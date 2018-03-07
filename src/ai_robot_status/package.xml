@@ -2,7 +2,8 @@
 <package format="2">
   <name>ai_robot_status</name>
   <version>0.0.0</version>
-  <description>The ai_robot_status package</description>
+  <description>The ai_robot_status package
+    Code deeply insparied by UTcoup 2018's code</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

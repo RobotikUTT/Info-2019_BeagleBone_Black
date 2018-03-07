@@ -9,7 +9,8 @@ import rospy
 #nodeReadiness
 #robotStatus
 #nodesstatus
-from ai_robot_status.msg import NodeReadiness, NodesStatus, RobotStatus
+from ai_robot_status.msg import NodesStatus, RobotStatus
+from ai_robot_status.srv import NodeReadiness, NodeReadinessResponse
 
  # SRV:
  # GameStart: bool
@@ -29,8 +30,8 @@ class Status(object):
 	NODES_CHECKLIST = {
 
 	# "/namespace/pkg" 	: None,
-	"/sender" 			: None,
-	"/receiver" 		: None
+	"/sender/" 			: None, #test
+	"/receiver/" 		: None  #test
 
 	}
 
@@ -42,8 +43,8 @@ class RobotWatcher(object):
 
 	def __init__(self):
 		rospy.init_node("ai_robot_watcher", log_level=rospy.INFO)
-		
-		rospy.Subscriber("/ai/robot_watcher/node_readiness", NodeReadiness, self.set_readiness)
+
+		rospy.Service("/ai/robot_watcher/node_readiness", NodeReadiness, self.set_readiness)
 		self._robot_status_publisher = rospy.Publisher("/ai/robot_watcher/robot_status", RobotStatus, queue_size = 1)
 		self._nodes_status_publisher = rospy.Publisher("/ai/robot_watcher/nodes_status", NodesStatus, queue_size = 1)
 
@@ -108,8 +109,12 @@ class RobotWatcher(object):
 		self.nodes_status = status
 
 	def set_readiness(self, msg):
-		rospy.loginfo("WAZZA")
-		Status.NODES_CHECKLIST[msg.node_name] = msg.ready
+		if msg.node_name in Status.NODES_CHECKLIST:
+			Status.NODES_CHECKLIST[msg.node_name] = msg.ready
+			return NodeReadinessResponse()
+		else: 
+			rospy.logwarn("Node {} not in cheklist".format(msg.node_name))
+			return NodeReadinessResponse()
 
 
 if __name__ == '__main__':

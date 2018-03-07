@@ -12,7 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   message_generation
-  ai_robot_status
 )
 
 ## System dependencies are found with CMake's conventions

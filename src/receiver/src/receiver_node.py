@@ -2,7 +2,8 @@
 import rospy
 import time
 from sender.msg import test
-from ai_robot_status.msg import NodeReadiness
+from ai_robot_status.srv import NodeReadiness
+from ai_robot_status import RobotServices
 
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + " I heard %s and", data.name)
@@ -17,10 +18,12 @@ def listener():
     rospy.init_node('receiver', anonymous=True)
 
     rospy.Subscriber("chatter", test, callback)
-    pub = rospy.Publisher("/ai/robot_watcher/node_readiness", NodeReadiness, queue_size = 10)
-    msg = NodeReadiness("/receiver", True)
-    time.sleep(2)
-    pub.publish(msg)
+    # pub = rospy.Publisher("/ai/robot_watcher/node_readiness", NodeReadiness, queue_size = 10)
+    # msg = NodeReadiness("/receiver", True)
+    # time.sleep(2)
+    # pub.publish(msg)
+
+    RobotServices.service_ready("sender", "", True)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
