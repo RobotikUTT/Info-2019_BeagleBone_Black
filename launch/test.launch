@@ -1,0 +1,4 @@
+<launch>
+	<include file="./src/sender/launch/pkg.launch"/>
+	<include file="./src/receiver/launch/pkg.launch"/>
+</launch>
