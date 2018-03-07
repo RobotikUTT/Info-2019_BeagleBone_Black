@@ -5,10 +5,6 @@ import rospy
 
 # import msgs/svrs
 
-# MSG:
-#nodeReadiness
-#robotStatus
-#nodesstatus
 from ai_robot_status.msg import NodesStatus, RobotStatus
 from ai_robot_status.srv import NodeReadiness, NodeReadinessResponse
 
@@ -29,7 +25,7 @@ class Status(object):
 
 	NODES_CHECKLIST = {
 
-	# "/namespace/pkg" 	: None,
+	"/namespace/pkg" 	: None,
 	"/sender/" 			: None, #test
 	"/receiver/" 		: None  #test
 
@@ -39,7 +35,7 @@ class Status(object):
 class RobotWatcher(object):
 	"""docstring for RobotStatus
 	node to monitor robot nodes"""
-	INIT_TIMEOUT = 40 #sec
+	INIT_TIMEOUT = 15 #sec
 
 	def __init__(self):
 		rospy.init_node("ai_robot_watcher", log_level=rospy.INFO)
@@ -68,7 +64,7 @@ class RobotWatcher(object):
 			# elif self.robot_status == Status.ROBOT_READY:
 			# 	pass
 
-			# elif self.robot_status == Status.ROBOT_RUNING:
+			# elif self.robot_status == Status.ROBOT_RUNNING:
 			# 	pass
 
 			# else: # self.robot_status == Status.ROBOT_HALT:
@@ -103,9 +99,22 @@ class RobotWatcher(object):
 		self._nodes_status_publisher.publish(msg)
 
 	def change_robot_status(self, status):
+		if status == Status.ROBOT_READY:
+			rospy.loginfo("All node started: Robot standing by")
+		elif status == Status.ROBOT_RUNNING:
+			rospy.loginfo("Game started: Robot running")
+		elif status == Status.ROBOT_HALT:
+			rospy.loginfo("Game stoped: Robot halted")
 		self.robot_status = status
 
 	def change_nodes_status(self, status):
+		if status == Status.NODES_RUNNING:
+			rospy.loginfo("All Nodes ready")
+		elif status == Status.NODES_ERROR :
+			rospy.logerr("Nodes init not complete\nnodes not ready '{}'\nnodes unresponsive '{}"
+				.format(
+					str([n for n in Status.NODES_CHECKLIST if Status.NODES_CHECKLIST[n] == False]),
+					str([n for n in Status.NODES_CHECKLIST if Status.NODES_CHECKLIST[n] == None])))
 		self.nodes_status = status
 
 	def set_readiness(self, msg):
