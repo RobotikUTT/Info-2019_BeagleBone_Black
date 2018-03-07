@@ -32,8 +32,8 @@ class Status(object):
 	}
 
 
-class RobotWatcher(object):
-	"""docstring for RobotStatus
+class RobotWatcherNode(object):
+	"""docstring for RobotWatcherNode
 	node to monitor robot nodes"""
 	INIT_TIMEOUT = 15 #sec
 
@@ -53,7 +53,7 @@ class RobotWatcher(object):
 		while not rospy.is_shutdown():
 			if self.robot_status == Status.ROBOT_INIT:
 				self.check_nodes()
-				if time.time() - self.init_start_time > RobotWatcher.INIT_TIMEOUT:
+				if time.time() - self.init_start_time > RobotWatcherNode.INIT_TIMEOUT:
 					if len([n for n in Status.NODES_CHECKLIST if Status.NODES_CHECKLIST[n] in [None, False]]) > 0:
 						self.change_nodes_status(Status.NODES_ERROR)
 					else:
@@ -127,6 +127,6 @@ class RobotWatcher(object):
 
 
 if __name__ == '__main__':
-	RobotWatcher()
+	RobotWatcherNode()
 			
 
