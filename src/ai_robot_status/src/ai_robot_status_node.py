@@ -2,6 +2,8 @@
 
 import time
 import rospy
+from ai_robot_status.EmulatorGUI import GPIO
+# import Adafruit_BBIO.GPIO as GPIO
 
 # import msgs/svrs
 
@@ -19,13 +21,16 @@ class Status(object):
 	ROBOT_RUNNING  = 2 # robot in game
 	ROBOT_HALT     = 3 # end of game
 
-	NODES_INIT    = 0 # nodes initializing
-	NODES_RUNNING = 1 # nodes running
-	NODES_ERROR   = 2 # at least 1 node error
+	NODES_INIT    	= 0 # nodes initializing
+	NODES_RUNNING 	= 1 # nodes running
+	NODES_ERROR 	= 2 # at least 1 node error
+
+	PIN_ON			= 0 # Game hold
+	PIN_OFF			= 1 # Game start
 
 	NODES_CHECKLIST = {
 
-	"/namespace/pkg" 	: None,
+	# "/namespace/pkg" 	: None,
 	"/sender/" 			: None, #test
 	"/receiver/" 		: None  #test
 
@@ -38,19 +43,34 @@ class RobotWatcherNode(object):
 	INIT_TIMEOUT = 15 #sec
 
 	def __init__(self):
+
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setwarnings(False)
+		GPIO.setup("P8_8",GPIO.IN, initial = GPIO.LOW)
+
 		rospy.init_node("ai_robot_watcher", log_level=rospy.INFO)
 
 		rospy.Service("/ai/robot_watcher/node_readiness", NodeReadiness, self.set_readiness)
 		self._robot_status_publisher = rospy.Publisher("/ai/robot_watcher/robot_status", RobotStatus, queue_size = 1)
 		self._nodes_status_publisher = rospy.Publisher("/ai/robot_watcher/nodes_status", NodesStatus, queue_size = 1)
 
-		self.robot_status = Status.ROBOT_INIT
-		self.nodes_status = Status.NODES_INIT
+		self.robot_status 	= Status.ROBOT_INIT
+		self.nodes_status 	= Status.NODES_INIT
+		self.pin 			= Status.PIN_ON
 
 		self.init_start_time = time.time()
 
 		r = rospy.Rate(5)
 		while not rospy.is_shutdown():
+
+			if self.pin == Status.PIN_ON:
+				# read pin
+				# print("pin status : " + str(self.pin))
+				if GPIO.input("P8_8") == Status.PIN_OFF:
+					self.pin = Status.PIN_OFF
+					# print("Pin off")
+
+				
 			if self.robot_status == Status.ROBOT_INIT:
 				self.check_nodes()
 				if time.time() - self.init_start_time > RobotWatcherNode.INIT_TIMEOUT:
@@ -61,14 +81,17 @@ class RobotWatcherNode(object):
 				if self.nodes_status == Status.NODES_RUNNING:
 					self.change_robot_status(Status.ROBOT_READY)
 
-			# elif self.robot_status == Status.ROBOT_READY:
-			# 	pass
+			elif self.robot_status == Status.ROBOT_READY:
+				if self.pin == Status.PIN_OFF:
+					self.change_robot_status(Status.ROBOT_RUNNING)
 
 			# elif self.robot_status == Status.ROBOT_RUNNING:
 			# 	pass
 
 			# else: # self.robot_status == Status.ROBOT_HALT:
 			# 	pass
+
+
 
 			self.publish_robot_status()
 			self.publish_nodes_status()
