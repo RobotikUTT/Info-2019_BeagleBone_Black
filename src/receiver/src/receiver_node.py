@@ -3,7 +3,7 @@ import rospy
 import time
 from sender.msg import test
 from ai_robot_status.srv import NodeReadiness
-from ai_robot_status import RobotServices
+from ai_robot_status.Services import RobotServices
 
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + " I heard %s and", data.name)

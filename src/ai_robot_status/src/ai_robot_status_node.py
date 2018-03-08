@@ -1,37 +1,15 @@
 #!/usr/bin/python
-
 import time
 import rospy
-from ai_robot_status.EmulatorGUI import GPIO
+
+from ai_robot_status.GPIOemulator.EmulatorGUI import GPIO
 # import Adafruit_BBIO.GPIO as GPIO
 
 # import msgs/svrs
 
 from ai_robot_status.msg import NodesStatus, RobotStatus
 from ai_robot_status.srv import NodeReadiness, NodeReadinessResponse
-
-class Status(object):
-	"""docstring for status
-	class for set robot status"""
-	ROBOT_INIT     = 0 # nodes initializing
-	ROBOT_READY    = 1 # all nodes ready, waiting start
-	ROBOT_RUNNING  = 2 # robot in game
-	ROBOT_HALT     = 3 # end of game
-
-	NODES_INIT    	= 0 # nodes initializing
-	NODES_RUNNING 	= 1 # nodes running
-	NODES_ERROR 	= 2 # at least 1 node error
-
-	PIN_ON			= 0 # Game hold
-	PIN_OFF			= 1 # Game start
-
-	NODES_CHECKLIST = {
-
-	# "/namespace/pkg" 	: None,
-	"/sender/" 			: None, #test
-	"/receiver/" 		: None  #test
-
-	}
+from ai_robot_status.RStatus.State import RobotState, WatcherState
 
 
 class RobotWatcherNode(object):
@@ -52,9 +30,9 @@ class RobotWatcherNode(object):
 		self._robot_status_publisher = rospy.Publisher("/ai/robot_watcher/robot_status", RobotStatus, queue_size = 1, latch=True)
 		self._nodes_status_publisher = rospy.Publisher("/ai/robot_watcher/nodes_status", NodesStatus, queue_size = 1)
 
-		self.robot_status 	= Status.ROBOT_INIT
-		self.nodes_status 	= Status.NODES_INIT
-		self.pin 			= Status.PIN_ON
+		self.robot_status 	= RobotState.ROBOT_INIT
+		self.nodes_status 	= WatcherState.NODES_INIT
+		self.pin 			= WatcherState.PIN_ON
 
 		self.init_start_time = time.time()
 		self.publish_robot_status()
@@ -62,31 +40,31 @@ class RobotWatcherNode(object):
 		r = rospy.Rate(5)
 		while not rospy.is_shutdown():
 
-			if self.pin == Status.PIN_ON:
-				if GPIO.input("P8_8") == Status.PIN_OFF:
-					self.pin = Status.PIN_OFF
+			if self.pin == WatcherState.PIN_ON:
+				if GPIO.input("P8_8") == WatcherState.PIN_OFF:
+					self.pin = WatcherState.PIN_OFF
 					rospy.Timer(rospy.Duration(RobotWatcherNode.GAME_LENTH), self.halt_game, oneshot=True)
 
 				
-			if self.robot_status == Status.ROBOT_INIT:
+			if self.robot_status == RobotState.ROBOT_INIT:
 				if self.nodes_ready():
-					self.change_nodes_status(Status.NODES_RUNNING)
+					self.change_nodes_status(WatcherState.NODES_RUNNING)
 				if time.time() - self.init_start_time > RobotWatcherNode.INIT_TIMEOUT:
-					if len([n for n in Status.NODES_CHECKLIST if Status.NODES_CHECKLIST[n] in [None, False]]) > 0:
-						self.change_nodes_status(Status.NODES_ERROR)
+					if len([n for n in WatcherState.NODES_CHECKLIST if WatcherState.NODES_CHECKLIST[n] in [None, False]]) > 0:
+						self.change_nodes_status(WatcherState.NODES_ERROR)
 					else:
-						self.change_nodes_status(Status.NODES_RUNNING)
-				if self.nodes_status == Status.NODES_RUNNING:
-					self.change_robot_status(Status.ROBOT_READY)
+						self.change_nodes_status(WatcherState.NODES_RUNNING)
+				if self.nodes_status == WatcherState.NODES_RUNNING:
+					self.change_robot_status(RobotState.ROBOT_READY)
 
-			elif self.robot_status == Status.ROBOT_READY:
-				if self.pin == Status.PIN_OFF:
-					self.change_robot_status(Status.ROBOT_RUNNING)
+			elif self.robot_status == RobotState.ROBOT_READY:
+				if self.pin == WatcherState.PIN_OFF:
+					self.change_robot_status(RobotState.ROBOT_RUNNING)
 
-			# elif self.robot_status == Status.ROBOT_RUNNING:
+			# elif self.robot_status == RobotState.ROBOT_RUNNING:
 			# 	pass
 
-			# else: # self.robot_status == Status.ROBOT_HALT:
+			# else: # self.robot_status == RobotState.ROBOT_HALT:
 			# 	pass
 
 
@@ -96,7 +74,7 @@ class RobotWatcherNode(object):
 
 
 	def nodes_ready(self):
-		for _, val in Status.NODES_CHECKLIST.items():
+		for _, val in WatcherState.NODES_CHECKLIST.items():
 			if val == None or val == False:
 				return False
 		return True
@@ -108,7 +86,7 @@ class RobotWatcherNode(object):
 
 	def publish_nodes_status(self):
 		msg = NodesStatus()
-		for node, val in Status.NODES_CHECKLIST.items():
+		for node, val in WatcherState.NODES_CHECKLIST.items():
 			if val == None:
 				msg.nodes_init.append(node)
 			elif val == True:
@@ -118,31 +96,31 @@ class RobotWatcherNode(object):
 		self._nodes_status_publisher.publish(msg)
 
 	def change_robot_status(self, status):
-		if status == Status.ROBOT_READY:
+		if status == RobotState.ROBOT_READY:
 			rospy.loginfo("All node started: Robot standing by")
-		elif status == Status.ROBOT_RUNNING:
+		elif status == RobotState.ROBOT_RUNNING:
 			rospy.loginfo("Game started: Robot running")
-		elif status == Status.ROBOT_HALT:
+		elif status == RobotState.ROBOT_HALT:
 			rospy.loginfo("Game stoped: Robot halted")
 		self.robot_status = status
 		self.publish_robot_status()
 
 
 	def change_nodes_status(self, status):
-		if status == Status.NODES_RUNNING:
+		if status == WatcherState.NODES_RUNNING:
 			rospy.loginfo("All Nodes ready")
-		elif status == Status.NODES_ERROR :
+		elif status == WatcherState.NODES_ERROR :
 			rospy.logerr("Nodes init not complete\nnodes not ready '{}'\nnodes unresponsive '{}"
 				.format(
-					str([n for n in Status.NODES_CHECKLIST if Status.NODES_CHECKLIST[n] == False]),
-					str([n for n in Status.NODES_CHECKLIST if Status.NODES_CHECKLIST[n] == None])))
+					str([n for n in WatcherState.NODES_CHECKLIST if WatcherState.NODES_CHECKLIST[n] == False]),
+					str([n for n in WatcherState.NODES_CHECKLIST if WatcherState.NODES_CHECKLIST[n] == None])))
 		self.nodes_status = status
 		self.publish_robot_status()
 
 
 	def set_readiness(self, msg):
-		if msg.node_name in Status.NODES_CHECKLIST:
-			Status.NODES_CHECKLIST[msg.node_name] = msg.ready
+		if msg.node_name in WatcherState.NODES_CHECKLIST:
+			WatcherState.NODES_CHECKLIST[msg.node_name] = msg.ready
 			return NodeReadinessResponse()
 		else: 
 			rospy.logwarn("Node {} not in cheklist".format(msg.node_name))
@@ -150,7 +128,7 @@ class RobotWatcherNode(object):
 
 	def halt_game(self, event):
 		# rospy.logwarn("!!!!!!!GAME STOP!!!!!!!!")
-		self.change_robot_status(Status.ROBOT_HALT)
+		self.change_robot_status(RobotState.ROBOT_HALT)
 
 if __name__ == '__main__':
 	RobotWatcherNode()
