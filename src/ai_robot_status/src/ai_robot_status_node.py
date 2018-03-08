@@ -57,6 +57,7 @@ class RobotWatcherNode(object):
 		self.pin 			= Status.PIN_ON
 
 		self.init_start_time = time.time()
+		self.publish_robot_status()
 
 		r = rospy.Rate(5)
 		while not rospy.is_shutdown():
@@ -68,7 +69,8 @@ class RobotWatcherNode(object):
 
 				
 			if self.robot_status == Status.ROBOT_INIT:
-				self.check_nodes()
+				if self.nodes_ready():
+					self.change_nodes_status(Status.NODES_RUNNING)
 				if time.time() - self.init_start_time > RobotWatcherNode.INIT_TIMEOUT:
 					if len([n for n in Status.NODES_CHECKLIST if Status.NODES_CHECKLIST[n] in [None, False]]) > 0:
 						self.change_nodes_status(Status.NODES_ERROR)
@@ -88,19 +90,17 @@ class RobotWatcherNode(object):
 			# 	pass
 
 
-
-			self.publish_robot_status()
 			self.publish_nodes_status()
 
 			r.sleep()
 
 
-	def check_nodes(self):
+	def nodes_ready(self):
 		for _, val in Status.NODES_CHECKLIST.items():
 			if val == None or val == False:
-				return
-		if self.nodes_status == Status.NODES_INIT:
-			self.change_nodes_status(Status.NODES_RUNNING)
+				return False
+		return True
+
 
 	def publish_robot_status(self):
 		msg = RobotStatus(self.robot_status, self.nodes_status)
@@ -125,6 +125,8 @@ class RobotWatcherNode(object):
 		elif status == Status.ROBOT_HALT:
 			rospy.loginfo("Game stoped: Robot halted")
 		self.robot_status = status
+		self.publish_robot_status()
+
 
 	def change_nodes_status(self, status):
 		if status == Status.NODES_RUNNING:
@@ -135,6 +137,8 @@ class RobotWatcherNode(object):
 					str([n for n in Status.NODES_CHECKLIST if Status.NODES_CHECKLIST[n] == False]),
 					str([n for n in Status.NODES_CHECKLIST if Status.NODES_CHECKLIST[n] == None])))
 		self.nodes_status = status
+		self.publish_robot_status()
+
 
 	def set_readiness(self, msg):
 		if msg.node_name in Status.NODES_CHECKLIST:
