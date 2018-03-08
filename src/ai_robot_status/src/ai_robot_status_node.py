@@ -10,9 +10,6 @@ from ai_robot_status.EmulatorGUI import GPIO
 from ai_robot_status.msg import NodesStatus, RobotStatus
 from ai_robot_status.srv import NodeReadiness, NodeReadinessResponse
 
- # SRV:
- # GameStart: bool
-
 class Status(object):
 	"""docstring for status
 	class for set robot status"""
@@ -40,7 +37,8 @@ class Status(object):
 class RobotWatcherNode(object):
 	"""docstring for RobotWatcherNode
 	node to monitor robot nodes"""
-	INIT_TIMEOUT = 15 #sec
+	INIT_TIMEOUT 	= 15 #sec
+	GAME_LENTH		= 10 #sec
 
 	def __init__(self):
 
@@ -64,11 +62,9 @@ class RobotWatcherNode(object):
 		while not rospy.is_shutdown():
 
 			if self.pin == Status.PIN_ON:
-				# read pin
-				# print("pin status : " + str(self.pin))
 				if GPIO.input("P8_8") == Status.PIN_OFF:
 					self.pin = Status.PIN_OFF
-					# print("Pin off")
+					rospy.Timer(rospy.Duration(RobotWatcherNode.GAME_LENTH), self.halt_game, oneshot=True)
 
 				
 			if self.robot_status == Status.ROBOT_INIT:
@@ -148,6 +144,9 @@ class RobotWatcherNode(object):
 			rospy.logwarn("Node {} not in cheklist".format(msg.node_name))
 			return NodeReadinessResponse()
 
+	def halt_game(self, event):
+		# rospy.logwarn("!!!!!!!GAME STOP!!!!!!!!")
+		self.change_robot_status(Status.ROBOT_HALT)
 
 if __name__ == '__main__':
 	RobotWatcherNode()
