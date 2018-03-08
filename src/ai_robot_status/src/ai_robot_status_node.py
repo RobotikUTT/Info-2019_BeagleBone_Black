@@ -49,7 +49,7 @@ class RobotWatcherNode(object):
 		rospy.init_node("ai_robot_watcher", log_level=rospy.INFO)
 
 		rospy.Service("/ai/robot_watcher/node_readiness", NodeReadiness, self.set_readiness)
-		self._robot_status_publisher = rospy.Publisher("/ai/robot_watcher/robot_status", RobotStatus, queue_size = 1)
+		self._robot_status_publisher = rospy.Publisher("/ai/robot_watcher/robot_status", RobotStatus, queue_size = 1, latch=True)
 		self._nodes_status_publisher = rospy.Publisher("/ai/robot_watcher/nodes_status", NodesStatus, queue_size = 1)
 
 		self.robot_status 	= Status.ROBOT_INIT
