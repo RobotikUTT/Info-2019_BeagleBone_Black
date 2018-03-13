@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 import rospy
 import time
-from sender.msg import test
+from sender.msg import test, test2
 from ai_robot_status.srv import NodeReadiness
 from ai_robot_status.Services import RobotServices
 
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + " I heard %s and", data.name)
+
+def callback2(data):
+    rospy.loginfo(rospy.get_caller_id() + " Can message heard; mode : {}   data : {}".format(data.mode, str([ n for n in data.data])))
     
 def listener():
 
@@ -18,6 +21,7 @@ def listener():
     rospy.init_node('receiver', anonymous=True)
 
     rospy.Subscriber("chatter", test, callback)
+    rospy.Subscriber("receiver/test", test2, callback2)
     # pub = rospy.Publisher("/ai/robot_watcher/node_readiness", NodeReadiness, queue_size = 10)
     # msg = NodeReadiness("/receiver", True)
     # time.sleep(2)
