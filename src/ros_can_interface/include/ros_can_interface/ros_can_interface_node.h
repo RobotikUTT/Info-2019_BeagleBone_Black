@@ -14,14 +14,17 @@ public:
 	~CanInterfaceNode();
 	void updateRobotStatus(const ai_robot_status::RobotStatus::ConstPtr&);
 	void test(const sender::test2::ConstPtr& msg);
+	void canMsgProcess(const can_msgs::Frame::ConstPtr& msg);
 private:
 	ros::NodeHandle nh;
 	uint8_t robot_status;
 
 	ros::Publisher can_pub;
+	ros::Publisher test_pub;
 
 	ros::Subscriber robot_status_sub;
 	ros::Subscriber test_sub;
+	ros::Subscriber can_sub;
 };
 
 #endif
