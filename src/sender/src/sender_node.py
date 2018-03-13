@@ -24,9 +24,9 @@ class TalkerNode(object):
                 msg.value = False
                 msg.name = "sender/send"
                 # rospy.loginfo(msg)
-                pub.publish(msg)
+                # pub.publish(msg)
 
-                pub2.publish(test2(25, [1,2,3,4,5,6,7]))
+                # pub2.publish(test2(25, [1,2,3,4,5,6,7]))
             rate.sleep()
         
     
