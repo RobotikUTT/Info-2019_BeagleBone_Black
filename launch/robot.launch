@@ -1,3 +1,4 @@
 <launch>
 	<include file="./src/ai_robot_status/launch/pkg.launch"/>
+	<include file="./src/ros_can_interface/launch/pkg.launch"/>
 </launch>
