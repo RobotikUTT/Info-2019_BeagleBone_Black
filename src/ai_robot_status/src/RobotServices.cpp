@@ -20,15 +20,12 @@ void service_ready(const string name_space, const string package, const bool val
         if (!readyPub.call(msg))
             throw;
         if (val)
-            // ROS_INFO_STREAM(" ss");
             ROS_INFO_STREAM("Node " << node_name << " initialized.");
         else
-            // ROS_ERROR_STREAM(" ss");
             ROS_ERROR_STREAM("Node " << node_name << " not initialized.");
     }
     catch(...)
     {
         ROS_ERROR_STREAM("status_services for '"<< node_name <<"' couldn't contact ai/game_status to send init notification.");
-        // ROS_ERROR(" ss");
     }
 }
