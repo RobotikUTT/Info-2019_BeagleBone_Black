@@ -4,6 +4,7 @@
 #include <ros/ros.h>
 #include <can_msgs/Frame.h>
 #include <ai_robot_status/RobotStatus.h>
+#include <ai_robot_status/Services/RobotServices.h>
 #include <sender/test2.h>
 #include <algorithm>
 

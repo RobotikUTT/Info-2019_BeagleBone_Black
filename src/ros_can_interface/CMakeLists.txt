@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   can_msgs
   std_msgs
   message_generation
+  ai_robot_status
 )
 
 ## System dependencies are found with CMake's conventions
@@ -107,8 +108,8 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES can_interface
-  CATKIN_DEPENDS roscpp rospy std_msgs can_msgs
-#  DEPENDS system_lib
+  CATKIN_DEPENDS roscpp rospy std_msgs can_msgs ai_robot_status sender
+  DEPENDS system_lib
 )
 
 ###########

@@ -12,6 +12,8 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->test_sub = nh.subscribe("/ros_can/interface/test", 1000, &CanInterfaceNode::test, this);
 	this->can_sub = nh.subscribe("received_messages", 1000, &CanInterfaceNode::canMsgProcess, this);
 
+	service_ready("ros_can", "interface", 1 );
+
 }
 
 CanInterfaceNode::~CanInterfaceNode(){

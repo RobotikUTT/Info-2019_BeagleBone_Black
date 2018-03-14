@@ -34,6 +34,8 @@
   <depend>rospy</depend>
   <depend>std_msgs</depend>
   <depend>can_msgs</depend>
+  <depend>ai_robot_status</depend>
+  <depend>sender</depend>
   <exec_depend>message_runtime</exec_depend>
 
 
