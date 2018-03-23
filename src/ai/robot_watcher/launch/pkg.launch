@@ -1,0 +1,3 @@
+<launch>
+	<node name="ai_robot_watcher" pkg="robot_watcher" type="robot_watcher_node.py" output="screen" required="True"/>
+</launch>

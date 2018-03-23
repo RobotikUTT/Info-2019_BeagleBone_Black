@@ -8,7 +8,7 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->can_pub = nh.advertise<can_msgs::Frame>("sent_messages", 1000);
 	this->test_pub = nh.advertise<sender::test2>("receiver/test", 1000);
 
-	this->robot_status_sub = nh.subscribe("/ai/robot_watcher/robot_status", 1000, &CanInterfaceNode::updateRobotStatus, this);
+	this->robot_watcher_sub = nh.subscribe("/ai/robot_watcher/robot_watcher", 1000, &CanInterfaceNode::updateRobotStatus, this);
 	this->test_sub = nh.subscribe("/ros_can/interface/test", 1000, &CanInterfaceNode::test, this);
 	this->can_sub = nh.subscribe("received_messages", 1000, &CanInterfaceNode::canMsgProcess, this);
 
@@ -20,9 +20,9 @@ CanInterfaceNode::~CanInterfaceNode(){
 
 }
 
-void CanInterfaceNode::updateRobotStatus(const ai_robot_status::RobotStatus::ConstPtr& msg){
-	this->robot_status = msg->robot_status;
-	// ROS_INFO("callback robot_status: %d", this->robot_status);
+void CanInterfaceNode::updateRobotStatus(const robot_watcher::RobotStatus::ConstPtr& msg){
+	this->robot_watcher = msg->robot_watcher;
+	// ROS_INFO("callback robot_watcher: %d", this->robot_watcher);
 }
 
 void CanInterfaceNode::test(const sender::test2::ConstPtr& msg){

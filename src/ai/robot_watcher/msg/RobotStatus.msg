@@ -1,0 +1,2 @@
+uint8 robot_watcher
+uint8 nodes_status

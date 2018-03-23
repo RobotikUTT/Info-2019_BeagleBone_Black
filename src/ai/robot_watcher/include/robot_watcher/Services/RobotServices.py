@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import rospy
-from ai_robot_status.srv import NodeReadiness
+from robot_watcher.srv import NodeReadiness
 
 # class RobotStatus(object):
 # 	"""docstring for RobotStatus"""

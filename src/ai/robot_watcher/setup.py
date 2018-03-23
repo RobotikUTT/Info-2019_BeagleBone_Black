@@ -5,7 +5,7 @@ from catkin_pkg.python_setup import generate_distutils_setup
 
 # fetch values from package.xml
 setup_args = generate_distutils_setup(
-    packages=['ai_robot_status'],
+    packages=['robot_watcher'],
     package_dir={'': 'include'})
 
 setup(**setup_args)

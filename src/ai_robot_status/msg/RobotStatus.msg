@@ -1,2 +1,0 @@
-uint8 robot_status
-uint8 nodes_status

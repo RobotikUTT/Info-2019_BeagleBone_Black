@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(ai_robot_status)
+project(robot_watcher)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
@@ -107,7 +107,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS roscpp rospy std_msgs
-  DEPENDS system_lib
+#  DEPENDS system_lib
 )
 
 ###########

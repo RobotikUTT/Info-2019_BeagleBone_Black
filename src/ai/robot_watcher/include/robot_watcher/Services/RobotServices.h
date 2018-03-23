@@ -3,7 +3,7 @@
 
 #include <string>
 #include <ros/ros.h>
-#include <ai_robot_status/NodeReadiness.h>
+#include <robot_watcher/NodeReadiness.h>
 
 void service_ready(const std::string, const std::string, const bool );
 #endif

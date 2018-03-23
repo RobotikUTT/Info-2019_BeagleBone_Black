@@ -1,4 +1,4 @@
-#include <ai_robot_status/Services/RobotServices.h>
+#include <robot_watcher/Services/RobotServices.h>
 
 using namespace std;
 
@@ -13,8 +13,8 @@ void service_ready(const string name_space, const string package, const bool val
 		if (!ros::service::waitForService(ROBOT_SRV, ros::Duration(TIMEOUT)))
 			throw;
 		ros::NodeHandle nh;
-		ros::ServiceClient readyPub = nh.serviceClient<ai_robot_status::NodeReadiness>(ROBOT_SRV);
-        ai_robot_status::NodeReadiness msg;
+		ros::ServiceClient readyPub = nh.serviceClient<robot_watcher::NodeReadiness>(ROBOT_SRV);
+        robot_watcher::NodeReadiness msg;
         msg.request.ready = val;
         msg.request.node_name = node_name;
         if (!readyPub.call(msg))
