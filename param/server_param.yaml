@@ -1,0 +1,8 @@
+ros_can:
+  socketcan_bridge:
+    can_device: "vcan0"
+
+ai:
+  robot_watcher:
+    INIT_TIMEOUT: 15 #sec
+    GAME_LENTH: 10 #sec
