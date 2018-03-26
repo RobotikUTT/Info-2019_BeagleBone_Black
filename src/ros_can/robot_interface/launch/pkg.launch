@@ -1,4 +1,4 @@
 <launch>
-	<node name="can_interface" pkg="robot_interface" type="node" output="screen"/>
+	<node name="robot_interface" pkg="robot_interface" type="node" output="screen"/>
 	<include file="$(find socketcan_bridge)/launch/pkg.launch"/>
 </launch>

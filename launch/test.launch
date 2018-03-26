@@ -1,4 +1,6 @@
 <launch>
-	<include file="./src/nodeTest/sender/launch/pkg.launch"/>
-	<include file="./src/nodeTest/receiver/launch/pkg.launch"/>
+	<group ns="nodeTest">
+		<include file="./src/nodeTest/sender/launch/pkg.launch"/>
+		<include file="./src/nodeTest/receiver/launch/pkg.launch"/>
+	</group>
 </launch>

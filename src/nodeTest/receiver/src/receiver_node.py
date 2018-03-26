@@ -10,7 +10,7 @@ def callback(data):
 
 def callback2(data):
     rospy.loginfo(rospy.get_caller_id() + " Can message heard; mode : {}   data : {}".format(data.mode, str([ n for n in data.data])))
-    
+
 def listener():
 
     # In ROS, nodes are uniquely named. If two nodes with the same
@@ -18,7 +18,7 @@ def listener():
     # anonymous=True flag means that rospy will choose a unique
     # name for our 'listener' node so that multiple listeners can
     # run simultaneously.
-    rospy.init_node('receiver', anonymous=True)
+    rospy.init_node('receiver')
 
     rospy.Subscriber("chatter", test, callback)
     rospy.Subscriber("receiver/test", test2, callback2)
@@ -27,7 +27,11 @@ def listener():
     # time.sleep(2)
     # pub.publish(msg)
 
+    rospy.set_param("a_test", 99)
+    rospy.set_param("/b_test", 99)
+    rospy.set_param("~c_test", 99)
     RobotServices.service_ready("sender", "", True)
+
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
