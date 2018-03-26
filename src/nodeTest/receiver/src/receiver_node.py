@@ -27,9 +27,10 @@ def listener():
     # time.sleep(2)
     # pub.publish(msg)
 
-    rospy.set_param("a_test", 99)
-    rospy.set_param("/b_test", 99)
-    rospy.set_param("~c_test", 99)
+    rospy.set_param("relative", 99)
+    rospy.set_param("/global", 99)
+    rospy.set_param("~private", 99)
+
     RobotServices.service_ready("sender", "", True)
 
 

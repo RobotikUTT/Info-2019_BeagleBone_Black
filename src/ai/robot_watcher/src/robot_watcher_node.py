@@ -15,16 +15,17 @@ from robot_watcher.RStatus.State import RobotState, WatcherState
 class RobotWatcherNode(object):
 	"""docstring for RobotWatcherNode
 	node to monitor robot nodes"""
-	INIT_TIMEOUT 	= 15 #sec
-	GAME_LENTH		= 10 #sec
 
 	def __init__(self):
+		rospy.init_node("ai_robot_watcher", log_level=rospy.INFO)
+
+		self.INIT_TIMEOUT = rospy.get_param("~INIT_TIMEOUT", 15)
+		self.GAME_LENTH = rospy.get_param("~GAME_LENTH", 10)
 
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setwarnings(False)
 		GPIO.setup("P8_8",GPIO.IN, initial = GPIO.LOW)
 
-		rospy.init_node("ai_robot_watcher", log_level=rospy.INFO)
 
 		rospy.Service("/ai/robot_watcher/node_readiness", NodeReadiness, self.set_readiness)
 		self._robot_watcher_publisher = rospy.Publisher("/ai/robot_watcher/robot_watcher", RobotStatus, queue_size = 1, latch=True)
@@ -43,13 +44,13 @@ class RobotWatcherNode(object):
 			if self.pin == WatcherState.PIN_ON:
 				if GPIO.input("P8_8") == WatcherState.PIN_OFF:
 					self.pin = WatcherState.PIN_OFF
-					rospy.Timer(rospy.Duration(RobotWatcherNode.GAME_LENTH), self.halt_game, oneshot=True)
+					rospy.Timer(rospy.Duration(self.GAME_LENTH), self.halt_game, oneshot=True)
 
-				
+
 			if self.robot_watcher == RobotState.ROBOT_INIT:
 				if self.nodes_ready():
 					self.change_nodes_status(WatcherState.NODES_RUNNING)
-				if time.time() - self.init_start_time > RobotWatcherNode.INIT_TIMEOUT:
+				if time.time() - self.init_start_time > self.INIT_TIMEOUT:
 					if len([n for n in WatcherState.NODES_CHECKLIST if WatcherState.NODES_CHECKLIST[n] in [None, False]]) > 0:
 						self.change_nodes_status(WatcherState.NODES_ERROR)
 					else:
@@ -122,7 +123,7 @@ class RobotWatcherNode(object):
 		if msg.node_name in WatcherState.NODES_CHECKLIST:
 			WatcherState.NODES_CHECKLIST[msg.node_name] = msg.ready
 			return NodeReadinessResponse()
-		else: 
+		else:
 			rospy.logwarn("Node {} not in cheklist".format(msg.node_name))
 			return NodeReadinessResponse()
 
@@ -132,5 +133,3 @@ class RobotWatcherNode(object):
 
 if __name__ == '__main__':
 	RobotWatcherNode()
-			
-
