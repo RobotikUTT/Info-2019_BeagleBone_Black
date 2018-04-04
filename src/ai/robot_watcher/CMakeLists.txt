@@ -52,6 +52,7 @@ catkin_python_setup()
    FILES
    NodesStatus.msg
    RobotStatus.msg
+   SetSide.msg
  )
 
 ## Generate services in the 'srv' folder
