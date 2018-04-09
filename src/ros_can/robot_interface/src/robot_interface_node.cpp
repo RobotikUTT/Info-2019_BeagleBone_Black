@@ -134,7 +134,6 @@ void CanInterfaceNode::STMSetMode(const robot_interface::Status::ConstPtr& msg){
 
 void CanInterfaceNode::STMSpeed(const robot_interface::Speed::ConstPtr& msg){
 
-	ROS_INFO_STREAM("Send data SPEED");
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
