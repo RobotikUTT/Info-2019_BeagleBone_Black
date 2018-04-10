@@ -12,26 +12,18 @@ public:
   bool _done;
   bool _possible;
   int _value;
+  float _diff_factor;
   ActionPoint PAction;
 
 
   ActionClass();
-  ActionClass(std::string, ActionPoint, int);
+  ActionClass(std::string, ActionPoint, int, float);
 
-  // void setName(std::string);
-  // void setPoint(int);
-  // void setDone(bool);
-
-  // int getPoint();
-  // bool getPossibility();
-
-  void updatePriority();
+  void updatePriority(Point&);
   void checkPossibility();
-  void setSide(bool);
+  void changeSide();
 
-  bool operator< ( const ActionClass &B) const {
-    return _priority < B._priority;
-  }
+  bool operator< ( const ActionClass &B) const;
 
 private:
   // bonus point relation
