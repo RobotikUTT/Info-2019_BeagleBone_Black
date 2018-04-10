@@ -10,6 +10,19 @@ Point::Point(int _x, int _y){
   this->y = _y;
 }
 
+int Point::manhattanDist(Point& P){
+  Point temp = *this - P;
+  return temp.manhattanDist();
+}
+
+int Point::manhattanDist(){
+  return std::abs(this->x + this->y);
+}
+
+Point Point::operator- (const Point& P){
+  return Point (this->x - P.x, this->y - P.y);
+}
+
 std::ostream& operator<<(std::ostream& os, const Point& P)
 {
     os << "point : { x: " << P.x << " ; y: " << P.y << " }";
