@@ -18,11 +18,11 @@ class WatcherState(object):
 	PIN_ON			= 0 # Game hold
 	PIN_OFF			= 1 # Game start
 
-	NODES_CHECKLIST = {
+NODES_CHECKLIST = {
 
-	# "/namespace/pkg" 		: None,
-	"/sender/" 				: None, #test
-	"/receiver/" 			: None,  #test
-	"/ros_can/interface" 	: None
+# "/namespace/pkg" 		: None,
+"/sender/" 				: None, #test
+"/receiver/" 			: None,  #test
+"/ros_can/interface" 	: None
 
-	}
+}

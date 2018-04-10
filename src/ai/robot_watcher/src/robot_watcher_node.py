@@ -9,7 +9,7 @@ from robot_watcher.GPIOemulator.EmulatorGUI import GPIO
 
 from robot_watcher.msg import NodesStatus, RobotStatus
 from robot_watcher.srv import NodeReadiness, NodeReadinessResponse
-from robot_watcher.RStatus.State import RobotState, WatcherState
+from robot_watcher.RStatus.State import RobotState, WatcherState, NODES_CHECKLIST
 
 
 class RobotWatcherNode(object):
@@ -28,7 +28,7 @@ class RobotWatcherNode(object):
 
 
 		rospy.Service("/ai/robot_watcher/node_readiness", NodeReadiness, self.set_readiness)
-		self._robot_watcher_publisher = rospy.Publisher("/ai/robot_watcher/robot_watcher", RobotStatus, queue_size = 1, latch=True)
+		self._robot_watcher_publisher = rospy.Publisher("/ai/robot_watcher/robot_status", RobotStatus, queue_size = 1, latch=True)
 		self._nodes_status_publisher = rospy.Publisher("/ai/robot_watcher/nodes_status", NodesStatus, queue_size = 1)
 
 		self.robot_watcher 	= RobotState.ROBOT_INIT
@@ -51,7 +51,7 @@ class RobotWatcherNode(object):
 				if self.nodes_ready():
 					self.change_nodes_status(WatcherState.NODES_RUNNING)
 				if time.time() - self.init_start_time > self.INIT_TIMEOUT:
-					if len([n for n in WatcherState.NODES_CHECKLIST if WatcherState.NODES_CHECKLIST[n] in [None, False]]) > 0:
+					if len([n for n in NODES_CHECKLIST if NODES_CHECKLIST[n] in [None, False]]) > 0:
 						self.change_nodes_status(WatcherState.NODES_ERROR)
 					else:
 						self.change_nodes_status(WatcherState.NODES_RUNNING)
@@ -75,7 +75,7 @@ class RobotWatcherNode(object):
 
 
 	def nodes_ready(self):
-		for _, val in WatcherState.NODES_CHECKLIST.items():
+		for _, val in NODES_CHECKLIST.items():
 			if val == None or val == False:
 				return False
 		return True
@@ -87,7 +87,7 @@ class RobotWatcherNode(object):
 
 	def publish_nodes_status(self):
 		msg = NodesStatus()
-		for node, val in WatcherState.NODES_CHECKLIST.items():
+		for node, val in NODES_CHECKLIST.items():
 			if val == None:
 				msg.nodes_init.append(node)
 			elif val == True:
@@ -113,15 +113,15 @@ class RobotWatcherNode(object):
 		elif status == WatcherState.NODES_ERROR :
 			rospy.logerr("Nodes init not complete\nnodes not ready '{}'\nnodes unresponsive '{}"
 				.format(
-					str([n for n in WatcherState.NODES_CHECKLIST if WatcherState.NODES_CHECKLIST[n] == False]),
-					str([n for n in WatcherState.NODES_CHECKLIST if WatcherState.NODES_CHECKLIST[n] == None])))
+					str([n for n in NODES_CHECKLIST if NODES_CHECKLIST[n] == False]),
+					str([n for n in NODES_CHECKLIST if NODES_CHECKLIST[n] == None])))
 		self.nodes_status = status
 		self.publish_robot_watcher()
 
 
 	def set_readiness(self, msg):
-		if msg.node_name in WatcherState.NODES_CHECKLIST:
-			WatcherState.NODES_CHECKLIST[msg.node_name] = msg.ready
+		if msg.node_name in NODES_CHECKLIST:
+			NODES_CHECKLIST[msg.node_name] = msg.ready
 			return NodeReadinessResponse()
 		else:
 			rospy.logwarn("Node {} not in cheklist".format(msg.node_name))
