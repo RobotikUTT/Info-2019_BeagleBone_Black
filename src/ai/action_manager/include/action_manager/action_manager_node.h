@@ -23,7 +23,7 @@ private:
 
   std::vector<ActionPoint> v;
 
-  void setSide (bool);
+  void setSide (const robot_watcher::SetSide::ConstPtr&);
   void updatePriority();
 
   PointAction getActionToDo(); //vias service
