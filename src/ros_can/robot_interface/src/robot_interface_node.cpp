@@ -6,7 +6,6 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->nh = *n;
 
 	this->can_pub = nh.advertise<can_msgs::Frame>("sent_messages", 1000);
-	this->test_pub = nh.advertise<sender::test2>("receiver/test", 1000);
 
 	this->STM_coder_pub = nh.advertise<robot_interface::WheelsDistance>("/STM/GetCoder", 10);
 	this->STM_pos_pub = nh.advertise<robot_interface::Point>("/STM/Position", 10);
@@ -14,7 +13,6 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->STM_speed_pub = nh.advertise<robot_interface::CurrSpeed>("/STM/GetSpeed", 10);
 
 	this->robot_watcher_sub = nh.subscribe("/ai/robot_watcher/robot_watcher", 1000, &CanInterfaceNode::updateRobotStatus, this);
-	this->test_sub = nh.subscribe("/ros_can/interface/test", 1000, &CanInterfaceNode::test, this);
 	this->can_sub = nh.subscribe("received_messages", 1000, &CanInterfaceNode::canMsgProcess, this);
 
 	this->STMSetMode_sub = nh.subscribe("/STM/SetMode",10, &CanInterfaceNode::STMSetMode, this);
@@ -39,28 +37,9 @@ CanInterfaceNode::~CanInterfaceNode(){
 
 }
 
-void CanInterfaceNode::updateRobotStatus(const robot_watcher::RobotStatus::ConstPtr& msg){
+void CanInterfaceNode::updateRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
 	this->robot_watcher = msg->robot_watcher;
 	// ROS_INFO("callback robot_watcher: %d", this->robot_watcher);
-}
-
-void CanInterfaceNode::test(const sender::test2::ConstPtr& msg){
-	// ROS_INFO("callback mode: %d", msg->mode);
-	// for (int i = 0; i < 7; ++i)
-	// {
-	// 	ROS_INFO("callback data %d: %d",i, msg->data[i]);
-	// }
-	can_msgs::Frame fr;
-	fr.header.stamp = ros::Time::now();
-	fr.header.frame_id = "/ros_can/interface/";
-	fr.id = 1;
-	fr.is_rtr = 0;
-	fr.is_error = 0;
-	fr.is_extended = 0;
-	fr.dlc = 8;
-	fr.data[0] = msg->mode;
-	std::copy(std::begin(msg->data), std::end(msg->data), std::next(std::begin(fr.data),1));
-
 }
 
 void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){

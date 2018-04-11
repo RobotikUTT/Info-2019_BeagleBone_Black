@@ -3,9 +3,8 @@
 
 #include <ros/ros.h>
 #include <can_msgs/Frame.h>
-#include <robot_watcher/RobotStatus.h>
+#include <ai_msgs/RobotStatus.h>
 #include <robot_watcher/Services/RobotServices.h>
-#include <sender/test2.h>
 #include <algorithm>
 
 #include "robot_interface/CurrSpeed.h"
@@ -53,8 +52,7 @@ class CanInterfaceNode
 public:
 	CanInterfaceNode(ros::NodeHandle*);
 	~CanInterfaceNode();
-	void updateRobotStatus(const robot_watcher::RobotStatus::ConstPtr&);
-	void test(const sender::test2::ConstPtr& msg);
+	void updateRobotStatus(const ai_msgs::RobotStatus::ConstPtr&);
 	void canMsgProcess(const can_msgs::Frame::ConstPtr& msg);
 
 	void STMSetMode(const robot_interface::Status::ConstPtr& msg);
@@ -76,7 +74,6 @@ private:
 	uint8_t robot_watcher;
 
 	ros::Publisher can_pub;
-	ros::Publisher test_pub;
 
 	ros::Publisher STM_coder_pub;
 	ros::Publisher STM_pos_pub;
@@ -85,7 +82,6 @@ private:
 
 
 	ros::Subscriber robot_watcher_sub;
-	ros::Subscriber test_sub;
 	ros::Subscriber can_sub;
 
 	ros::Subscriber STMSetMode_sub;

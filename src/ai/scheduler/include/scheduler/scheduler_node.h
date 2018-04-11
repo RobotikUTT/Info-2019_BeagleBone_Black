@@ -4,8 +4,8 @@
 #include <ros/ros.h>
 #include "robot_watcher/Services/RobotServices.h"
 #include "robot_watcher/RStatus/Side.h"
-#include "robot_watcher/SetSide.h"
-#include "robot_watcher/GetActionToDo.h"
+#include "ai_msgs/SetSide.h"
+#include "ai_msgs/GetActionToDo.h"
 #include "scheduler/ActionManager.h"
 
 
@@ -24,10 +24,10 @@ private:
 
   bool side;
 
-  void setSide(const robot_watcher::SetSide::ConstPtr& msg);
+  void setSide(const ai_msgs::SetSide::ConstPtr& msg);
 
-  bool getActionToDo(robot_watcher::GetActionToDo::Request &req,
-                      robot_watcher::GetActionToDo::Response &res); //vias service
+  bool getActionToDo(ai_msgs::GetActionToDo::Request &req,
+                      ai_msgs::GetActionToDo::Response &res); //vias service
 
 
 

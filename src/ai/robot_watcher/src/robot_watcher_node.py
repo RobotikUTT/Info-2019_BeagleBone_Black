@@ -7,8 +7,8 @@ from robot_watcher.GPIOemulator.EmulatorGUI import GPIO
 
 # import msgs/svrs
 
-from robot_watcher.msg import NodesStatus, RobotStatus
-from robot_watcher.srv import NodeReadiness, NodeReadinessResponse
+from ai_msgs.msg import NodesStatus, RobotStatus
+from ai_msgs.srv import NodeReadiness, NodeReadinessResponse
 from robot_watcher.RStatus.State import RobotState, WatcherState, NODES_CHECKLIST
 
 

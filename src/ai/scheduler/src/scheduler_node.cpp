@@ -15,14 +15,14 @@ Scheduler::Scheduler(ros::NodeHandle* n){
 
 }
 
-void Scheduler::setSide(const robot_watcher::SetSide::ConstPtr& msg){
+void Scheduler::setSide(const ai_msgs::SetSide::ConstPtr& msg){
   if(this->side != msg->side){
     this->side = ! this->side;
     this->actionManager.changeSide();
   }
 }
 
-bool Scheduler::getActionToDo(robot_watcher::GetActionToDo::Request &req, robot_watcher::GetActionToDo::Response &res){
+bool Scheduler::getActionToDo(ai_msgs::GetActionToDo::Request &req, ai_msgs::GetActionToDo::Response &res){
   this->actionManager.updatePriority(Point(req.robot_pos_x,req.robot_pos_y));
   res.action_name = this->actionManager.getActionToDo();
   return true;

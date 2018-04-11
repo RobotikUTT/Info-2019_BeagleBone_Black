@@ -2,8 +2,8 @@
 # license removed for brevity
 import rospy
 from sender.msg import test, test2
-from robot_watcher.srv import NodeReadiness
-from robot_watcher.msg import RobotStatus
+from ai_msgs.srv import NodeReadiness
+from ai_msgs.msg import RobotStatus
 from robot_watcher.Services import RobotServices
 from robot_watcher.RStatus.State import RobotState
 

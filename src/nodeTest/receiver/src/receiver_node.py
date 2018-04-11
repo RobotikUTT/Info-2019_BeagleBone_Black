@@ -2,7 +2,7 @@
 import rospy
 import time
 from sender.msg import test, test2
-from robot_watcher.srv import NodeReadiness
+from ai_msgs.srv import NodeReadiness
 from robot_watcher.Services import RobotServices
 
 def callback(data):
