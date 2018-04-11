@@ -6,3 +6,7 @@ ai:
   robot_watcher:
     INIT_TIMEOUT: 15 #sec
     GAME_LENTH: 10 #sec
+
+  action_manager:
+    config_file: "action_manager/actions.config"
+S
