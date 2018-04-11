@@ -2,7 +2,7 @@
 #define ACTION_CLASS_H
 
 #include <string>
-#include "ActionPoint.h"
+#include "action_manager/ActionPoint.h"
 
 class ActionClass{
 public:
