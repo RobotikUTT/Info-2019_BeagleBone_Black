@@ -1,0 +1,3 @@
+<launch>
+	<node name="action_manager" pkg="action_manager" type="node" output="screen"/>
+</launch>
