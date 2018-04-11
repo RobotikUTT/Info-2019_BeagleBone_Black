@@ -1,0 +1,4 @@
+int16 robot_pos_x #mm
+int16 robot_pos_y #mm
+---
+string action_name

@@ -59,6 +59,7 @@ catkin_python_setup()
  add_service_files(
    FILES
    NodeReadiness.srv
+   GetActionToDo.srv
 #   Service2.srv
  )
 
