@@ -7,10 +7,10 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 
 	this->can_pub = nh.advertise<can_msgs::Frame>("sent_messages", 1000);
 
-	this->STM_coder_pub = nh.advertise<robot_interface::WheelsDistance>("/STM/GetCoder", 10);
-	this->STM_pos_pub = nh.advertise<robot_interface::Point>("/STM/Position", 10);
-	this->STM_pwm_pub = nh.advertise<robot_interface::PWMs>("/STM/GetPWM", 10);
-	this->STM_speed_pub = nh.advertise<robot_interface::CurrSpeed>("/STM/GetSpeed", 10);
+	this->STM_coder_pub = nh.advertise<can_msgs::WheelsDistance>("/STM/GetCoder", 10);
+	this->STM_pos_pub = nh.advertise<can_msgs::Point>("/STM/Position", 10);
+	this->STM_pwm_pub = nh.advertise<can_msgs::PWMs>("/STM/GetPWM", 10);
+	this->STM_speed_pub = nh.advertise<can_msgs::CurrSpeed>("/STM/GetSpeed", 10);
 
 	this->robot_watcher_sub = nh.subscribe("/ai/robot_watcher/robot_watcher", 1000, &CanInterfaceNode::updateRobotStatus, this);
 	this->can_sub = nh.subscribe("received_messages", 1000, &CanInterfaceNode::canMsgProcess, this);
@@ -52,7 +52,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			break;
 			}
 		case GET_CODER:{
-			robot_interface::WheelsDistance msg_out;
+			can_msgs::WheelsDistance msg_out;
 			msg_out.right_wheel_dist = msg->data[2] | msg->data[1] << 8; //mm
 			msg_out.left_wheel_dist = msg->data[4] | msg->data[3] << 8; //mm
 
@@ -60,7 +60,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			break;
 		}
 		case CURRENT_POS:{
-		robot_interface::Point msg_out;
+		can_msgs::Point msg_out;
 
 			msg_out.pos_x = msg->data[2] | msg->data[1] << 8; //mm
 			msg_out.pos_y = msg->data[4] | msg->data[3] << 8; //mm
@@ -70,7 +70,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			break;
 		}
 		case CURRENT_PWM:{
-			robot_interface::PWMs msg_out;
+			can_msgs::PWMs msg_out;
 
 			msg_out.left_pwm = msg->data[2] | msg->data[1] << 8;
 			msg_out.right_pwm = msg->data[4] | msg->data[3] << 8;
@@ -79,7 +79,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			break;
 		}
 		case CURRENT_SPD:{
-			robot_interface::CurrSpeed msg_out;
+			can_msgs::CurrSpeed msg_out;
 
 			msg_out.linear_speed = msg->data[2] | msg->data[1] << 8; //mm/s
 			msg_out.left_speed = msg->data[4] | msg->data[3] << 8; //mm/s
@@ -93,7 +93,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 }
 
 
-void CanInterfaceNode::STMSetMode(const robot_interface::Status::ConstPtr& msg){
+void CanInterfaceNode::STMSetMode(const can_msgs::Status::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -111,7 +111,7 @@ void CanInterfaceNode::STMSetMode(const robot_interface::Status::ConstPtr& msg){
 
 }
 
-void CanInterfaceNode::STMSpeed(const robot_interface::Speed::ConstPtr& msg){
+void CanInterfaceNode::STMSpeed(const can_msgs::Speed::ConstPtr& msg){
 
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
@@ -134,7 +134,7 @@ void CanInterfaceNode::STMSpeed(const robot_interface::Speed::ConstPtr& msg){
 
 }
 
-void CanInterfaceNode::STMAsserManagement(const robot_interface::Status::ConstPtr& msg){
+void CanInterfaceNode::STMAsserManagement(const can_msgs::Status::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -152,7 +152,7 @@ void CanInterfaceNode::STMAsserManagement(const robot_interface::Status::ConstPt
 
 }
 
-void CanInterfaceNode::STMGoToAngle(const robot_interface::Point::ConstPtr& msg){
+void CanInterfaceNode::STMGoToAngle(const can_msgs::Point::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -176,7 +176,7 @@ void CanInterfaceNode::STMGoToAngle(const robot_interface::Point::ConstPtr& msg)
 
 }
 
-void CanInterfaceNode::STMGoTo(const robot_interface::Point::ConstPtr& msg){
+void CanInterfaceNode::STMGoTo(const can_msgs::Point::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -198,7 +198,7 @@ void CanInterfaceNode::STMGoTo(const robot_interface::Point::ConstPtr& msg){
 
 }
 
-void CanInterfaceNode::STMRotation(const robot_interface::Point::ConstPtr& msg){
+void CanInterfaceNode::STMRotation(const can_msgs::Point::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -217,7 +217,7 @@ void CanInterfaceNode::STMRotation(const robot_interface::Point::ConstPtr& msg){
 
 }
 
-void CanInterfaceNode::STMRotationNoModulo(const robot_interface::Point::ConstPtr& msg){
+void CanInterfaceNode::STMRotationNoModulo(const can_msgs::Point::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -236,7 +236,7 @@ void CanInterfaceNode::STMRotationNoModulo(const robot_interface::Point::ConstPt
 
 }
 
-void CanInterfaceNode::STMLeftPID(const robot_interface::PID::ConstPtr& msg){
+void CanInterfaceNode::STMLeftPID(const can_msgs::PID::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -259,7 +259,7 @@ void CanInterfaceNode::STMLeftPID(const robot_interface::PID::ConstPtr& msg){
 
 }
 
-void CanInterfaceNode::STMRightPID(const robot_interface::PID::ConstPtr& msg){
+void CanInterfaceNode::STMRightPID(const can_msgs::PID::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -282,7 +282,7 @@ void CanInterfaceNode::STMRightPID(const robot_interface::PID::ConstPtr& msg){
 
 }
 
-void CanInterfaceNode::STMAllPID(const robot_interface::PID::ConstPtr& msg){
+void CanInterfaceNode::STMAllPID(const can_msgs::PID::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -305,7 +305,7 @@ void CanInterfaceNode::STMAllPID(const robot_interface::PID::ConstPtr& msg){
 
 }
 
-void CanInterfaceNode::STMPWM(const robot_interface::PWMs::ConstPtr& msg){
+void CanInterfaceNode::STMPWM(const can_msgs::PWMs::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -326,7 +326,7 @@ void CanInterfaceNode::STMPWM(const robot_interface::PWMs::ConstPtr& msg){
 
 }
 
-void CanInterfaceNode::STMSetPose(const robot_interface::Point::ConstPtr& msg){
+void CanInterfaceNode::STMSetPose(const can_msgs::Point::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -348,7 +348,7 @@ void CanInterfaceNode::STMSetPose(const robot_interface::Point::ConstPtr& msg){
 
 }
 
-void CanInterfaceNode::STMSetParam(const robot_interface::STMParam::ConstPtr& msg){
+void CanInterfaceNode::STMSetParam(const can_msgs::STMParam::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";

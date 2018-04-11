@@ -1,4 +1,4 @@
-#ifndef CAN_INTERFACE_NODE
+#ifndef CAcan_msgsE
 #define CAN_INTERFACE_NODE
 
 #include <ros/ros.h>
@@ -7,14 +7,14 @@
 #include <robot_watcher/Services/RobotServices.h>
 #include <algorithm>
 
-#include "robot_interface/CurrSpeed.h"
-#include "robot_interface/PID.h"
-#include "robot_interface/Point.h"
-#include "robot_interface/PWMs.h"
-#include "robot_interface/Speed.h"
-#include "robot_interface/Status.h"
-#include "robot_interface/STMParam.h"
-#include "robot_interface/WheelsDistance.h"
+#include "can_msgs/CurrSpeed.h"
+#include "can_msgs/PID.h"
+#include "can_msgs/Point.h"
+#include "can_msgs/PWMs.h"
+#include "can_msgs/Speed.h"
+#include "can_msgs/Status.h"
+#include "can_msgs/STMParam.h"
+#include "can_msgs/WheelsDistance.h"
 
 #define STOP                 0
 #define START                 1
@@ -55,19 +55,19 @@ public:
 	void updateRobotStatus(const ai_msgs::RobotStatus::ConstPtr&);
 	void canMsgProcess(const can_msgs::Frame::ConstPtr& msg);
 
-	void STMSetMode(const robot_interface::Status::ConstPtr& msg);
-	void STMSpeed(const robot_interface::Speed::ConstPtr& msg);
-	void STMAsserManagement(const robot_interface::Status::ConstPtr& msg);
-	void STMGoToAngle(const robot_interface::Point::ConstPtr& msg);
-	void STMGoTo(const robot_interface::Point::ConstPtr& msg);
-	void STMRotation(const robot_interface::Point::ConstPtr& msg);
-	void STMRotationNoModulo(const robot_interface::Point::ConstPtr& msg);
-	void STMLeftPID(const robot_interface::PID::ConstPtr& msg);
-	void STMRightPID(const robot_interface::PID::ConstPtr& msg);
-	void STMAllPID(const robot_interface::PID::ConstPtr& msg);
-	void STMPWM(const robot_interface::PWMs::ConstPtr& msg);
-	void STMSetPose(const robot_interface::Point::ConstPtr& msg);
-	void STMSetParam(const robot_interface::STMParam::ConstPtr& msg);
+	void STMSetMode(const can_msgs::Status::ConstPtr& msg);
+	void STMSpeed(const can_msgs::Speed::ConstPtr& msg);
+	void STMAsserManagement(const can_msgs::Status::ConstPtr& msg);
+	void STMGoToAngle(const can_msgs::Point::ConstPtr& msg);
+	void STMGoTo(const can_msgs::Point::ConstPtr& msg);
+	void STMRotation(const can_msgs::Point::ConstPtr& msg);
+	void STMRotationNoModulo(const can_msgs::Point::ConstPtr& msg);
+	void STMLeftPID(const can_msgs::PID::ConstPtr& msg);
+	void STMRightPID(const can_msgs::PID::ConstPtr& msg);
+	void STMAllPID(const can_msgs::PID::ConstPtr& msg);
+	void STMPWM(const can_msgs::PWMs::ConstPtr& msg);
+	void STMSetPose(const can_msgs::Point::ConstPtr& msg);
+	void STMSetParam(const can_msgs::STMParam::ConstPtr& msg);
 
 private:
 	ros::NodeHandle nh;

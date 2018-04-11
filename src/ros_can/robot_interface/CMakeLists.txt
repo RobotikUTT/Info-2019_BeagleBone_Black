@@ -12,7 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   can_msgs
   std_msgs
-  message_generation
   robot_watcher
 )
 
@@ -49,38 +48,7 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * uncomment the generate_messages entry below
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
-## Generate messages in the 'msg' folder
- add_message_files(
-   FILES
-   CurrSpeed.msg
-   PID.msg
-   Point.msg
-   PWMs.msg
-   Speed.msg
-   Status.msg
-   STMParam.msg
-   WheelsDistance.msg
- )
-
-## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
-
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
-
 ## Generate added messages and services with any dependencies listed here
- generate_messages(
-   DEPENDENCIES
-   std_msgs
- )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -114,8 +82,9 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES can_interface
-  CATKIN_DEPENDS roscpp rospy std_msgs can_msgs robot_watcher sender message_runtime
-  DEPENDS system_lib
+
+  CATKIN_DEPENDS roscpp rospy std_msgs can_msgs robot_watcher
+  #DEPENDS system_lib
 )
 
 ###########

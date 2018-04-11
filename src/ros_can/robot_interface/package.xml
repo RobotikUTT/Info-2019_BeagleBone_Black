@@ -29,13 +29,11 @@
 
 
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>message_generation</build_depend>
   <depend>roscpp</depend>
   <depend>rospy</depend>
   <depend>std_msgs</depend>
   <depend>can_msgs</depend>
   <depend>robot_watcher</depend>
-  <depend>sender</depend>
   <exec_depend>message_runtime</exec_depend>
 
 

@@ -10,6 +10,14 @@ find_package(catkin REQUIRED
 add_message_files(DIRECTORY msg
   FILES
     Frame.msg
+    CurrSpeed.msg
+    PID.msg
+    Point.msg
+    PWMs.msg
+    Speed.msg
+    Status.msg
+    STMParam.msg
+    WheelsDistance.msg
 )
 
 generate_messages(
