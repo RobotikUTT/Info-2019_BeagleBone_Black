@@ -27,6 +27,7 @@ NODES_CHECKLIST = {
 # "/namespace/pkg" 		: None,
 "/sender/" 				: None, #test
 "/receiver/" 			: None,  #test
-"/ros_can/interface" 	: None
+"/ros_can/interface" 	: None,
+"/ai/action_manager" 	: None
 
 }
