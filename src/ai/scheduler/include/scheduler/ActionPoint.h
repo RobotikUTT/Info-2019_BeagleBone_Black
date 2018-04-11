@@ -1,7 +1,7 @@
 #ifndef ACTION_POINT_H
 #define ACTION_POINT_H
 
-#include "action_manager/Point.h"
+#include "scheduler/Point.h"
 
 class ActionPoint{
 public:

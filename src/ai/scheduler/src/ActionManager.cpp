@@ -1,18 +1,18 @@
-#include "action_manager/action_manager_node.h"
+#include "scheduler/ActionManager.h"
 
 using namespace rapidjson;
 
-ActionManager::ActionManager(ros::NodeHandle *n){
+ActionManager::ActionManager(){
 
-  this->nh = *n;
+  // this->nh = *n;
 
-  this->side = SIDE_GREEN;
+  // this->side = SIDE_GREEN;
 
-  this->side_sub = nh.subscribe("ai/side", 1, &ActionManager::setSide, this);
+  // this->side_sub = nh.subscribe("ai/side", 1, &ActionManager::setSide, this);
 
   this->actionsInit();
 
-  service_ready("ai", "action_manager", 1 );
+  // service_ready("ai", "action_manager", 1 );
 
 }
 
@@ -61,22 +61,20 @@ void ActionManager::actionsInit (){
 }
 
 
-void ActionManager::setSide(const robot_watcher::SetSide::ConstPtr& msg) {
-  if(msg->side != this->side){
-    this->side = !this->side;
-    std::list<ActionClass>::iterator it;
-    for(it = action.begin(); it != action.end(); ++it){
-      it->changeSide();
-    }
+void ActionManager::changeSide() {
+  std::list<ActionClass>::iterator it;
+  for(it = action.begin(); it != action.end(); ++it){
+    it->changeSide();
   }
 }
 
-int main(int argc, char *argv[]) {
-  ros::init(argc,argv, "action_manager_node");
 
-	ros::NodeHandle nmh;
-
-  ActionManager node (&nmh);
-
-	ros::spin();
-}
+// int main(int argc, char *argv[]) {
+//   ros::init(argc,argv, "action_manager_node");
+//
+// 	ros::NodeHandle nmh;
+//
+//   ActionManager node (&nmh);
+//
+// 	ros::spin();
+// }

@@ -7,6 +7,6 @@ ai:
     INIT_TIMEOUT: 15 #sec
     GAME_LENTH: 10 #sec
 
-  action_manager:
+  scheduler:
     config_file: "action_manager/actions.config"
 S
