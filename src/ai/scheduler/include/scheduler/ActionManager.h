@@ -7,6 +7,7 @@
 #include <list>
 #include <iostream>
 #include <string>
+#include <limits>
 
 #define ACTIONS_FILE "scheduler/actions.config"
 
@@ -18,10 +19,12 @@ public:
   // ~ActionManager();
   void changeSide ();
 
+  std::string getActionToDo();
+  void updatePriority(Point robot_pos);
+
 private:
   std::list<ActionClass> action;
 
-  void updatePriority();
   void actionsInit(); //parse actions.config
 
 };

@@ -3,17 +3,7 @@
 using namespace rapidjson;
 
 ActionManager::ActionManager(){
-
-  // this->nh = *n;
-
-  // this->side = SIDE_GREEN;
-
-  // this->side_sub = nh.subscribe("ai/side", 1, &ActionManager::setSide, this);
-
   this->actionsInit();
-
-  // service_ready("ai", "action_manager", 1 );
-
 }
 
 
@@ -68,13 +58,24 @@ void ActionManager::changeSide() {
   }
 }
 
+void ActionManager::updatePriority(Point robot_pos){
+  std::list<ActionClass>::iterator it;
+  for(it = action.begin(); it != action.end(); ++it){
+    it->updatePriority( robot_pos );
+  }
+}
 
-// int main(int argc, char *argv[]) {
-//   ros::init(argc,argv, "action_manager_node");
-//
-// 	ros::NodeHandle nmh;
-//
-//   ActionManager node (&nmh);
-//
-// 	ros::spin();
-// }
+std::string ActionManager::getActionToDo(){
+  std::string action_name = "";
+  int min_prio = std::numeric_limits<int>::max();
+  std::list<ActionClass>::iterator it;
+  for(it = action.begin(); it != action.end(); ++it){
+    if (!it->_done) {
+      if (min_prio > it->_priority) {
+        action_name = it->_name;
+        min_prio = it->_priority;
+      }
+    }
+  }
+  return action_name;
+}
