@@ -9,4 +9,3 @@ ai:
 
   scheduler:
     config_file: "action_manager/actions.config"
-S

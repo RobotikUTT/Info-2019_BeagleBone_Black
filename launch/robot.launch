@@ -2,7 +2,7 @@
 	<rosparam command="load" file="param/server_param.yaml" />
 	<group ns="ai">
 		<include file="./src/ai/robot_watcher/launch/pkg.launch"/>
-		<include file="./src/ai/action_manager/launch/pkg.launch"/>
+		<include file="./src/ai/scheduler/launch/pkg.launch"/>
 	</group>
 	<group ns="ros_can">
 		<include file="./src/ros_can/robot_interface/launch/pkg.launch"/>
