@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import rospy
-from robot_watcher.srv import NodeReadiness
+from ai_msgs.srv import NodeReadiness
 
 # class RobotStatus(object):
 # 	"""docstring for RobotStatus"""
@@ -16,7 +16,7 @@ from robot_watcher.srv import NodeReadiness
 # 			_ready_srv = rospy.ServiceProxy(RobotStatus.ROBOT_SRV, NodeReadiness)
 # 			_ready_srv(self.node_name, val)
 
-# 			if val: 
+# 			if val:
 # 				rospy.loginfo("Node '{}' initialized".format(self.node_name))
 # 			else :
 # 				rospy.logerr("Node '{}' not initialized".format(self.node_name))
@@ -24,8 +24,8 @@ from robot_watcher.srv import NodeReadiness
 # 			rospy.logerr("Node '{}' could not contacte {} server".format(self.node_name, RobotStatus.ROBOT_SRV))
 
 ROBOT_SRV = "/ai/robot_watcher/node_readiness"
-TIMEOUT = 5.0	
-		
+TIMEOUT = 5.0
+
 def service_ready(namespace, package, val):
 	node_name = "/{}/{}".format(namespace, package)
 	try:
@@ -33,7 +33,7 @@ def service_ready(namespace, package, val):
 		_ready_srv = rospy.ServiceProxy(ROBOT_SRV, NodeReadiness)
 		_ready_srv(node_name, val)
 
-		if val: 
+		if val:
 			rospy.loginfo("Node '{}' initialized".format(node_name))
 		else :
 			rospy.logerr("Node '{}' not initialized".format(node_name))

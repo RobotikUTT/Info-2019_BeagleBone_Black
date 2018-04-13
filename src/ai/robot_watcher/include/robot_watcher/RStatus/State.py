@@ -18,7 +18,7 @@ class WatcherState(object):
 	PIN_ON			= 0 # Game hold
 	PIN_OFF			= 1 # Game start
 
-class Side(object)
+class Side(object):
 	GREEN = 0
 	ORANGE = 1
 
