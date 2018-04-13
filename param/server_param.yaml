@@ -8,4 +8,4 @@ ai:
     GAME_LENTH: 10 #sec
 
   scheduler:
-    config_file: "action_manager/actions.config"
+    config_file: "" #set in scheduler launch file
