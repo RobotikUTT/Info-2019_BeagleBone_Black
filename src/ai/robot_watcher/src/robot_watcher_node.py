@@ -7,9 +7,9 @@ from robot_watcher.GPIOemulator.EmulatorGUI import GPIO
 
 # import msgs/svrs
 
-from ai_msgs.msg import NodesStatus, RobotStatus
+from ai_msgs.msg import NodesStatus, RobotStatus, SetSide
 from ai_msgs.srv import NodeReadiness, NodeReadinessResponse
-from robot_watcher.RStatus.State import RobotState, WatcherState, NODES_CHECKLIST
+from robot_watcher.RStatus.State import RobotState, WatcherState, NODES_CHECKLIST, Side
 
 
 class RobotWatcherNode(object):
@@ -25,11 +25,13 @@ class RobotWatcherNode(object):
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setwarnings(False)
 		GPIO.setup("P8_8",GPIO.IN, initial = GPIO.LOW)
+		GPIO.setup("P8_7",GPIO.IN, initial = GPIO.LOW)
 
 
 		rospy.Service("/ai/robot_watcher/node_readiness", NodeReadiness, self.set_readiness)
 		self._robot_watcher_publisher = rospy.Publisher("/ai/robot_watcher/robot_status", RobotStatus, queue_size = 1, latch=True)
 		self._nodes_status_publisher = rospy.Publisher("/ai/robot_watcher/nodes_status", NodesStatus, queue_size = 1)
+		self._side_publisher = rospy.Publisher("side", SetSide, queue_size = 1, latch=True)
 
 		self.robot_watcher 	= RobotState.ROBOT_INIT
 		self.nodes_status 	= WatcherState.NODES_INIT
@@ -37,11 +39,17 @@ class RobotWatcherNode(object):
 
 		self.init_start_time = time.time()
 		self.publish_robot_watcher()
+		self.side = GPIO.input("P8_7")
+		self._side_publisher.publish(SetSide(self.side))
 
 		r = rospy.Rate(5)
 		while not rospy.is_shutdown():
 
 			if self.pin == WatcherState.PIN_ON:
+				if GPIO.input("P8_7") != self.side:
+					self.side = not self.side
+					self._side_publisher.publish(SetSide(self.side))
+
 				if GPIO.input("P8_8") == WatcherState.PIN_OFF:
 					self.pin = WatcherState.PIN_OFF
 					rospy.Timer(rospy.Duration(self.GAME_LENTH), self.halt_game, oneshot=True)
