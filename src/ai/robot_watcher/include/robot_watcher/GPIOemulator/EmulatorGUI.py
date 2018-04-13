@@ -16,14 +16,14 @@ dictionaryPinsTkinter = {}
 GPIONames=["P8_"+str(i) for i in [1,2,7,8]]
 
 class App(threading.Thread):
-    
 
-        
+
+
     def __init__(self):
         threading.Thread.__init__(self)
         self.start()
 
-        
+
 
     def callback(self):
         self.root.quit()
@@ -34,11 +34,11 @@ class App(threading.Thread):
         self.root.protocol("WM_DELETE_WINDOW", self.callback)
 
 
-            
+
         #GND
         pin1label = Label(text="GND", fg="black")
         pin1label.grid(row=0, column=0, padx=(10, 10))
-        
+
         #GND
         pin2label = Label(text="GND", fg="black")
         pin2label.grid(row=1, column=0, padx=(10, 10))
@@ -58,7 +58,7 @@ class App(threading.Thread):
         # #GND
         # pin6label = Label(text="GND", fg="black")
         # pin6label.grid(row=0, column=2, padx=(10, 10))
-        
+
         # #GPIO14
         # pin8btn = Button(text="GPIO14\nOUT=0", command="14", padx ="1px", pady="1px", bd="0px", fg="blue", relief="sunken", activeforeground="blue")
         # pin8btn.grid(row=0, column=3, padx=(10, 10),pady=(5,5))
@@ -72,13 +72,13 @@ class App(threading.Thread):
 
         # dictionaryPinsTkinter["15"] =pin10btn
 
-        
+
         # #GPIO18
         # pin12btn = Button(text="GPIO18\nOUT=0", command="18",  padx ="1px", pady="1px", bd="0px", fg="blue", relief="sunken", activeforeground="blue")
         # pin12btn.grid(row=0, column=5, padx=(10, 10))
 
         # dictionaryPinsTkinter["18"] = pin12btn
-        
+
 
         # #GND
         # pin14label = Label(text="GND", fg="black")
@@ -97,7 +97,7 @@ class App(threading.Thread):
 
         # dictionaryPinsTkinter["24"] = pin18btn
 
-        
+
         # #GND
         # pin20label = Label(text="GND", fg="black")
         # pin20label.grid(row=0, column=9, padx=(10, 10))
@@ -108,7 +108,7 @@ class App(threading.Thread):
 
         # dictionaryPinsTkinter["25"] = pin22btn
 
-        
+
         # #GPIO08
         # pin24btn = Button(text="GPIO8\nOUT=0", command="8", padx ="1px", pady="1px", bd="0px", fg="blue", relief="sunken", activeforeground="blue")
         # pin24btn.grid(row=0, column=11, padx=(10, 10))
@@ -153,12 +153,12 @@ class App(threading.Thread):
         # pin38btn.grid(row=0, column=18, padx=(10, 10))
 
         # dictionaryPinsTkinter["20"] = pin38btn
-        
+
         # #GPIO21
         # pin40btn = Button(text="GPIO21\nOUT=0", command="21", padx ="1px", pady="1px", bd="0px", fg="blue", relief="sunken", activeforeground="blue")
         # pin40btn.grid(row=0, column=19, padx=(10, 10))
 
-        
+
         # dictionaryPinsTkinter["21"] = pin40btn
 
         # #####bottom
@@ -260,13 +260,13 @@ class App(threading.Thread):
         # pin35btn.grid(row=1, column=17, padx=(10, 10))
 
         # dictionaryPinsTkinter["19"] = pin35btn
-        
-            
+
+
         # #GPIO26
         # pin37btn = Button(text="GPIO26\nOUT=0", command="26", padx ="1px", pady="1px", bd="0px", fg="blue", relief="sunken", activeforeground="blue")
         # pin37btn.grid(row=1, column=18, padx=(10, 10))
-        
-        
+
+
         # dictionaryPinsTkinter["26"] = pin37btn
 
         # #gnd
@@ -275,13 +275,13 @@ class App(threading.Thread):
 
 
         self.root.geometry('%dx%d+%d+%d' % (1300, 100, 0, 0))
-       
-        self.root.mainloop()       
 
-        
+        self.root.mainloop()
+
+
 
 ##        button1.unbind("<Button-1>")
-     
+
 
 app = App()
 
@@ -290,33 +290,33 @@ def toggleButton(gpioID):
     # print("\n\n" + gpioID)
     objBtn = dictionaryPinsTkinter[str(gpioID)]
     objPin = dictionaryPins[str(gpioID)]
-    
+
     if(objPin.In == "1"):
         objPin.In = "0"
     elif(objPin.In == "0"):
         objPin.In = "1"
-        
+
     objBtn["text"] = str(gpioID) + "\nIN=" + str(objPin.In)
-    
-    
-  
+
+
+
 def buttonClick(self):
 ##    print("clicked")
     gpioID = (self.widget.config('command')[-1])
     toggleButton(gpioID)
-    
-    
+
+
 
 def buttonClickRelease(self):
 ##    print("released")
     gpioID = (self.widget.config('command')[-1])
     toggleButton(gpioID)
-    
 
 
 
 
-    
+
+
 def drawGPIOOut(gpioID):
     global dictionaryPins
     global dictionaryPinsTkinter
@@ -325,7 +325,7 @@ def drawGPIOOut(gpioID):
     objPin = dictionaryPins[gpioID]
     objBtn = dictionaryPinsTkinter[gpioID]
 
-    
+
 
     if(objPin.SetMode == "OUT"):
         objBtn["text"] = str(gpioID) + "\nOUT=" + str(objPin.Out)
@@ -335,11 +335,11 @@ def drawGPIOOut(gpioID):
         else:
             objBtn.configure(background='DarkOliveGreen3')
             objBtn.configure(activebackground='DarkOliveGreen3')
-            
-            
-    
-    
-    
+
+
+
+
+
 
 def drawBindUpdateButtonIn(gpioID,In):
     objBtn = dictionaryPinsTkinter[gpioID]
@@ -349,14 +349,14 @@ def drawBindUpdateButtonIn(gpioID,In):
     objBtn.configure(bd="1px")
     objBtn["text"] = str(gpioID) + "\nIN=" + str(In)
     objBtn.bind("<Button-1>", buttonClick)
-    objBtn.bind("<ButtonRelease-1>", buttonClickRelease)
+    # objBtn.bind("<ButtonRelease-1>", buttonClickRelease)
 
 
 class GPIO:
 
-  
+
     #constants
-    LOW = 0 
+    LOW = 0
     HIGH = 1
     OUT = 2
     IN = 3
@@ -374,7 +374,7 @@ class GPIO:
         if(GPIO.setModeDone == False):
             raise Exception('Setup your GPIO mode. Must be set to BCM')
 
-    
+
     #GPIO LIBRARY Functions
     # @typeassert(int)
     @staticmethod
@@ -390,11 +390,11 @@ class GPIO:
     def setwarnings(flag):
         pass
 
-    # @typeassert(int,int,int,int)        
+    # @typeassert(int,int,int,int)
     @staticmethod
     def setup(channel, state, initial=-1,pull_up_down=-1):
         global dictionaryPins
-        
+
         GPIO.checkModeValidator()
 
         if str(channel) not in GPIONames:
@@ -409,10 +409,10 @@ class GPIO:
             objTemp =  PIN("OUT")
             if(initial == GPIO.HIGH):
                 objTemp.Out = "1"
-                
+
             dictionaryPins[str(channel)] =objTemp
             drawGPIOOut(channel)
-            
+
         elif(state == GPIO.IN):
             #set input
             objTemp =  PIN("IN")
@@ -422,25 +422,25 @@ class GPIO:
             elif(pull_up_down == GPIO.PUD_DOWN):
                 objTemp.pull_up_down = "PUD_DOWN"
                 objTemp.In = "0"
-             
+
             elif(pull_up_down == GPIO.PUD_UP):
                 objTemp.pull_up_down = "PUD_UP"
                 objTemp.In = "1"
-                
+
             drawBindUpdateButtonIn(str(channel),objTemp.In)
             dictionaryPins[str(channel)] =objTemp
-            
-            
-        
-        
-        
+
+
+
+
+
 
     # @typeassert(int,int)
     @staticmethod
     def output(channel, outmode):
         global dictionaryPins
         channel = str(channel)
-        
+
         GPIO.checkModeValidator()
 
 
@@ -453,17 +453,17 @@ class GPIO:
                 #if channel is setup as IN and used as an OUTPUT
                 raise Exception('GPIO must be setup as OUT')
 
-        
+
         if(outmode != GPIO.LOW and outmode != GPIO.HIGH):
             raise Exception('Output must be set to HIGH/LOW')
-            
+
         objPin = dictionaryPins[channel]
         if(outmode == GPIO.LOW):
             objPin.Out = "0"
         elif(outmode == GPIO.HIGH):
             objPin.Out = "1"
 
-        
+
         drawGPIOOut(channel)
 
 
@@ -492,16 +492,7 @@ class GPIO:
             return False
 
 
-    
+
     @staticmethod
     def cleanup():
         pass
-       
-                
-            
-        
-        
-        
-
-        
-
