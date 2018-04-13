@@ -9,14 +9,12 @@
 #include <string>
 #include <limits>
 
-#define ACTIONS_FILE "scheduler/actions.config"
-
 class ActionManager
 {
 public:
   std::list<ActionClass> actions;
-  ActionManager(); // init with actions.config file
-  // ~ActionManager();
+  ActionManager(const char*); // init with actions.config file
+  ActionManager();
   void changeSide ();
 
   std::string getActionToDo();
@@ -25,7 +23,7 @@ public:
 private:
   std::list<ActionClass> action;
 
-  void actionsInit(); //parse actions.config
+  void actionsInit(const char*); //parse actions.config
 
 };
 
