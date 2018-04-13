@@ -12,7 +12,7 @@ void ActionManager::actionsInit (){
   // nh.param<char*>("~config_file", ACTIONS_FILE, "action_manager/actions.config");
   FILE* fp = fopen(ACTIONS_FILE, "r");
 
-  char readBuffer[65536];
+  char readBuffer[1000];
   FileReadStream is(fp, readBuffer, sizeof(readBuffer));
 
   Document doc;
