@@ -2,15 +2,18 @@
 
 using namespace rapidjson;
 
+ActionManager::ActionManager(const char* actions_file){
+  this->actionsInit(actions_file);
+}
+
 ActionManager::ActionManager(){
-  this->actionsInit();
 }
 
 
-void ActionManager::actionsInit (){
+void ActionManager::actionsInit (const char* actions_file){
   // char* ACTIONS_FILE;
   // nh.param<char*>("~config_file", ACTIONS_FILE, "action_manager/actions.config");
-  FILE* fp = fopen(ACTIONS_FILE, "r");
+  FILE* fp = fopen(actions_file, "r");
 
   char readBuffer[1000];
   FileReadStream is(fp, readBuffer, sizeof(readBuffer));
