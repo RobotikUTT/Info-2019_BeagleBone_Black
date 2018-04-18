@@ -1,0 +1,10 @@
+#start
+int16 end_x
+int16 end_y
+---
+#feedback
+
+---
+#result
+bool done
+int8 point_done
