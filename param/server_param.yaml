@@ -9,3 +9,9 @@ ai:
 
   scheduler:
     config_file: "" #set in scheduler launch file
+
+  controller:
+      robot_pos:
+        x: 250
+        y: 250
+      procedures: [Move]
