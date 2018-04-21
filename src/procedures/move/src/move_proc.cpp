@@ -1,4 +1,4 @@
-#include "procedures/move_proc.h"
+#include "move/move_proc.h"
 
 
 Move::Move(std::string name):
@@ -7,60 +7,79 @@ Move::Move(std::string name):
     act.registerGoalCallback(boost::bind(&Move::goalCB, this));
     act.registerPreemptCallback(boost::bind(&Move::preemptCB, this));
 
+    sub = nh.subscribe("/STM/Position", 1, &Move::analysisCB, this);
+
+    this->STMGoToAngle_pub = nh.advertise<can_msgs::Point>("/STM/GoToAngle", 1);
+    this->STMGoTo_pub = nh.advertise<can_msgs::Point>("/STM/GoTo", 1);
+    this->STMRotation_pub = nh.advertise<can_msgs::Point>("/STM/Rotation", 1);
+    this->STMRotationNoModulo_pub = nh.advertise<can_msgs::Point>("/STM/RotationNoModulo", 1);
+
+
     //subs
     // sub = nh_.subscribe("/random_number", 1, &AveragingAction::analysisCB, this);
+    service_ready("procedure", "move", 1 );
+
   }
 
 void Move::goalCB()
 {
-  ROS_DEBUG("%s: new goal", action_name_.c_str());
-  // reset helper variables
+  ROS_DEBUG("Move: new goal");
 
-  // accept the new goal
-  // goal_ = as_.acceptNewGoal()->samples;
+  procedures_msgs::MoveGoal::ConstPtr msg = act.acceptNewGoal();
+  for (int i = 0; i < msg->points.size(); i++) {
+    fifo.push_back(MovePoint(msg->points[i].end_x, msg->points[i].end_y, msg->points[i].end_angle));
+  }
 }
 
 void Move::preemptCB()
 {
-  ROS_DEBUG("%s: Preempted", action_name_.c_str());
+  ROS_DEBUG("Move; Preempted");
   // set the action state to preempted
-  as_.setPreempted();
+  act.setPreempted();
 }
 
-void Move::analysisCB(const std_msgs::Float32::ConstPtr& msg)
+void Move::analysisCB(const can_msgs::Finish::ConstPtr& msg)
 {
   // make sure that the action hasn't been canceled
-  if (!as_.isActive())
+  if (!act.isActive())
     return;
 
-  // data_count_++;
-  // feedback_.sample = data_count_;
-  // feedback_.data = msg->data;
-  // //compute the std_dev and mean of the data
-  // sum_ += msg->data;
-  // feedback_.mean = sum_ / data_count_;
-  // sum_sq_ += pow(msg->data, 2);
-  // feedback_.std_dev = sqrt(fabs((sum_sq_/data_count_) - pow(feedback_.mean, 2)));
-  // as_.publishFeedback(feedback_);
-  //
-  // if(data_count_ > goal_)
-  // {
-  //   result_.mean = feedback_.mean;
-  //   result_.std_dev = feedback_.std_dev;
-  //
-  //   if(result_.mean < 5.0)
-  //   {
-  //     ROS_INFO("%s: Aborted", action_name_.c_str());
-  //     //set the action state to aborted
-  //     as_.setAborted(result_);
-  //   }
-  //   else
-  //   {
-  //     ROS_INFO("%s: Succeeded", action_name_.c_str());
-  //     // set the action state to succeeded
-  //     as_.setSucceeded(result_);
-  //   }
-  // }
+
+  if (!fifo.empty()) {
+    /* code */
+    can_msgs::Point msg;
+    //direction
+
+    switch (fifo.front()._move_type) {
+      case GO_TO_ANGLE:
+        msg.pos_x = fifo.front()._x;
+        msg.pos_y = fifo.front()._y;
+        msg.angle = fifo.front()._angle;
+        STMGoToAngle_pub.publish(msg);
+        break;
+      case GO_TO:
+        msg.pos_x = fifo.front()._x;
+        msg.pos_y = fifo.front()._y;
+        STMGoTo_pub.publish(msg);
+        break;
+      case ROTATION:
+        msg.angle = fifo.front()._angle;
+        STMRotation_pub.publish(msg);
+        break;
+      case ROTATION_NO_MODULO:
+        msg.angle = fifo.front()._angle;
+        STMRotationNoModulo_pub.publish(msg);
+        break;
+    }
+
+    fifo.erase(fifo.begin());
+
+
+  } else {
+    procedures_msgs::MoveResult result_;
+    act.setSucceeded(result_);
+  }
+
 }
 
 int main(int argc, char** argv)
@@ -72,3 +91,16 @@ int main(int argc, char** argv)
 
   return 0;
 }
+
+/*
+callback:
+  check if other point
+    send new point
+  no point
+    succeeded
+
+can send multiple point
+
+need to wait STM msg to continue
+
+*/
