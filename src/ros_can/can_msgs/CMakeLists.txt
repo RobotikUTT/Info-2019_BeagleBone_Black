@@ -12,6 +12,7 @@ add_message_files(DIRECTORY msg
     Frame.msg
     CurrSpeed.msg
     PID.msg
+    Finish.msg
     Point.msg
     PWMs.msg
     Speed.msg
