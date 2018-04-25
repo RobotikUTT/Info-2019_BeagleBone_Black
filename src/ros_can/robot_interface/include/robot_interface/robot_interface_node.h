@@ -10,6 +10,7 @@
 #include "can_msgs/CurrSpeed.h"
 #include "can_msgs/PID.h"
 #include "can_msgs/Point.h"
+#include "can_msgs/Finish.h"
 #include "can_msgs/PWMs.h"
 #include "can_msgs/Speed.h"
 #include "can_msgs/Status.h"
@@ -45,7 +46,9 @@
 #define CURRENT_PWM    19
 #define CURRENT_SPD    20
 
-#define STM_ID 10
+#define ORDER_COMPLETED	26
+
+#define STM_ID 2
 
 class CanInterfaceNode
 {
@@ -79,7 +82,7 @@ private:
 	ros::Publisher STM_pos_pub;
 	ros::Publisher STM_pwm_pub;
 	ros::Publisher STM_speed_pub;
-
+	ros::Publisher ALL_finish_pub;
 
 	ros::Subscriber robot_watcher_sub;
 	ros::Subscriber can_sub;
