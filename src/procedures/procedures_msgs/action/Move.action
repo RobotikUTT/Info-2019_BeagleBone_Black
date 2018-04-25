@@ -1,9 +1,8 @@
 #start
 MovePoint[] points
 ---
-#feedback
-
----
 #result
 bool done
-int8 point_done
+int8 points_done
+---
+#feedback
