@@ -5,13 +5,14 @@ ros_can:
 ai:
   robot_watcher:
     INIT_TIMEOUT: 15 #sec
-    GAME_LENTH: 10 #sec
+    GAME_LENTH: 10000 #sec
 
   scheduler:
     config_file: "" #set in scheduler launch file
 
   controller:
       robot_pos:
-        x: 250
-        y: 250
+        x: 210
+        y: 210
+        angle: 1571 #mrad green side
       procedures: [Move]
