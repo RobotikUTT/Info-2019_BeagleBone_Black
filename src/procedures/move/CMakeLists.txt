@@ -12,7 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-  procedures_msgs
   can_msgs
   robot_watcher
 )
@@ -75,6 +74,7 @@ find_package(catkin REQUIRED COMPONENTS
 # generate_messages(
 #   DEPENDENCIES
 #   actionlib_msgs
+#   procedures_msgs
 #   std_msgs
 # )
 

@@ -2,12 +2,13 @@
 
 
 Move::Move(std::string name):
-  act(nh,name,false)
+  act(name,false)
   {
     act.registerGoalCallback(boost::bind(&Move::goalCB, this));
     act.registerPreemptCallback(boost::bind(&Move::preemptCB, this));
+    act.start();
 
-    sub = nh.subscribe("/STM/Position", 1, &Move::analysisCB, this);
+    sub = nh.subscribe("/ALL/Finish", 1, &Move::analysisCB, this);
 
     this->STMGoToAngle_pub = nh.advertise<can_msgs::Point>("/STM/GoToAngle", 1);
     this->STMGoTo_pub = nh.advertise<can_msgs::Point>("/STM/GoTo", 1);
@@ -23,14 +24,19 @@ Move::Move(std::string name):
 
 void Move::goalCB()
 {
-  ROS_DEBUG("Move: new goal");
+  ROS_WARN("Move: new goal");
 
+  bool temp = !act.isActive();
   procedures_msgs::MoveGoal::ConstPtr msg = act.acceptNewGoal();
   for (int i = 0; i < msg->points.size(); i++) {
     fifo.push_back(MovePoint(msg->points[i].end_x, msg->points[i].end_y, msg->points[i].end_angle));
   }
-}
 
+  if(temp){
+    sendMsg();
+  }
+  //send point !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+}
 void Move::preemptCB()
 {
   ROS_DEBUG("Move; Preempted");
@@ -41,46 +47,53 @@ void Move::preemptCB()
 void Move::analysisCB(const can_msgs::Finish::ConstPtr& msg)
 {
   // make sure that the action hasn't been canceled
+  ROS_WARN_STREAM("Move; FINISH : state "<< act.isActive());
+
   if (!act.isActive())
     return;
 
-
   if (!fifo.empty()) {
     /* code */
-    can_msgs::Point msg;
-    //direction
-
-    switch (fifo.front()._move_type) {
-      case GO_TO_ANGLE:
-        msg.pos_x = fifo.front()._x;
-        msg.pos_y = fifo.front()._y;
-        msg.angle = fifo.front()._angle;
-        STMGoToAngle_pub.publish(msg);
-        break;
-      case GO_TO:
-        msg.pos_x = fifo.front()._x;
-        msg.pos_y = fifo.front()._y;
-        STMGoTo_pub.publish(msg);
-        break;
-      case ROTATION:
-        msg.angle = fifo.front()._angle;
-        STMRotation_pub.publish(msg);
-        break;
-      case ROTATION_NO_MODULO:
-        msg.angle = fifo.front()._angle;
-        STMRotationNoModulo_pub.publish(msg);
-        break;
-    }
-
-    fifo.erase(fifo.begin());
+    ROS_INFO_STREAM("Move; FiFo : not empty");
+    sendMsg();
 
 
   } else {
     procedures_msgs::MoveResult result_;
+    result_.done = 1;
     act.setSucceeded(result_);
   }
-
 }
+
+inline void Move::sendMsg() {
+  can_msgs::Point msg;
+  //direction
+
+  switch (fifo.front()._move_type) {
+    case GO_TO_ANGLE:
+      msg.pos_x = fifo.front()._x;
+      msg.pos_y = fifo.front()._y;
+      msg.angle = fifo.front()._angle;
+      STMGoToAngle_pub.publish(msg);
+      break;
+    case GO_TO:
+      msg.pos_x = fifo.front()._x;
+      msg.pos_y = fifo.front()._y;
+      STMGoTo_pub.publish(msg);
+      break;
+    case ROTATION:
+      msg.angle = fifo.front()._angle;
+      STMRotation_pub.publish(msg);
+      break;
+    case ROTATION_NO_MODULO:
+      msg.angle = fifo.front()._angle;
+      STMRotationNoModulo_pub.publish(msg);
+      break;
+  }
+
+  fifo.erase(fifo.begin());
+}
+
 
 int main(int argc, char** argv)
 {

@@ -39,6 +39,7 @@ private:
   void goalCB();
   void preemptCB();
   void analysisCB(const can_msgs::Finish::ConstPtr&);
+  inline void sendMsg();
 
 
   // procedures_msgs::XXFeedback feedback
