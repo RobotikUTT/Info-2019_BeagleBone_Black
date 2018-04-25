@@ -25,11 +25,12 @@ class Side(object):
 NODES_CHECKLIST = {
 
 # "/namespace/pkg" 		: None,
-"/sender/" 				: None, #test
-"/receiver/" 			: None, #test
+# "/sender/" 				: None, #test
+# "/receiver/" 			: None, #test
 "/ros_can/interface" 	: None,
 "/ai/scheduler" 		: None,
-"/ai/controller" 		: None
+"/ai/controller" 		: None,
+"/procedure/move" 		: None
 
 
 }
