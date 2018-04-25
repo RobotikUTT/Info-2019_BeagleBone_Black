@@ -9,6 +9,7 @@ public:
 
   int _priority;
   std::string _name;
+  int8_t _action;
   bool _done;
   bool _possible;
   int _value;
@@ -17,7 +18,7 @@ public:
 
 
   ActionClass();
-  ActionClass(std::string, ActionPoint, int, float);
+  ActionClass(std::string, int8_t, ActionPoint, int, float);
 
   void updatePriority(Point&);
   void checkPossibility();

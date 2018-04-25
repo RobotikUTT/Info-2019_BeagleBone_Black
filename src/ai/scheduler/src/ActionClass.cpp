@@ -4,6 +4,7 @@
 ActionClass::ActionClass(){
   this->_priority = 0;
   this->_name = "";
+  this->_action = -1;
   this->_done = false;
   this->_possible = true;
   this->_value = 0;
@@ -11,9 +12,10 @@ ActionClass::ActionClass(){
   this->_diff_factor = 1;
 }
 
-ActionClass::ActionClass(std::string name, ActionPoint PAction , int point, float fact){
+ActionClass::ActionClass(std::string name, int8_t action, ActionPoint PAction , int point, float fact){
   this->_priority = 0;
   this->_name = name;
+  this->_action = action;
   this->_done = false;
   this->_possible = true;
   this->_value = point;

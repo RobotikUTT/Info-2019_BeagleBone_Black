@@ -56,6 +56,7 @@
   <exec_depend>message_runtime</exec_depend>
 
   <depend>robot_watcher</depend>
+  <depend>controller</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

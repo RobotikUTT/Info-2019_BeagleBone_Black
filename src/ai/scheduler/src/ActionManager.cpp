@@ -1,4 +1,5 @@
 #include "scheduler/ActionManager.h"
+#include "ros/ros.h"
 
 using namespace rapidjson;
 
@@ -43,6 +44,7 @@ void ActionManager::actionsInit (const char* actions_file){
 
     // std::cout << tempPoint << '\n';
     ActionClass temp (a[i]["name"].GetString(),
+                      a[i]["action"].GetInt(),
                       tempPoint,
                       a[i]["point"].GetInt(),
                       a[i]["difficulty"].GetFloat());
@@ -68,17 +70,31 @@ void ActionManager::updatePriority(Point robot_pos){
   }
 }
 
-std::string ActionManager::getActionToDo(){
-  std::string action_name = "";
+void ActionManager::getActionToDo(ai_msgs::GetActionToDo::Response &res){
+  std::string action_name;
+  res.action_val = -1;
   int min_prio = std::numeric_limits<int>::max();
   std::list<ActionClass>::iterator it;
   for(it = action.begin(); it != action.end(); ++it){
     if (!it->_done) {
       if (min_prio > it->_priority) {
+        res.action_val = it->_action;
         action_name = it->_name;
+        if (it->_action == MOVE) {
+          res.point.end_x = it->PAction.startPoint.x;
+          res.point.end_y = it->PAction.startPoint.y;
+        }
         min_prio = it->_priority;
+        current_action = it;
       }
     }
   }
-  return action_name;
+  // return action_val;
+  ROS_WARN_STREAM("action name: " << action_name);
+}
+
+
+void ActionManager::currentActionDone(bool done){
+  ROS_INFO_STREAM("Action done: " << done);
+  current_action->_done = done;
 }
