@@ -18,9 +18,9 @@ acM("/procedures/move_action", true){
 
   side = SIDE_GREEN;
 
-  nh.getParam("controller/robot_pos/x", robot_pos_x);
-  nh.getParam("controller/robot_pos/y", robot_pos_y);
-  nh.getParam("controller/robot_pos/angle", robot_angle);
+  // nh.getParam("controller/robot_pos/x", robot_pos_x);
+  // nh.getParam("controller/robot_pos/y", robot_pos_y);
+  // nh.getParam("controller/robot_pos/angle", robot_angle);
 
   clientD = nh.serviceClient<ai_msgs::CurrentActionDone>("scheduler/currentActionDone");
   clientA = nh.serviceClient<ai_msgs::GetActionToDo>("scheduler/actionToDo");
@@ -68,9 +68,14 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
       }
       //init pos STM
       can_msgs::Point msg;
-      msg.pos_x = robot_pos_x;
-      msg.pos_y = robot_pos_y;
-      msg.angle = robot_angle;
+      int x,y,angle;
+      nh.getParam("controller/robot_pos/x", x);
+      nh.getParam("controller/robot_pos/y", y);
+      nh.getParam("controller/robot_pos/angle", angle);
+      msg.pos_x = x;
+      msg.pos_y = y;
+      msg.angle = angle;
+
       STM_SetPose_pub.publish(msg);
       can_msgs::Status msg2;
       msg2.value = 1;
