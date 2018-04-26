@@ -354,7 +354,8 @@ void CanInterfaceNode::STMSetPose(const can_msgs::Point::ConstPtr& msg){
 	fr.data[5] = msg->angle >> 8;
 	fr.data[6] = msg->angle & 0x00FF;
 
-	//publish
+	can_pub.publish(fr);
+
 
 }
 
