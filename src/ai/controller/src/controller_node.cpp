@@ -18,10 +18,6 @@ acM("/procedures/move_action", true){
 
   side = SIDE_GREEN;
 
-  // nh.getParam("controller/robot_pos/x", robot_pos_x);
-  // nh.getParam("controller/robot_pos/y", robot_pos_y);
-  // nh.getParam("controller/robot_pos/angle", robot_angle);
-
   clientD = nh.serviceClient<ai_msgs::CurrentActionDone>("scheduler/currentActionDone");
   clientA = nh.serviceClient<ai_msgs::GetActionToDo>("scheduler/actionToDo");
   clientA.waitForExistence();
@@ -72,6 +68,11 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
       nh.getParam("controller/robot_pos/x", x);
       nh.getParam("controller/robot_pos/y", y);
       nh.getParam("controller/robot_pos/angle", angle);
+
+      robot_pos_x = x;
+      robot_pos_y = y;
+      robot_angle = angle;
+
       msg.pos_x = x;
       msg.pos_y = y;
       msg.angle = angle;
