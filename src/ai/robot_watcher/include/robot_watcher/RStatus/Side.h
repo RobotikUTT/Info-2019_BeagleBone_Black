@@ -8,7 +8,7 @@
 //
 // };
 
-#define SIDE_GREEN  0
-#define SIDE_ORANGE 1
+#define SIDE_GREEN  1
+#define SIDE_ORANGE 0
 
 #endif
