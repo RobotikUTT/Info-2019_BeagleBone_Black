@@ -60,17 +60,17 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
 
   } else if (robot_status == ROBOT_RUNNING) {
     // ROS_DEBUG("Robot Running");
+    int x,y,angle;
+    nh.getParam("controller/robot_pos/x", x);
+    nh.getParam("controller/robot_pos/y", y);
+    nh.getParam("controller/robot_pos/angle", angle);
 
       if(side){
-        robot_pos_x = (1500 - robot_pos_x) + 1500;
-        robot_angle = -robot_angle;
+        x = (1500 - x) + 1500;
+        angle = -angle;
       }
       //init pos STM
       can_msgs::Point msg;
-      int x,y,angle;
-      nh.getParam("controller/robot_pos/x", x);
-      nh.getParam("controller/robot_pos/y", y);
-      nh.getParam("controller/robot_pos/angle", angle);
 
       robot_pos_x = x;
       robot_pos_y = y;
