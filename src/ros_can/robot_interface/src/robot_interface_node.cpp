@@ -7,29 +7,29 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 
 	this->can_pub = nh.advertise<can_msgs::Frame>("sent_messages", 1000);
 
-	this->STM_coder_pub = nh.advertise<can_msgs::WheelsDistance>("/STM/GetCoder", 1);
-	this->STM_pos_pub = nh.advertise<can_msgs::Point>("/STM/Position", 1);
-	this->STM_pwm_pub = nh.advertise<can_msgs::PWMs>("/STM/GetPWM", 1);
-	this->STM_speed_pub = nh.advertise<can_msgs::CurrSpeed>("/STM/GetSpeed", 1);
-	this->STM_speed_pub = nh.advertise<can_msgs::CurrSpeed>("/STM/GetSpeed", 1);
-	this->ALL_finish_pub = nh.advertise<can_msgs::Finish>("/ALL/Finish", 1);
+	this->STM_coder_pub = nh.advertise<can_msgs::WheelsDistance>("/STM/GetCoder", 10);
+	this->STM_pos_pub = nh.advertise<can_msgs::Point>("/STM/Position", 10);
+	this->STM_pwm_pub = nh.advertise<can_msgs::PWMs>("/STM/GetPWM", 10);
+	this->STM_speed_pub = nh.advertise<can_msgs::CurrSpeed>("/STM/GetSpeed", 10);
+	this->STM_speed_pub = nh.advertise<can_msgs::CurrSpeed>("/STM/GetSpeed", 10);
+	this->ALL_finish_pub = nh.advertise<can_msgs::Finish>("/ALL/Finish", 10);
 
-	this->robot_watcher_sub = nh.subscribe("/ai/robot_watcher/robot_watcher", 1, &CanInterfaceNode::updateRobotStatus, this);
-	this->can_sub = nh.subscribe("received_messages", 1, &CanInterfaceNode::canMsgProcess, this);
+	this->robot_watcher_sub = nh.subscribe("/ai/robot_watcher/robot_watcher", 10, &CanInterfaceNode::updateRobotStatus, this);
+	this->can_sub = nh.subscribe("received_messages", 10, &CanInterfaceNode::canMsgProcess, this);
 
-	this->STMSetMode_sub = nh.subscribe("/STM/SetMode",1, &CanInterfaceNode::STMSetMode, this);
-	this->STMSpeed_sub = nh.subscribe("/STM/Speed",1, &CanInterfaceNode::STMSpeed, this);
-	this->STMAsserManagement_sub = nh.subscribe("/STM/AsserManagement",1, &CanInterfaceNode::STMAsserManagement, this);
-	this->STMGoToAngle_sub = nh.subscribe("/STM/GoToAngle",1, &CanInterfaceNode::STMGoToAngle, this);
-	this->STMGoTo_sub = nh.subscribe("/STM/GoTo",1, &CanInterfaceNode::STMGoTo, this);
-	this->STMRotation_sub = nh.subscribe("/STM/Rotation",1, &CanInterfaceNode::STMRotation, this);
-	this->STMRotationNoModulo_sub = nh.subscribe("/STM/RotationNoModulo",1, &CanInterfaceNode::STMRotationNoModulo, this);
-	this->STMLeftPID_sub = nh.subscribe("/STM/LeftPID",1, &CanInterfaceNode::STMLeftPID, this);
-	this->STMRightPID_sub = nh.subscribe("/STM/RightPID",1, &CanInterfaceNode::STMRightPID, this);
-	this->STMAllPID_sub = nh.subscribe("/STM/AllPID",1, &CanInterfaceNode::STMAllPID, this);
-	this->STMPWM_sub = nh.subscribe("/STM/PWM",1, &CanInterfaceNode::STMPWM, this);
-	this->STMSetPose_sub = nh.subscribe("/STM/SetPose",1, &CanInterfaceNode::STMSetPose, this);
-	this->STMSetParam_sub = nh.subscribe("/STM/SetParam",1, &CanInterfaceNode::STMSetParam, this);
+	this->STMSetMode_sub = nh.subscribe("/STM/SetMode",10, &CanInterfaceNode::STMSetMode, this);
+	this->STMSpeed_sub = nh.subscribe("/STM/Speed",10, &CanInterfaceNode::STMSpeed, this);
+	this->STMAsserManagement_sub = nh.subscribe("/STM/AsserManagement",10, &CanInterfaceNode::STMAsserManagement, this);
+	this->STMGoToAngle_sub = nh.subscribe("/STM/GoToAngle",10, &CanInterfaceNode::STMGoToAngle, this);
+	this->STMGoTo_sub = nh.subscribe("/STM/GoTo",10, &CanInterfaceNode::STMGoTo, this);
+	this->STMRotation_sub = nh.subscribe("/STM/Rotation",10, &CanInterfaceNode::STMRotation, this);
+	this->STMRotationNoModulo_sub = nh.subscribe("/STM/RotationNoModulo",10, &CanInterfaceNode::STMRotationNoModulo, this);
+	this->STMLeftPID_sub = nh.subscribe("/STM/LeftPID",10, &CanInterfaceNode::STMLeftPID, this);
+	this->STMRightPID_sub = nh.subscribe("/STM/RightPID",10, &CanInterfaceNode::STMRightPID, this);
+	this->STMAllPID_sub = nh.subscribe("/STM/AllPID",10, &CanInterfaceNode::STMAllPID, this);
+	this->STMPWM_sub = nh.subscribe("/STM/PWM",10, &CanInterfaceNode::STMPWM, this);
+	this->STMSetPose_sub = nh.subscribe("/STM/SetPose",10, &CanInterfaceNode::STMSetPose, this);
+	this->STMSetParam_sub = nh.subscribe("/STM/SetParam",10, &CanInterfaceNode::STMSetParam, this);
 
 	service_ready("ros_can", "interface", 1 );
 
