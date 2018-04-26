@@ -337,6 +337,9 @@ void CanInterfaceNode::STMPWM(const can_msgs::PWMs::ConstPtr& msg){
 }
 
 void CanInterfaceNode::STMSetPose(const can_msgs::Point::ConstPtr& msg){
+	ROS_INFO_STREAM("SET POSE X: " << msg->pos_x);
+	ROS_INFO_STREAM("SET POSE Y: " << msg->pos_y);
+	ROS_INFO_STREAM("SET ANGLE: " << msg->angle);
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -344,7 +347,7 @@ void CanInterfaceNode::STMSetPose(const can_msgs::Point::ConstPtr& msg){
 	fr.is_error = 0;
 	fr.is_extended = 0;
 
-	fr.dlc = 6;
+	fr.dlc = 7;
 	fr.id = STM_ID;
 	fr.data[0] = SET_POS;
 	fr.data[1] = msg->pos_x >> 8;
@@ -367,7 +370,7 @@ void CanInterfaceNode::STMSetParam(const can_msgs::STMParam::ConstPtr& msg){
 	fr.is_error = 0;
 	fr.is_extended = 0;
 
-	fr.dlc = 6;
+	fr.dlc = 7;
 	fr.id = STM_ID;
 	fr.data[0] = SET_PARAM;
 	fr.data[1] = msg->max_linear_speed >> 8;
