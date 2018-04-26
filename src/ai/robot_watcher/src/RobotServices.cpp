@@ -3,7 +3,7 @@
 using namespace std;
 
 string ROBOT_SRV = "/ai/robot_watcher/node_readiness";
-float TIMEOUT = 5.0;
+float TIMEOUT = 10.0;
 
 
 void service_ready(const string name_space, const string package, const bool val){

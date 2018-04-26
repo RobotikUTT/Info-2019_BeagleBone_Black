@@ -41,6 +41,9 @@ void Controller::setSide(const ai_msgs::SetSide::ConstPtr& msg){
 
 //function to get robot pos
 void Controller::GetRobotPose(const can_msgs::Point::ConstPtr & msg){
+ ROS_INFO_STREAM("robot pos_x: " << msg->pos_x);
+ ROS_INFO_STREAM("robot pos_y: " << msg->pos_y);
+ ROS_INFO_STREAM("robot angle: " << msg->angle);
   robot_pos_x = msg->pos_x;
   robot_pos_y = msg->pos_y;
   robot_angle = msg->angle;

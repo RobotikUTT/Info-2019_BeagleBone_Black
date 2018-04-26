@@ -1,5 +1,5 @@
 #include "scheduler/scheduler_node.h"
-
+#include "ros/ros.h"
 
 Scheduler::Scheduler(ros::NodeHandle* n){
   this->nh = *n;
@@ -28,6 +28,8 @@ void Scheduler::setSide(const ai_msgs::SetSide::ConstPtr& msg){
 }
 
 bool Scheduler::getActionToDo(ai_msgs::GetActionToDo::Request &req, ai_msgs::GetActionToDo::Response &res){
+  ROS_INFO_STREAM("action position x: " << req.robot_pos_x);
+  ROS_INFO_STREAM("action position y: " << req.robot_pos_y);
   this->actionManager.updatePriority(Point(req.robot_pos_x,req.robot_pos_y));
   this->actionManager.getActionToDo(res);
   return true;
