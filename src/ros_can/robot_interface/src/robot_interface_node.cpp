@@ -394,7 +394,7 @@ void CanInterfaceNode::ARDUINOActionPliers(const can_msgs::ActionPliers::ConstPt
 	fr.dlc = 3;
 	fr.id = ARDUINO_CAN_ADDR;
 	fr.data[0] = ACTION_PLIERS;
-	fr.data[1] = msg->take;
+	fr.data[1] = msg->action;
 	fr.data[2] = msg->level;
 
 	can_pub.publish(fr);
