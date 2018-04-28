@@ -19,6 +19,7 @@ add_message_files(DIRECTORY msg
     Status.msg
     STMParam.msg
     WheelsDistance.msg
+    ActionPliers.msg
 )
 
 generate_messages(
