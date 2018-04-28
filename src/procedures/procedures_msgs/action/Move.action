@@ -1,5 +1,5 @@
 #start
-MovePoint[] points
+MPoint[] points
 ---
 #result
 bool done

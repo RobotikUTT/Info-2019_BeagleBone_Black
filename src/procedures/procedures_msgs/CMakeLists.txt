@@ -5,7 +5,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   std_msgs
   actionlib
-
+  can_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -44,7 +44,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
  add_message_files(
    FILES
-   MovePoint.msg
+   MPoint.msg
+   BlockAct.msg
 #   Message2.msg
  )
 
@@ -59,6 +60,7 @@ find_package(catkin REQUIRED COMPONENTS
  add_action_files(
    FILES
    Move.action
+   Block.action
 #   Action2.action
  )
 
@@ -66,5 +68,6 @@ find_package(catkin REQUIRED COMPONENTS
  generate_messages(
    DEPENDENCIES
    actionlib_msgs
+   can_msgs
    std_msgs
  )

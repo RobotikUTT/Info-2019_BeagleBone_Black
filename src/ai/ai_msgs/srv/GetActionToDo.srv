@@ -2,4 +2,4 @@ int16 robot_pos_x #mm
 int16 robot_pos_y #mm
 ---
 int8 action_val
-procedures_msgs/MovePoint point
+procedures_msgs/MPoint point
