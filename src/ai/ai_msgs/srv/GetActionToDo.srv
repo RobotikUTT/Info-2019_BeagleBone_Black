@@ -3,3 +3,5 @@ int16 robot_pos_y #mm
 ---
 int8 action_val
 procedures_msgs/MPoint point
+procedures_msgs/BlockAct block_action
+procedures_msgs/BlockAct depot
