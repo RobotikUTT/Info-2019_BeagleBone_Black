@@ -3,4 +3,5 @@
 
 
 #define MOVE 0
+#define BLOCK 1
 #endif
