@@ -112,7 +112,7 @@ void CanInterfaceNode::STMSetMode(const can_msgs::Status::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 2;
-	fr.id = STM_ID;
+	fr.id = STM_CAN_ADDR;
 	fr.data[0] = SET_MODE;
 	fr.data[1] = msg->value;
 
@@ -131,8 +131,8 @@ void CanInterfaceNode::STMSpeed(const can_msgs::Speed::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 7;
-	fr.id = STM_ID;
-	fr.data[0] = SPEED;
+	fr.id = STM_CAN_ADDR;
+	fr.data[0] = SPD;
 	fr.data[1] = msg->linear_speed >> 8;
 	fr.data[2] = msg->linear_speed & 0x00FF;
 	fr.data[3] = msg->angular_speed >> 8;
@@ -153,7 +153,7 @@ void CanInterfaceNode::STMAsserManagement(const can_msgs::Status::ConstPtr& msg)
 	fr.is_extended = 0;
 
 	fr.dlc = 2;
-	fr.id = STM_ID;
+	fr.id = STM_CAN_ADDR;
 	fr.data[0] = MANAGEMENT;
 	fr.data[1] = msg->value;
 
@@ -171,7 +171,7 @@ void CanInterfaceNode::STMGoToAngle(const can_msgs::Point::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 8;
-	fr.id = STM_ID;
+	fr.id = STM_CAN_ADDR;
 	fr.data[0] = GOTOA;
 	fr.data[1] = msg->pos_x >> 8;
 	fr.data[2] = msg->pos_x & 0x00FF;
@@ -195,7 +195,7 @@ void CanInterfaceNode::STMGoTo(const can_msgs::Point::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 6;
-	fr.id = STM_ID;
+	fr.id = STM_CAN_ADDR;
 	fr.data[0] = GOTO;
 	fr.data[1] = msg->pos_x >> 8;
 	fr.data[2] = msg->pos_x & 0x00FF;
@@ -217,7 +217,7 @@ void CanInterfaceNode::STMRotation(const can_msgs::Point::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 3;
-	fr.id = STM_ID;
+	fr.id = STM_CAN_ADDR;
 	fr.data[0] = ROT;
 	fr.data[1] = msg->angle >> 8;
 	fr.data[2] = msg->angle & 0x00FF;
@@ -236,7 +236,7 @@ void CanInterfaceNode::STMRotationNoModulo(const can_msgs::Point::ConstPtr& msg)
 	fr.is_extended = 0;
 
 	fr.dlc = 3;
-	fr.id = STM_ID;
+	fr.id = STM_CAN_ADDR;
 	fr.data[0] = ROT;
 	fr.data[1] = msg->angle >> 8;
 	fr.data[2] = msg->angle & 0x00FF;
@@ -255,7 +255,7 @@ void CanInterfaceNode::STMLeftPID(const can_msgs::PID::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 7;
-	fr.id = STM_ID;
+	fr.id = STM_CAN_ADDR;
 	fr.data[0] = PIDLEFT;
 	fr.data[1] = msg->P >> 8;
 	fr.data[2] = msg->P & 0x00FF;
@@ -278,7 +278,7 @@ void CanInterfaceNode::STMRightPID(const can_msgs::PID::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 7;
-	fr.id = STM_ID;
+	fr.id = STM_CAN_ADDR;
 	fr.data[0] = PIDRIGHT;
 	fr.data[1] = msg->P >> 8;
 	fr.data[2] = msg->P & 0x00FF;
@@ -301,7 +301,7 @@ void CanInterfaceNode::STMAllPID(const can_msgs::PID::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 7;
-	fr.id = STM_ID;
+	fr.id = STM_CAN_ADDR;
 	fr.data[0] = PIDALL;
 	fr.data[1] = msg->P >> 8;
 	fr.data[2] = msg->P & 0x00FF;
@@ -324,7 +324,7 @@ void CanInterfaceNode::STMPWM(const can_msgs::PWMs::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 5;
-	fr.id = STM_ID;
+	fr.id = STM_CAN_ADDR;
 	fr.data[0] = PWM;
 	fr.data[1] = msg->left_pwm >> 8;
 	fr.data[2] = msg->left_pwm & 0x00FF;
@@ -348,7 +348,7 @@ void CanInterfaceNode::STMSetPose(const can_msgs::Point::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 7;
-	fr.id = STM_ID;
+	fr.id = STM_CAN_ADDR;
 	fr.data[0] = SET_POS;
 	fr.data[1] = msg->pos_x >> 8;
 	fr.data[2] = msg->pos_x & 0x00FF;
@@ -371,7 +371,7 @@ void CanInterfaceNode::STMSetParam(const can_msgs::STMParam::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 7;
-	fr.id = STM_ID;
+	fr.id = STM_CAN_ADDR;
 	fr.data[0] = SET_PARAM;
 	fr.data[1] = msg->max_linear_speed >> 8;
 	fr.data[2] = msg->max_linear_speed & 0x00FF;
