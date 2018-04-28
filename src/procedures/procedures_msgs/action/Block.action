@@ -1,6 +1,6 @@
 #start
 BlockAct block_action
-can_msgs/Point depot
+BlockAct depot
 ---
 #result
 bool done
