@@ -29,7 +29,7 @@ void Move::goalCB()
   bool temp = !act.isActive();
   procedures_msgs::MoveGoal::ConstPtr msg = act.acceptNewGoal();
   for (int i = 0; i < msg->points.size(); i++) {
-    fifo.push_back(MovePoint(msg->points[i].end_x, msg->points[i].end_y, msg->points[i].end_angle));
+    fifo.push_back(MovePoint(msg->points[i].end_x, msg->points[i].end_y, msg->points[i].end_angle, msg->points[i].type));
   }
 
   if(temp){
@@ -49,7 +49,7 @@ void Move::analysisCB(const can_msgs::Finish::ConstPtr& msg)
   // make sure that the action hasn't been canceled
   ROS_WARN_STREAM("Move; FINISH : state "<< act.isActive());
 
-  if (!act.isActive())
+  if (!act.isActive() || msg->val != MOVE)
     return;
 
   if (!fifo.empty()) {

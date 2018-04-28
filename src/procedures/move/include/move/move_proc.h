@@ -10,7 +10,7 @@
 #include "move/MoveType.h"
 #include <robot_watcher/Services/RobotServices.h>
 #include <actionlib/server/simple_action_server.h>
-
+#include "action/action_define.h"
 #include "move/MovePoint.h"
 
 typedef actionlib::SimpleActionServer<procedures_msgs::MoveAction> MoveSrv;
