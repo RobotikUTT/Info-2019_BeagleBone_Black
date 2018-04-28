@@ -30,7 +30,8 @@ NODES_CHECKLIST = {
 "/ros_can/interface" 	: None,
 "/ai/scheduler" 		: None,
 "/ai/controller" 		: None,
-"/procedure/move" 		: None
+"/procedure/move" 		: None,
+"/procedure/block" 		: None
 
 
 }
