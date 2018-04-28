@@ -3,11 +3,19 @@
 Point::Point(){
   this->x = 0;
   this->y = 0;
+  this->angle = 0;
+}
+
+Point::Point(int _x, int _y, int _angle){
+  this->x = _x;
+  this->y = _y;
+  this->angle = _angle;
 }
 
 Point::Point(int _x, int _y){
   this->x = _x;
   this->y = _y;
+  this->angle = 0;
 }
 
 int Point::manhattanDist(Point& P){
