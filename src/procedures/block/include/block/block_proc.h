@@ -18,7 +18,7 @@
 typedef actionlib::SimpleActionServer<procedures_msgs::BlockAction> BlockSrv;
 typedef actionlib::SimpleActionClient<procedures_msgs::MoveAction> ClientMove;
 
-typedef boost::shared_ptr< ::procedures_msgs::MoveResult const> MoveResultConstPtr;
+typedef boost::shared_ptr< ::procedures_msgs::BlockResult const> BlockResultConstPtr;
 
 
 class Block
@@ -52,7 +52,7 @@ private:
   void analysisCB(const can_msgs::Finish::ConstPtr&);
   void sendMsg();
 
-  void DoneMove( const actionlib::SimpleClientGoalState& state, const MoveResultConstPtr & result);
+  void DoneMove( const actionlib::SimpleClientGoalState& state, const BlockResultConstPtr & result);
   void setSide(const ai_msgs::SetSide::ConstPtr& msg);
 
 

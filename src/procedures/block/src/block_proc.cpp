@@ -38,7 +38,7 @@ void Block::goalCB()
   //   fifo.push_back();
   // }
 
-  objectif = GroupBlocks(msg->block_action.gr_x, msg->block_action.gr_y, msg->block_action.rot, msg->depot.pos_x, msg->depot.pos_y, side);
+  objectif = GroupBlocks(msg->block_action.x, msg->block_action.y, msg->block_action.rot, msg->depot.x, msg->depot.y, side);
 
   sendMsg();
 
@@ -339,7 +339,7 @@ void Block::setSide(const ai_msgs::SetSide::ConstPtr& msg){
   side = msg->side;
 }
 
-void Block::DoneMove( const actionlib::SimpleClientGoalState& state, const MoveResultConstPtr & result){
+void Block::DoneMove( const actionlib::SimpleClientGoalState& state, const BlockResultConstPtr & result){
   point += result->points_done;
 
   phase ++;
