@@ -14,11 +14,13 @@
 #include "can_msgs/Point.h"
 #include "can_msgs/Status.h"
 #include "procedures_msgs/MoveAction.h"
+#include "procedures_msgs/BlockAction.h"
 #include "action/action_define.h"
 #include <actionlib/client/simple_action_client.h>
 //include action
 
 typedef actionlib::SimpleActionClient<procedures_msgs::MoveAction> ClientMove;
+typedef actionlib::SimpleActionClient<procedures_msgs::BlockAction> ClientBlock;
 
 class Controller
 {
@@ -55,6 +57,7 @@ private:
   int points_done;
 
   ClientMove acM;
+  ClientBlock acB;
   // std::map<std::string, value> map;
 
   void GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);

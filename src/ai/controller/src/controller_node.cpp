@@ -1,9 +1,11 @@
 #include "controller/controller_node.h"
 
 typedef boost::shared_ptr< ::procedures_msgs::MoveResult const> MoveResultConstPtr;
+typedef boost::shared_ptr< ::procedures_msgs::BlockResult const> BlockResultConstPtr;
 
 Controller::Controller(ros::NodeHandle* n):
-acM("/procedures/move_action", true){
+acM("/procedures/move_action", true),
+acB("/procedures/block_action", true){
   nh = *n;
 
   status_sub = nh.subscribe("robot_watcher/robot_status", 1, &Controller::GetRobotStatus, this);
@@ -22,11 +24,9 @@ acM("/procedures/move_action", true){
   clientA = nh.serviceClient<ai_msgs::GetActionToDo>("scheduler/actionToDo");
   clientA.waitForExistence();
 
-  if(!acM.waitForServer(ros::Duration(10))){
-    ROS_ERROR("NOPE");
-  } else {
-    service_ready("ai", "controller", 1 );
-  }
+  acM.waitForServer();
+  acB.waitForServer();
+  service_ready("ai", "controller", 1 );
 
 }
 
@@ -145,11 +145,16 @@ void Controller::SetAction(){
     acM.sendGoal(goal, boost::bind(&Controller::DoneAction<MoveResultConstPtr>, this, _1, _2));
     ROS_WARN("Action MOVE send");
 
-    // acM.start();
+  } else if (action_val == BLOCK){
+
+    procedures_msgs::BlockGoal goal;
+
+    goal.block_action =srv.response.block_action;
+    goal.depot = srv.response.depot;
+
+    acB.sendGoal(goal, boost::bind(&Controller::DoneAction<BlockResultConstPtr>, this, _1, _2));
+
   }
-
-  //.start()
-
 }
 
 int main(int argc, char *argv[]) {
