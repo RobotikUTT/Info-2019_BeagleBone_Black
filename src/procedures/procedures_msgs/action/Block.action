@@ -1,0 +1,9 @@
+#start
+BlockAct block_action
+can_msgs/Point depot
+---
+#result
+bool done
+int8 points_done
+---
+#feedback
