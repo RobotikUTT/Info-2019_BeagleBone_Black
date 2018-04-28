@@ -27,19 +27,35 @@ void ActionManager::actionsInit (const char* actions_file){
 
   for (SizeType i = 0; i < a.Size(); i++){
 
-    int val_x, val_y;
+    int val_x, val_y, val_angle;
     if(a[i]["PAction"].HasMember("end")){
       val_x = a[i]["PAction"]["end"]["x"].GetInt();
       val_y = a[i]["PAction"]["end"]["y"].GetInt();
+      if(a[i]["PAction"]["end"].HasMember("angle")){
+        val_angle = a[i]["PAction"]["end"]["angle"].GetInt();
+      } else {
+        val_angle = 0;
+
+      }
     } else {
       val_x = -1;
       val_y = -1;
+      val_angle = 0;
     }
+    int angle;
+    if(a[i]["PAction"]["start"].HasMember("angle")){
+      angle = a[i]["PAction"]["start"]["angle"].GetInt();
+    } else {
+      angle = 0;
+    }
+
 
     ActionPoint tempPoint ( a[i]["PAction"]["start"]["x"].GetInt(),
                             a[i]["PAction"]["start"]["y"].GetInt(),
+                            angle,
                             val_x,
-                            val_y);
+                            val_y,
+                            val_angle);
 
 
     // std::cout << tempPoint << '\n';
@@ -83,6 +99,14 @@ void ActionManager::getActionToDo(ai_msgs::GetActionToDo::Response &res){
         if (it->_action == MOVE) {
           res.point.end_x = it->PAction.startPoint.x;
           res.point.end_y = it->PAction.startPoint.y;
+          res.point.end_angle = it->PAction.startPoint.angle;
+        } else if(it->_action == BLOCK) {
+          res.block_action.x = it->PAction.startPoint.x;
+          res.block_action.y = it->PAction.startPoint.y;
+          res.block_action.rot = it->PAction.startPoint.angle;
+          res.depot.x = it->PAction.endPoint.x;
+          res.depot.y = it->PAction.endPoint.y;
+          res.depot.rot = it->PAction.endPoint.angle;
         }
         min_prio = it->_priority;
         current_action = it;
