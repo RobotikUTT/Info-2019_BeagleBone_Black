@@ -339,7 +339,7 @@ void Block::setSide(const ai_msgs::SetSide::ConstPtr& msg){
   side = msg->side;
 }
 
-void Block::DoneMove( const actionlib::SimpleClientGoalState& state, const BlockResultConstPtr & result){
+void Block::DoneMove( const actionlib::SimpleClientGoalState& state, const MoveResultConstPtr & result){
   point += result->points_done;
 
   phase ++;
