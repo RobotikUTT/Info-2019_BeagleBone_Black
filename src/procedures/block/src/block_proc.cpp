@@ -12,7 +12,7 @@ Block::Block(std::string name):
     finish_sub = nh.subscribe("/ALL/Finish", 10, &Block::analysisCB, this);
     side_sub = nh.subscribe("/ai/side", 1, &Block::setSide, this );
 
-    // ARDUINOpliers_pub = nh.advertise<can_msgs::XXX>("/ARDUINO/Pliers", 1);
+    ARDUINO_pliers_pub = nh.advertise<can_msgs::ActionPliers>("/ARDUINO/ActionPliers", 10);
 
     // this->STMGoToAngle_pub = nh.advertise<can_msgs::Point>("/STM/GoToAngle", 1);
     // this->STMGoTo_pub = nh.advertise<can_msgs::Point>("/STM/GoTo", 1);
@@ -106,7 +106,10 @@ void Block::sendMsg() {
       break;
     }
     case 1:{
-      //take 0
+      can_msgs::ActionPliers temp;
+      temp.action = TAKE_BLOCK;
+      temp.level = 0;
+      ARDUINO_pliers_pub.publish(temp);
       break;
     }
     case 2:{
@@ -140,7 +143,10 @@ void Block::sendMsg() {
       break;
     }
     case 3:{
-      //take 1
+      can_msgs::ActionPliers temp;
+      temp.action = TAKE_BLOCK;
+      temp.level = 1;
+      ARDUINO_pliers_pub.publish(temp);
       break;
     }
     case 4:{
@@ -168,7 +174,10 @@ void Block::sendMsg() {
       break;
     }
     case 5:{
-      //release 0
+      can_msgs::ActionPliers temp;
+      temp.action = RELEASE_BLOCK;
+      temp.level = 0;
+      ARDUINO_pliers_pub.publish(temp);
       break;
     }
     case 6:{
@@ -203,7 +212,10 @@ void Block::sendMsg() {
       break;
     }
     case 7:{
-      //take 0
+      can_msgs::ActionPliers temp;
+      temp.action = TAKE_BLOCK;
+      temp.level = 0;
+      ARDUINO_pliers_pub.publish(temp);
       break;
     }
     case 8:{
@@ -237,7 +249,10 @@ void Block::sendMsg() {
       break;
     }
     case 9:{
-      //release 3
+      can_msgs::ActionPliers temp;
+      temp.action = RELEASE_BLOCK;
+      temp.level = 3;
+      ARDUINO_pliers_pub.publish(temp);
       break;
     }
     case 10:{
@@ -266,7 +281,10 @@ void Block::sendMsg() {
       break;
     }
     case 11:{
-      // take 0
+      can_msgs::ActionPliers temp;
+      temp.action = TAKE_BLOCK;
+      temp.level = 0;
+      ARDUINO_pliers_pub.publish(temp);
       break;
     }
     case 12:{
@@ -282,7 +300,10 @@ void Block::sendMsg() {
       break;
     }
     case 13:{
-      // take 1
+      can_msgs::ActionPliers temp;
+      temp.action = TAKE_BLOCK;
+      temp.level = 1;
+      ARDUINO_pliers_pub.publish(temp);
       break;
     }
     case 14:{
@@ -304,7 +325,10 @@ void Block::sendMsg() {
       break;
     }
     case 15:{
-      //release 4
+      can_msgs::ActionPliers temp;
+      temp.action = RELEASE_BLOCK;
+      temp.level = 4;
+      ARDUINO_pliers_pub.publish(temp);
       break;
     }
     case 16:{

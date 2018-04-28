@@ -8,6 +8,7 @@
 #include "procedures_msgs/MPoint.h"
 #include "can_msgs/Point.h"
 #include "can_msgs/Finish.h"
+#include "can_msgs/ActionPliers.h"
 #include "ai_msgs/SetSide.h"
 #include <robot_watcher/Services/RobotServices.h>
 #include <actionlib/server/simple_action_server.h>
@@ -36,7 +37,7 @@ private:
   ros::Subscriber finish_sub;
   ros::Subscriber side_sub;
 
-  ros::Publisher ARDUINOpliers_pub;
+  ros::Publisher ARDUINO_pliers_pub;
   // ros::Publisher ;
   // ros::Publisher ;
   // ros::Publisher ;
