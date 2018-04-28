@@ -8,8 +8,8 @@ public:
   Point startPoint;
   Point endPoint;
   ActionPoint();
-  ActionPoint(Point, Point);
-  ActionPoint(int, int, int, int);
+  ActionPoint(Point start, Point end);
+  ActionPoint(int start_x, int start_y, int start_angle, int end_x, int end_y, int end_angle);
 };
 
 std::ostream& operator<<(std::ostream&, const ActionPoint&);
