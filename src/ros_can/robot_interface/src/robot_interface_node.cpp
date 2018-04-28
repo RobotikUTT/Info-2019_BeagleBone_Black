@@ -17,20 +17,20 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->robot_watcher_sub = nh.subscribe("/ai/robot_watcher/robot_watcher", 10, &CanInterfaceNode::updateRobotStatus, this);
 	this->can_sub = nh.subscribe("received_messages", 10, &CanInterfaceNode::canMsgProcess, this);
 
-	this->STMSetMode_sub = nh.subscribe("/STM/SetMode",10, &CanInterfaceNode::STMSetMode, this);
-	this->STMSpeed_sub = nh.subscribe("/STM/Speed",10, &CanInterfaceNode::STMSpeed, this);
-	this->STMAsserManagement_sub = nh.subscribe("/STM/AsserManagement",10, &CanInterfaceNode::STMAsserManagement, this);
-	this->STMGoToAngle_sub = nh.subscribe("/STM/GoToAngle",10, &CanInterfaceNode::STMGoToAngle, this);
-	this->STMGoTo_sub = nh.subscribe("/STM/GoTo",10, &CanInterfaceNode::STMGoTo, this);
-	this->STMRotation_sub = nh.subscribe("/STM/Rotation",10, &CanInterfaceNode::STMRotation, this);
-	this->STMRotationNoModulo_sub = nh.subscribe("/STM/RotationNoModulo",10, &CanInterfaceNode::STMRotationNoModulo, this);
-	this->STMLeftPID_sub = nh.subscribe("/STM/LeftPID",10, &CanInterfaceNode::STMLeftPID, this);
-	this->STMRightPID_sub = nh.subscribe("/STM/RightPID",10, &CanInterfaceNode::STMRightPID, this);
-	this->STMAllPID_sub = nh.subscribe("/STM/AllPID",10, &CanInterfaceNode::STMAllPID, this);
-	this->STMPWM_sub = nh.subscribe("/STM/PWM",10, &CanInterfaceNode::STMPWM, this);
-	this->STMSetPose_sub = nh.subscribe("/STM/SetPose",10, &CanInterfaceNode::STMSetPose, this);
-	this->STMSetParam_sub = nh.subscribe("/STM/SetParam",10, &CanInterfaceNode::STMSetParam, this);
-
+	this->STM_SetMode_sub = nh.subscribe("/STM/SetMode",10, &CanInterfaceNode::STMSetMode, this);
+	this->STM_Speed_sub = nh.subscribe("/STM/Speed",10, &CanInterfaceNode::STMSpeed, this);
+	this->STM_AsserManagement_sub = nh.subscribe("/STM/AsserManagement",10, &CanInterfaceNode::STMAsserManagement, this);
+	this->STM_GoToAngle_sub = nh.subscribe("/STM/GoToAngle",10, &CanInterfaceNode::STMGoToAngle, this);
+	this->STM_GoTo_sub = nh.subscribe("/STM/GoTo",10, &CanInterfaceNode::STMGoTo, this);
+	this->STM_Rotation_sub = nh.subscribe("/STM/Rotation",10, &CanInterfaceNode::STMRotation, this);
+	this->STM_RotationNoModulo_sub = nh.subscribe("/STM/RotationNoModulo",10, &CanInterfaceNode::STMRotationNoModulo, this);
+	this->STM_LeftPID_sub = nh.subscribe("/STM/LeftPID",10, &CanInterfaceNode::STMLeftPID, this);
+	this->STM_RightPID_sub = nh.subscribe("/STM/RightPID",10, &CanInterfaceNode::STMRightPID, this);
+	this->STM_AllPID_sub = nh.subscribe("/STM/AllPID",10, &CanInterfaceNode::STMAllPID, this);
+	this->STM_PWM_sub = nh.subscribe("/STM/PWM",10, &CanInterfaceNode::STMPWM, this);
+	this->STM_SetPose_sub = nh.subscribe("/STM/SetPose",10, &CanInterfaceNode::STMSetPose, this);
+	this->STM_SetParam_sub = nh.subscribe("/STM/SetParam",10, &CanInterfaceNode::STMSetParam, this);
+	this->ARDUINO_ActionPliers_sub = nh.subscribe("/ARDUINO/ActionPliers",10, &CanInterfaceNode::ARDUINOActionPliers, this);
 	service_ready("ros_can", "interface", 1 );
 
 }
@@ -381,9 +381,25 @@ void CanInterfaceNode::STMSetParam(const can_msgs::STMParam::ConstPtr& msg){
 	fr.data[6] = msg->max_acc & 0x00FF;
 
 	can_pub.publish(fr);
-
-
 }
+
+void CanInterfaceNode::ARDUINOActionPliers(const can_msgs::ActionPliers::ConstPtr& msg){
+	can_msgs::Frame fr;
+	fr.header.stamp = ros::Time::now();
+	fr.header.frame_id = "/ros_can/interface/";
+	fr.is_rtr = 0;
+	fr.is_error = 0;
+	fr.is_extended = 0;
+
+	fr.dlc = 3;
+	fr.id = ARDUINO_CAN_ADDR;
+	fr.data[0] = ACTION_PLIERS;
+	fr.data[1] = msg->take;
+	fr.data[2] = msg->level;
+
+	can_pub.publish(fr);
+}
+
 
 int main(int argc, char **argv)
 {

@@ -16,6 +16,7 @@
 #include "can_msgs/Status.h"
 #include "can_msgs/STMParam.h"
 #include "can_msgs/WheelsDistance.h"
+#include "can_msgs/ActionPliers.h"
 
 #define ALL_CAN_ADDR            0
 #define BBB_CAN_ADDR            1
@@ -87,6 +88,7 @@ public:
 	void STMPWM(const can_msgs::PWMs::ConstPtr& msg);
 	void STMSetPose(const can_msgs::Point::ConstPtr& msg);
 	void STMSetParam(const can_msgs::STMParam::ConstPtr& msg);
+	void ARDUINOActionPliers(const can_msgs::ActionPliers::ConstPtr& msg);
 
 private:
 	ros::NodeHandle nh;
@@ -103,19 +105,20 @@ private:
 	ros::Subscriber robot_watcher_sub;
 	ros::Subscriber can_sub;
 
-	ros::Subscriber STMSetMode_sub;
-	ros::Subscriber STMSpeed_sub;
-	ros::Subscriber STMAsserManagement_sub;
-	ros::Subscriber STMGoToAngle_sub;
-	ros::Subscriber STMGoTo_sub;
-	ros::Subscriber STMRotation_sub;
-	ros::Subscriber STMRotationNoModulo_sub;
-	ros::Subscriber STMLeftPID_sub;
-	ros::Subscriber STMRightPID_sub;
-	ros::Subscriber STMAllPID_sub;
-	ros::Subscriber STMPWM_sub;
-	ros::Subscriber STMSetPose_sub;
-	ros::Subscriber STMSetParam_sub;
+	ros::Subscriber STM_SetMode_sub;
+	ros::Subscriber STM_Speed_sub;
+	ros::Subscriber STM_AsserManagement_sub;
+	ros::Subscriber STM_GoToAngle_sub;
+	ros::Subscriber STM_GoTo_sub;
+	ros::Subscriber STM_Rotation_sub;
+	ros::Subscriber STM_RotationNoModulo_sub;
+	ros::Subscriber STM_LeftPID_sub;
+	ros::Subscriber STM_RightPID_sub;
+	ros::Subscriber STM_AllPID_sub;
+	ros::Subscriber STM_PWM_sub;
+	ros::Subscriber STM_SetPose_sub;
+	ros::Subscriber STM_SetParam_sub;
+	ros::Subscriber ARDUINO_ActionPliers_sub;
 };
 
 #endif
