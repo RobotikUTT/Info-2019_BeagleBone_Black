@@ -24,11 +24,12 @@ Move::Move(std::string name):
 
 void Move::goalCB()
 {
-  ROS_WARN("Move: new goal");
+  // ROS_WARN("Move: new goal");
 
   bool temp = !act.isActive();
   procedures_msgs::MoveGoal::ConstPtr msg = act.acceptNewGoal();
   for (int i = 0; i < msg->points.size(); i++) {
+    // ROS_INFO_STREAM("Point["<< i <<"] recieved: { x: " << msg->points[i].end_x << "; y: " << msg->points[i].end_y <<"; angle: "<< msg->points[i].end_angle<< "; type: "<< (int)msg->points[i].type << "}" );
     fifo.push_back(MovePoint(msg->points[i].end_x, msg->points[i].end_y, msg->points[i].end_angle, msg->points[i].type));
   }
 
@@ -47,14 +48,14 @@ void Move::preemptCB()
 void Move::analysisCB(const can_msgs::Finish::ConstPtr& msg)
 {
   // make sure that the action hasn't been canceled
-  ROS_WARN_STREAM("Move; FINISH : state "<< act.isActive());
+  // ROS_WARN_STREAM("Move; FINISH : state "<< act.isActive());
 
   if (!act.isActive() || msg->val != MOVE)
     return;
 
   if (!fifo.empty()) {
     /* code */
-    ROS_INFO_STREAM("Move; FiFo : not empty");
+    // ROS_INFO_STREAM("Move; FiFo : not empty");
     sendMsg();
 
 
@@ -68,30 +69,32 @@ void Move::analysisCB(const can_msgs::Finish::ConstPtr& msg)
 inline void Move::sendMsg() {
   can_msgs::Point msg;
   //direction
+  while (!fifo.empty()) {
+    // ROS_INFO_STREAM("Point send: { x: " << fifo.front()._x << "; y: " << fifo.front()._y <<"; angle: "<< fifo.front()._angle<< "}" );
+    switch (fifo.front()._move_type) {
+      case GO_TO_ANGLE:
+        msg.pos_x = fifo.front()._x;
+        msg.pos_y = fifo.front()._y;
+        msg.angle = fifo.front()._angle;
+        STMGoToAngle_pub.publish(msg);
+        break;
+      case GO_TO:
+        msg.pos_x = fifo.front()._x;
+        msg.pos_y = fifo.front()._y;
+        STMGoTo_pub.publish(msg);
+        break;
+      case ROTATION:
+        msg.angle = fifo.front()._angle;
+        STMRotation_pub.publish(msg);
+        break;
+      case ROTATION_NO_MODULO:
+        msg.angle = fifo.front()._angle;
+        STMRotationNoModulo_pub.publish(msg);
+        break;
+    }
 
-  switch (fifo.front()._move_type) {
-    case GO_TO_ANGLE:
-      msg.pos_x = fifo.front()._x;
-      msg.pos_y = fifo.front()._y;
-      msg.angle = fifo.front()._angle;
-      STMGoToAngle_pub.publish(msg);
-      break;
-    case GO_TO:
-      msg.pos_x = fifo.front()._x;
-      msg.pos_y = fifo.front()._y;
-      STMGoTo_pub.publish(msg);
-      break;
-    case ROTATION:
-      msg.angle = fifo.front()._angle;
-      STMRotation_pub.publish(msg);
-      break;
-    case ROTATION_NO_MODULO:
-      msg.angle = fifo.front()._angle;
-      STMRotationNoModulo_pub.publish(msg);
-      break;
+    fifo.erase(fifo.begin());
   }
-
-  fifo.erase(fifo.begin());
 }
 
 
