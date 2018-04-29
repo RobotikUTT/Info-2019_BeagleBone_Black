@@ -28,7 +28,7 @@ Block::Block(std::string name):
 
 void Block::goalCB()
 {
-  ROS_WARN("Block: new goal");
+  // ROS_WARN("Block: new goal");
 
   // bool temp = !act.isActive();
   phase = 0;
@@ -46,7 +46,7 @@ void Block::goalCB()
   // if(temp){
   //   sendMsg();
   // }
-  ROS_WARN("Block: end");
+  // ROS_WARN("Block: end");
 
 }
 
@@ -60,7 +60,7 @@ void Block::preemptCB()
 void Block::analysisCB(const can_msgs::Finish::ConstPtr& msg)
 {
   // make sure that the action hasn't been canceled
-  ROS_WARN_STREAM("Block; FINISH : state "<< act.isActive());
+  // ROS_WARN_STREAM("Block; FINISH : state "<< act.isActive());
 
   if (!act.isActive() || msg->val != BLOCK)
     return;
@@ -81,28 +81,25 @@ void Block::analysisCB(const can_msgs::Finish::ConstPtr& msg)
 }
 
 void Block::sendMsg() {
-  ROS_WARN_STREAM("phase: " << phase);
+  ROS_WARN_STREAM("phase: " << (int)phase);
 
   switch (phase) {
     case 0:{
       procedures_msgs::MoveGoal goal;
       procedures_msgs::MPoint temp;
 
-      ROS_WARN_STREAM("msg 1");
       temp.end_x = objectif.proc_point[0].x;
       temp.end_y = objectif.proc_point[0].y;
       temp.end_angle = objectif.proc_point[0].angle;
       temp.type = GO_TO;
       goal.points.push_back(temp);
 
-      ROS_WARN_STREAM("msg 2");
       temp.end_x = objectif.proc_point[1].x;
       temp.end_y = objectif.proc_point[1].y;
       temp.end_angle = objectif.proc_point[1].angle;
       temp.type = GO_TO_ANGLE;
       goal.points.push_back(temp);
 
-      ROS_WARN_STREAM("msg 3");
       temp.end_x = objectif.proc_point[2].x;
       temp.end_y = objectif.proc_point[2].y;
       temp.end_angle = objectif.proc_point[2].angle;
@@ -113,7 +110,6 @@ void Block::sendMsg() {
       break;
     }
     case 1:{
-      ROS_WARN_STREAM("msg 4");
 
       can_msgs::ActionPliers temp;
       temp.action = TAKE_BLOCK;
@@ -364,8 +360,11 @@ void Block::sendMsg() {
       //error
     }
   }
-  ROS_WARN_STREAM("end switch");
-
+  // if(phase%2 == 0){
+  //   ROS_INFO("MOVE");
+  // } else {
+  //   ROS_INFO("PLIERS");
+  // }
 
   // fifo.erase(fifo.begin());
 }

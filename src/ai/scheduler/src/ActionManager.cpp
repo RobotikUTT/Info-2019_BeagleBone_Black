@@ -119,6 +119,6 @@ void ActionManager::getActionToDo(ai_msgs::GetActionToDo::Response &res){
 
 
 void ActionManager::currentActionDone(bool done){
-  ROS_INFO_STREAM("Action done: " << done);
+  // ROS_INFO_STREAM("Action done: " << done);
   current_action->_done = done;
 }

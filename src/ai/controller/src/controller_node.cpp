@@ -139,11 +139,11 @@ void Controller::SetAction(){
 
   if(action_val == MOVE)
   {
-    ROS_WARN("Action MOVE");
+    // ROS_WARN("Action MOVE");
     procedures_msgs::MoveGoal goal;
     goal.points.push_back(srv.response.point);
     acM.sendGoal(goal, boost::bind(&Controller::DoneAction<MoveResultConstPtr>, this, _1, _2));
-    ROS_WARN("Action MOVE send");
+    // ROS_WARN("Action MOVE send");
 
   } else if (action_val == BLOCK){
 
