@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   robot_watcher
   can_msgs
+  robot_interface
 )
 
 ## System dependencies are found with CMake's conventions
