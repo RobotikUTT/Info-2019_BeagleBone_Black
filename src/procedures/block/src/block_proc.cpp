@@ -38,6 +38,7 @@ void Block::goalCB()
   //   fifo.push_back();
   // }
 
+  //MARCHE PAS OVERFLOW
   objectif = GroupBlocks(msg->block_action.x, msg->block_action.y, msg->block_action.rot, msg->depot.x, msg->depot.y, side);
 
   sendMsg();
@@ -45,8 +46,10 @@ void Block::goalCB()
   // if(temp){
   //   sendMsg();
   // }
+  ROS_WARN("Block: end");
 
 }
+
 void Block::preemptCB()
 {
   ROS_DEBUG("Move; Preempted");
@@ -78,24 +81,28 @@ void Block::analysisCB(const can_msgs::Finish::ConstPtr& msg)
 }
 
 void Block::sendMsg() {
+  ROS_WARN_STREAM("phase: " << phase);
 
   switch (phase) {
     case 0:{
       procedures_msgs::MoveGoal goal;
       procedures_msgs::MPoint temp;
 
+      ROS_WARN_STREAM("msg 1");
       temp.end_x = objectif.proc_point[0].x;
       temp.end_y = objectif.proc_point[0].y;
       temp.end_angle = objectif.proc_point[0].angle;
       temp.type = GO_TO;
       goal.points.push_back(temp);
 
+      ROS_WARN_STREAM("msg 2");
       temp.end_x = objectif.proc_point[1].x;
       temp.end_y = objectif.proc_point[1].y;
       temp.end_angle = objectif.proc_point[1].angle;
       temp.type = GO_TO_ANGLE;
       goal.points.push_back(temp);
 
+      ROS_WARN_STREAM("msg 3");
       temp.end_x = objectif.proc_point[2].x;
       temp.end_y = objectif.proc_point[2].y;
       temp.end_angle = objectif.proc_point[2].angle;
@@ -106,6 +113,8 @@ void Block::sendMsg() {
       break;
     }
     case 1:{
+      ROS_WARN_STREAM("msg 4");
+
       can_msgs::ActionPliers temp;
       temp.action = TAKE_BLOCK;
       temp.level = 0;
@@ -351,9 +360,11 @@ void Block::sendMsg() {
       act.setSucceeded(result_);
     }
     default: {
+      ROS_WARN_STREAM("default");
       //error
     }
   }
+  ROS_WARN_STREAM("end switch");
 
 
   // fifo.erase(fifo.begin());
