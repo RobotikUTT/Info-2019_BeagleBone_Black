@@ -2,8 +2,6 @@
 import time
 import rospy
 
-from robot_watcher.GPIOemulator.EmulatorGUI import GPIO
-# import Adafruit_BBIO.GPIO as GPIO
 
 # import msgs/svrs
 
@@ -25,11 +23,18 @@ class RobotWatcherNode(object):
 
 		self.INIT_TIMEOUT = rospy.get_param("~INIT_TIMEOUT", 15)
 		self.GAME_LENTH = rospy.get_param("~GAME_LENTH", 10)
+		simulation = rospy.get_param("/simulation", False)
 
-		GPIO.setmode(GPIO.BCM)
-		GPIO.setwarnings(False)
-		GPIO.setup(PIN_START,GPIO.IN, initial = GPIO.LOW)
-		GPIO.setup(PIN_SIDE,GPIO.IN, initial = GPIO.LOW)
+		if simulation:
+			from robot_watcher.GPIOemulator.EmulatorGUI import GPIO
+			GPIO.setmode(GPIO.BCM)
+			GPIO.setwarnings(False)
+			GPIO.setup(PIN_START,GPIO.IN, initial = GPIO.LOW)
+			GPIO.setup(PIN_SIDE,GPIO.IN, initial = GPIO.LOW)
+		else :
+			import Adafruit_BBIO.GPIO as GPIO
+			GPIO.setup(PIN_START,GPIO.IN)
+			GPIO.setup(PIN_SIDE,GPIO.IN)
 
 
 		rospy.Service("/ai/robot_watcher/node_readiness", NodeReadiness, self.set_readiness)
