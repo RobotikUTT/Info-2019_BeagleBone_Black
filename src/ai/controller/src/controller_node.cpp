@@ -13,13 +13,17 @@ acB("/procedures/block_action", true){
   //sonar_sub = nh.subscribe("/Arduino/sonars", 1, &Controller::GetSonars, this);
   robot_pos_sub = nh.subscribe("/STM/Position", 1, &Controller::GetRobotPose, this);
   side_sub = nh.subscribe("side", 1, &Controller::setSide, this);
+  nodes_status_sub = nh.subscribe("robot_watcher/nodes_status", 1, &Controller::checkForPANEL, this);
 
   // emergency_stop_pub = nh.advertise<ai_msgs::EmergencyStop>("emergency", 1);
   STM_SetPose_pub = nh.advertise<can_msgs::Point>("/STM/SetPose", 1);
   STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement", 1);
+  PANEL_Point_pub = nh.advertise<std_msgs::Int8>("/PANEL/AddPoint", 1);
+
 
   side = SIDE_GREEN;
-
+  PANLEUp = 0;
+  points_done = 0;
   clientD = nh.serviceClient<ai_msgs::CurrentActionDone>("scheduler/currentActionDone");
   clientA = nh.serviceClient<ai_msgs::GetActionToDo>("scheduler/actionToDo");
   clientA.waitForExistence();
@@ -89,6 +93,24 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
   }
 }
 
+void Controller::checkForPANEL(const ai_msgs::NodesStatus::ConstPtr & msg){
+  for (int i = 0; i < msg->nodes_ready.size(); i++){
+    if(msg->nodes_ready[i] == "/board/PANEL"){
+        PANLEUp = 1;
+        nodes_status_sub.shutdown();
+        sendPoint();
+    }
+  }
+}
+
+void Controller::sendPoint(){
+  ROS_INFO_STREAM("sendPoint point " << points_done);
+  std_msgs::Int8 msg;
+  msg.data = points_done;
+  PANEL_Point_pub.publish(msg);
+  points_done = 0;
+}
+
 template <class doneMsg>
 void Controller::DoneAction( const actionlib::SimpleClientGoalState& state,
                         const doneMsg & result){
@@ -99,6 +121,9 @@ void Controller::DoneAction( const actionlib::SimpleClientGoalState& state,
 
   //send point
   points_done += result->points_done;
+  if(PANLEUp){
+    sendPoint();
+  }
 
 
   //set old action to done
