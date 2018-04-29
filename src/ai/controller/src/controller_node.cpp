@@ -13,6 +13,8 @@ acB("/procedures/block_action", true){
   //sonar_sub = nh.subscribe("/Arduino/sonars", 1, &Controller::GetSonars, this);
   robot_pos_sub = nh.subscribe("/STM/Position", 1, &Controller::GetRobotPose, this);
   side_sub = nh.subscribe("side", 1, &Controller::setSide, this);
+  sonar_distance_sub = nh.subscribe("/ARDUINO/SonarDistance", 1, &Controller::processSonars, this);
+
 
   // emergency_stop_pub = nh.advertise<ai_msgs::EmergencyStop>("emergency", 1);
   STM_SetPose_pub = nh.advertise<can_msgs::Point>("/STM/SetPose", 1);
@@ -82,7 +84,7 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
 
       STM_SetPose_pub.publish(msg);
       can_msgs::Status msg2;
-      msg2.value = 1;
+      msg2.value = START;
       STM_AsserManagement_pub.publish(msg2);
       SetAction();
       //set action to true
@@ -155,6 +157,12 @@ void Controller::SetAction(){
     acB.sendGoal(goal, boost::bind(&Controller::DoneAction<BlockResultConstPtr>, this, _1, _2));
 
   }
+}
+
+void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
+{
+  ROS_WARN("PROCESS SONAR");
+  
 }
 
 int main(int argc, char *argv[]) {

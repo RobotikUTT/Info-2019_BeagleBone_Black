@@ -13,11 +13,17 @@
 #include "ai_msgs/CurrentActionDone.h"
 #include "can_msgs/Point.h"
 #include "can_msgs/Status.h"
+#include "can_msgs/SonarDistance.h"
+#include "can_msgs/Frame.h"
 #include "procedures_msgs/MoveAction.h"
 #include "procedures_msgs/BlockAction.h"
 #include "action/action_define.h"
 #include <actionlib/client/simple_action_client.h>
+#include "robot_interface/protocol.h"
 //include action
+
+#define FOREWARD  1
+#define BACKWARD  -1
 
 typedef actionlib::SimpleActionClient<procedures_msgs::MoveAction> ClientMove;
 typedef actionlib::SimpleActionClient<procedures_msgs::BlockAction> ClientBlock;
@@ -35,7 +41,7 @@ private:
   ros::Subscriber status_sub;
   ros::Subscriber robot_pos_sub;
   // ros::Subscriber robot_pos_sub;
-  // ros::Subscriber sonar_sub;
+  ros::Subscriber sonar_distance_sub;
   ros::Subscriber side_sub;
 
   // ros::Publisher emergency_stop_pub;
@@ -49,7 +55,8 @@ private:
   int robot_angle;
 
   uint8_t robot_status;
-  // bool emergency_stop;
+  int8_t direction;
+  bool emergency_stop;
   bool side;
 
   int8_t action_val;
@@ -64,6 +71,7 @@ private:
   void GetRobotPose(const can_msgs::Point::ConstPtr& msg);
   void SetAction();
   void setSide(const ai_msgs::SetSide::ConstPtr& msg);
+  void processSonars(const can_msgs::SonarDistance::ConstPtr& msg);
 
   template <class doneMsg>
   void DoneAction( const actionlib::SimpleClientGoalState& state, const doneMsg & result);
