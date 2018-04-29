@@ -81,7 +81,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES can_interface
+  #LIBRARIES can_interface
 
   CATKIN_DEPENDS roscpp rospy std_msgs can_msgs robot_watcher
   #DEPENDS system_lib

@@ -354,6 +354,7 @@ void Block::sendMsg() {
       result_.done = 1;
       result_.points_done = point;
       act.setSucceeded(result_);
+      break;
     }
     default: {
       ROS_WARN_STREAM("default");

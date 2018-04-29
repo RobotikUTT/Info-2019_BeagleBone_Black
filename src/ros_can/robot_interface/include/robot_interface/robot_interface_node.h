@@ -1,4 +1,4 @@
-#ifndef CAcan_msgsE
+#ifndef CAN_INTERFACE_NODE
 #define CAN_INTERFACE_NODE
 
 #include <ros/ros.h>
@@ -6,15 +6,21 @@
 #include <ai_msgs/RobotStatus.h>
 #include <robot_watcher/Services/RobotServices.h>
 #include <algorithm>
+#include "robot_interface/protocol.h"
 
+#include "can_msgs/ActionPliers.h"
 #include "can_msgs/CurrSpeed.h"
-#include "can_msgs/PID.h"
-#include "can_msgs/Point.h"
 #include "can_msgs/Finish.h"
+#include "can_msgs/ObjectOnMap.h"
+#include "can_msgs/PID.h"
 #include "can_msgs/PWMs.h"
+#include "can_msgs/Point.h"
+#include "can_msgs/RobotBlocked.h"
+#include "can_msgs/STMParam.h"
+#include "can_msgs/SonarDistance.h"
 #include "can_msgs/Speed.h"
 #include "can_msgs/Status.h"
-#include "can_msgs/STMParam.h"
+#include "can_msgs/ThrowBalls.h"
 #include "can_msgs/WheelsDistance.h"
 #include "can_msgs/ActionPliers.h"
 
@@ -27,18 +33,6 @@
 #define ARDUINO_CAN_ADDR        3
 #define ZIGBEE_CAN_ADDR         4
 #define PANEL_CAN_ADDR          5
-
-
-
-#define STOP                    0
-#define START                   1
-#define PAUSE                   2
-#define RESUME                  3
-#define RESET_ID                4
-#define SETEMERGENCYSTOP        5
-#define NEXT_ORDER              6
-#define RESET_ORDERS            7
-#define UNSETEMERGENCYSTOP      8
 
 
 #define HANDSHAKE               0
@@ -94,6 +88,7 @@ public:
 	void STMPWM(const can_msgs::PWMs::ConstPtr& msg);
 	void STMSetPose(const can_msgs::Point::ConstPtr& msg);
 	void STMSetParam(const can_msgs::STMParam::ConstPtr& msg);
+	void ARDUINOThrowBalls(const can_msgs::ThrowBalls::ConstPtr& msg);
 	void ARDUINOActionPliers(const can_msgs::ActionPliers::ConstPtr& msg);
 	void PANELAddPoint(const std_msgs::Int8::ConstPtr& msg);
 
@@ -108,6 +103,10 @@ private:
 	ros::Publisher STM_pwm_pub;
 	ros::Publisher STM_speed_pub;
 	ros::Publisher ALL_finish_pub;
+	ros::Publisher ARDUINO_sonar_distance_pub;
+	ros::Publisher STM_robot_blocked_pub;
+	// ros::Publisher LIDAR_objec_on_map_pub;
+
 
 	ros::Subscriber robot_watcher_sub;
 	ros::Subscriber can_sub;
@@ -127,6 +126,7 @@ private:
 	ros::Subscriber STM_SetPose_sub;
 	ros::Subscriber STM_SetParam_sub;
 	ros::Subscriber ARDUINO_ActionPliers_sub;
+	ros::Subscriber ARDUINO_ThrowBalls_sub;
 	ros::Subscriber PANEL_point_sub;
 };
 

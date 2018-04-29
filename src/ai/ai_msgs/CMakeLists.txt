@@ -14,6 +14,7 @@ add_message_files(DIRECTORY msg
   NodesStatus.msg
   RobotStatus.msg
   SetSide.msg
+  EmergencyStop.msg
 )
 
 add_service_files(

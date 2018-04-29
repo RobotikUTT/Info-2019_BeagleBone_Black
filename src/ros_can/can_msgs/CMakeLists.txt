@@ -9,17 +9,23 @@ find_package(catkin REQUIRED
 
 add_message_files(DIRECTORY msg
   FILES
-    Frame.msg
+    ActionPliers.msg
     CurrSpeed.msg
-    PID.msg
     Finish.msg
-    Point.msg
+    Frame.msg
+    ObjectOnMap.msg
+    PID.msg
     PWMs.msg
+    Point.msg
+    RobotBlocked.msg
+    STMParam.msg
+    SonarDistance.msg
     Speed.msg
     Status.msg
-    STMParam.msg
+    ThrowBalls.msg
     WheelsDistance.msg
-    ActionPliers.msg
+    
+
 )
 
 generate_messages(

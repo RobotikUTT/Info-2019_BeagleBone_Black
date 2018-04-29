@@ -12,10 +12,13 @@ acB("/procedures/block_action", true){
   //sub for sonar data
   //sonar_sub = nh.subscribe("/Arduino/sonars", 1, &Controller::GetSonars, this);
   robot_pos_sub = nh.subscribe("/STM/Position", 1, &Controller::GetRobotPose, this);
+  robot_speed_sub = nh.subscribe("/STM/GetSpeed", 1, &Controller::GetRobotSpeed, this);
   side_sub = nh.subscribe("side", 1, &Controller::setSide, this);
   nodes_status_sub = nh.subscribe("robot_watcher/nodes_status", 1, &Controller::checkForPANEL, this);
+  sonar_distance_sub = nh.subscribe("/ARDUINO/SonarDistance", 1, &Controller::processSonars, this);
 
-  // emergency_stop_pub = nh.advertise<ai_msgs::EmergencyStop>("emergency", 1);
+
+  emergency_stop_pub = nh.advertise<ai_msgs::EmergencyStop>("emergency", 1);
   STM_SetPose_pub = nh.advertise<can_msgs::Point>("/STM/SetPose", 1);
   STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement", 1);
   PANEL_Point_pub = nh.advertise<std_msgs::Int8>("/PANEL/AddPoint", 1);
@@ -86,7 +89,7 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
 
       STM_SetPose_pub.publish(msg);
       can_msgs::Status msg2;
-      msg2.value = 1;
+      msg2.value = START;
       STM_AsserManagement_pub.publish(msg2);
       SetAction();
       //set action to true
@@ -109,6 +112,30 @@ void Controller::sendPoint(){
   msg.data = points_done;
   PANEL_Point_pub.publish(msg);
   points_done = 0;
+}
+
+void Controller::GetRobotSpeed(const can_msgs::CurrSpeed::ConstPtr& msg)
+{
+  ROS_WARN("GET SPEED");
+  int16_t linearSpeed = msg->linear_speed;
+
+
+  if( linearSpeed > 0 )
+  {
+    direction = FORWARD;
+    ROS_INFO("FORWARD");
+  }
+  else if (linearSpeed < 0)
+  {
+    direction = BACKWARD;
+    ROS_INFO("BACKWARD");
+  }
+  else
+  {
+    direction = NONE;
+    ROS_INFO("NONE");
+  }
+
 }
 
 template <class doneMsg>
@@ -180,6 +207,70 @@ void Controller::SetAction(){
     acB.sendGoal(goal, boost::bind(&Controller::DoneAction<BlockResultConstPtr>, this, _1, _2));
 
   }
+}
+
+void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
+{
+  bool last_emergency_value = emergency_stop;
+  ROS_WARN("PROCESS SONAR");
+  uint8_t front_left,front_right,
+          left, right, back;
+
+  front_left = msg->dist_front_left;
+  front_right = msg->dist_front_right;
+  left = msg->dist_left;
+  right = msg->dist_right;
+  back = msg->dist_back;
+
+  emergency_stop = false;
+  if ( direction == FORWARD)
+  {
+    if (front_left <= SONAR_MIN_DIST ||
+        front_right <= SONAR_MIN_DIST)
+    {
+      emergency_stop = true;
+      ROS_INFO("EMG FORWARD");
+    }
+  }
+  else if ( direction == BACKWARD)
+  {
+    if ( back <= SONAR_MIN_DIST)
+    {
+      emergency_stop = true;
+      ROS_INFO("EMG BACKWARD");
+    }
+  }
+  else
+  {
+
+
+    ROS_INFO("NO EMG");
+  }
+
+  if (last_emergency_value != emergency_stop)
+  {
+    ai_msgs::EmergencyStop emergency_msg;
+    emergency_msg.emergency_set = emergency_stop;
+    emergency_stop_pub.publish(emergency_msg);
+
+    can_msgs::Status can_msg;
+    if (emergency_stop)
+    {
+      ROS_INFO("SEND EMG MSG");
+      can_msg.value = SETEMERGENCYSTOP;
+    }
+    else
+    {
+      ROS_INFO("SEND NO EMG MSG");
+      can_msg.value = UNSETEMERGENCYSTOP;
+    }
+    STM_AsserManagement_pub.publish(can_msg);
+
+  }
+
+
+
+
 }
 
 int main(int argc, char *argv[]) {
