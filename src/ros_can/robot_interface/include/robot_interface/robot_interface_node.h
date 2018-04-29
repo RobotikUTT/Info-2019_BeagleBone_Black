@@ -19,12 +19,14 @@
 #include "can_msgs/ActionPliers.h"
 
 #include "std_msgs/Empty.h"
+#include "std_msgs/Int8.h"
 
 #define ALL_CAN_ADDR            0
 #define BBB_CAN_ADDR            1
 #define STM_CAN_ADDR            2
 #define ARDUINO_CAN_ADDR        3
 #define ZIGBEE_CAN_ADDR         4
+#define PANEL_CAN_ADDR          5
 
 
 
@@ -45,6 +47,7 @@
 
 #define SPD                     4
 #define GET_CODER               5
+#define SEND_POINT              6
 #define MANAGEMENT              7
 #define GOTOA                   8
 #define GOTO                    9
@@ -92,6 +95,7 @@ public:
 	void STMSetPose(const can_msgs::Point::ConstPtr& msg);
 	void STMSetParam(const can_msgs::STMParam::ConstPtr& msg);
 	void ARDUINOActionPliers(const can_msgs::ActionPliers::ConstPtr& msg);
+	void PANELAddPoint(const std_msgs::Int8::ConstPtr& msg);
 
 private:
 	ros::NodeHandle nh;
@@ -123,6 +127,7 @@ private:
 	ros::Subscriber STM_SetPose_sub;
 	ros::Subscriber STM_SetParam_sub;
 	ros::Subscriber ARDUINO_ActionPliers_sub;
+	ros::Subscriber PANEL_point_sub;
 };
 
 #endif

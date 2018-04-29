@@ -32,6 +32,8 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->STM_SetParam_sub = nh.subscribe("/STM/SetParam",10, &CanInterfaceNode::STMSetParam, this);
 	this->ARDUINO_ActionPliers_sub = nh.subscribe("/ARDUINO/ActionPliers",10, &CanInterfaceNode::ARDUINOActionPliers, this);
 	this->ALL_Ping_sub = nh.subscribe("/ALL/Ping",10, &CanInterfaceNode::ALLPing, this);
+
+	this->PANEL_point_sub = nh.subscribe("/PANEL/AddPoint",10, &CanInterfaceNode::PANELAddPoint, this);
 	service_ready("ros_can", "interface", 1 );
 
 }
@@ -65,6 +67,10 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 				}
 				case ZIGBEE_CAN_ADDR:{
 					boardName = "ZIGBEE";
+					break;
+				}
+				case PANEL_CAN_ADDR:{
+					boardName = "PANEL";
 					break;
 				}
 			}
@@ -176,8 +182,25 @@ void CanInterfaceNode::STMSpeed(const can_msgs::Speed::ConstPtr& msg){
 	fr.data[6] = msg->duration & 0x00FF;
 
 	can_pub.publish(fr);
-
 }
+
+
+void CanInterfaceNode::PANELAddPoint(const std_msgs::Int8::ConstPtr& msg){
+	can_msgs::Frame fr;
+	fr.header.stamp = ros::Time::now();
+	fr.header.frame_id = "/ros_can/interface/";
+	fr.is_rtr = 0;
+	fr.is_error = 0;
+	fr.is_extended = 0;
+
+	fr.dlc = 2;
+	fr.id = PANEL_CAN_ADDR;
+	fr.data[0] = SEND_POINT;
+	fr.data[1] = msg->data;
+
+	can_pub.publish(fr);
+}
+
 
 void CanInterfaceNode::STMAsserManagement(const can_msgs::Status::ConstPtr& msg){
 	can_msgs::Frame fr;
