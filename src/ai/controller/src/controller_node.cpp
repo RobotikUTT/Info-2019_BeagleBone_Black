@@ -12,11 +12,12 @@ acB("/procedures/block_action", true){
   //sub for sonar data
   //sonar_sub = nh.subscribe("/Arduino/sonars", 1, &Controller::GetSonars, this);
   robot_pos_sub = nh.subscribe("/STM/Position", 1, &Controller::GetRobotPose, this);
+  robot_speed_sub = nh.subscribe("/STM/GetSpeed", 1, &Controller::GetRobotSpeed, this);
   side_sub = nh.subscribe("side", 1, &Controller::setSide, this);
   sonar_distance_sub = nh.subscribe("/ARDUINO/SonarDistance", 1, &Controller::processSonars, this);
 
 
-  // emergency_stop_pub = nh.advertise<ai_msgs::EmergencyStop>("emergency", 1);
+  emergency_stop_pub = nh.advertise<ai_msgs::EmergencyStop>("emergency", 1);
   STM_SetPose_pub = nh.advertise<can_msgs::Point>("/STM/SetPose", 1);
   STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement", 1);
 
@@ -91,6 +92,26 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
   }
 }
 
+void Controller::GetRobotSpeed(const can_msgs::CurrSpeed::ConstPtr& msg)
+{
+  int16_t linearSpeed = msg->linear_speed;
+  
+
+  if( linearSpeed > 0 )
+  {
+    direction = FOREWARD;
+  }
+  else if (linearSpeed < 0)
+  {
+    direction = BACKWARD;
+  }
+  else
+  {
+    direction = NONE;
+  }
+
+}
+
 template <class doneMsg>
 void Controller::DoneAction( const actionlib::SimpleClientGoalState& state,
                         const doneMsg & result){
@@ -161,7 +182,58 @@ void Controller::SetAction(){
 
 void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
 {
+  bool last_emergency_value = emergency_stop;
   ROS_WARN("PROCESS SONAR");
+  uint8_t front_left,front_right,
+          left, right, back;
+  
+  front_left = msg->dist_front_left;
+  front_right = msg->dist_front_right;
+  left = msg->dist_left;
+  right = msg->dist_right;
+  back = msg->dist_back;
+  
+  if ( direction == FOREWARD)
+  {
+    if (front_left <= SONAR_MIN_DIST ||
+        front_right <= SONAR_MIN_DIST)
+    {
+      emergency_stop = true;
+    }
+  }
+  else if ( direction == BACKWARD)
+  {
+    if ( back <= SONAR_MIN_DIST)
+    {
+      emergency_stop = true;
+    }
+  }
+  else
+  {
+    emergency_stop = false;
+  }
+
+  if (last_emergency_value != emergency_stop)
+  {
+    ai_msgs::EmergencyStop emergency_msg;
+    emergency_msg.emergency_set = emergency_stop;
+    emergency_stop_pub.publish(emergency_msg);
+
+    can_msgs::Status can_msg;
+    if (emergency_stop)
+    {
+      can_msg.value = SETEMERGENCYSTOP;
+    }
+    else
+    {
+      can_msg.value = UNSETEMERGENCYSTOP;
+    }
+    STM_AsserManagement_pub.publish(can_msg);
+
+  }
+
+
+
   
 }
 
