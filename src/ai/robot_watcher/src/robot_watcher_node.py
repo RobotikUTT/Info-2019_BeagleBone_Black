@@ -11,6 +11,8 @@ from ai_msgs.msg import NodesStatus, RobotStatus, SetSide
 from ai_msgs.srv import NodeReadiness, NodeReadinessResponse
 from robot_watcher.RStatus.State import RobotState, WatcherState, NODES_CHECKLIST, Side
 
+from std_msgs.msg import Empty
+
 PIN_SIDE = "P8_7"
 PIN_START = "P8_8"
 
@@ -34,6 +36,7 @@ class RobotWatcherNode(object):
 		self._robot_watcher_publisher = rospy.Publisher("/ai/robot_watcher/robot_status", RobotStatus, queue_size = 1, latch=True)
 		self._nodes_status_publisher = rospy.Publisher("/ai/robot_watcher/nodes_status", NodesStatus, queue_size = 1)
 		self._side_publisher = rospy.Publisher("side", SetSide, queue_size = 1, latch=True)
+		self._ping_publisher = rospy.Publisher("/ALL/Ping", Empty, queue_size = 3)
 
 		self.robot_watcher 	= RobotState.ROBOT_INIT
 		self.nodes_status 	= WatcherState.NODES_INIT
@@ -43,6 +46,8 @@ class RobotWatcherNode(object):
 		self.publish_robot_watcher()
 		self.side = GPIO.input(PIN_SIDE)
 		self._side_publisher.publish(SetSide(self.side))
+
+		self.ping_board = rospy.Timer(rospy.Duration(1), self.board_ping)
 
 		r = rospy.Rate(5)
 		while not rospy.is_shutdown():
@@ -61,7 +66,7 @@ class RobotWatcherNode(object):
 				if self.nodes_ready():
 					self.change_nodes_status(WatcherState.NODES_RUNNING)
 				if time.time() - self.init_start_time > self.INIT_TIMEOUT:
-					if len([n for n in NODES_CHECKLIST if NODES_CHECKLIST[n] in [None, False]]) > 0:
+					if len([n for n in NODES_CHECKLIST if NODES_CHECKLIST[n] in ["need", False]]) > 0:
 						self.change_nodes_status(WatcherState.NODES_ERROR)
 					else:
 						self.change_nodes_status(WatcherState.NODES_RUNNING)
@@ -86,7 +91,7 @@ class RobotWatcherNode(object):
 
 	def nodes_ready(self):
 		for _, val in NODES_CHECKLIST.items():
-			if val == None or val == False:
+			if val == "need" or val == False:
 				return False
 		return True
 
@@ -98,7 +103,7 @@ class RobotWatcherNode(object):
 	def publish_nodes_status(self):
 		msg = NodesStatus()
 		for node, val in NODES_CHECKLIST.items():
-			if val == None:
+			if val == "need" or val == "optional":
 				msg.nodes_init.append(node)
 			elif val == True:
 				msg.nodes_ready.append(node)
@@ -124,7 +129,7 @@ class RobotWatcherNode(object):
 			rospy.logerr("Nodes init not complete\nnodes not ready '{}'\nnodes unresponsive '{}"
 				.format(
 					str([n for n in NODES_CHECKLIST if NODES_CHECKLIST[n] == False]),
-					str([n for n in NODES_CHECKLIST if NODES_CHECKLIST[n] == None])))
+					str([n for n in NODES_CHECKLIST if NODES_CHECKLIST[n] == "need"])))
 		self.nodes_status = status
 		self.publish_robot_watcher()
 
@@ -140,6 +145,22 @@ class RobotWatcherNode(object):
 	def halt_game(self, event):
 		# rospy.logwarn("!!!!!!!GAME STOP!!!!!!!!")
 		self.change_robot_watcher(RobotState.ROBOT_HALT)
+
+	def board_ready(self):
+		for name, val in NODES_CHECKLIST.items():
+			if name.split('/')[1] == "board":
+				if val == "need" or val == False:
+					return False
+		return True
+
+	def board_ping(self, event):
+		if NODES_CHECKLIST["/ros_can/interface"] != False or NODES_CHECKLIST["/ros_can/interface"] != "need" :
+			if not self.board_ready():
+				self._ping_publisher.publish(Empty())
+			else:
+				self.ping_board.shutdown()
+
+
 
 if __name__ == '__main__':
 	RobotWatcherNode()

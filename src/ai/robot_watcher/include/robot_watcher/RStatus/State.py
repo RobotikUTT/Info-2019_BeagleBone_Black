@@ -27,11 +27,14 @@ NODES_CHECKLIST = {
 # "/namespace/pkg" 		: None,
 # "/sender/" 				: None, #test
 # "/receiver/" 			: None, #test
-"/ros_can/interface" 	: None,
-"/ai/scheduler" 		: None,
-"/ai/controller" 		: None,
-"/procedure/move" 		: None,
-"/procedure/block" 		: None
+"/board/STM" 			: "optional",
+"/board/ARDUINO" 		: "optional",
+"/board/ZIGBEE" 		: "optional",
+"/ros_can/interface" 	: "need",
+"/ai/scheduler" 		: "need",
+"/ai/controller" 		: "need",
+"/procedure/move" 		: "need",
+"/procedure/block" 		: "need"
 
 
 }
