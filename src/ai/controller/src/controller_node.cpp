@@ -94,20 +94,24 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
 
 void Controller::GetRobotSpeed(const can_msgs::CurrSpeed::ConstPtr& msg)
 {
+  ROS_WARN("GET SPEED");
   int16_t linearSpeed = msg->linear_speed;
   
 
   if( linearSpeed > 0 )
   {
-    direction = FOREWARD;
+    direction = FORWARD;
+    ROS_INFO("FORWARD");
   }
   else if (linearSpeed < 0)
   {
     direction = BACKWARD;
+    ROS_INFO("BACKWARD");
   }
   else
   {
     direction = NONE;
+    ROS_INFO("NONE");
   }
 
 }
@@ -193,12 +197,14 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
   right = msg->dist_right;
   back = msg->dist_back;
   
-  if ( direction == FOREWARD)
+  emergency_stop = false;
+  if ( direction == FORWARD)
   {
     if (front_left <= SONAR_MIN_DIST ||
         front_right <= SONAR_MIN_DIST)
     {
       emergency_stop = true;
+      ROS_INFO("EMG FORWARD");
     }
   }
   else if ( direction == BACKWARD)
@@ -206,11 +212,14 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
     if ( back <= SONAR_MIN_DIST)
     {
       emergency_stop = true;
+      ROS_INFO("EMG BACKWARD");
     }
   }
   else
   {
-    emergency_stop = false;
+
+    
+    ROS_INFO("NO EMG");
   }
 
   if (last_emergency_value != emergency_stop)
@@ -222,10 +231,12 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
     can_msgs::Status can_msg;
     if (emergency_stop)
     {
+      ROS_INFO("SEND EMG MSG");
       can_msg.value = SETEMERGENCYSTOP;
     }
     else
     {
+      ROS_INFO("SEND NO EMG MSG");
       can_msg.value = UNSETEMERGENCYSTOP;
     }
     STM_AsserManagement_pub.publish(can_msg);
