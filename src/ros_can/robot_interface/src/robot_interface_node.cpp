@@ -11,7 +11,6 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->STM_pos_pub = nh.advertise<can_msgs::Point>("/STM/Position", 10);
 	this->STM_pwm_pub = nh.advertise<can_msgs::PWMs>("/STM/GetPWM", 10);
 	this->STM_speed_pub = nh.advertise<can_msgs::CurrSpeed>("/STM/GetSpeed", 10);
-	this->STM_speed_pub = nh.advertise<can_msgs::CurrSpeed>("/STM/GetSpeed", 10);
 	this->ALL_finish_pub = nh.advertise<can_msgs::Finish>("/ALL/Finish", 10);
 	this->ARDUINO_sonar_distance_pub = nh.advertise<can_msgs::SonarDistance>("/ARDUINO/SonarDistance",10);
 	this->STM_robot_blocked_pub = nh.advertise<can_msgs::RobotBlocked>("/STM/RobotBlocked", 10);
