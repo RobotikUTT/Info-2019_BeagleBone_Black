@@ -24,7 +24,7 @@
 #include "robot_interface/protocol.h"
 //include action
 
-#define FOREWARD        1
+#define FORWARD        1
 #define BACKWARD        -1
 #define NONE            0
 
