@@ -18,6 +18,8 @@
 #include "can_msgs/WheelsDistance.h"
 #include "can_msgs/ActionPliers.h"
 
+#include "std_msgs/Empty.h"
+
 #define ALL_CAN_ADDR            0
 #define BBB_CAN_ADDR            1
 #define STM_CAN_ADDR            2
@@ -75,6 +77,7 @@ public:
 	void updateRobotStatus(const ai_msgs::RobotStatus::ConstPtr&);
 	void canMsgProcess(const can_msgs::Frame::ConstPtr& msg);
 
+	void ALLPing(const std_msgs::Empty::ConstPtr& msg);
 	void STMSetMode(const can_msgs::Status::ConstPtr& msg);
 	void STMSpeed(const can_msgs::Speed::ConstPtr& msg);
 	void STMAsserManagement(const can_msgs::Status::ConstPtr& msg);
@@ -105,6 +108,7 @@ private:
 	ros::Subscriber robot_watcher_sub;
 	ros::Subscriber can_sub;
 
+	ros::Subscriber ALL_Ping_sub;
 	ros::Subscriber STM_SetMode_sub;
 	ros::Subscriber STM_Speed_sub;
 	ros::Subscriber STM_AsserManagement_sub;

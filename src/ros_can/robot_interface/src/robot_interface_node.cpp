@@ -15,7 +15,7 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->ALL_finish_pub = nh.advertise<can_msgs::Finish>("/ALL/Finish", 10);
 
 	this->robot_watcher_sub = nh.subscribe("/ai/robot_watcher/robot_watcher", 10, &CanInterfaceNode::updateRobotStatus, this);
-	this->can_sub = nh.subscribe("received_messages", 10, &CanInterfaceNode::canMsgProcess, this);
+	this->can_sub = nh.subscribe("received_messages", 100, &CanInterfaceNode::canMsgProcess, this);
 
 	this->STM_SetMode_sub = nh.subscribe("/STM/SetMode",10, &CanInterfaceNode::STMSetMode, this);
 	this->STM_Speed_sub = nh.subscribe("/STM/Speed",10, &CanInterfaceNode::STMSpeed, this);
@@ -31,6 +31,7 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->STM_SetPose_sub = nh.subscribe("/STM/SetPose",10, &CanInterfaceNode::STMSetPose, this);
 	this->STM_SetParam_sub = nh.subscribe("/STM/SetParam",10, &CanInterfaceNode::STMSetParam, this);
 	this->ARDUINO_ActionPliers_sub = nh.subscribe("/ARDUINO/ActionPliers",10, &CanInterfaceNode::ARDUINOActionPliers, this);
+	this->ALL_Ping_sub = nh.subscribe("/ALL/Ping",10, &CanInterfaceNode::ALLPing, this);
 	service_ready("ros_can", "interface", 1 );
 
 }
@@ -49,8 +50,26 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 	switch (msg->data[0]) {
 		case WHOAMI:{
 
-			uint boardID = msg->id;
-			uint8_t status = msg->data[1];
+			uint8_t status = msg->data[2];
+
+			std::string boardName;
+
+			switch (msg->data[1]) {
+				case STM_CAN_ADDR:{
+					boardName = "STM";
+					break;
+				}
+				case ARDUINO_CAN_ADDR:{
+					boardName = "ARDUINO";
+					break;
+				}
+				case ZIGBEE_CAN_ADDR:{
+					boardName = "ZIGBEE";
+					break;
+				}
+			}
+
+			service_ready("board", boardName, status );
 			break;
 			}
 		case GET_CODER:{
@@ -102,6 +121,22 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 
 }
 
+void CanInterfaceNode::ALLPing(const std_msgs::Empty::ConstPtr& msg){
+	can_msgs::Frame fr;
+	fr.header.stamp = ros::Time::now();
+	fr.header.frame_id = "/ros_can/interface/";
+	fr.is_rtr = 0;
+	fr.is_error = 0;
+	fr.is_extended = 0;
+
+	fr.dlc = 1;
+	fr.id = ALL_CAN_ADDR;
+	fr.data[0] = HANDSHAKE;
+
+	can_pub.publish(fr);
+
+
+}
 
 void CanInterfaceNode::STMSetMode(const can_msgs::Status::ConstPtr& msg){
 	can_msgs::Frame fr;
