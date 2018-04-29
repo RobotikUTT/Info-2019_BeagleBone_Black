@@ -37,7 +37,7 @@ GroupBlocks::GroupBlocks(int _xg, int _yg, int _rot, int _xd, int _yd, bool side
   proc_point[9] = OrientedPoint(_xg + (int)round(std::cos(M_PI/2 - (float)rot/1000))* d_1, _yg + (int)round(std::sin(M_PI/2 - (float)rot/1000)) * d_1, -3141 + rot);
 
   if (side) { //if orange
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 10; i++) {
       proc_point[i].x = (_xg - proc_point[i].x) + _xg;
       proc_point[i].angle = -proc_point[i].angle;
     }

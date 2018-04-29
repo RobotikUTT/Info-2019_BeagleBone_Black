@@ -23,7 +23,7 @@ public:
   OrientedPoint depos;
   OrientedPoint depos_;
   int rot;
-  OrientedPoint proc_point [9];
+  OrientedPoint proc_point [10];
 
 private:
 
