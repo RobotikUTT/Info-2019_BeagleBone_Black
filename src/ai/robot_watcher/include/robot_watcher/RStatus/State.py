@@ -30,6 +30,7 @@ NODES_CHECKLIST = {
 "/board/STM" 			: "optional",
 "/board/ARDUINO" 		: "optional",
 "/board/ZIGBEE" 		: "optional",
+"/board/PANEL" 			: "optional",
 "/ros_can/interface" 	: "need",
 "/ai/scheduler" 		: "need",
 "/ai/controller" 		: "need",
