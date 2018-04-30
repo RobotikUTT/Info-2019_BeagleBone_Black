@@ -125,7 +125,6 @@ class RobotWatcherNode(object):
 		GPIO.output(GREEN_LED, GPIO.LOW)
 
 	def setLED(self, GPIO):
-		print self.error_code
 		if self.error_code != 0:
 			GPIO.output(PINK_LED, GPIO.LOW)
 			GPIO.output(GREEN_LED, GPIO.LOW)
