@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   can_msgs
+  ai_msgs
   robot_watcher
   controller
 )

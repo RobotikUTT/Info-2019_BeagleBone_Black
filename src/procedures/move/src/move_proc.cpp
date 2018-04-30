@@ -8,7 +8,8 @@ Move::Move(std::string name):
     act.registerPreemptCallback(boost::bind(&Move::preemptCB, this));
     act.start();
 
-    sub = nh.subscribe("/ALL/Finish", 1, &Move::analysisCB, this);
+    finish_sub = nh.subscribe("/ALL/Finish", 1, &Move::analysisCB, this);
+    robot_watcher_sub = nh.subscribe("/ai/robot_watcher/robot_status", 1, &Move::GetRobotStatus, this);
 
     this->STMGoToAngle_pub = nh.advertise<can_msgs::Point>("/STM/GoToAngle", 1);
     this->STMGoTo_pub = nh.advertise<can_msgs::Point>("/STM/GoTo", 1);
@@ -94,6 +95,13 @@ inline void Move::sendMsg() {
     }
 
     fifo.erase(fifo.begin());
+  }
+}
+
+void Move::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
+  if(msg->robot_watcher == ROBOT_HALT){
+    fifo.clear();
+    act.shutdown();
   }
 }
 

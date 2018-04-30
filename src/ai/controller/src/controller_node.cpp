@@ -48,8 +48,8 @@ void Controller::setSide(const ai_msgs::SetSide::ConstPtr& msg){
 
 //function to get robot pos
 void Controller::GetRobotPose(const can_msgs::Point::ConstPtr & msg){
- ROS_INFO_STREAM("robot pos_x: " << msg->pos_x 
-  << " robot pos_y: " << msg->pos_y 
+ ROS_INFO_STREAM("robot pos_x: " << msg->pos_x
+  << " robot pos_y: " << msg->pos_y
   << " robot angle: " << msg->angle);
   robot_pos_x = msg->pos_x;
   robot_pos_y = msg->pos_y;
@@ -93,6 +93,14 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
       STM_AsserManagement_pub.publish(msg2);
       SetAction();
       //set action to true
+  } else if (robot_status == ROBOT_HALT){
+
+    can_msgs::Status msg;
+    msg.value = STOP;
+    STM_AsserManagement_pub.publish(msg);
+
+    msg.value = RESET_ORDERS;
+    STM_AsserManagement_pub.publish(msg);
   }
 }
 
@@ -120,8 +128,8 @@ void Controller::GetRobotSpeed(const can_msgs::CurrSpeed::ConstPtr& msg)
   int16_t leftSpeed = msg->left_speed;
   int16_t rightSpeed = msg->right_speed;
 
-  ROS_INFO_STREAM("SPEEDS|linear: " << linearSpeed 
-  << " left: " << leftSpeed 
+  ROS_INFO_STREAM("SPEEDS|linear: " << linearSpeed
+  << " left: " << leftSpeed
   << " right: " << rightSpeed);
 
   if( linearSpeed > 0 )
@@ -153,18 +161,20 @@ void Controller::DoneAction( const actionlib::SimpleClientGoalState& state,
     sendPoint();
   }
 
+  if (robot_status != ROBOT_HALT){
 
-  //set old action to done
-  ai_msgs::CurrentActionDone srv;
-  srv.request.done = result->done;
-  // ROS_INFO_STREAM("Action in state " << result->done);
-  if (!clientD.call(srv)) {
-    ROS_ERROR("Failed to call service currentActionDone");
+    //set old action to done
+    ai_msgs::CurrentActionDone srv;
+    srv.request.done = result->done;
+    // ROS_INFO_STREAM("Action in state " << result->done);
+    if (!clientD.call(srv)) {
+      ROS_ERROR("Failed to call service currentActionDone");
+    }
+
+    //ask for new action
+    //activate new action
+    SetAction();
   }
-
-  //ask for new action
-  //activate new action
-  SetAction();
 
 }
 
@@ -226,9 +236,9 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
   // << "|" << left << "|"  << right << "|" << back);
   ROS_INFO("DIST|%u|%u|%u|%u|%u",front_left,
     front_right, left, right, back);
-  
 
-  
+
+
 
   emergency_stop = false;
   if ( direction == FORWARD)

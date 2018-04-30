@@ -20,6 +20,9 @@ GREEN_LED 	= "P9_27"
 
 ERROR_LED	= ["P9_"+str(j) for j in [17,18,12,15,30]]
 
+
+WAIT_TIME = 10
+
 class RobotWatcherNode(object):
 	"""docstring for RobotWatcherNode
 	node to monitor robot nodes"""
@@ -52,7 +55,7 @@ class RobotWatcherNode(object):
 			GPIO.setup(RED_LED,GPIO.OUT)
 			GPIO.setup(PINK_LED,GPIO.OUT)
 			GPIO.setup(GREEN_LED,GPIO.OUT)
-			
+
 			GPIO.output(RED_LED, GPIO.LOW)
 			GPIO.output(PINK_LED, GPIO.LOW)
 			GPIO.output(GREEN_LED, GPIO.LOW)
@@ -198,6 +201,12 @@ class RobotWatcherNode(object):
 	def halt_game(self, event):
 		# rospy.logwarn("!!!!!!!GAME STOP!!!!!!!!")
 		self.change_robot_watcher(RobotState.ROBOT_HALT)
+		rospy.Timer(rospy.Duration(WAIT_TIME), self.shutdown_ros, oneshot=True)
+
+	def shutdown_ros(self, event):
+
+		rospy.signal_shutdown("shuting down: end of game")
+
 
 	def board_ready(self):
 		for name, val in NODES_CHECKLIST.items():
