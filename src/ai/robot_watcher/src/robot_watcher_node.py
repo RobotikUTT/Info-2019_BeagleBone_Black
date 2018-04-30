@@ -11,8 +11,14 @@ from robot_watcher.RStatus.State import RobotState, WatcherState, NODES_CHECKLIS
 
 from std_msgs.msg import Empty
 
-PIN_SIDE = "P8_7"
-PIN_START = "P8_8"
+PIN_SIDE 	= "P8_7"
+PIN_START 	= "P8_8"
+
+RED_LED 	= "P9_23"
+PINK_LED 	= "P9_25"
+GREEN_LED 	= "P9_27"
+
+ERROR_LED	= ["P9_"+str(j) for j in [17,18,12,15,30]]
 
 class RobotWatcherNode(object):
 	"""docstring for RobotWatcherNode
@@ -29,13 +35,28 @@ class RobotWatcherNode(object):
 			from robot_watcher.GPIOemulator.EmulatorGUI import GPIO
 			GPIO.setmode(GPIO.BCM)
 			GPIO.setwarnings(False)
-			GPIO.setup(PIN_START,GPIO.IN, initial = GPIO.LOW)
-			GPIO.setup(PIN_SIDE,GPIO.IN, initial = GPIO.LOW)
+			GPIO.setup(PIN_START,GPIO.IN, 		initial = GPIO.LOW)
+			GPIO.setup(PIN_SIDE,GPIO.IN, 		initial = GPIO.LOW)
+
+			GPIO.setup(RED_LED,GPIO.OUT,	 	initial = GPIO.LOW)
+			GPIO.setup(PINK_LED,GPIO.OUT,	 	initial = GPIO.LOW)
+			GPIO.setup(GREEN_LED,GPIO.OUT,	 	initial = GPIO.LOW)
+
+			for i in ERROR_LED:
+				GPIO.setup(i,GPIO.OUT,	initial = GPIO.LOW)
 		else :
 			import Adafruit_BBIO.GPIO as GPIO
 			GPIO.setup(PIN_START,GPIO.IN)
 			GPIO.setup(PIN_SIDE,GPIO.IN)
 
+			GPIO.setup(RED_LED,GPIO.OUT)
+			GPIO.setup(PINK_LED,GPIO.OUT)
+			GPIO.setup(GREEN_LED,GPIO.OUT)
+
+			for i in ERROR_LED:
+				GPIO.setup(i,GPIO.OUT)
+
+		GPIO.output(RED_LED, GPIO.HIGH)
 
 		rospy.Service("/ai/robot_watcher/node_readiness", NodeReadiness, self.set_readiness)
 		self._robot_watcher_publisher = rospy.Publisher("/ai/robot_watcher/robot_status", RobotStatus, queue_size = 1, latch=True)
@@ -51,6 +72,8 @@ class RobotWatcherNode(object):
 		self.publish_robot_watcher()
 		self.side = GPIO.input(PIN_SIDE)
 		self._side_publisher.publish(SetSide(self.side))
+
+		self.error_code = 0
 
 		self.ping_board = rospy.Timer(rospy.Duration(1), self.board_ping)
 
@@ -90,8 +113,25 @@ class RobotWatcherNode(object):
 
 
 			self.publish_nodes_status()
-
+			self.setLED(GPIO)
 			r.sleep()
+
+	def setLED(self, GPIO):
+		print self.error_code
+		if self.error_code != 0:
+			GPIO.output(PINK_LED, GPIO.LOW)
+			GPIO.output(GREEN_LED, GPIO.LOW)
+			for i in xrange(5):
+				GPIO.output(ERROR_LED[i], self.error_code >> i & 1)
+
+		else:
+			if self.robot_watcher == RobotState.ROBOT_INIT:
+				GPIO.output(PINK_LED, not GPIO.input(PINK_LED))
+			elif self.robot_watcher == RobotState.ROBOT_READY:
+				GPIO.output(PINK_LED, GPIO.HIGH)
+			elif self.robot_watcher == RobotState.ROBOT_RUNNING:
+				GPIO.output(GREEN_LED, GPIO.HIGH)
+
 
 
 	def nodes_ready(self):
@@ -142,6 +182,7 @@ class RobotWatcherNode(object):
 	def set_readiness(self, msg):
 		if msg.node_name in NODES_CHECKLIST:
 			NODES_CHECKLIST[msg.node_name] = msg.ready
+			self.error_code = msg.error_code
 			return NodeReadinessResponse()
 		else:
 			rospy.logwarn("Node {} not in cheklist".format(msg.node_name))
