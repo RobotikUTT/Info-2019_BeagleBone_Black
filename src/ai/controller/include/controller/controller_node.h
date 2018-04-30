@@ -30,7 +30,7 @@
 #define BACKWARD        -1
 #define NONE            0
 
-#define SONAR_MIN_DIST  0
+#define SONAR_MIN_DIST  30 //in cm
 
 typedef actionlib::SimpleActionClient<procedures_msgs::MoveAction> ClientMove;
 typedef actionlib::SimpleActionClient<procedures_msgs::BlockAction> ClientBlock;
