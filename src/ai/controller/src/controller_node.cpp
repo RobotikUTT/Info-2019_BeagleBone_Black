@@ -48,9 +48,9 @@ void Controller::setSide(const ai_msgs::SetSide::ConstPtr& msg){
 
 //function to get robot pos
 void Controller::GetRobotPose(const can_msgs::Point::ConstPtr & msg){
- ROS_INFO_STREAM("robot pos_x: " << msg->pos_x);
- ROS_INFO_STREAM("robot pos_y: " << msg->pos_y);
- ROS_INFO_STREAM("robot angle: " << msg->angle);
+ ROS_INFO_STREAM("robot pos_x: " << msg->pos_x 
+  << " robot pos_y: " << msg->pos_y 
+  << " robot angle: " << msg->angle);
   robot_pos_x = msg->pos_x;
   robot_pos_y = msg->pos_y;
   robot_angle = msg->angle;
@@ -117,7 +117,12 @@ void Controller::sendPoint(){
 void Controller::GetRobotSpeed(const can_msgs::CurrSpeed::ConstPtr& msg)
 {
   int16_t linearSpeed = msg->linear_speed;
+  int16_t leftSpeed = msg->left_speed;
+  int16_t rightSpeed = msg->right_speed;
 
+  ROS_INFO_STREAM("SPEEDS|linear: " << linearSpeed 
+  << " left: " << leftSpeed 
+  << " right: " << rightSpeed);
 
   if( linearSpeed > 0 )
   {
@@ -210,6 +215,10 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
   bool last_emergency_value = emergency_stop;
   uint8_t front_left,front_right,
           left, right, back;
+
+  ROS_INFO_STREAM("DIST|" << front_left << "|" << front_right
+  << "|" << left << "|"  << right << "|" << back);
+  
 
   front_left = msg->dist_front_left;
   front_right = msg->dist_front_right;
