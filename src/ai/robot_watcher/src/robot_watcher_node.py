@@ -52,6 +52,10 @@ class RobotWatcherNode(object):
 			GPIO.setup(RED_LED,GPIO.OUT)
 			GPIO.setup(PINK_LED,GPIO.OUT)
 			GPIO.setup(GREEN_LED,GPIO.OUT)
+			
+			GPIO.output(RED_LED, GPIO.LOW)
+			GPIO.output(PINK_LED, GPIO.LOW)
+			GPIO.output(GREEN_LED, GPIO.LOW)
 
 			for i in ERROR_LED:
 				GPIO.setup(i,GPIO.OUT)
@@ -115,6 +119,10 @@ class RobotWatcherNode(object):
 			self.publish_nodes_status()
 			self.setLED(GPIO)
 			r.sleep()
+
+		GPIO.output(RED_LED, GPIO.LOW)
+		GPIO.output(PINK_LED, GPIO.LOW)
+		GPIO.output(GREEN_LED, GPIO.LOW)
 
 	def setLED(self, GPIO):
 		print self.error_code
