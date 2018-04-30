@@ -250,8 +250,6 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
   {
     if (front_left <= SONAR_MIN_DIST ||
         front_right <= SONAR_MIN_DIST ||
-        left <= SONAR_MIN_DIST ||
-        right <= SONAR_MIN_DIST ||
         back <= SONAR_MIN_DIST)
     {
       emergency_stop = true;
