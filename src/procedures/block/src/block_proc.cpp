@@ -38,7 +38,6 @@ void Block::goalCB()
   //   fifo.push_back();
   // }
 
-  //MARCHE PAS OVERFLOW
   objectif = GroupBlocks(msg->block_action.x, msg->block_action.y, msg->block_action.rot, msg->depot.x, msg->depot.y, side);
 
   sendMsg();
@@ -380,6 +379,12 @@ void Block::DoneMove( const actionlib::SimpleClientGoalState& state, const MoveR
   phase ++;
 
   sendMsg();
+}
+
+void Block::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
+  if(msg->robot_watcher == ROBOT_HALT){
+    act.shutdown();
+  }
 }
 
 

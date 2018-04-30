@@ -10,11 +10,13 @@
 #include "can_msgs/Finish.h"
 #include "can_msgs/ActionPliers.h"
 #include "ai_msgs/SetSide.h"
+#include "ai_msgs/RobotStatus.h"
 #include <robot_watcher/Services/RobotServices.h>
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
 #include "action/action_define.h"
 #include "move/MoveType.h"
+#include "robot_watcher/RStatus/State.h"
 
 typedef actionlib::SimpleActionServer<procedures_msgs::BlockAction> BlockSrv;
 typedef actionlib::SimpleActionClient<procedures_msgs::MoveAction> ClientMove;
@@ -55,6 +57,7 @@ private:
 
   void DoneMove( const actionlib::SimpleClientGoalState& state, const MoveResultConstPtr & result);
   void setSide(const ai_msgs::SetSide::ConstPtr& msg);
+  void GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
 
 
   // procedures_msgs::XXFeedback feedback
