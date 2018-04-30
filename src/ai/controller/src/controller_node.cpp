@@ -216,17 +216,19 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
   uint8_t front_left,front_right,
           left, right, back;
 
+  front_left = msg->dist_front_left;
+  front_right = msg->dist_front_right;
+  left = msg->dist_left;
+  right = msg->dist_right;
+  back = msg->dist_back;
+
   // ROS_INFO_STREAM("DIST|" << front_left << "|" << front_right
   // << "|" << left << "|"  << right << "|" << back);
   ROS_INFO("DIST|%u|%u|%u|%u|%u",front_left,
     front_right, left, right, back);
   
 
-  front_left = msg->dist_front_left;
-  front_right = msg->dist_front_right;
-  left = msg->dist_left;
-  right = msg->dist_right;
-  back = msg->dist_back;
+  
 
   emergency_stop = false;
   if ( direction == FORWARD)
