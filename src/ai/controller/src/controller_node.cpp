@@ -264,6 +264,15 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
     emergency_msg.emergency_set = emergency_stop;
     emergency_stop_pub.publish(emergency_msg);
 
+    if (emergency_stop)
+    {
+      ROS_WARN("SET EMG");
+    }
+    else
+    {
+      ROS_WARN("UNSET EMG");
+    }
+
     can_msgs::Status can_msg;
     if (emergency_stop)
     {
