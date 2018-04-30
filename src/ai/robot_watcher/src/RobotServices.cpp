@@ -6,7 +6,7 @@ string ROBOT_SRV = "/ai/robot_watcher/node_readiness";
 float TIMEOUT = 10.0;
 
 
-void service_ready(const string name_space, const string package, const bool val){
+void service_ready(const string name_space, const string package, const bool ready, const uint8_t error_code){
 	string node_name = "/" + name_space + "/" + package;
 
 	try {
@@ -15,14 +15,18 @@ void service_ready(const string name_space, const string package, const bool val
 		ros::NodeHandle nh;
 		ros::ServiceClient readyPub = nh.serviceClient<ai_msgs::NodeReadiness>(ROBOT_SRV);
         ai_msgs::NodeReadiness msg;
-        msg.request.ready = val;
+        msg.request.ready = ready;
         msg.request.node_name = node_name;
-        if (!readyPub.call(msg))
-            throw;
-        if (val)
+
+        if (ready){
             ROS_INFO_STREAM("Node " << node_name << " initialized.");
-        else
+						msg.request.error_code = 0;
+				} else{
             ROS_ERROR_STREAM("Node " << node_name << " not initialized.");
+						msg.request.error_code = error_code;
+					}
+				if (!readyPub.call(msg))
+						throw;
     }
     catch(...)
     {

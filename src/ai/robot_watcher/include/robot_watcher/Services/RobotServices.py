@@ -26,16 +26,17 @@ from ai_msgs.srv import NodeReadiness
 ROBOT_SRV = "/ai/robot_watcher/node_readiness"
 TIMEOUT = 5.0
 
-def service_ready(namespace, package, val):
+def service_ready(namespace, package, ready, error_code = 0):
 	node_name = "/{}/{}".format(namespace, package)
 	try:
 		rospy.wait_for_service(ROBOT_SRV, timeout = TIMEOUT)
 		_ready_srv = rospy.ServiceProxy(ROBOT_SRV, NodeReadiness)
-		_ready_srv(node_name, val)
 
-		if val:
+		if ready:
 			rospy.loginfo("Node '{}' initialized".format(node_name))
+			_ready_srv(node_name, ready, 0)
 		else :
 			rospy.logerr("Node '{}' not initialized".format(node_name))
+			_ready_srv(node_name, ready, error_code)
 	except Exception as e:
 		rospy.logerr("Node '{}' could not contacte {} server".format(node_name, ROBOT_SRV))
