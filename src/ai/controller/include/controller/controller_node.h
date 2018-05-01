@@ -67,7 +67,6 @@ private:
   int robot_angle;
 
   uint8_t robot_status;
-  bool robot_blocked;
   int8_t direction;
   bool emergency_stop;
   bool side;
