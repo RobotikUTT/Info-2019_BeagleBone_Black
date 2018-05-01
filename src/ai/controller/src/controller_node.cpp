@@ -16,7 +16,7 @@ acB("/procedures/block_action", true){
   side_sub = nh.subscribe("side", 1, &Controller::setSide, this);
   nodes_status_sub = nh.subscribe("robot_watcher/nodes_status", 1, &Controller::checkForPANEL, this);
   sonar_distance_sub = nh.subscribe("/ARDUINO/SonarDistance", 1, &Controller::processSonars, this);
-
+  robot_blocked_sub = nh.subscribe("/STM/RobotBlocked", 1, &Controller::processRobotBlocked,this);
 
   emergency_stop_pub = nh.advertise<ai_msgs::EmergencyStop>("emergency", 1);
   STM_SetPose_pub = nh.advertise<can_msgs::Point>("/STM/SetPose", 1);
@@ -25,6 +25,8 @@ acB("/procedures/block_action", true){
 
 
   side = SIDE_GREEN;
+  direction = NONE;
+  emergency_stop = false;
   PANLEUp = 0;
   points_done = 0;
   clientD = nh.serviceClient<ai_msgs::CurrentActionDone>("scheduler/currentActionDone");
@@ -293,10 +295,11 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
     STM_AsserManagement_pub.publish(can_msg);
 
   }
+}
 
-
-
-
+void Controller::processRobotBlocked(const can_msgs::RobotBlocked::ConstPtr& msg)
+{
+  ROS_WARN("Robot blocked");
 }
 
 int main(int argc, char *argv[]) {

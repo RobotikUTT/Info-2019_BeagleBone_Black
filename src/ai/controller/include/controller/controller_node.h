@@ -19,6 +19,7 @@
 #include "can_msgs/SonarDistance.h"
 #include "can_msgs/Frame.h"
 #include "can_msgs/CurrSpeed.h"
+#include "can_msgs/RobotBlocked.h"
 #include "procedures_msgs/MoveAction.h"
 #include "procedures_msgs/BlockAction.h"
 #include "action/action_define.h"
@@ -52,6 +53,7 @@ private:
   ros::Subscriber robot_speed_sub;
   ros::Subscriber sonar_distance_sub;
   ros::Subscriber side_sub;
+  ros::Subscriber robot_blocked_sub;
 
   ros::Publisher emergency_stop_pub;
   ros::Publisher STM_SetPose_pub;
@@ -65,6 +67,7 @@ private:
   int robot_angle;
 
   uint8_t robot_status;
+  bool robot_blocked;
   int8_t direction;
   bool emergency_stop;
   bool side;
@@ -86,6 +89,7 @@ private:
   void checkForPANEL(const ai_msgs::NodesStatus::ConstPtr & msg);
   void sendPoint();
   void processSonars(const can_msgs::SonarDistance::ConstPtr& msg);
+  void processRobotBlocked(const can_msgs::RobotBlocked::ConstPtr& msg);
 
   template <class doneMsg>
   void DoneAction( const actionlib::SimpleClientGoalState& state, const doneMsg & result);
