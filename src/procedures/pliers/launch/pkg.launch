@@ -1,0 +1,3 @@
+<launch>
+	<node name="pliers_action" pkg="pliers" type="proc" output="screen"/>
+</launch>
