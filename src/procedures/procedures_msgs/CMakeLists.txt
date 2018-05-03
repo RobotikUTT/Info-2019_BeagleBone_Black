@@ -61,6 +61,7 @@ find_package(catkin REQUIRED COMPONENTS
    FILES
    Move.action
    Block.action
+   Pliers.action
 #   Action2.action
  )
 

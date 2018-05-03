@@ -1,0 +1,9 @@
+#start
+uint8 action
+uint8 level
+---
+#result
+bool done
+int8 points_done
+---
+#feedback
