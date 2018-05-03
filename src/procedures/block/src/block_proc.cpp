@@ -3,16 +3,17 @@
 
 Block::Block(std::string name):
   act(name,false),
-  acM("/procedures/move_action", true)
+  acM("/procedures/move_action", true),
+  acP("/procedures/pliers_action", true)
   {
     act.registerGoalCallback(boost::bind(&Block::goalCB, this));
     act.registerPreemptCallback(boost::bind(&Block::preemptCB, this));
     act.start();
 
-    finish_sub = nh.subscribe("/ALL/Finish", 10, &Block::analysisCB, this);
+    // finish_sub = nh.subscribe("/ALL/Finish", 10, &Block::analysisCB, this);
     side_sub = nh.subscribe("/ai/side", 1, &Block::setSide, this );
 
-    ARDUINO_pliers_pub = nh.advertise<can_msgs::ActionPliers>("/ARDUINO/ActionPliers", 10);
+    // ARDUINO_pliers_pub = nh.advertise<can_msgs::ActionPliers>("/ARDUINO/ActionPliers", 10);
 
     // this->STMGoToAngle_pub = nh.advertise<can_msgs::Point>("/STM/GoToAngle", 1);
     // this->STMGoTo_pub = nh.advertise<can_msgs::Point>("/STM/GoTo", 1);
@@ -56,31 +57,36 @@ void Block::preemptCB()
   act.setPreempted();
 }
 
-void Block::analysisCB(const can_msgs::Finish::ConstPtr& msg)
-{
-  // make sure that the action hasn't been canceled
-  // ROS_WARN_STREAM("Block; FINISH : state "<< act.isActive());
-
-  if (!act.isActive() || msg->val != BLOCK)
-    return;
-
-  phase++;
-
-  // if (!fifo.empty()) {
-  //   /* code */
-  //   ROS_INFO_STREAM("Block; FiFo : not empty");
-  sendMsg();
-
-
-  // } else {
-  //   procedures_msgs::MoveResult result_;
-  //   result_.done = 1;
-  //   act.setSucceeded(result_);
-  // }
-}
+// void Block::analysisCB(const can_msgs::Finish::ConstPtr& msg)
+// {
+//   // make sure that the action hasn't been canceled
+//   // ROS_WARN_STREAM("Block; FINISH : state "<< act.isActive());
+//
+//   if (!act.isActive() || msg->val != BLOCK)
+//     return;
+//
+//   phase++;
+//
+//   // if (!fifo.empty()) {
+//   //   /* code */
+//   //   ROS_INFO_STREAM("Block; FiFo : not empty");
+//   sendMsg();
+//
+//
+//   // } else {
+//   //   procedures_msgs::MoveResult result_;
+//   //   result_.done = 1;
+//   //   act.setSucceeded(result_);
+//   // }
+// }
 
 void Block::sendMsg() {
+
+  if (!act.isActive())
+      return;
+
   ROS_WARN_STREAM("phase: " << (int)phase);
+
 
   switch (phase) {
     case 0:{
@@ -105,15 +111,15 @@ void Block::sendMsg() {
       temp.type = GO_TO_ANGLE;
       goal.points.push_back(temp);
 
-      acM.sendGoal(goal, boost::bind(&Block::DoneMove, this, _1, _2));
+      acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
     }
     case 1:{
+      procedures_msgs::PliersGoal goal;
+      goal.action = TAKE_BLOCK;
+      goal.level = 0;
 
-      can_msgs::ActionPliers temp;
-      temp.action = TAKE_BLOCK;
-      temp.level = 0;
-      ARDUINO_pliers_pub.publish(temp);
+      acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
       break;
     }
     case 2:{
@@ -143,14 +149,15 @@ void Block::sendMsg() {
       temp.end_angle = objectif.proc_point[4].angle;
       temp.type = GO_TO_ANGLE;
       goal.points.push_back(temp);
-      acM.sendGoal(goal, boost::bind(&Block::DoneMove, this, _1, _2));
+      acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
     }
     case 3:{
-      can_msgs::ActionPliers temp;
-      temp.action = TAKE_BLOCK;
-      temp.level = 1;
-      ARDUINO_pliers_pub.publish(temp);
+      procedures_msgs::PliersGoal goal;
+      goal.action = TAKE_BLOCK;
+      goal.level = 1;
+
+      acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
       break;
     }
     case 4:{
@@ -174,14 +181,15 @@ void Block::sendMsg() {
       temp.end_angle = objectif.depos.angle;
       temp.type = GO_TO_ANGLE;
       goal.points.push_back(temp);
-      acM.sendGoal(goal, boost::bind(&Block::DoneMove, this, _1, _2));
+      acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
     }
     case 5:{
-      can_msgs::ActionPliers temp;
-      temp.action = RELEASE_BLOCK;
-      temp.level = 0;
-      ARDUINO_pliers_pub.publish(temp);
+      procedures_msgs::PliersGoal goal;
+      goal.action = RELEASE_BLOCK;
+      goal.level = 0;
+
+      acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
       break;
     }
     case 6:{
@@ -212,14 +220,15 @@ void Block::sendMsg() {
       temp.end_angle = objectif.proc_point[7].angle;
       temp.type = GO_TO_ANGLE;
       goal.points.push_back(temp);
-      acM.sendGoal(goal, boost::bind(&Block::DoneMove, this, _1, _2));
+      acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
     }
     case 7:{
-      can_msgs::ActionPliers temp;
-      temp.action = TAKE_BLOCK;
-      temp.level = 0;
-      ARDUINO_pliers_pub.publish(temp);
+      procedures_msgs::PliersGoal goal;
+      goal.action = TAKE_BLOCK;
+      goal.level = 0;
+
+      acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
       break;
     }
     case 8:{
@@ -249,14 +258,16 @@ void Block::sendMsg() {
       temp.end_angle = objectif.depos.angle;
       temp.type = GO_TO_ANGLE;
       goal.points.push_back(temp);
-      acM.sendGoal(goal, boost::bind(&Block::DoneMove, this, _1, _2));
+      acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
     }
     case 9:{
-      can_msgs::ActionPliers temp;
-      temp.action = RELEASE_BLOCK;
-      temp.level = 3;
-      ARDUINO_pliers_pub.publish(temp);
+      procedures_msgs::PliersGoal goal;
+      goal.action = RELEASE_BLOCK;
+      goal.level = 3;
+
+      acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
+
       break;
     }
     case 10:{
@@ -281,14 +292,15 @@ void Block::sendMsg() {
       temp.end_angle = objectif.proc_point[8].angle;
       temp.type = GO_TO_ANGLE;
       goal.points.push_back(temp);
-      acM.sendGoal(goal, boost::bind(&Block::DoneMove, this, _1, _2));
+      acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
     }
     case 11:{
-      can_msgs::ActionPliers temp;
-      temp.action = TAKE_BLOCK;
-      temp.level = 0;
-      ARDUINO_pliers_pub.publish(temp);
+      procedures_msgs::PliersGoal goal;
+      goal.action = TAKE_BLOCK;
+      goal.level = 0;
+
+      acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
       break;
     }
     case 12:{
@@ -300,14 +312,15 @@ void Block::sendMsg() {
       temp.end_angle = objectif.proc_point[9].angle;
       temp.type = GO_TO_ANGLE;
       goal.points.push_back(temp);
-      acM.sendGoal(goal, boost::bind(&Block::DoneMove, this, _1, _2));
+      acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
     }
     case 13:{
-      can_msgs::ActionPliers temp;
-      temp.action = TAKE_BLOCK;
-      temp.level = 1;
-      ARDUINO_pliers_pub.publish(temp);
+      procedures_msgs::PliersGoal goal;
+      goal.action = TAKE_BLOCK;
+      goal.level = 1;
+
+      acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
       break;
     }
     case 14:{
@@ -325,14 +338,14 @@ void Block::sendMsg() {
       temp.end_angle = objectif.depos.angle;
       temp.type = GO_TO_ANGLE;
       goal.points.push_back(temp);
-      acM.sendGoal(goal, boost::bind(&Block::DoneMove, this, _1, _2));
+      acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
     }
     case 15:{
-      can_msgs::ActionPliers temp;
-      temp.action = RELEASE_BLOCK;
-      temp.level = 4;
-      ARDUINO_pliers_pub.publish(temp);
+      procedures_msgs::PliersGoal goal;
+      goal.action = RELEASE_BLOCK;
+      goal.level = 4;
+      acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
       break;
     }
     case 16:{
@@ -345,7 +358,7 @@ void Block::sendMsg() {
       temp.end_angle = objectif.depos.angle;
       temp.type = GO_TO_ANGLE;
       goal.points.push_back(temp);
-      acM.sendGoal(goal, boost::bind(&Block::DoneMove, this, _1, _2));
+      acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
     }
     case 17:{
@@ -373,12 +386,16 @@ void Block::setSide(const ai_msgs::SetSide::ConstPtr& msg){
   side = msg->side;
 }
 
-void Block::DoneMove( const actionlib::SimpleClientGoalState& state, const MoveResultConstPtr & result){
-  point += result->points_done;
+template <class doneMsg>
+void Block::DoneAction( const actionlib::SimpleClientGoalState& state, const doneMsg & result){
 
-  phase ++;
+  if (state == actionlib::SimpleClientGoalState::SUCCEEDED){
+    point += result->points_done;
 
-  sendMsg();
+    phase ++;
+
+    sendMsg();
+  }
 }
 
 void Block::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){

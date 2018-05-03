@@ -33,7 +33,7 @@ private:
   // ros::Publisher STMGoTo_pub; //"/STM/GoTo"
   // ros::Publisher STMRotation_pub; //"/STM/Rotation"
   // ros::Publisher STMRotationNoModulo_pub; //"/STM/RotationNoModulo";
-  ros::Publisher ARDUINO_pliers_pub
+  ros::Publisher ARDUINO_pliers_pub;
   PliersSrv act;
 
   std::vector<PliersCommand> fifo;

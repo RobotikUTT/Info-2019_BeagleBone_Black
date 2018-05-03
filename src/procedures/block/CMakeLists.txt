@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   robot_watcher
   controller
   move
+  pliers
 )
 
 ## System dependencies are found with CMake's conventions

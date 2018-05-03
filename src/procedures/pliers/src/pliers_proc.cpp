@@ -29,11 +29,9 @@ void Pliers::goalCB()
   // ROS_WARN("Pliers: new goal");
 
   bool temp = !act.isActive();
-  // procedures_msgs::PliersGoal::ConstPtr msg = act.acceptNewGoal();
-  for (int i = 0; i < msg->points.size(); i++) {
+  procedures_msgs::PliersGoal::ConstPtr msg = act.acceptNewGoal();
     // ROS_INFO_STREAM("Point["<< i <<"] recieved: { x: " << msg->points[i].end_x << "; y: " << msg->points[i].end_y <<"; angle: "<< msg->points[i].end_angle<< "; type: "<< (int)msg->points[i].type << "}" );
-    fifo.push_back(PliersCommand(msg->action, msg->level));
-  }
+  fifo.push_back(PliersCommand(msg->action, msg->level));
   //
   if(temp){
     sendMsg();
@@ -71,7 +69,7 @@ inline void Pliers::sendMsg() {
   while (!fifo.empty()) {
     msg.action = fifo.front().action;
     msg.level = fifo.front().level;
-    ARDUINO_pliers_pub.publish(temp);
+    ARDUINO_pliers_pub.publish(msg);
 
     fifo.erase(fifo.begin());
   }
