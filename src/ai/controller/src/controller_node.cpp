@@ -97,6 +97,9 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
       //set action to true
   } else if (robot_status == ROBOT_HALT){
 
+    acM.cancelAllGoals();
+    acB.cancelAllGoals();
+
     can_msgs::Status msg;
     msg.value = STOP;
     STM_AsserManagement_pub.publish(msg);
