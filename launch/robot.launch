@@ -13,5 +13,6 @@
 	<group ns="procedures">
 		<include file="./src/procedures/move/launch/pkg.launch"/>
 		<include file="./src/procedures/block/launch/pkg.launch"/>
+		<include file="./src/procedures/pliers/launch/pkg.launch"/>
 	</group>
 </launch>
