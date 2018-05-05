@@ -3,6 +3,7 @@
 
 #include <string>
 #include "scheduler/ActionPoint.h"
+#include <vector>
 
 class ActionClass{
 public:
@@ -15,10 +16,11 @@ public:
   int _value;
   float _diff_factor;
   ActionPoint PAction;
+  std::vector<int> _param;
 
-
+  // make a constructor from json object ?
   ActionClass();
-  ActionClass(std::string, int8_t, ActionPoint, int, float);
+  ActionClass(std::string, int8_t, ActionPoint, int, float, std::vector<int>);
 
   void updatePriority(Point&);
   void checkPossibility();

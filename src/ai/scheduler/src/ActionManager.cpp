@@ -28,6 +28,7 @@ void ActionManager::actionsInit (const char* actions_file){
   for (SizeType i = 0; i < a.Size(); i++){
 
     int val_x, val_y, val_angle;
+    std::vector<int> param;
     if(a[i]["PAction"].HasMember("end")){
       val_x = a[i]["PAction"]["end"]["x"].GetInt();
       val_y = a[i]["PAction"]["end"]["y"].GetInt();
@@ -49,7 +50,11 @@ void ActionManager::actionsInit (const char* actions_file){
       angle = 0;
     }
 
-
+    if(a[i].HasMember("param")){
+      for (SizeType j = 0; j < a[i]["param"].Size(); j++){
+        param.push_back(a[i]["param"][j].GetInt());
+      }
+    }
     ActionPoint tempPoint ( a[i]["PAction"]["start"]["x"].GetInt(),
                             a[i]["PAction"]["start"]["y"].GetInt(),
                             angle,
@@ -63,7 +68,8 @@ void ActionManager::actionsInit (const char* actions_file){
                       a[i]["action"].GetInt(),
                       tempPoint,
                       a[i]["point"].GetInt(),
-                      a[i]["difficulty"].GetFloat());
+                      a[i]["difficulty"].GetFloat(),
+                      param);
     // std::cout << temp << '\n';
 
     this->action.push_back(temp);
@@ -97,16 +103,28 @@ void ActionManager::getActionToDo(ai_msgs::GetActionToDo::Response &res){
         res.action_val = it->_action;
         action_name = it->_name;
         if (it->_action == MOVE) {
-          res.point.end_x = it->PAction.startPoint.x;
-          res.point.end_y = it->PAction.startPoint.y;
-          res.point.end_angle = it->PAction.startPoint.angle;
+          res.point.Opoint.x = it->PAction.startPoint.x;
+          res.point.Opoint.y = it->PAction.startPoint.y;
+          res.point.Opoint.rot = it->PAction.startPoint.angle;
         } else if(it->_action == BLOCK) {
-          res.block_action.x = it->PAction.startPoint.x;
-          res.block_action.y = it->PAction.startPoint.y;
-          res.block_action.rot = it->PAction.startPoint.angle;
-          res.depot.x = it->PAction.endPoint.x;
-          res.depot.y = it->PAction.endPoint.y;
-          res.depot.rot = it->PAction.endPoint.angle;
+          res.action_pos.x = it->PAction.startPoint.x;
+          res.action_pos.y = it->PAction.startPoint.y;
+          res.action_pos.rot = it->PAction.startPoint.angle;
+          res.depot_pos.x = it->PAction.endPoint.x;
+          res.depot_pos.y = it->PAction.endPoint.y;
+          res.depot_pos.rot = it->PAction.endPoint.angle;
+        }
+        else if (it->_action == BALL) {
+          res.action_pos.x = it->PAction.startPoint.x;
+          res.action_pos.y = it->PAction.startPoint.y;
+          res.action_pos.rot = it->PAction.startPoint.angle;
+          res.depot_pos.x = it->PAction.endPoint.x;
+          res.depot_pos.y = it->PAction.endPoint.y;
+          res.depot_pos.rot = it->PAction.endPoint.angle;
+          std::vector<int>::iterator i;
+          for(i = it->_param.begin(); i != it->_param.end(); ++i){
+            res.param.push_back(*i);
+          }
         }
         min_prio = it->_priority;
         current_action = it;

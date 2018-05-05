@@ -12,7 +12,7 @@ ActionClass::ActionClass(){
   this->_diff_factor = 1;
 }
 
-ActionClass::ActionClass(std::string name, int8_t action, ActionPoint PAction , int point, float fact){
+ActionClass::ActionClass(std::string name, int8_t action, ActionPoint PAction , int point, float fact, std::vector<int> para){
   this->_priority = 0;
   this->_name = name;
   this->_action = action;
@@ -21,6 +21,7 @@ ActionClass::ActionClass(std::string name, int8_t action, ActionPoint PAction , 
   this->_value = point;
   this->PAction = PAction;
   this->_diff_factor = fact;
+  this->_param = para;
 }
 
 // Methodes

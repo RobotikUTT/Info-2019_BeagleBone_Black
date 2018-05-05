@@ -6,6 +6,7 @@
 #include "rapidjson/filereadstream.h"
 #include "action/action_define.h"
 #include <list>
+#include <vector>
 #include <iostream>
 #include <string>
 #include <limits>
@@ -14,7 +15,6 @@
 class ActionManager
 {
 public:
-  // std::list<ActionClass> actions;
   ActionManager(const char*); // init with actions.config file
   ActionManager();
   void changeSide ();
