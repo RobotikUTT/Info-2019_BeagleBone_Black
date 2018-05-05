@@ -36,6 +36,8 @@ NODES_CHECKLIST = {
 "/ai/controller" 		: "need",
 "/procedure/move" 		: "need",
 "/procedure/pliers" 	: "need",
+"/procedure/ball" 		: "need",
+"/procedure/canon" 		: "need",
 "/procedure/block" 		: "need"
 
 
