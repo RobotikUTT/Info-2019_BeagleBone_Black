@@ -2,9 +2,11 @@
 
 typedef boost::shared_ptr< ::procedures_msgs::MoveResult const> MoveResultConstPtr;
 typedef boost::shared_ptr< ::procedures_msgs::BlockResult const> BlockResultConstPtr;
+typedef boost::shared_ptr< ::procedures_msgs::BallResult const> BallResultConstPtr;
 
 Controller::Controller(ros::NodeHandle* n):
 acM("/procedures/move_action", true),
+acBl("/procedures/ball_action", true),
 acB("/procedures/block_action", true){
   nh = *n;
 
@@ -217,10 +219,19 @@ void Controller::SetAction(){
 
     procedures_msgs::BlockGoal goal;
 
-    goal.block_action =srv.response.block_action;
-    goal.depot = srv.response.depot;
+    goal.block_action =srv.response.action_pos;
+    goal.depot = srv.response.depot_pos;
 
     acB.sendGoal(goal, boost::bind(&Controller::DoneAction<BlockResultConstPtr>, this, _1, _2));
+
+  } else if (action_val == BALL){
+    procedures_msgs::BallGoal goal;
+
+    goal.tube_pose =srv.response.action_pos;
+    goal.shoot_pose = srv.response.depot_pos;
+    goal.param = srv.response.param;
+
+    acBl.sendGoal(goal, boost::bind(&Controller::DoneAction<BallResultConstPtr>, this, _1, _2));
 
   }
 }

@@ -22,6 +22,7 @@
 #include "can_msgs/RobotBlocked.h"
 #include "procedures_msgs/MoveAction.h"
 #include "procedures_msgs/BlockAction.h"
+#include "procedures_msgs/BallAction.h"
 #include "action/action_define.h"
 #include <actionlib/client/simple_action_client.h>
 #include "robot_interface/protocol.h"
@@ -35,6 +36,7 @@
 
 typedef actionlib::SimpleActionClient<procedures_msgs::MoveAction> ClientMove;
 typedef actionlib::SimpleActionClient<procedures_msgs::BlockAction> ClientBlock;
+typedef actionlib::SimpleActionClient<procedures_msgs::BallAction> ClientBall;
 
 class Controller
 {
@@ -78,6 +80,7 @@ private:
 
   ClientMove acM;
   ClientBlock acB;
+  ClientBall acBl;
   // std::map<std::string, value> map;
 
   void GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
@@ -92,8 +95,6 @@ private:
 
   template <class doneMsg>
   void DoneAction( const actionlib::SimpleClientGoalState& state, const doneMsg & result);
-
-  // void GetSonars(const can_msgs::Sonars::ConstPtr & msg);
 
 };
 #endif
