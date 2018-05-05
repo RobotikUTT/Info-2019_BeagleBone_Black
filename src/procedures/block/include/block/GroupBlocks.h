@@ -2,7 +2,7 @@
 #define GROUP_BLOCK_H
 
 #define _USE_MATH_DEFINES
-#include "block/OrientedPoint.h"
+#include "controller/OrientedPoint.h"
 #include <math.h>
 #include <cmath>
 

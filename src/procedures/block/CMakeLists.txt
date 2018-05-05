@@ -110,7 +110,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-# LIBRARIES block
+  LIBRARIES controller
   CATKIN_DEPENDS actionlib actionlib_msgs message_runtime roscpp std_msgs controller move
 #  DEPENDS system_lib
 )
@@ -129,7 +129,6 @@ include_directories(
 ## Declare a C++ library
  add_library(${PROJECT_NAME}
    src/GroupBlocks.cpp
-   src/OrientedPoint.cpp
  )
 
 ## Add cmake target dependencies of the library
@@ -157,9 +156,14 @@ include_directories(
    ${catkin_LIBRARIES}
  )
 
+ target_link_libraries(${PROJECT_NAME}
+   ${catkin_LIBRARIES}
+ )
+
  target_link_libraries(${PROJECT_NAME}_proc
    ${PROJECT_NAME}
  )
+
 #############
 ## Install ##
 #############
