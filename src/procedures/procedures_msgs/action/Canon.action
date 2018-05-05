@@ -1,6 +1,5 @@
 #start
-OrPoint block_action
-OrPoint depot
+
 ---
 #result
 bool done

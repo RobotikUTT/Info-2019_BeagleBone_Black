@@ -45,7 +45,7 @@ find_package(catkin REQUIRED COMPONENTS
  add_message_files(
    FILES
    MPoint.msg
-   BlockAct.msg
+   OrPoint.msg
 #   Message2.msg
  )
 
@@ -62,6 +62,8 @@ find_package(catkin REQUIRED COMPONENTS
    Move.action
    Block.action
    Pliers.action
+   Ball.action
+   Canon.action
 #   Action2.action
  )
 
