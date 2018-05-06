@@ -15,6 +15,7 @@ add_message_files(DIRECTORY msg
   RobotStatus.msg
   SetSide.msg
   EmergencyStop.msg
+  2Dpoint.msg
 )
 
 add_service_files(
@@ -22,6 +23,7 @@ add_service_files(
   GetActionToDo.srv
   NodeReadiness.srv
   CurrentActionDone.srv
+  ObjectManager.srv
 )
 
 # add_action_files(
