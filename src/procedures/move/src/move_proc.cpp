@@ -25,7 +25,7 @@ void Move::goalCB(){
   bool temp = !act.isActive();
   procedures_msgs::MoveGoal::ConstPtr msg = act.acceptNewGoal();
   for (int i = 0; i < msg->points.size(); i++) {
-    // ROS_INFO_STREAM("Point["<< i <<"] recieved: { x: " << msg->points[i].end_x << "; y: " << msg->points[i].end_y <<"; angle: "<< msg->points[i].end_angle<< "; type: "<< (int)msg->points[i].type << "}" );
+    // ROS_INFO_STREAM("Point["<< i <<"] recieved: { x: " << msg->points[i].Opoint.x << "; y: " << msg->points[i].Opoint.y <<"; angle: "<< msg->points[i].Opoint.rot<< "; type: "<< (int)msg->points[i].type << "}" );
     fifo.push_back(MovePoint(msg->points[i].Opoint.x, msg->points[i].Opoint.y, msg->points[i].Opoint.rot, msg->points[i].type));
   }
   if(temp){
@@ -58,7 +58,7 @@ inline void Move::sendMsg() {
   can_msgs::Point msg;
   //direction
   while (!fifo.empty()) {
-    // ROS_INFO_STREAM("Point send: { x: " << fifo.front()._x << "; y: " << fifo.front()._y <<"; angle: "<< fifo.front()._angle<< "}" );
+     ROS_INFO_STREAM("Point send: { x: " << fifo.front()._x << "; y: " << fifo.front()._y <<"; angle: "<< fifo.front()._angle<< "}" );
     switch (fifo.front()._move_type) {
       case GO_TO_ANGLE:
         msg.pos_x = fifo.front()._x;
@@ -81,6 +81,7 @@ inline void Move::sendMsg() {
         break;
     }
     fifo.erase(fifo.begin());
+    ros::Duration(0.01).sleep();
   }
 }
 

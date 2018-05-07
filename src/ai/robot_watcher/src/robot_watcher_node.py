@@ -89,6 +89,7 @@ class RobotWatcherNode(object):
 			if self.pin == WatcherState.PIN_ON:
 				if GPIO.input(PIN_SIDE) != self.side:
 					self.side = not self.side
+					rospy.logwarn("side: {}".format(self.side))
 					self._side_publisher.publish(SetSide(self.side))
 
 				if GPIO.input(PIN_START) == WatcherState.PIN_OFF:

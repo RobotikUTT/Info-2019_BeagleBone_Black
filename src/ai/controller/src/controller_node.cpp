@@ -45,9 +45,9 @@ void Controller::setSide(const ai_msgs::SetSide::ConstPtr& msg){
 
 //function to get robot pos
 void Controller::GetRobotPose(const can_msgs::Point::ConstPtr & msg){
- ROS_INFO_STREAM("robot pos_x: " << msg->pos_x
-  << " robot pos_y: " << msg->pos_y
-  << " robot angle: " << msg->angle);
+// ROS_INFO_STREAM("robot pos_x: " << msg->pos_x
+//  << " robot pos_y: " << msg->pos_y
+//  << " robot angle: " << msg->angle);
   robot_pos_x = msg->pos_x;
   robot_pos_y = msg->pos_y;
   robot_angle = msg->angle;
@@ -114,7 +114,7 @@ void Controller::checkForPANEL(const ai_msgs::NodesStatus::ConstPtr & msg){
 }
 
 void Controller::sendPoint(){
-  ROS_INFO_STREAM("sendPoint point " << points_done);
+ // ROS_INFO_STREAM("sendPoint point " << points_done);
   std_msgs::Int8 msg;
   msg.data = points_done;
   PANEL_Point_pub.publish(msg);
@@ -127,9 +127,9 @@ void Controller::GetRobotSpeed(const can_msgs::CurrSpeed::ConstPtr& msg)
   int16_t leftSpeed = msg->left_speed;
   int16_t rightSpeed = msg->right_speed;
 
-  ROS_INFO_STREAM("SPEEDS|linear: " << linearSpeed
-  << " left: " << leftSpeed
-  << " right: " << rightSpeed);
+//  ROS_INFO_STREAM("SPEEDS|linear: " << linearSpeed
+//  << " left: " << leftSpeed
+//  << " right: " << rightSpeed);
 
   if( linearSpeed > 0 ){
     direction = FORWARD;

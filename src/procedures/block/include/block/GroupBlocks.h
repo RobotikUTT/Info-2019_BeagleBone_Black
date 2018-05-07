@@ -7,9 +7,9 @@
 #include <cmath>
 
 #define SEMI_CUBE_LENTH 29 //mm
-#define CENTER_FRONT 145 //mm
-#define CENTER_PLIERS 50 //mm
-#define EPSILON 15 //mm
+#define CENTER_FRONT 170 //mm
+#define CENTER_PLIERS 85 //mm
+#define EPSILON 50 //mm
 
 class GroupBlocks
 {
