@@ -6,6 +6,7 @@
 #define STM_CAN_ADDR            2
 #define ARDUINO_CAN_ADDR        3
 #define ZIGBEE_CAN_ADDR         4
+#define PANEL_CAN_ADDR          5
 
 #define STOP                    0
 #define START                   1
@@ -24,6 +25,7 @@
 
 #define SPD                     4
 #define GET_CODER               5
+#define SEND_POINT              6
 #define MANAGEMENT              7
 #define GOTOA                   8
 #define GOTO                    9
