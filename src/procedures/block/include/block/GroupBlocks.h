@@ -11,7 +11,6 @@
 #define CENTER_PLIERS 50 //mm
 #define EPSILON 15 //mm
 
-
 class GroupBlocks
 {
 public:
