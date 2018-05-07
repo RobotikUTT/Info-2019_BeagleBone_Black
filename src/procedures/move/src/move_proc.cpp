@@ -26,7 +26,7 @@ void Move::goalCB(){
   procedures_msgs::MoveGoal::ConstPtr msg = act.acceptNewGoal();
   for (int i = 0; i < msg->points.size(); i++) {
     // ROS_INFO_STREAM("Point["<< i <<"] recieved: { x: " << msg->points[i].Opoint.x << "; y: " << msg->points[i].Opoint.y <<"; angle: "<< msg->points[i].Opoint.rot<< "; type: "<< (int)msg->points[i].type << "}" );
-    fifo.push_back(MovePoint(msg->points[i].Opoint.x, msg->points[i].Opoint.y, msg->points[i].Opoint.rot, msg->points[i].type));
+    fifo.push_back(MovePoint(msg->points[i].Opoint.x, msg->points[i].Opoint.y, msg->points[i].Opoint.rot, msg->points[i].type, msg->points[i].direction));
   }
   if(temp){
     sendMsg();
@@ -64,11 +64,13 @@ inline void Move::sendMsg() {
         msg.pos_x = fifo.front()._x;
         msg.pos_y = fifo.front()._y;
         msg.angle = fifo.front()._angle;
+        msg.direction = fifo.front()._direction;
         STMGoToAngle_pub.publish(msg);
         break;
       case GO_TO:
         msg.pos_x = fifo.front()._x;
         msg.pos_y = fifo.front()._y;
+        msg.direction = fifo.front()._direction;
         STMGoTo_pub.publish(msg);
         break;
       case ROTATION:

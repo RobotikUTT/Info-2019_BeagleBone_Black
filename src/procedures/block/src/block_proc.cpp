@@ -51,18 +51,21 @@ void Block::sendMsg() {
       temp.Opoint.y = objectif.proc_point[0].y;
       temp.Opoint.rot = objectif.proc_point[0].angle;
       temp.type = GO_TO;
+      temp.direction = DEFAULT;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.proc_point[1].x;
       temp.Opoint.y = objectif.proc_point[1].y;
       temp.Opoint.rot = objectif.proc_point[1].angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = DEFAULT;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.proc_point[2].x;
       temp.Opoint.y = objectif.proc_point[2].y;
       temp.Opoint.rot = objectif.proc_point[2].angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = FORWARD;
       goal.points.push_back(temp);
 
       acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
@@ -84,24 +87,28 @@ void Block::sendMsg() {
       temp.Opoint.y = objectif.proc_point[1].y;
       temp.Opoint.rot = objectif.proc_point[1].angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = BACKWARD;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.proc_point[0].x;
       temp.Opoint.y = objectif.proc_point[0].y;
       temp.Opoint.rot = objectif.proc_point[0].angle;
       temp.type = GO_TO;
+      temp.direction = DEFAULT;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.proc_point[3].x;
       temp.Opoint.y = objectif.proc_point[3].y;
       temp.Opoint.rot = objectif.proc_point[3].angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = DEFAULT;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.proc_point[4].x;
       temp.Opoint.y = objectif.proc_point[4].y;
       temp.Opoint.rot = objectif.proc_point[4].angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = FORWARD;
       goal.points.push_back(temp);
       acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
@@ -122,18 +129,21 @@ void Block::sendMsg() {
       temp.Opoint.y = objectif.proc_point[3].y;
       temp.Opoint.rot = objectif.proc_point[3].angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = BACKWARD;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.depos_.x;
       temp.Opoint.y = objectif.depos_.y;
       temp.Opoint.rot = objectif.depos.angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = FORWARD;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.depos.x;
       temp.Opoint.y = objectif.depos.y;
       temp.Opoint.rot = objectif.depos.angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = FORWARD;
       goal.points.push_back(temp);
       acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
@@ -155,24 +165,28 @@ void Block::sendMsg() {
       temp.Opoint.y = objectif.depos_.y;
       temp.Opoint.rot = objectif.depos.angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = BACKWARD;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.proc_point[5].x;
       temp.Opoint.y = objectif.proc_point[5].y;
       temp.Opoint.rot = objectif.proc_point[5].angle;
       temp.type = GO_TO;
+      temp.direction = BACKWARD;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.proc_point[6].x;
       temp.Opoint.y = objectif.proc_point[6].y;
       temp.Opoint.rot = objectif.proc_point[6].angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = DEFAULT;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.proc_point[7].x;
       temp.Opoint.y = objectif.proc_point[7].y;
       temp.Opoint.rot = objectif.proc_point[7].angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = FORWARD;
       goal.points.push_back(temp);
       acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
@@ -193,24 +207,28 @@ void Block::sendMsg() {
       temp.Opoint.y = objectif.proc_point[6].y;
       temp.Opoint.rot = objectif.proc_point[6].angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = BACKWARD;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.proc_point[5].x;
       temp.Opoint.y = objectif.proc_point[5].y;
       temp.Opoint.rot = objectif.proc_point[5].angle;
       temp.type = GO_TO;
+      temp.direction = DEFAULT;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.depos_.x;
       temp.Opoint.y = objectif.depos_.y;
       temp.Opoint.rot = objectif.depos.angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = FORWARD;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.depos.x;
       temp.Opoint.y = objectif.depos.y;
       temp.Opoint.rot = objectif.depos.angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = FORWARD;
       goal.points.push_back(temp);
       acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
@@ -233,18 +251,21 @@ void Block::sendMsg() {
       temp.Opoint.y = objectif.depos_.y;
       temp.Opoint.rot = objectif.depos.angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = BACKWARD;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.proc_point[3].x;
       temp.Opoint.y = objectif.proc_point[3].y;
       temp.Opoint.rot = objectif.proc_point[3].angle;
       temp.type = GO_TO;
+      temp.direction = BACKWARD;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.proc_point[8].x;
       temp.Opoint.y = objectif.proc_point[8].y;
       temp.Opoint.rot = objectif.proc_point[8].angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = FORWARD;
       goal.points.push_back(temp);
       acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
@@ -265,6 +286,7 @@ void Block::sendMsg() {
       temp.Opoint.y = objectif.proc_point[9].y;
       temp.Opoint.rot = objectif.proc_point[9].angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = FORWARD;
       goal.points.push_back(temp);
       acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
@@ -285,12 +307,14 @@ void Block::sendMsg() {
       temp.Opoint.y = objectif.depos_.y;
       temp.Opoint.rot = objectif.depos.angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = FORWARD;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.depos.x;
       temp.Opoint.y = objectif.depos.y;
       temp.Opoint.rot = objectif.depos.angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = FORWARD;
       goal.points.push_back(temp);
       acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
@@ -311,6 +335,7 @@ void Block::sendMsg() {
       temp.Opoint.y = objectif.depos_.y;
       temp.Opoint.rot = objectif.depos.angle;
       temp.type = GO_TO_ANGLE;
+      temp.direction = BACKWARD;
       goal.points.push_back(temp);
       acM.sendGoal(goal, boost::bind(&Block::DoneAction<MoveResultConstPtr>, this, _1, _2));
       break;
