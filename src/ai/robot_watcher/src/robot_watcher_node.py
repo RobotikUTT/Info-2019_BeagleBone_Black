@@ -2,11 +2,9 @@
 import time
 import rospy
 
-
-# import msgs/svrs
-
 from ai_msgs.msg import NodesStatus, RobotStatus, SetSide
 from ai_msgs.srv import NodeReadiness, NodeReadinessResponse
+
 from robot_watcher.RStatus.State import RobotState, WatcherState, NODES_CHECKLIST, Side
 
 from std_msgs.msg import Empty
@@ -20,7 +18,6 @@ GREEN_LED 	= "P9_27"
 
 ERROR_LED	= ["P9_"+str(j) for j in [17,18,12,15,30]]
 
-
 WAIT_TIME = 10
 
 class RobotWatcherNode(object):
@@ -30,9 +27,9 @@ class RobotWatcherNode(object):
 	def __init__(self):
 		rospy.init_node("ai_robot_watcher", log_level=rospy.INFO)
 
-		self.INIT_TIMEOUT = rospy.get_param("~INIT_TIMEOUT", 15)
-		self.GAME_LENTH = rospy.get_param("~GAME_LENTH", 10)
-		simulation = rospy.get_param("/simulation", False)
+		self.INIT_TIMEOUT 	= rospy.get_param("~INIT_TIMEOUT", 15)
+		self.GAME_LENTH 	= rospy.get_param("~GAME_LENTH", 10)
+		simulation 			= rospy.get_param("/simulation", False)
 
 		if simulation:
 			from robot_watcher.GPIOemulator.EmulatorGUI import GPIO
@@ -49,16 +46,16 @@ class RobotWatcherNode(object):
 				GPIO.setup(i,GPIO.OUT,	initial = GPIO.LOW)
 		else :
 			import Adafruit_BBIO.GPIO as GPIO
-			GPIO.setup(PIN_START,GPIO.IN)
-			GPIO.setup(PIN_SIDE,GPIO.IN)
+			GPIO.setup(PIN_START,	GPIO.IN)
+			GPIO.setup(PIN_SIDE,	GPIO.IN)
 
-			GPIO.setup(RED_LED,GPIO.OUT)
-			GPIO.setup(PINK_LED,GPIO.OUT)
-			GPIO.setup(GREEN_LED,GPIO.OUT)
+			GPIO.setup(RED_LED,		GPIO.OUT)
+			GPIO.setup(PINK_LED,	GPIO.OUT)
+			GPIO.setup(GREEN_LED,	GPIO.OUT)
 
-			GPIO.output(RED_LED, GPIO.LOW)
-			GPIO.output(PINK_LED, GPIO.LOW)
-			GPIO.output(GREEN_LED, GPIO.LOW)
+			GPIO.output(RED_LED, 	GPIO.LOW)
+			GPIO.output(PINK_LED, 	GPIO.LOW)
+			GPIO.output(GREEN_LED, 	GPIO.LOW)
 
 			for i in ERROR_LED:
 				GPIO.setup(i,GPIO.OUT)
@@ -66,17 +63,19 @@ class RobotWatcherNode(object):
 		GPIO.output(RED_LED, GPIO.HIGH)
 
 		rospy.Service("/ai/robot_watcher/node_readiness", NodeReadiness, self.set_readiness)
-		self._robot_watcher_publisher = rospy.Publisher("/ai/robot_watcher/robot_status", RobotStatus, queue_size = 1, latch=True)
-		self._nodes_status_publisher = rospy.Publisher("/ai/robot_watcher/nodes_status", NodesStatus, queue_size = 1)
-		self._side_publisher = rospy.Publisher("side", SetSide, queue_size = 1, latch=True)
-		self._ping_publisher = rospy.Publisher("/ALL/Ping", Empty, queue_size = 3)
+		self._robot_watcher_publisher 	= rospy.Publisher("/ai/robot_watcher/robot_status", RobotStatus, 	queue_size = 1, latch=True)
+		self._nodes_status_publisher 	= rospy.Publisher("/ai/robot_watcher/nodes_status", NodesStatus, 	queue_size = 1)
+		self._side_publisher 			= rospy.Publisher("side", 							SetSide, 		queue_size = 1, latch=True)
+		self._ping_publisher 			= rospy.Publisher("/ALL/Ping", 						Empty, 			queue_size = 3)
 
 		self.robot_watcher 	= RobotState.ROBOT_INIT
 		self.nodes_status 	= WatcherState.NODES_INIT
 		self.pin 			= WatcherState.PIN_ON
 
 		self.init_start_time = time.time()
+
 		self.publish_robot_watcher()
+
 		self.side = GPIO.input(PIN_SIDE)
 		self._side_publisher.publish(SetSide(self.side))
 
@@ -120,14 +119,14 @@ class RobotWatcherNode(object):
 
 
 			self.publish_nodes_status()
-			self.setLED(GPIO)
+			self.set_LED(GPIO)
 			r.sleep()
 
-		GPIO.output(RED_LED, GPIO.LOW)
-		GPIO.output(PINK_LED, GPIO.LOW)
-		GPIO.output(GREEN_LED, GPIO.LOW)
+		GPIO.output(RED_LED, 	GPIO.LOW)
+		GPIO.output(PINK_LED,	GPIO.LOW)
+		GPIO.output(GREEN_LED, 	GPIO.LOW)
 
-	def setLED(self, GPIO):
+	def set_LED(self, GPIO):
 		if self.error_code != 0:
 			GPIO.output(PINK_LED, GPIO.LOW)
 			GPIO.output(GREEN_LED, GPIO.LOW)
@@ -142,14 +141,11 @@ class RobotWatcherNode(object):
 			elif self.robot_watcher == RobotState.ROBOT_RUNNING:
 				GPIO.output(GREEN_LED, GPIO.HIGH)
 
-
-
 	def nodes_ready(self):
 		for _, val in NODES_CHECKLIST.items():
 			if val == "need" or val == False:
 				return False
 		return True
-
 
 	def publish_robot_watcher(self):
 		msg = RobotStatus(self.robot_watcher, self.nodes_status)
@@ -175,7 +171,6 @@ class RobotWatcherNode(object):
 			rospy.loginfo("Game stoped: Robot halted")
 		self.robot_watcher = status
 		self.publish_robot_watcher()
-
 
 	def change_nodes_status(self, status):
 		if status == WatcherState.NODES_RUNNING:
@@ -204,9 +199,7 @@ class RobotWatcherNode(object):
 		rospy.Timer(rospy.Duration(WAIT_TIME), self.shutdown_ros, oneshot=True)
 
 	def shutdown_ros(self, event):
-
 		rospy.signal_shutdown("shuting down: end of game")
-
 
 	def board_ready(self):
 		for name, val in NODES_CHECKLIST.items():
@@ -221,8 +214,6 @@ class RobotWatcherNode(object):
 				self._ping_publisher.publish(Empty())
 			else:
 				self.ping_board.shutdown()
-
-
 
 if __name__ == '__main__':
 	RobotWatcherNode()
