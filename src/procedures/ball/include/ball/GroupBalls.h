@@ -18,7 +18,7 @@ public:
   OrientedPoint proc_point [4];
   int alpha;
 
-  GroupBalls(int _xg, int _yg, int _rot_g, int _alpha, int y_delta, int _xs, int _ys, int _rot_s, bool side);
+  GroupBalls(int _xg, int _yg, int _rot_g, int _alpha, int x_delta, int _xs, int _ys, int _rot_s, bool side);
   GroupBalls();
 private:
 
