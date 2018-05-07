@@ -76,8 +76,8 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
     nh.getParam("controller/robot_pos/y", y);
     nh.getParam("controller/robot_pos/angle", angle);
 
-      if(side){
-        x = (1500 - x) + 1500;
+      if(side){ //if orange
+        y = (1500 - y) + 1500;
         angle = -angle;
       }
       //init pos STM
