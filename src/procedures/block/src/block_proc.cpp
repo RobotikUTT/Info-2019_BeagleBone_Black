@@ -6,79 +6,33 @@ Block::Block(std::string name):
   acM("/procedures/move_action", true),
   acP("/procedures/pliers_action", true)
   {
-    act.registerGoalCallback(boost::bind(&Block::goalCB, this));
-    act.registerPreemptCallback(boost::bind(&Block::preemptCB, this));
+    act.registerGoalCallback(   boost::bind(&Block::goalCB,     this));
+    act.registerPreemptCallback(boost::bind(&Block::preemptCB,  this));
     act.start();
 
-    // finish_sub = nh.subscribe("/ALL/Finish", 10, &Block::analysisCB, this);
     side_sub = nh.subscribe("/ai/side", 1, &Block::setSide, this );
 
-    // ARDUINO_pliers_pub = nh.advertise<can_msgs::ActionPliers>("/ARDUINO/ActionPliers", 10);
-
-    // this->STMGoToAngle_pub = nh.advertise<can_msgs::Point>("/STM/GoToAngle", 1);
-    // this->STMGoTo_pub = nh.advertise<can_msgs::Point>("/STM/GoTo", 1);
-    // this->STMRotation_pub = nh.advertise<can_msgs::Point>("/STM/Rotation", 1);
-    // this->STMRotationNoModulo_pub = nh.advertise<can_msgs::Point>("/STM/RotationNoModulo", 1);
-
-
-    //subs
-    // sub = nh_.subscribe("/random_number", 1, &AveragingAction::analysisCB, this);
     service_ready("procedure", "block", 1 );
 
   }
 
-void Block::goalCB()
-{
+void Block::goalCB(){
   // ROS_WARN("Block: new goal");
 
-  // bool temp = !act.isActive();
   phase = 0;
   point = 0;
   procedures_msgs::BlockGoal::ConstPtr msg = act.acceptNewGoal();
-  // for (int i = 0; i < msg->points.size(); i++) {
-  //   fifo.push_back();
-  // }
 
   objectif = GroupBlocks(msg->block_action.x, msg->block_action.y, msg->block_action.rot, msg->depot.x, msg->depot.y, side);
 
   sendMsg();
-
-  // if(temp){
-  //   sendMsg();
-  // }
-  // ROS_WARN("Block: end");
-
 }
 
-void Block::preemptCB()
-{
+void Block::preemptCB(){
   ROS_DEBUG("Move; Preempted");
   // set the action state to preempted
   act.setPreempted();
 }
-
-// void Block::analysisCB(const can_msgs::Finish::ConstPtr& msg)
-// {
-//   // make sure that the action hasn't been canceled
-//   // ROS_WARN_STREAM("Block; FINISH : state "<< act.isActive());
-//
-//   if (!act.isActive() || msg->val != BLOCK)
-//     return;
-//
-//   phase++;
-//
-//   // if (!fifo.empty()) {
-//   //   /* code */
-//   //   ROS_INFO_STREAM("Block; FiFo : not empty");
-//   sendMsg();
-//
-//
-//   // } else {
-//   //   procedures_msgs::MoveResult result_;
-//   //   result_.done = 1;
-//   //   act.setSucceeded(result_);
-//   // }
-// }
 
 void Block::sendMsg() {
 
@@ -373,13 +327,6 @@ void Block::sendMsg() {
       //error
     }
   }
-  // if(phase%2 == 0){
-  //   ROS_INFO("MOVE");
-  // } else {
-  //   ROS_INFO("PLIERS");
-  // }
-
-  // fifo.erase(fifo.begin());
 }
 
 void Block::setSide(const ai_msgs::SetSide::ConstPtr& msg){
