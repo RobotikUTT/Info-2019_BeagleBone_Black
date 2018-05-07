@@ -15,7 +15,7 @@ add_message_files(DIRECTORY msg
   RobotStatus.msg
   SetSide.msg
   EmergencyStop.msg
-  2Dpoint.msg
+  Point2D.msg
 )
 
 add_service_files(
