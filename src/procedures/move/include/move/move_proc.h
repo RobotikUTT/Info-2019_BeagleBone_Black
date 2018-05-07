@@ -2,18 +2,22 @@
 #define MOVE_PROC_H
 
 #include "ros/ros.h"
-// #include "ros_can/can"
-#include "procedures_msgs/MoveAction.h"
+#include <vector>
+
+#include <robot_watcher/Services/RobotServices.h>
+#include "robot_watcher/RStatus/State.h"
+
 #include "can_msgs/Point.h"
 #include "can_msgs/Finish.h"
+
+#include "procedures_msgs/MoveAction.h"
+
 #include "ai_msgs/RobotStatus.h"
-#include <vector>
-#include "move/MoveType.h"
-#include <robot_watcher/Services/RobotServices.h>
-#include <actionlib/server/simple_action_server.h>
+
 #include "action/action_define.h"
+#include "move/MoveType.h"
 #include "move/MovePoint.h"
-#include "robot_watcher/RStatus/State.h"
+#include <actionlib/server/simple_action_server.h>
 
 typedef actionlib::SimpleActionServer<procedures_msgs::MoveAction> MoveSrv;
 
@@ -30,10 +34,10 @@ private:
   ros::Subscriber finish_sub;
   ros::Subscriber robot_watcher_sub;
 
-  ros::Publisher STMGoToAngle_pub; //"/STM/GoToAngle"
-  ros::Publisher STMGoTo_pub; //"/STM/GoTo"
-  ros::Publisher STMRotation_pub; //"/STM/Rotation"
-  ros::Publisher STMRotationNoModulo_pub; //"/STM/RotationNoModulo";
+  ros::Publisher STMGoToAngle_pub;
+  ros::Publisher STMGoTo_pub;
+  ros::Publisher STMRotation_pub;
+  ros::Publisher STMRotationNoModulo_pub;
 
   MoveSrv act;
 
@@ -44,11 +48,5 @@ private:
   void analysisCB(const can_msgs::Finish::ConstPtr&);
   inline void sendMsg();
   void GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
-
-
-  // procedures_msgs::XXFeedback feedback
-  // procedures_msgs::XXResult result
 };
-
-
 #endif

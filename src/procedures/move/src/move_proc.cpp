@@ -4,27 +4,22 @@
 Move::Move(std::string name):
   act(name,false)
   {
-    act.registerGoalCallback(boost::bind(&Move::goalCB, this));
+    act.registerGoalCallback(   boost::bind(&Move::goalCB,    this));
     act.registerPreemptCallback(boost::bind(&Move::preemptCB, this));
     act.start();
 
-    finish_sub = nh.subscribe("/ALL/Finish", 1, &Move::analysisCB, this);
-    robot_watcher_sub = nh.subscribe("/ai/robot_watcher/robot_status", 1, &Move::GetRobotStatus, this);
+    finish_sub        = nh.subscribe("/ALL/Finish",                    1, &Move::analysisCB,      this);
+    robot_watcher_sub = nh.subscribe("/ai/robot_watcher/robot_status", 1, &Move::GetRobotStatus,  this);
 
-    this->STMGoToAngle_pub = nh.advertise<can_msgs::Point>("/STM/GoToAngle", 1);
-    this->STMGoTo_pub = nh.advertise<can_msgs::Point>("/STM/GoTo", 1);
-    this->STMRotation_pub = nh.advertise<can_msgs::Point>("/STM/Rotation", 1);
-    this->STMRotationNoModulo_pub = nh.advertise<can_msgs::Point>("/STM/RotationNoModulo", 1);
+    this->STMGoToAngle_pub        = nh.advertise<can_msgs::Point>("/STM/GoToAngle",         1);
+    this->STMGoTo_pub             = nh.advertise<can_msgs::Point>("/STM/GoTo",              1);
+    this->STMRotation_pub         = nh.advertise<can_msgs::Point>("/STM/Rotation",          1);
+    this->STMRotationNoModulo_pub = nh.advertise<can_msgs::Point>("/STM/RotationNoModulo",  1);
 
-
-    //subs
-    // sub = nh_.subscribe("/random_number", 1, &AveragingAction::analysisCB, this);
     service_ready("procedure", "move", 1 );
-
   }
 
-void Move::goalCB()
-{
+void Move::goalCB(){
   // ROS_WARN("Move: new goal");
 
   bool temp = !act.isActive();
@@ -33,11 +28,9 @@ void Move::goalCB()
     // ROS_INFO_STREAM("Point["<< i <<"] recieved: { x: " << msg->points[i].end_x << "; y: " << msg->points[i].end_y <<"; angle: "<< msg->points[i].end_angle<< "; type: "<< (int)msg->points[i].type << "}" );
     fifo.push_back(MovePoint(msg->points[i].Opoint.x, msg->points[i].Opoint.y, msg->points[i].Opoint.rot, msg->points[i].type));
   }
-
   if(temp){
     sendMsg();
   }
-  //send point !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
 void Move::preemptCB()
 {
@@ -46,20 +39,14 @@ void Move::preemptCB()
   act.setPreempted();
 }
 
-void Move::analysisCB(const can_msgs::Finish::ConstPtr& msg)
-{
-  // make sure that the action hasn't been canceled
+void Move::analysisCB(const can_msgs::Finish::ConstPtr& msg){
   // ROS_WARN_STREAM("Move; FINISH : state "<< act.isActive());
 
   if (!act.isActive() || msg->val != MOVE)
     return;
 
   if (!fifo.empty()) {
-    /* code */
-    // ROS_INFO_STREAM("Move; FiFo : not empty");
     sendMsg();
-
-
   } else {
     procedures_msgs::MoveResult result_;
     result_.done = 1;
@@ -93,7 +80,6 @@ inline void Move::sendMsg() {
         STMRotationNoModulo_pub.publish(msg);
         break;
     }
-
     fifo.erase(fifo.begin());
   }
 }
@@ -115,16 +101,3 @@ int main(int argc, char** argv)
 
   return 0;
 }
-
-/*
-callback:
-  check if other point
-    send new point
-  no point
-    succeeded
-
-can send multiple point
-
-need to wait STM msg to continue
-
-*/
