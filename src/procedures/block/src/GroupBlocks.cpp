@@ -15,8 +15,8 @@ GroupBlocks::GroupBlocks(int _xg, int _yg, int _rot, int _xd, int _yd, bool side
   int d1 = SEMI_CUBE_LENTH + CENTER_PLIERS + EPSILON;
   int d_1 = -SEMI_CUBE_LENTH + CENTER_PLIERS + EPSILON;
 
-  depos = OrientedPoint(_xd + d3, _yd, -3141);
-  depos_ = OrientedPoint(_xd  + d1,_yd, -3141);
+  depos = OrientedPoint(_xd + d1, _yd, -3141);
+  depos_ = OrientedPoint(_xd  + D3,_yd, -3141);
 
   proc_point[0] = OrientedPoint(_xg + sgn(std::cos((-3*M_PI)/4 + (float)rot/1000))* D3, _yg + sgn(std::sin((-3*M_PI)/4 + (float)rot/1000)) * D3);
   proc_point[1] = OrientedPoint(_xg + (int)round(std::cos(M_PI + (float)rot/1000))* D3, _yg + (int)round(std::sin(M_PI + (float)rot/1000)) * D3, rot);
