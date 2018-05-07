@@ -1,8 +1,8 @@
 #include "controller/controller_node.h"
 
-typedef boost::shared_ptr< ::procedures_msgs::MoveResult const> MoveResultConstPtr;
-typedef boost::shared_ptr< ::procedures_msgs::BlockResult const> BlockResultConstPtr;
-typedef boost::shared_ptr< ::procedures_msgs::BallResult const> BallResultConstPtr;
+typedef boost::shared_ptr< ::procedures_msgs::MoveResult const>   MoveResultConstPtr;
+typedef boost::shared_ptr< ::procedures_msgs::BlockResult const>  BlockResultConstPtr;
+typedef boost::shared_ptr< ::procedures_msgs::BallResult const>   BallResultConstPtr;
 
 Controller::Controller(ros::NodeHandle* n):
 acM("/procedures/move_action", true),
@@ -10,41 +10,34 @@ acBl("/procedures/ball_action", true),
 acB("/procedures/block_action", true){
   nh = *n;
 
-  status_sub = nh.subscribe("robot_watcher/robot_status", 1, &Controller::GetRobotStatus, this);
-  //sub for sonar data
-  //sonar_sub = nh.subscribe("/Arduino/sonars", 1, &Controller::GetSonars, this);
-  robot_pos_sub = nh.subscribe("/STM/Position", 1, &Controller::GetRobotPose, this);
-  robot_speed_sub = nh.subscribe("/STM/GetSpeed", 1, &Controller::GetRobotSpeed, this);
-  side_sub = nh.subscribe("side", 1, &Controller::setSide, this);
-  nodes_status_sub = nh.subscribe("robot_watcher/nodes_status", 1, &Controller::checkForPANEL, this);
-  sonar_distance_sub = nh.subscribe("/ARDUINO/SonarDistance", 1, &Controller::processSonars, this);
-  robot_blocked_sub = nh.subscribe("/STM/RobotBlocked", 1, &Controller::processRobotBlocked,this);
+  status_sub          = nh.subscribe("robot_watcher/robot_status",  1, &Controller::GetRobotStatus,     this);
+  robot_pos_sub       = nh.subscribe("/STM/Position",               1, &Controller::GetRobotPose,       this);
+  robot_speed_sub     = nh.subscribe("/STM/GetSpeed",               1, &Controller::GetRobotSpeed,      this);
+  side_sub            = nh.subscribe("side",                        1, &Controller::setSide,            this);
+  nodes_status_sub    = nh.subscribe("robot_watcher/nodes_status",  1, &Controller::checkForPANEL,      this);
+  sonar_distance_sub  = nh.subscribe("/ARDUINO/SonarDistance",      1, &Controller::processSonars,      this);
+  robot_blocked_sub   = nh.subscribe("/STM/RobotBlocked",           1, &Controller::processRobotBlocked,this);
 
-  emergency_stop_pub = nh.advertise<ai_msgs::EmergencyStop>("emergency", 1);
-  STM_SetPose_pub = nh.advertise<can_msgs::Point>("/STM/SetPose", 1);
-  STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement", 1);
-  PANEL_Point_pub = nh.advertise<std_msgs::Int8>("/PANEL/AddPoint", 1);
+  emergency_stop_pub      = nh.advertise<ai_msgs::EmergencyStop>("emergency",             1);
+  STM_SetPose_pub         = nh.advertise<can_msgs::Point>       ("/STM/SetPose",          1);
+  STM_AsserManagement_pub = nh.advertise<can_msgs::Status>      ("/STM/AsserManagement",  1);
+  PANEL_Point_pub         = nh.advertise<std_msgs::Int8>        ("/PANEL/AddPoint",       1);
 
-
-  side = SIDE_GREEN;
-  direction = NONE;
-  emergency_stop = false;
-  PANLEUp = 0;
-  points_done = 0;
-  clientD = nh.serviceClient<ai_msgs::CurrentActionDone>("scheduler/currentActionDone");
-  clientA = nh.serviceClient<ai_msgs::GetActionToDo>("scheduler/actionToDo");
+  clientD = nh.serviceClient<ai_msgs::CurrentActionDone>  ("scheduler/currentActionDone");
+  clientA = nh.serviceClient<ai_msgs::GetActionToDo>      ("scheduler/actionToDo");
   clientA.waitForExistence();
+
+  side            = SIDE_GREEN;
+  direction       = NONE;
+  emergency_stop  = false;
+  PANLEUp         = 0;
+  points_done     = 0;
 
   acM.waitForServer();
   acB.waitForServer();
   service_ready("ai", "controller", 1 );
 
 }
-
-//function urgency stop
-// void Controller::GetSonars(const can_msgs::Sonars::ConstPtr & msg) {
-//   /* code */
-// }
 
 void Controller::setSide(const ai_msgs::SetSide::ConstPtr& msg){
   side = msg->side;
@@ -58,7 +51,6 @@ void Controller::GetRobotPose(const can_msgs::Point::ConstPtr & msg){
   robot_pos_x = msg->pos_x;
   robot_pos_y = msg->pos_y;
   robot_angle = msg->angle;
-  // compute direction
 }
 
 void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
@@ -69,7 +61,7 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
     // ROS_DEBUG("Robot Ready");
 
 
-  } else if (robot_status == ROBOT_RUNNING) {
+  } else if (robot_status == ROBOT_RUNNING){
     // ROS_DEBUG("Robot Running");
     int x,y,angle;
     nh.getParam("controller/robot_pos/x", x);
@@ -95,8 +87,8 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
       can_msgs::Status msg2;
       msg2.value = START;
       STM_AsserManagement_pub.publish(msg2);
+
       SetAction();
-      //set action to true
   } else if (robot_status == ROBOT_HALT){
 
     acM.cancelAllGoals();
@@ -139,28 +131,19 @@ void Controller::GetRobotSpeed(const can_msgs::CurrSpeed::ConstPtr& msg)
   << " left: " << leftSpeed
   << " right: " << rightSpeed);
 
-  if( linearSpeed > 0 )
-  {
+  if( linearSpeed > 0 ){
     direction = FORWARD;
-  }
-  else if (linearSpeed < 0)
-  {
+  } else if (linearSpeed < 0) {
     direction = BACKWARD;
-  }
-  else
-  {
+  } else {
     direction = NONE;
   }
-
 }
 
 template <class doneMsg>
 void Controller::DoneAction( const actionlib::SimpleClientGoalState& state,
                         const doneMsg & result){
   ROS_INFO("Finished in state [%s]", state.toString().c_str());
-
-  //desactivate old action
-  // acM.shutdown()
 
   //send point
   points_done += result->points_done;
@@ -169,7 +152,6 @@ void Controller::DoneAction( const actionlib::SimpleClientGoalState& state,
   }
 
   if (robot_status != ROBOT_HALT){
-
     //set old action to done
     ai_msgs::CurrentActionDone srv;
     srv.request.done = result->done;
@@ -178,22 +160,10 @@ void Controller::DoneAction( const actionlib::SimpleClientGoalState& state,
       ROS_ERROR("Failed to call service currentActionDone");
     }
 
-    //ask for new action
-    //activate new action
     SetAction();
   }
 
 }
-
-// ac.sendGoal(goal, &doneCb, &activeCb, &feedbackCb);
-
-// void Controller::activeAction(){
-//   ROS_INFO("Goal just went active");
-// }
-
-// void Controller::feedbackCb(const procedures_msgs::XXFeedback& feedback){
-//   ROS_INFO("Feedback");
-// }
 
 void Controller::SetAction(){
   ai_msgs::GetActionToDo srv;
@@ -207,8 +177,7 @@ void Controller::SetAction(){
     action_val = -1;
   }
 
-  if(action_val == MOVE)
-  {
+  if(action_val == MOVE){
     // ROS_WARN("Action MOVE");
     procedures_msgs::MoveGoal goal;
     goal.points.push_back(srv.response.point);
@@ -253,27 +222,18 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
   ROS_INFO("DIST|%u|%u|%u|%u|%u",front_left,
     front_right, left, right, back);
 
-
-
-
   emergency_stop = false;
-  if ( direction == FORWARD)
-  {
+  if ( direction == FORWARD){
     if (front_left <= SONAR_MIN_DIST ||
         front_right <= SONAR_MIN_DIST)
     {
       emergency_stop = true;
     }
-  }
-  else if ( direction == BACKWARD)
-  {
-    if ( back <= SONAR_MIN_DIST)
-    {
+  } else if ( direction == BACKWARD){
+    if ( back <= SONAR_MIN_DIST){
       emergency_stop = true;
     }
-  }
-  else
-  {
+  } else {
     if (front_left <= SONAR_MIN_DIST ||
         front_right <= SONAR_MIN_DIST ||
         back <= SONAR_MIN_DIST)
@@ -282,32 +242,24 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
     }
   }
 
-  if (last_emergency_value != emergency_stop)
-  {
+  if (last_emergency_value != emergency_stop){
     ai_msgs::EmergencyStop emergency_msg;
     emergency_msg.emergency_set = emergency_stop;
     emergency_stop_pub.publish(emergency_msg);
 
-    if (emergency_stop)
-    {
+    if (emergency_stop){
       ROS_WARN("SET EMG");
-    }
-    else
-    {
+    } else {
       ROS_WARN("UNSET EMG");
     }
 
     can_msgs::Status can_msg;
-    if (emergency_stop)
-    {
+    if (emergency_stop){
       can_msg.value = SETEMERGENCYSTOP;
-    }
-    else
-    {
+    } else {
       can_msg.value = UNSETEMERGENCYSTOP;
     }
     STM_AsserManagement_pub.publish(can_msg);
-
   }
 }
 

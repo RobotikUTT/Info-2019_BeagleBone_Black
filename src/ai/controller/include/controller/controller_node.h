@@ -2,8 +2,8 @@
 #define CONTROLLER_NODE_H
 
 #include "ros/ros.h"
-#include "robot_watcher/Services/RobotServices.h"
 
+#include "robot_watcher/Services/RobotServices.h"
 #include "robot_watcher/RStatus/State.h"
 #include "robot_watcher/RStatus/Side.h"
 
@@ -12,31 +12,35 @@
 #include "ai_msgs/GetActionToDo.h"
 #include "ai_msgs/CurrentActionDone.h"
 #include "ai_msgs/NodesStatus.h"
-#include "std_msgs/Int8.h"
 #include "ai_msgs/EmergencyStop.h"
+
 #include "can_msgs/Point.h"
 #include "can_msgs/Status.h"
 #include "can_msgs/SonarDistance.h"
 #include "can_msgs/Frame.h"
 #include "can_msgs/CurrSpeed.h"
 #include "can_msgs/RobotBlocked.h"
-#include "procedures_msgs/MoveAction.h"
-#include "procedures_msgs/BlockAction.h"
+
 #include "procedures_msgs/BallAction.h"
+#include "procedures_msgs/BlockAction.h"
+#include "procedures_msgs/MoveAction.h"
+
+#include "std_msgs/Int8.h"
+
 #include "action/action_define.h"
 #include <actionlib/client/simple_action_client.h>
-#include "robot_interface/protocol.h"
-//include action
 
-#define FORWARD        1
+#include "robot_interface/protocol.h"
+
+#define FORWARD         1
 #define BACKWARD        -1
 #define NONE            0
 
 #define SONAR_MIN_DIST  30 //in cm
 
-typedef actionlib::SimpleActionClient<procedures_msgs::MoveAction> ClientMove;
+typedef actionlib::SimpleActionClient<procedures_msgs::MoveAction>  ClientMove;
 typedef actionlib::SimpleActionClient<procedures_msgs::BlockAction> ClientBlock;
-typedef actionlib::SimpleActionClient<procedures_msgs::BallAction> ClientBall;
+typedef actionlib::SimpleActionClient<procedures_msgs::BallAction>  ClientBall;
 
 class Controller
 {
@@ -51,7 +55,6 @@ private:
   ros::Subscriber status_sub;
   ros::Subscriber robot_pos_sub;
   ros::Subscriber nodes_status_sub;
-  // ros::Subscriber sonar_sub;
   ros::Subscriber robot_speed_sub;
   ros::Subscriber sonar_distance_sub;
   ros::Subscriber side_sub;
@@ -68,20 +71,20 @@ private:
   int robot_pos_y;
   int robot_angle;
 
+  int points_done;
+
   uint8_t robot_status;
   int8_t direction;
+  int8_t action_val;
+
   bool emergency_stop;
   bool side;
   bool PANLEUp;
 
-  int8_t action_val;
 
-  int points_done;
-
-  ClientMove acM;
+  ClientMove  acM;
   ClientBlock acB;
-  ClientBall acBl;
-  // std::map<std::string, value> map;
+  ClientBall  acBl;
 
   void GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
   void GetRobotPose(const can_msgs::Point::ConstPtr& msg);
