@@ -27,70 +27,31 @@
 #include "std_msgs/Empty.h"
 #include "std_msgs/Int8.h"
 
-#define ALL_CAN_ADDR            0
-#define BBB_CAN_ADDR            1
-#define STM_CAN_ADDR            2
-#define ARDUINO_CAN_ADDR        3
-#define ZIGBEE_CAN_ADDR         4
-#define PANEL_CAN_ADDR          5
-
-
-#define HANDSHAKE               0
-#define WHOAMI                  1
-#define SET_MODE                2
-
-#define SPD                     4
-#define GET_CODER               5
-#define SEND_POINT              6
-#define MANAGEMENT              7
-#define GOTOA                   8
-#define GOTO                    9
-#define ROT                     10
-#define ROTNOMODULO             11
-#define PIDLEFT                 12
-#define PIDRIGHT                13
-#define PIDALL                  14
-#define PWM                     15
-#define SET_POS                 16
-#define SET_PARAM               17
-#define CURRENT_POS             18
-#define CURRENT_PWM             19
-#define CURRENT_SPD             20
-#define MOVE_PLIERS             21
-#define CLOSE_OPEN_PLIERS       22
-#define SONAR_DISTANCE          23
-#define THROW_BALLS             24
-#define OBJECT_ON_MAP           25
-#define ORDER_COMPLETED         26
-#define SET_SERVO               27
-#define ROBOT_BLOCKED           28
-#define ACTION_PLIERS           29
-
 class CanInterfaceNode
 {
 public:
 	CanInterfaceNode(ros::NodeHandle*);
 	~CanInterfaceNode();
 	void updateRobotStatus(const ai_msgs::RobotStatus::ConstPtr&);
-	void canMsgProcess(const can_msgs::Frame::ConstPtr& msg);
+	void canMsgProcess		(const can_msgs::Frame::ConstPtr& msg);
 
-	void ALLPing(const std_msgs::Empty::ConstPtr& msg);
-	void STMSetMode(const can_msgs::Status::ConstPtr& msg);
-	void STMSpeed(const can_msgs::Speed::ConstPtr& msg);
-	void STMAsserManagement(const can_msgs::Status::ConstPtr& msg);
-	void STMGoToAngle(const can_msgs::Point::ConstPtr& msg);
-	void STMGoTo(const can_msgs::Point::ConstPtr& msg);
-	void STMRotation(const can_msgs::Point::ConstPtr& msg);
-	void STMRotationNoModulo(const can_msgs::Point::ConstPtr& msg);
-	void STMLeftPID(const can_msgs::PID::ConstPtr& msg);
-	void STMRightPID(const can_msgs::PID::ConstPtr& msg);
-	void STMAllPID(const can_msgs::PID::ConstPtr& msg);
-	void STMPWM(const can_msgs::PWMs::ConstPtr& msg);
-	void STMSetPose(const can_msgs::Point::ConstPtr& msg);
-	void STMSetParam(const can_msgs::STMParam::ConstPtr& msg);
-	void ARDUINOThrowBalls(const can_msgs::ThrowBalls::ConstPtr& msg);
-	void ARDUINOActionPliers(const can_msgs::ActionPliers::ConstPtr& msg);
-	void PANELAddPoint(const std_msgs::Int8::ConstPtr& msg);
+	void ALLPing							(const std_msgs::Empty::ConstPtr& msg);
+	void STMSetMode						(const can_msgs::Status::ConstPtr& msg);
+	void STMSpeed							(const can_msgs::Speed::ConstPtr& msg);
+	void STMAsserManagement		(const can_msgs::Status::ConstPtr& msg);
+	void STMGoToAngle					(const can_msgs::Point::ConstPtr& msg);
+	void STMGoTo							(const can_msgs::Point::ConstPtr& msg);
+	void STMRotation					(const can_msgs::Point::ConstPtr& msg);
+	void STMRotationNoModulo	(const can_msgs::Point::ConstPtr& msg);
+	void STMLeftPID						(const can_msgs::PID::ConstPtr& msg);
+	void STMRightPID					(const can_msgs::PID::ConstPtr& msg);
+	void STMAllPID						(const can_msgs::PID::ConstPtr& msg);
+	void STMPWM								(const can_msgs::PWMs::ConstPtr& msg);
+	void STMSetPose						(const can_msgs::Point::ConstPtr& msg);
+	void STMSetParam					(const can_msgs::STMParam::ConstPtr& msg);
+	void ARDUINOThrowBalls		(const can_msgs::ThrowBalls::ConstPtr& msg);
+	void ARDUINOActionPliers	(const can_msgs::ActionPliers::ConstPtr& msg);
+	void PANELAddPoint				(const std_msgs::Int8::ConstPtr& msg);
 
 private:
 	ros::NodeHandle nh;
@@ -106,7 +67,6 @@ private:
 	ros::Publisher ARDUINO_sonar_distance_pub;
 	ros::Publisher STM_robot_blocked_pub;
 	// ros::Publisher LIDAR_objec_on_map_pub;
-
 
 	ros::Subscriber robot_watcher_sub;
 	ros::Subscriber can_sub;
@@ -129,5 +89,4 @@ private:
 	ros::Subscriber ARDUINO_ThrowBalls_sub;
 	ros::Subscriber PANEL_point_sub;
 };
-
 #endif

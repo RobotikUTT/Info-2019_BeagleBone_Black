@@ -5,44 +5,42 @@
 CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->nh = *n;
 
-	this->can_pub = nh.advertise<can_msgs::Frame>("sent_messages", 1000);
+	this->can_pub 										= nh.advertise<can_msgs::Frame>("sent_messages", 									1000);
 
-	this->STM_coder_pub = nh.advertise<can_msgs::WheelsDistance>("/STM/GetCoder", 10);
-	this->STM_pos_pub = nh.advertise<can_msgs::Point>("/STM/Position", 10);
-	this->STM_pwm_pub = nh.advertise<can_msgs::PWMs>("/STM/GetPWM", 10);
-	this->STM_speed_pub = nh.advertise<can_msgs::CurrSpeed>("/STM/GetSpeed", 10);
-	this->ALL_finish_pub = nh.advertise<can_msgs::Finish>("/ALL/Finish", 10);
-	this->ARDUINO_sonar_distance_pub = nh.advertise<can_msgs::SonarDistance>("/ARDUINO/SonarDistance",10);
-	this->STM_robot_blocked_pub = nh.advertise<can_msgs::RobotBlocked>("/STM/RobotBlocked", 10);
+	this->STM_coder_pub 							= nh.advertise<can_msgs::WheelsDistance>("/STM/GetCoder", 				10);
+	this->STM_pos_pub 								= nh.advertise<can_msgs::Point>("/STM/Position", 									10);
+	this->STM_pwm_pub 								= nh.advertise<can_msgs::PWMs>("/STM/GetPWM", 										10);
+	this->STM_speed_pub 							= nh.advertise<can_msgs::CurrSpeed>("/STM/GetSpeed", 							10);
+	this->ALL_finish_pub	 						= nh.advertise<can_msgs::Finish>("/ALL/Finish", 									10);
+	this->ARDUINO_sonar_distance_pub 	= nh.advertise<can_msgs::SonarDistance>("/ARDUINO/SonarDistance",	10);
+	this->STM_robot_blocked_pub 			= nh.advertise<can_msgs::RobotBlocked>("/STM/RobotBlocked", 			10);
 	//this->LIDAR_object_on_map_pub = nh.advertise<can_msgs::ObjectOnMap>("LIDAR/ObjectOnMap",10);
 
-	this->robot_watcher_sub = nh.subscribe("/ai/robot_watcher/robot_watcher", 10, &CanInterfaceNode::updateRobotStatus, this);
-	this->can_sub = nh.subscribe("received_messages", 100, &CanInterfaceNode::canMsgProcess, this);
+	this->robot_watcher_sub 					= nh.subscribe("/ai/robot_watcher/robot_watcher", 10, &CanInterfaceNode::updateRobotStatus, this);
+	this->can_sub 										= nh.subscribe("received_messages", 							100, &CanInterfaceNode::canMsgProcess, 		this);
 
-	this->ALL_Ping_sub = nh.subscribe("/ALL/Ping",10, &CanInterfaceNode::ALLPing, this);
-	this->STM_SetMode_sub = nh.subscribe("/STM/SetMode",10, &CanInterfaceNode::STMSetMode, this);
-	this->STM_Speed_sub = nh.subscribe("/STM/Speed",10, &CanInterfaceNode::STMSpeed, this);
-	this->STM_AsserManagement_sub = nh.subscribe("/STM/AsserManagement",10, &CanInterfaceNode::STMAsserManagement, this);
-	this->STM_GoToAngle_sub = nh.subscribe("/STM/GoToAngle",10, &CanInterfaceNode::STMGoToAngle, this);
-	this->STM_GoTo_sub = nh.subscribe("/STM/GoTo",10, &CanInterfaceNode::STMGoTo, this);
-	this->STM_Rotation_sub = nh.subscribe("/STM/Rotation",10, &CanInterfaceNode::STMRotation, this);
-	this->STM_RotationNoModulo_sub = nh.subscribe("/STM/RotationNoModulo",10, &CanInterfaceNode::STMRotationNoModulo, this);
-	this->STM_LeftPID_sub = nh.subscribe("/STM/LeftPID",10, &CanInterfaceNode::STMLeftPID, this);
-	this->STM_RightPID_sub = nh.subscribe("/STM/RightPID",10, &CanInterfaceNode::STMRightPID, this);
-	this->STM_AllPID_sub = nh.subscribe("/STM/AllPID",10, &CanInterfaceNode::STMAllPID, this);
-	this->STM_PWM_sub = nh.subscribe("/STM/PWM",10, &CanInterfaceNode::STMPWM, this);
-	this->STM_SetPose_sub = nh.subscribe("/STM/SetPose",10, &CanInterfaceNode::STMSetPose, this);
-	this->STM_SetParam_sub = nh.subscribe("/STM/SetParam",10, &CanInterfaceNode::STMSetParam, this);
-	this->ARDUINO_ActionPliers_sub = nh.subscribe("/ARDUINO/ActionPliers",10, &CanInterfaceNode::ARDUINOActionPliers, this);
-	this->ARDUINO_ThrowBalls_sub = nh.subscribe("/ARDUINO/ThrowBalls",10, &CanInterfaceNode::ARDUINOThrowBalls, this);
+	this->ALL_Ping_sub 								= nh.subscribe("/ALL/Ping",												10, &CanInterfaceNode::ALLPing, 						this);
+	this->STM_SetMode_sub 						= nh.subscribe("/STM/SetMode",										10, &CanInterfaceNode::STMSetMode, 					this);
+	this->STM_Speed_sub 							= nh.subscribe("/STM/Speed",											10, &CanInterfaceNode::STMSpeed, 						this);
+	this->STM_AsserManagement_sub 		= nh.subscribe("/STM/AsserManagement",						10, &CanInterfaceNode::STMAsserManagement, 	this);
+	this->STM_GoToAngle_sub 					= nh.subscribe("/STM/GoToAngle",									10, &CanInterfaceNode::STMGoToAngle, 				this);
+	this->STM_GoTo_sub 								= nh.subscribe("/STM/GoTo",												10, &CanInterfaceNode::STMGoTo, 						this);
+	this->STM_Rotation_sub 						= nh.subscribe("/STM/Rotation",										10, &CanInterfaceNode::STMRotation, 				this);
+	this->STM_RotationNoModulo_sub 		= nh.subscribe("/STM/RotationNoModulo",						10, &CanInterfaceNode::STMRotationNoModulo, this);
+	this->STM_LeftPID_sub 						= nh.subscribe("/STM/LeftPID",										10, &CanInterfaceNode::STMLeftPID, 					this);
+	this->STM_RightPID_sub 						= nh.subscribe("/STM/RightPID",										10, &CanInterfaceNode::STMRightPID, 				this);
+	this->STM_AllPID_sub 							= nh.subscribe("/STM/AllPID",											10, &CanInterfaceNode::STMAllPID, 					this);
+	this->STM_PWM_sub									= nh.subscribe("/STM/PWM",												10, &CanInterfaceNode::STMPWM, 							this);
+	this->STM_SetPose_sub 						= nh.subscribe("/STM/SetPose",										10, &CanInterfaceNode::STMSetPose, 					this);
+	this->STM_SetParam_sub 						= nh.subscribe("/STM/SetParam",										10, &CanInterfaceNode::STMSetParam, 				this);
+	this->ARDUINO_ActionPliers_sub 		= nh.subscribe("/ARDUINO/ActionPliers",						10, &CanInterfaceNode::ARDUINOActionPliers, this);
+	this->ARDUINO_ThrowBalls_sub 			= nh.subscribe("/ARDUINO/ThrowBalls",							10, &CanInterfaceNode::ARDUINOThrowBalls, 	this);
+	this->PANEL_point_sub 						= nh.subscribe("/PANEL/AddPoint",									10, &CanInterfaceNode::PANELAddPoint, 			this);
 
-	this->PANEL_point_sub = nh.subscribe("/PANEL/AddPoint",10, &CanInterfaceNode::PANELAddPoint, this);
 	service_ready("ros_can", "interface", 1 );
-
 }
 
 CanInterfaceNode::~CanInterfaceNode(){
-
 }
 
 void CanInterfaceNode::updateRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
@@ -144,9 +142,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			this->STM_robot_blocked_pub.publish(msg_out);
 			break;
 		}
-
 	}
-
 }
 
 void CanInterfaceNode::ALLPing(const std_msgs::Empty::ConstPtr& msg){
@@ -162,8 +158,6 @@ void CanInterfaceNode::ALLPing(const std_msgs::Empty::ConstPtr& msg){
 	fr.data[0] = HANDSHAKE;
 
 	can_pub.publish(fr);
-
-
 }
 
 void CanInterfaceNode::STMSetMode(const can_msgs::Status::ConstPtr& msg){
@@ -180,8 +174,6 @@ void CanInterfaceNode::STMSetMode(const can_msgs::Status::ConstPtr& msg){
 	fr.data[1] = msg->value;
 
 	can_pub.publish(fr);
-
-
 }
 
 void CanInterfaceNode::STMSpeed(const can_msgs::Speed::ConstPtr& msg){
@@ -238,8 +230,6 @@ void CanInterfaceNode::STMAsserManagement(const can_msgs::Status::ConstPtr& msg)
 	fr.data[1] = msg->value;
 
 	can_pub.publish(fr);
-
-
 }
 
 void CanInterfaceNode::STMGoToAngle(const can_msgs::Point::ConstPtr& msg){
@@ -262,8 +252,6 @@ void CanInterfaceNode::STMGoToAngle(const can_msgs::Point::ConstPtr& msg){
 	fr.data[7] = msg->direction;
 
 	can_pub.publish(fr);
-
-
 }
 
 void CanInterfaceNode::STMGoTo(const can_msgs::Point::ConstPtr& msg){
@@ -284,8 +272,6 @@ void CanInterfaceNode::STMGoTo(const can_msgs::Point::ConstPtr& msg){
 	fr.data[5] = msg->direction;
 
 	can_pub.publish(fr);
-
-
 }
 
 void CanInterfaceNode::STMRotation(const can_msgs::Point::ConstPtr& msg){
@@ -303,8 +289,6 @@ void CanInterfaceNode::STMRotation(const can_msgs::Point::ConstPtr& msg){
 	fr.data[2] = msg->angle & 0x00FF;
 
 	can_pub.publish(fr);
-
-
 }
 
 void CanInterfaceNode::STMRotationNoModulo(const can_msgs::Point::ConstPtr& msg){
@@ -322,8 +306,6 @@ void CanInterfaceNode::STMRotationNoModulo(const can_msgs::Point::ConstPtr& msg)
 	fr.data[2] = msg->angle & 0x00FF;
 
 	can_pub.publish(fr);
-
-
 }
 
 void CanInterfaceNode::STMLeftPID(const can_msgs::PID::ConstPtr& msg){
@@ -345,8 +327,6 @@ void CanInterfaceNode::STMLeftPID(const can_msgs::PID::ConstPtr& msg){
 	fr.data[6] = msg->D & 0x00FF;
 
 	can_pub.publish(fr);
-
-
 }
 
 void CanInterfaceNode::STMRightPID(const can_msgs::PID::ConstPtr& msg){
@@ -368,8 +348,6 @@ void CanInterfaceNode::STMRightPID(const can_msgs::PID::ConstPtr& msg){
 	fr.data[6] = msg->D & 0x00FF;
 
 	can_pub.publish(fr);
-
-
 }
 
 void CanInterfaceNode::STMAllPID(const can_msgs::PID::ConstPtr& msg){
@@ -391,8 +369,6 @@ void CanInterfaceNode::STMAllPID(const can_msgs::PID::ConstPtr& msg){
 	fr.data[6] = msg->D & 0x00FF;
 
 	can_pub.publish(fr);
-
-
 }
 
 void CanInterfaceNode::STMPWM(const can_msgs::PWMs::ConstPtr& msg){
@@ -412,8 +388,6 @@ void CanInterfaceNode::STMPWM(const can_msgs::PWMs::ConstPtr& msg){
 	fr.data[4] = msg->right_pwm & 0x00FF;
 
 	can_pub.publish(fr);
-
-
 }
 
 void CanInterfaceNode::STMSetPose(const can_msgs::Point::ConstPtr& msg){
@@ -438,8 +412,6 @@ void CanInterfaceNode::STMSetPose(const can_msgs::Point::ConstPtr& msg){
 	fr.data[6] = msg->angle & 0x00FF;
 
 	can_pub.publish(fr);
-
-
 }
 
 void CanInterfaceNode::STMSetParam(const can_msgs::STMParam::ConstPtr& msg){

@@ -1,3 +1,6 @@
+#ifndef PROTOCOL_H
+#define PROTOCOL_H
+
 #define ALL_CAN_ADDR            0
 #define BBB_CAN_ADDR            1
 #define STM_CAN_ADDR            2
@@ -44,3 +47,5 @@
 #define SET_SERVO               27
 #define ROBOT_BLOCKED           28
 #define ACTION_PLIERS           29
+
+#endif
