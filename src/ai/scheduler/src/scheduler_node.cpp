@@ -7,17 +7,16 @@ Scheduler::Scheduler(ros::NodeHandle* n){
   std::string actions_file;
   nh.getParam("scheduler/config_file", actions_file);
 
-
   this->side = SIDE_GREEN;
 
   this->side_sub = nh.subscribe("side", 1, &Scheduler::setSide, this);
 
-  this->action_srv = nh.advertiseService("scheduler/actionToDo", &Scheduler::getActionToDo, this);
-  this->actionD_srv = nh.advertiseService("scheduler/currentActionDone", &Scheduler::currentActionDone, this);
+  this->action_srv  = nh.advertiseService("scheduler/actionToDo",         &Scheduler::getActionToDo,     this);
+  this->actionD_srv = nh.advertiseService("scheduler/currentActionDone",  &Scheduler::currentActionDone, this);
+  
   this->actionManager = ActionManager(actions_file.c_str());
 
   service_ready("ai", "scheduler", 1 );
-
 }
 
 void Scheduler::setSide(const ai_msgs::SetSide::ConstPtr& msg){

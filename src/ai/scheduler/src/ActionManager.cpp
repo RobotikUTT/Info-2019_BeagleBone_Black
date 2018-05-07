@@ -10,10 +10,7 @@ ActionManager::ActionManager(const char* actions_file){
 ActionManager::ActionManager(){
 }
 
-
 void ActionManager::actionsInit (const char* actions_file){
-  // char* ACTIONS_FILE;
-  // nh.param<char*>("~config_file", ACTIONS_FILE, "action_manager/actions.config");
   FILE* fp = fopen(actions_file, "r");
 
   char readBuffer[1000];
@@ -26,7 +23,6 @@ void ActionManager::actionsInit (const char* actions_file){
   const Value& a = doc["actions"];
 
   for (SizeType i = 0; i < a.Size(); i++){
-
     int val_x, val_y, val_angle;
     std::vector<int> param;
     if(a[i]["PAction"].HasMember("end")){
@@ -36,7 +32,6 @@ void ActionManager::actionsInit (const char* actions_file){
         val_angle = a[i]["PAction"]["end"]["angle"].GetInt();
       } else {
         val_angle = 0;
-
       }
     } else {
       val_x = -1;
@@ -73,12 +68,10 @@ void ActionManager::actionsInit (const char* actions_file){
     // std::cout << temp << '\n';
 
     this->action.push_back(temp);
-
   }
 }
 
-
-void ActionManager::changeSide() {
+void ActionManager::changeSide(){
   std::list<ActionClass>::iterator it;
   for(it = action.begin(); it != action.end(); ++it){
     it->changeSide();
@@ -103,24 +96,25 @@ void ActionManager::getActionToDo(ai_msgs::GetActionToDo::Response &res){
         res.action_val = it->_action;
         action_name = it->_name;
         if (it->_action == MOVE) {
-          res.point.Opoint.x = it->PAction.startPoint.x;
-          res.point.Opoint.y = it->PAction.startPoint.y;
-          res.point.Opoint.rot = it->PAction.startPoint.angle;
+          res.point.Opoint.x    = it->PAction.startPoint.x;
+          res.point.Opoint.y    = it->PAction.startPoint.y;
+          res.point.Opoint.rot  = it->PAction.startPoint.angle;
         } else if(it->_action == BLOCK) {
-          res.action_pos.x = it->PAction.startPoint.x;
-          res.action_pos.y = it->PAction.startPoint.y;
-          res.action_pos.rot = it->PAction.startPoint.angle;
-          res.depot_pos.x = it->PAction.endPoint.x;
-          res.depot_pos.y = it->PAction.endPoint.y;
-          res.depot_pos.rot = it->PAction.endPoint.angle;
+          res.action_pos.x      = it->PAction.startPoint.x;
+          res.action_pos.y      = it->PAction.startPoint.y;
+          res.action_pos.rot    = it->PAction.startPoint.angle;
+          res.depot_pos.x       = it->PAction.endPoint.x;
+          res.depot_pos.y       = it->PAction.endPoint.y;
+          res.depot_pos.rot     = it->PAction.endPoint.angle;
         }
         else if (it->_action == BALL) {
-          res.action_pos.x = it->PAction.startPoint.x;
-          res.action_pos.y = it->PAction.startPoint.y;
-          res.action_pos.rot = it->PAction.startPoint.angle;
-          res.depot_pos.x = it->PAction.endPoint.x;
-          res.depot_pos.y = it->PAction.endPoint.y;
-          res.depot_pos.rot = it->PAction.endPoint.angle;
+          res.action_pos.x      = it->PAction.startPoint.x;
+          res.action_pos.y      = it->PAction.startPoint.y;
+          res.action_pos.rot    = it->PAction.startPoint.angle;
+          res.depot_pos.x       = it->PAction.endPoint.x;
+          res.depot_pos.y       = it->PAction.endPoint.y;
+          res.depot_pos.rot     = it->PAction.endPoint.angle;
+          res.param.clear();
           std::vector<int>::iterator i;
           for(i = it->_param.begin(); i != it->_param.end(); ++i){
             res.param.push_back(*i);
@@ -134,7 +128,6 @@ void ActionManager::getActionToDo(ai_msgs::GetActionToDo::Response &res){
   // return action_val;
   ROS_WARN_STREAM("action name: " << action_name);
 }
-
 
 void ActionManager::currentActionDone(bool done){
   // ROS_INFO_STREAM("Action done: " << done);

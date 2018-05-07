@@ -8,6 +8,7 @@ public:
   int x;
   int y;
   int angle;
+
   Point();
   Point(int _x, int _y, int _angle);
   Point(int _x, int _y);

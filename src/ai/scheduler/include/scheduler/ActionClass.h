@@ -1,9 +1,10 @@
 #ifndef ACTION_CLASS_H
 #define ACTION_CLASS_H
 
-#include <string>
 #include "scheduler/ActionPoint.h"
+
 #include <vector>
+#include <string>
 
 class ActionClass{
 public:
@@ -20,9 +21,9 @@ public:
 
   // make a constructor from json object ?
   ActionClass();
-  ActionClass(std::string, int8_t, ActionPoint, int, float, std::vector<int>);
+  ActionClass(std::string name, int8_t action, ActionPoint PAction , int point, float fact, std::vector<int> para);
 
-  void updatePriority(Point&);
+  void updatePriority(Point& robot_pos);
   void checkPossibility();
   void changeSide();
 
@@ -30,10 +31,9 @@ public:
 
 private:
   // bonus point relation
-  // procedure
 };
 
-std::ostream& operator<<(std::ostream&, const ActionClass&);
+std::ostream& operator<<(std::ostream& os, const ActionClass& AC);
 
 
 

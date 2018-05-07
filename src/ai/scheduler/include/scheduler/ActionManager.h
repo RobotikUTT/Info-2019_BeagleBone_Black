@@ -2,15 +2,19 @@
 #define ACTION_MANAGER_NODE_H
 
 #include "scheduler/ActionClass.h"
+
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
+
+#include "ai_msgs/GetActionToDo.h"
+
 #include "action/action_define.h"
+
 #include <list>
 #include <vector>
 #include <iostream>
 #include <string>
 #include <limits>
-#include "ai_msgs/GetActionToDo.h"
 
 class ActionManager
 {
