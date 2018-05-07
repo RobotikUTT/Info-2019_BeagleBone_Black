@@ -13,9 +13,7 @@ Canon::Canon(std::string name):
 
     ARDUINO_canon_pub = nh.advertise<can_msgs::ThrowBalls>("/ARDUINO/ThrowBalls", 10);
 
-    //subs
     service_ready("procedure", "canon", 1 );
-
   }
 
 void Canon::goalCB()
@@ -24,12 +22,7 @@ void Canon::goalCB()
 
   bool temp = !act.isActive();
   procedures_msgs::CanonGoal::ConstPtr msg = act.acceptNewGoal();
-    // ROS_INFO_STREAM("Point["<< i <<"] recieved: { x: " << msg->points[i].end_x << "; y: " << msg->points[i].end_y <<"; angle: "<< msg->points[i].end_angle<< "; type: "<< (int)msg->points[i].type << "}" );
-  // fifo.push_back(CanonCommand(msg->action, msg->level));
-  //
-  // if(temp){
-    sendMsg();
-  // }
+  sendMsg();
 }
 void Canon::preemptCB()
 {
@@ -40,21 +33,13 @@ void Canon::preemptCB()
 
 void Canon::analysisCB(const can_msgs::Finish::ConstPtr& msg)
 {
-  // make sure that the action hasn't been canceled
   // ROS_WARN_STREAM("Canon; FINISH : state "<< act.isActive());
-
   if (!act.isActive() || msg->val != CANON)
     return;
 
-  // if (!fifo.empty()) {
-  //   // ROS_INFO_STREAM("Canon; FiFo : not empty");
-  //   sendMsg();
-  //
-  // } else {
     procedures_msgs::CanonResult result_;
     result_.done = 1;
     act.setSucceeded(result_);
-  // }
 }
 
 inline void Canon::sendMsg() {
@@ -80,16 +65,3 @@ int main(int argc, char** argv)
 
   return 0;
 }
-
-/*
-callback:
-  check if other point
-    send new point
-  no point
-    succeeded
-
-can send multiple point
-
-need to wait STM msg to continue
-
-*/
