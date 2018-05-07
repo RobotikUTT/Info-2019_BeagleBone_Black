@@ -4,35 +4,25 @@
 Pliers::Pliers(std::string name):
   act(name,false)
   {
-    act.registerGoalCallback(boost::bind(&Pliers::goalCB, this));
+    act.registerGoalCallback(   boost::bind(&Pliers::goalCB,    this));
     act.registerPreemptCallback(boost::bind(&Pliers::preemptCB, this));
     act.start();
 
-    finish_sub = nh.subscribe("/ALL/Finish", 1, &Pliers::analysisCB, this);
+    finish_sub        = nh.subscribe("/ALL/Finish",                    1, &Pliers::analysisCB,     this);
     robot_watcher_sub = nh.subscribe("/ai/robot_watcher/robot_status", 1, &Pliers::GetRobotStatus, this);
 
     ARDUINO_pliers_pub = nh.advertise<can_msgs::ActionPliers>("/ARDUINO/ActionPliers", 10);
-    // this->STMGoToAngle_pub = nh.advertise<can_msgs::Point>("/STM/GoToAngle", 1);
-    // this->STMGoTo_pub = nh.advertise<can_msgs::Point>("/STM/GoTo", 1);
-    // this->STMRotation_pub = nh.advertise<can_msgs::Point>("/STM/Rotation", 1);
-    // this->STMRotationNoModulo_pub = nh.advertise<can_msgs::Point>("/STM/RotationNoModulo", 1);
 
-
-    //subs
-    // sub = nh_.subscribe("/random_number", 1, &AveragingAction::analysisCB, this);
     service_ready("procedure", "pliers", 1 );
-
   }
 
-void Pliers::goalCB()
-{
+void Pliers::goalCB(){
   // ROS_WARN("Pliers: new goal");
 
   bool temp = !act.isActive();
   procedures_msgs::PliersGoal::ConstPtr msg = act.acceptNewGoal();
     // ROS_INFO_STREAM("Point["<< i <<"] recieved: { x: " << msg->points[i].end_x << "; y: " << msg->points[i].end_y <<"; angle: "<< msg->points[i].end_angle<< "; type: "<< (int)msg->points[i].type << "}" );
   fifo.push_back(PliersCommand(msg->action, msg->level));
-  //
   if(temp){
     sendMsg();
   }
@@ -82,7 +72,6 @@ void Pliers::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
   }
 }
 
-
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "pliers_procedure");
@@ -92,16 +81,3 @@ int main(int argc, char** argv)
 
   return 0;
 }
-
-/*
-callback:
-  check if other point
-    send new point
-  no point
-    succeeded
-
-can send multiple point
-
-need to wait STM msg to continue
-
-*/
