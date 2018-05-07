@@ -6,23 +6,12 @@ Ball::Ball(std::string name):
   acM("/procedures/move_action", true),
   acC("/procedures/canon_action", true)
   {
-    act.registerGoalCallback(boost::bind(&Ball::goalCB, this));
+    act.registerGoalCallback(   boost::bind(&Ball::goalCB,    this));
     act.registerPreemptCallback(boost::bind(&Ball::preemptCB, this));
     act.start();
 
-    // finish_sub = nh.subscribe("/ALL/Finish", 10, &Ball::analysisCB, this);
     side_sub = nh.subscribe("/ai/side", 1, &Ball::setSide, this );
 
-    // ARDUINO_pliers_pub = nh.advertise<can_msgs::ActionPliers>("/ARDUINO/ActionPliers", 10);
-
-    // this->STMGoToAngle_pub = nh.advertise<can_msgs::Point>("/STM/GoToAngle", 1);
-    // this->STMGoTo_pub = nh.advertise<can_msgs::Point>("/STM/GoTo", 1);
-    // this->STMRotation_pub = nh.advertise<can_msgs::Point>("/STM/Rotation", 1);
-    // this->STMRotationNoModulo_pub = nh.advertise<can_msgs::Point>("/STM/RotationNoModulo", 1);
-
-
-    //subs
-    // sub = nh_.subscribe("/random_number", 1, &AveragingAction::analysisCB, this);
     service_ready("procedure", "ball", 1 );
 
   }
@@ -31,13 +20,9 @@ void Ball::goalCB()
 {
   ROS_WARN("Ball: new goal");
 
-  // bool temp = !act.isActive();
   phase = 0;
   point = 0;
   procedures_msgs::BallGoal::ConstPtr msg = act.acceptNewGoal();
-  // for (int i = 0; i < msg->points.size(); i++) {
-  //   fifo.push_back();
-  // }
 
   objectif = GroupBalls(msg->tube_pose.x, msg->tube_pose.y, msg->tube_pose.rot,
                         msg->param[0] , msg->param[1],
@@ -45,12 +30,6 @@ void Ball::goalCB()
                         side);
 
   sendMsg();
-
-  // if(temp){
-  //   sendMsg();
-  // }
-  // ROS_WARN("Ball: end");
-
 }
 
 void Ball::preemptCB()
@@ -60,36 +39,12 @@ void Ball::preemptCB()
   act.setPreempted();
 }
 
-// void Ball::analysisCB(const can_msgs::Finish::ConstPtr& msg)
-// {
-//   // make sure that the action hasn't been canceled
-//   // ROS_WARN_STREAM("Ball; FINISH : state "<< act.isActive());
-//
-//   if (!act.isActive() || msg->val != BLOCK)
-//     return;
-//
-//   phase++;
-//
-//   // if (!fifo.empty()) {
-//   //   /* code */
-//   //   ROS_INFO_STREAM("Ball; FiFo : not empty");
-//   sendMsg();
-//
-//
-//   // } else {
-//   //   procedures_msgs::MoveResult result_;
-//   //   result_.done = 1;
-//   //   act.setSucceeded(result_);
-//   // }
-// }
-
 void Ball::sendMsg() {
 
   if (!act.isActive())
       return;
 
   ROS_WARN_STREAM("phase: " << (int)phase);
-
 
   switch (phase) {
     case 0:{
@@ -155,8 +110,8 @@ void Ball::sendMsg() {
     }
 
     default: {
-      ROS_WARN_STREAM("default");
       //error
+      ROS_WARN_STREAM("default");
     }
   }
   // if(phase%2 == 0){
@@ -164,8 +119,6 @@ void Ball::sendMsg() {
   // } else {
   //   ROS_INFO("PLIERS");
   // }
-
-  // fifo.erase(fifo.begin());
 }
 
 void Ball::setSide(const ai_msgs::SetSide::ConstPtr& msg){
