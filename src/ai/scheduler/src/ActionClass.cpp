@@ -41,12 +41,13 @@ void ActionClass::checkPossibility(){
 }
 
 void ActionClass::changeSide(){
-  PAction.startPoint.x = (1500 - PAction.startPoint.x) + 1500;
-  if (PAction.endPoint.x >= 0 ) {
-    PAction.endPoint.x = (1500 - PAction.endPoint.x) + 1500;
+  PAction.startPoint.y = (1500 - PAction.startPoint.y) + 1500;
+  PAction.startPoint.angle *= -1;
+  if (PAction.endPoint.y >= 0 ) {
+    PAction.endPoint.y = (1500 - PAction.endPoint.y) + 1500;
+    PAction.endPoint.angle *= -1;
   }
 }
-
 
 bool ActionClass::operator< ( const ActionClass &B)const{
   if (_done) return 0;
