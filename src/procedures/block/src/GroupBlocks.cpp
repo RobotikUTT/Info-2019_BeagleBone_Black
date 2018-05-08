@@ -30,7 +30,7 @@ GroupBlocks::GroupBlocks(int _xg, int _yg, int _rot, int _xd, int _yd, bool side
 
   if (side) { //if orange
     for (int i = 0; i < 10; i++) {
-      proc_point[i].x = (_xg - proc_point[i].x) + _xg;
+      proc_point[i].y = (_yg - proc_point[i].y) + _yg;
       proc_point[i].angle = -proc_point[i].angle;
     }
   }
