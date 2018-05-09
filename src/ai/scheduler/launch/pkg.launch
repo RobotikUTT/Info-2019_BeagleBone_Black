@@ -1,6 +1,6 @@
 <launch>
 	<node name="scheduler" pkg="scheduler" type="node" output="screen">
-		<param name="config_file" value="$(find scheduler)/include/scheduler/actions0.config" />
+		<param name="config_file" value="$(find scheduler)/include/scheduler/block1.config" />
 
 	</node>
 </launch>
