@@ -31,7 +31,7 @@ void ActionClass::updatePriority(Point& robot_pos){
     if (PAction.endPoint.x >= 0 ) {
       temp += PAction.startPoint.manhattanDist(PAction.endPoint)/100;
     }
-    temp +=  _value / _diff_factor;
+    temp +=  _value * _diff_factor;
     this->_priority = temp;
   }
 }
