@@ -7,8 +7,8 @@
 #include <cmath>
 
 #define SEMI_CUBE_LENTH 29 //mm
-#define CENTER_FRONT 170 //mm
-#define CENTER_PLIERS 85 //mm
+#define RADIUS_ROBOT 170 //mm
+#define CENTER_PLIERS 155 //mm
 #define EPSILON 50 //mm
 
 class GroupBlocks

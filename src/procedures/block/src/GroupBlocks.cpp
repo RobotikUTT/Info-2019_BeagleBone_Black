@@ -9,11 +9,10 @@ GroupBlocks::GroupBlocks(int _xg, int _yg, int _rot, int _xd, int _yd, bool side
   groupPoint = OrientedPoint(_xg,_yg);
   rot = _rot;
 
-  int D3 = 3*SEMI_CUBE_LENTH + CENTER_FRONT + EPSILON;
-
-  int d3 = 3*SEMI_CUBE_LENTH + CENTER_PLIERS + EPSILON;
-  int d1 = SEMI_CUBE_LENTH + CENTER_PLIERS + EPSILON;
-  int d_1 = -SEMI_CUBE_LENTH + CENTER_PLIERS + EPSILON;
+  int D3 = 3*SEMI_CUBE_LENTH + RADIUS_ROBOT + EPSILON;
+  int d3 = 3*SEMI_CUBE_LENTH + CENTER_PLIERS;
+  int d1 = SEMI_CUBE_LENTH + CENTER_PLIERS;
+  int d_1 = -SEMI_CUBE_LENTH + CENTER_PLIERS;
 
   depos = OrientedPoint(_xd + d1, _yd, -3141);
   depos_ = OrientedPoint(_xd  + D3,_yd, -3141);
