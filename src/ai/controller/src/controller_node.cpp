@@ -224,8 +224,8 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
 
   emergency_stop = false;
   if ( direction == FORWARD){
-    if (front_left <= SONAR_MIN_DIST ||
-        front_right <= SONAR_MIN_DIST)
+    if (front_left <= SONAR_MIN_DIST + 6 ||
+        front_right <= SONAR_MIN_DIST + 16 )
     {
       emergency_stop = true;
     }
