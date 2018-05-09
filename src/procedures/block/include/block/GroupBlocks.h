@@ -5,10 +5,11 @@
 #include "controller/OrientedPoint.h"
 #include <math.h>
 #include <cmath>
+#include "ros/ros.h"
 
 #define SEMI_CUBE_LENTH 29 //mm
 #define RADIUS_ROBOT 170 //mm
-#define CENTER_PLIERS 155 //mm
+#define CENTER_PLIERS 140 //mm
 #define EPSILON 50 //mm
 
 class GroupBlocks
