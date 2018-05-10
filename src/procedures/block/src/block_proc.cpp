@@ -171,11 +171,6 @@ void Block::sendMsg() {
 
       goal.act.push_back(temp);
 
-      temp.action = SET_PLIERS;
-      temp.level = 1;
-
-      goal.act.push_back(temp);
-
       acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
       break;
     }
@@ -224,7 +219,7 @@ void Block::sendMsg() {
 
       goal.act.push_back(temp);
       temp.action = SET_PLIERS;
-      temp.level = 3;
+      temp.level = 2;
 
       goal.act.push_back(temp);
 
@@ -271,7 +266,7 @@ void Block::sendMsg() {
       procedures_msgs::APliers temp;
 
       temp.action = RELEASE_BLOCK;
-      temp.level = 3;
+      temp.level = 2;
 
       goal.act.push_back(temp);
 
@@ -349,7 +344,7 @@ void Block::sendMsg() {
       goal.act.push_back(temp);
 
       temp.action = SET_PLIERS;
-      temp.level = 4;
+      temp.level = 3;
 
       goal.act.push_back(temp);
 
@@ -382,7 +377,7 @@ void Block::sendMsg() {
       procedures_msgs::APliers temp;
 
       temp.action = RELEASE_BLOCK;
-      temp.level = 4;
+      temp.level = 3;
 
       goal.act.push_back(temp);
 
