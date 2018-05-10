@@ -121,9 +121,8 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 
 			msg_out.dist_front_left 	= msg->data[1];
 			msg_out.dist_front_right 	= msg->data[2];
-			msg_out.dist_left 			= msg->data[3];
-			msg_out.dist_right 			= msg->data[4];
-			msg_out.dist_back 			= msg->data[5];
+			msg_out.dist_back_left  	= msg->data[3];
+			msg_out.dist_back_right 	= msg->data[4];
 
 			this->ARDUINO_sonar_distance_pub.publish(msg_out);
 			break;

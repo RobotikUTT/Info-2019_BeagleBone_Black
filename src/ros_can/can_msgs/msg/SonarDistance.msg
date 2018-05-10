@@ -1,5 +1,4 @@
 uint8 dist_front_left
 uint8 dist_front_right
-uint8 dist_left
-uint8 dist_right
-uint8 dist_back
+uint8 dist_back_left
+uint8 dist_back_right

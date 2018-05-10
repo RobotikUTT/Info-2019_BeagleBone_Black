@@ -209,18 +209,17 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
 {
   bool last_emergency_value = emergency_stop;
   uint8_t front_left,front_right,
-          left, right, back;
+          back_left, back_right;
 
   front_left = msg->dist_front_left;
   front_right = msg->dist_front_right;
-  left = msg->dist_left;
-  right = msg->dist_right;
-  back = msg->dist_back;
+  back_left = msg->dist_back_left;
+  back_right = msg->dist_back_right;
 
   // ROS_INFO_STREAM("DIST|" << front_left << "|" << front_right
   // << "|" << left << "|"  << right << "|" << back);
-  ROS_INFO("DIST|%u|%u|%u|%u|%u",front_left,
-    front_right, left, right, back);
+  ROS_INFO("DIST|%u|%u|%u|%u|",front_left,
+    front_right, back_left, back_right);
 
   emergency_stop = false;
   if ( direction == FORWARD){
@@ -230,13 +229,15 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
       emergency_stop = true;
     }
   } else if ( direction == BACKWARD){
-    if ( back <= SONAR_MIN_DIST){
+    if ( back_left <= SONAR_MIN_DIST ||
+         back_right <= SONAR_MIN_DIST  ){
       emergency_stop = true;
     }
   } else {
     if (front_left <= SONAR_MIN_DIST ||
         front_right <= SONAR_MIN_DIST ||
-        back <= SONAR_MIN_DIST)
+        back_left <= SONAR_MIN_DIST ||
+        back_right <= SONAR_MIN_DIST)
     {
       emergency_stop = true;
     }
