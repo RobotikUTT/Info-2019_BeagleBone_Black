@@ -197,7 +197,7 @@ class RobotWatcherNode(object):
 	def halt_game(self, event):
 		# rospy.logwarn("!!!!!!!GAME STOP!!!!!!!!")
 		self.change_robot_watcher(RobotState.ROBOT_HALT)
-		rospy.Timer(rospy.Duration(WAIT_TIME), self.shutdown_ros, oneshot=True)
+		# rospy.Timer(rospy.Duration(WAIT_TIME), self.shutdown_ros, oneshot=True)
 
 	def shutdown_ros(self, event):
 		rospy.signal_shutdown("shuting down: end of game")
