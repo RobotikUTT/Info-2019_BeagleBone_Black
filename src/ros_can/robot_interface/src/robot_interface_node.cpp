@@ -463,7 +463,7 @@ void CanInterfaceNode::ARDUINOMovePliers(const std_msgs::Int8::ConstPtr& msg){
 	fr.dlc = 2;
 	fr.id = ARDUINO_CAN_ADDR;
 	fr.data[0] = MOVE_PLIERS;
-	fr.data[2] = msg->data;
+	fr.data[1] = msg->data;
 
 	can_pub.publish(fr);
 }
