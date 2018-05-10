@@ -4,12 +4,12 @@ import rospy
 from ai_msgs.srv import NodeReadiness
 
 ROBOT_SRV = "/ai/robot_watcher/node_readiness"
-TIMEOUT = 5.0
+TIMEOUT = 20.0
 
 def service_ready(namespace, package, ready, error_code = 0):
 	node_name = "/{}/{}".format(namespace, package)
 	try:
-		rospy.wait_for_service(ROBOT_SRV, timeout = TIMEOUT)
+		rospy.wait_for_service(ROBOT_SRV)
 		_ready_srv = rospy.ServiceProxy(ROBOT_SRV, NodeReadiness)
 
 		if ready:

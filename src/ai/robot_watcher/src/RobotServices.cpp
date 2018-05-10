@@ -3,14 +3,14 @@
 using namespace std;
 
 string ROBOT_SRV = "/ai/robot_watcher/node_readiness";
-float TIMEOUT = 10.0;
+float TIMEOUT = 20.0;
 
 
 void service_ready(const string name_space, const string package, const bool ready, const uint8_t error_code){
 	string node_name = "/" + name_space + "/" + package;
 
 	try {
-		if (!ros::service::waitForService(ROBOT_SRV, ros::Duration(TIMEOUT)))
+		if (!ros::service::waitForService(ROBOT_SRV))
 			throw;
 		ros::NodeHandle nh;
 		ros::ServiceClient readyPub = nh.serviceClient<ai_msgs::NodeReadiness>(ROBOT_SRV);
