@@ -223,8 +223,8 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
 
   // ROS_INFO_STREAM("DIST|" << front_left << "|" << front_right
   // << "|" << left << "|"  << right << "|" << back);
-  ROS_INFO("DIST|%u|%u|%u|%u|",front_left,
-    front_right, back_left, back_right);
+  /*ROS_INFO("DIST|%u|%u|%u|%u|",front_left,
+    front_right, back_left, back_right);*/
 
   emergency_stop = false;
   if ( direction == FORWARD){
