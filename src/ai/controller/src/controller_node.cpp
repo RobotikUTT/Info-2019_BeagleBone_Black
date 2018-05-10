@@ -239,13 +239,7 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
       emergency_stop = true;
     }
   } else {
-    if (front_left <= SONAR_MIN_DIST_FORWARD ||
-        front_right <= SONAR_MIN_DIST_FORWARD ||
-        back_left <= SONAR_MIN_DIST_BACKWARD ||
-        back_right <= SONAR_MIN_DIST_BACKWARD)
-    {
-      emergency_stop = true;
-    }
+      emergency_stop = false;
   }
 
   if (last_emergency_value != emergency_stop){
