@@ -223,21 +223,21 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
 
   emergency_stop = false;
   if ( direction == FORWARD){
-    if (front_left <= SONAR_MIN_DIST + 6 ||
-        front_right <= SONAR_MIN_DIST + 16 )
+    if (front_left <= SONAR_MIN_DIST_FORWARD + 6 ||
+        front_right <= SONAR_MIN_DIST_FORWARD + 16 )
     {
       emergency_stop = true;
     }
   } else if ( direction == BACKWARD){
-    if ( back_left <= SONAR_MIN_DIST ||
-         back_right <= SONAR_MIN_DIST  ){
+    if ( back_left <= SONAR_MIN_DIST_BACKWARD ||
+         back_right <= SONAR_MIN_DIST_BACKWARD  ){
       emergency_stop = true;
     }
   } else {
-    if (front_left <= SONAR_MIN_DIST ||
-        front_right <= SONAR_MIN_DIST ||
-        back_left <= SONAR_MIN_DIST ||
-        back_right <= SONAR_MIN_DIST)
+    if (front_left <= SONAR_MIN_DIST_FORWARD ||
+        front_right <= SONAR_MIN_DIST_FORWARD ||
+        back_left <= SONAR_MIN_DIST_BACKWARD ||
+        back_right <= SONAR_MIN_DIST_BACKWARD)
     {
       emergency_stop = true;
     }
