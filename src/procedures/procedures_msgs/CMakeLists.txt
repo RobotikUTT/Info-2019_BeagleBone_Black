@@ -46,6 +46,7 @@ find_package(catkin REQUIRED COMPONENTS
    FILES
    MPoint.msg
    OrPoint.msg
+   APliers.msg
 #   Message2.msg
  )
 

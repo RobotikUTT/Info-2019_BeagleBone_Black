@@ -52,6 +52,7 @@ public:
 	void ARDUINOThrowBalls		(const can_msgs::ThrowBalls::ConstPtr& msg);
 	void ARDUINOActionPliers	(const can_msgs::ActionPliers::ConstPtr& msg);
 	void PANELAddPoint				(const std_msgs::Int8::ConstPtr& msg);
+	void ARDUINOMovePliers		(const std_msgs::Int8::ConstPtr& msg);
 
 private:
 	ros::NodeHandle nh;
@@ -88,5 +89,6 @@ private:
 	ros::Subscriber ARDUINO_ActionPliers_sub;
 	ros::Subscriber ARDUINO_ThrowBalls_sub;
 	ros::Subscriber PANEL_point_sub;
+	ros::Subscriber ARDUINO_MovePliers_sub;
 };
 #endif

@@ -10,6 +10,7 @@
 #include "procedures_msgs/MoveAction.h"
 #include "procedures_msgs/MPoint.h"
 #include "procedures_msgs/PliersAction.h"
+#include "procedures_msgs/APliers.h"
 
 #include "can_msgs/Point.h"
 #include "can_msgs/Finish.h"

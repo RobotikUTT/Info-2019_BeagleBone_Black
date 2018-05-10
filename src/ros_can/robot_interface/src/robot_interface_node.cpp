@@ -34,6 +34,7 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->STM_SetPose_sub 						= nh.subscribe("/STM/SetPose",										10, &CanInterfaceNode::STMSetPose, 					this);
 	this->STM_SetParam_sub 						= nh.subscribe("/STM/SetParam",										10, &CanInterfaceNode::STMSetParam, 				this);
 	this->ARDUINO_ActionPliers_sub 		= nh.subscribe("/ARDUINO/ActionPliers",						10, &CanInterfaceNode::ARDUINOActionPliers, this);
+	this->ARDUINO_MovePliers_sub 			= nh.subscribe("/ARDUINO/MovePliers",							10, &CanInterfaceNode::ARDUINOMovePliers, this);
 	this->ARDUINO_ThrowBalls_sub 			= nh.subscribe("/ARDUINO/ThrowBalls",							10, &CanInterfaceNode::ARDUINOThrowBalls, 	this);
 	this->PANEL_point_sub 						= nh.subscribe("/PANEL/AddPoint",									10, &CanInterfaceNode::PANELAddPoint, 			this);
 
@@ -447,6 +448,22 @@ void CanInterfaceNode::ARDUINOActionPliers(const can_msgs::ActionPliers::ConstPt
 	fr.data[0] = ACTION_PLIERS;
 	fr.data[1] = msg->action;
 	fr.data[2] = msg->level;
+
+	can_pub.publish(fr);
+}
+
+void CanInterfaceNode::ARDUINOMovePliers(const std_msgs::Int8::ConstPtr& msg){
+	can_msgs::Frame fr;
+	fr.header.stamp = ros::Time::now();
+	fr.header.frame_id = "/ros_can/interface/";
+	fr.is_rtr = 0;
+	fr.is_error = 0;
+	fr.is_extended = 0;
+
+	fr.dlc = 2;
+	fr.id = ARDUINO_CAN_ADDR;
+	fr.data[0] = MOVE_PLIERS;
+	fr.data[2] = msg->data;
 
 	can_pub.publish(fr);
 }

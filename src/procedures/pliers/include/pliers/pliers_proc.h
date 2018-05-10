@@ -14,6 +14,8 @@
 
 #include "ai_msgs/RobotStatus.h"
 
+#include "std_msgs/Int8.h"
+
 #include "action/action_define.h"
 #include "pliers/PliersCommand.h"
 #include <actionlib/server/simple_action_server.h>
@@ -34,6 +36,7 @@ private:
   ros::Subscriber robot_watcher_sub;
 
   ros::Publisher ARDUINO_pliers_pub;
+  ros::Publisher ARDUINO_Move_pliers_pub;
   PliersSrv act;
 
   std::vector<PliersCommand> fifo;

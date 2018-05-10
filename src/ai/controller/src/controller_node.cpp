@@ -22,6 +22,7 @@ acB("/procedures/block_action", true){
   STM_SetPose_pub         = nh.advertise<can_msgs::Point>       ("/STM/SetPose",          1);
   STM_AsserManagement_pub = nh.advertise<can_msgs::Status>      ("/STM/AsserManagement",  1);
   PANEL_Point_pub         = nh.advertise<std_msgs::Int8>        ("/PANEL/AddPoint",       1);
+  ARDUINO_Move_Pliers_pub         = nh.advertise<std_msgs::Int8>        ("/ARDUINO/MovePliers",       1);
 
   clientD = nh.serviceClient<ai_msgs::CurrentActionDone>  ("scheduler/currentActionDone");
   clientA = nh.serviceClient<ai_msgs::GetActionToDo>      ("scheduler/actionToDo");
@@ -59,6 +60,10 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
   if(robot_status == ROBOT_READY){
     //init card
     // ROS_DEBUG("Robot Ready");
+    std_msgs::Int8 msg;
+    msg.data = 1;
+
+    ARDUINO_Move_Pliers_pub.publish(msg);
 
 
   } else if (robot_status == ROBOT_RUNNING){

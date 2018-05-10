@@ -23,6 +23,8 @@ void Block::goalCB(){
   point = 0;
   procedures_msgs::BlockGoal::ConstPtr msg = act.acceptNewGoal();
 
+   ROS_WARN_STREAM("Block:  x: " << (int)msg->block_action.x << " y: " << (int)msg->block_action.y << " rot: " << (int)msg->block_action.rot << " xdep: " << (int)msg->depot.x << " ydep: " <<(int) msg->depot.y << " side: " << (int)side);
+
   objectif = GroupBlocks(msg->block_action.x, msg->block_action.y, msg->block_action.rot, msg->depot.x, msg->depot.y, side);
 
   sendMsg();
@@ -73,8 +75,14 @@ void Block::sendMsg() {
     }
     case 1:{
       procedures_msgs::PliersGoal goal;
-      goal.action = TAKE_BLOCK;
-      goal.level = 0;
+
+      procedures_msgs::APliers temp;
+
+      temp.action = TAKE_BLOCK;
+      temp.level = 0;
+
+      goal.act.push_back(temp);
+
 
       acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
       break;
@@ -115,8 +123,13 @@ void Block::sendMsg() {
     }
     case 3:{
       procedures_msgs::PliersGoal goal;
-      goal.action = TAKE_BLOCK;
-      goal.level = 1;
+
+      procedures_msgs::APliers temp;
+
+      temp.action = TAKE_BLOCK;
+      temp.level = 0;
+
+      goal.act.push_back(temp);
 
       acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
       break;
@@ -150,8 +163,18 @@ void Block::sendMsg() {
     }
     case 5:{
       procedures_msgs::PliersGoal goal;
-      goal.action = RELEASE_BLOCK;
-      goal.level = 0;
+
+      procedures_msgs::APliers temp;
+
+      temp.action = RELEASE_BLOCK;
+      temp.level = 0;
+
+      goal.act.push_back(temp);
+
+      temp.action = SET_PLIERS;
+      temp.level = 1;
+
+      goal.act.push_back(temp);
 
       acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
       break;
@@ -193,8 +216,17 @@ void Block::sendMsg() {
     }
     case 7:{
       procedures_msgs::PliersGoal goal;
-      goal.action = TAKE_BLOCK;
-      goal.level = 0;
+
+      procedures_msgs::APliers temp;
+
+      temp.action = TAKE_BLOCK;
+      temp.level = 0;
+
+      goal.act.push_back(temp);
+      temp.action = SET_PLIERS;
+      temp.level = 3;
+
+      goal.act.push_back(temp);
 
       acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
       break;
@@ -235,8 +267,18 @@ void Block::sendMsg() {
     }
     case 9:{
       procedures_msgs::PliersGoal goal;
-      goal.action = RELEASE_BLOCK;
-      goal.level = 3;
+
+      procedures_msgs::APliers temp;
+
+      temp.action = RELEASE_BLOCK;
+      temp.level = 3;
+
+      goal.act.push_back(temp);
+
+      temp.action = SET_PLIERS;
+      temp.level = 1;
+
+      goal.act.push_back(temp);
 
       acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
 
@@ -272,8 +314,13 @@ void Block::sendMsg() {
     }
     case 11:{
       procedures_msgs::PliersGoal goal;
-      goal.action = TAKE_BLOCK;
-      goal.level = 0;
+
+      procedures_msgs::APliers temp;
+
+      temp.action = TAKE_BLOCK;
+      temp.level = 0;
+
+      goal.act.push_back(temp);
 
       acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
       break;
@@ -293,8 +340,18 @@ void Block::sendMsg() {
     }
     case 13:{
       procedures_msgs::PliersGoal goal;
-      goal.action = TAKE_BLOCK;
-      goal.level = 1;
+
+      procedures_msgs::APliers temp;
+
+      temp.action = TAKE_BLOCK;
+      temp.level = 0;
+
+      goal.act.push_back(temp);
+
+      temp.action = SET_PLIERS;
+      temp.level = 4;
+
+      goal.act.push_back(temp);
 
       acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
       break;
@@ -321,8 +378,19 @@ void Block::sendMsg() {
     }
     case 15:{
       procedures_msgs::PliersGoal goal;
-      goal.action = RELEASE_BLOCK;
-      goal.level = 4;
+
+      procedures_msgs::APliers temp;
+
+      temp.action = RELEASE_BLOCK;
+      temp.level = 4;
+
+      goal.act.push_back(temp);
+
+      temp.action = SET_PLIERS;
+      temp.level = 1;
+
+      goal.act.push_back(temp);
+
       acP.sendGoal(goal, boost::bind(&Block::DoneAction<PliersResultConstPtr>, this, _1, _2));
       break;
     }
@@ -355,6 +423,7 @@ void Block::sendMsg() {
 }
 
 void Block::setSide(const ai_msgs::SetSide::ConstPtr& msg){
+  ROS_WARN_STREAM("SET SIDE BLOCK");
   side = msg->side;
 }
 

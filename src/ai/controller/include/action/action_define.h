@@ -10,5 +10,6 @@
 
 #define TAKE_BLOCK 1
 #define RELEASE_BLOCK 0
+#define SET_PLIERS 2
 
 #endif

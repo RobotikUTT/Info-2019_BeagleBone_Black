@@ -12,6 +12,7 @@ Pliers::Pliers(std::string name):
     robot_watcher_sub = nh.subscribe("/ai/robot_watcher/robot_status", 1, &Pliers::GetRobotStatus, this);
 
     ARDUINO_pliers_pub = nh.advertise<can_msgs::ActionPliers>("/ARDUINO/ActionPliers", 10);
+    ARDUINO_Move_pliers_pub = nh.advertise<std_msgs::Int8>("/ARDUINO/MovePliers", 10);
 
     service_ready("procedure", "pliers", 1 );
   }
@@ -22,7 +23,9 @@ void Pliers::goalCB(){
   bool temp = !act.isActive();
   procedures_msgs::PliersGoal::ConstPtr msg = act.acceptNewGoal();
     // ROS_INFO_STREAM("Point["<< i <<"] recieved: { x: " << msg->points[i].end_x << "; y: " << msg->points[i].end_y <<"; angle: "<< msg->points[i].end_angle<< "; type: "<< (int)msg->points[i].type << "}" );
-  fifo.push_back(PliersCommand(msg->action, msg->level));
+  for (int i = 0; i < msg->act.size(); i++) {
+    fifo.push_back(PliersCommand(msg->act[i].action, msg->act[i].level));
+  }
   if(temp){
     sendMsg();
   }
@@ -54,14 +57,23 @@ void Pliers::analysisCB(const can_msgs::Finish::ConstPtr& msg)
 }
 
 inline void Pliers::sendMsg() {
-  can_msgs::ActionPliers msg;
   //direction
   while (!fifo.empty()) {
-    msg.action = fifo.front().action;
-    msg.level = fifo.front().level;
-    ARDUINO_pliers_pub.publish(msg);
+    if (fifo.front().action == SET_PLIERS) {
+      std_msgs::Int8 msg;
+      msg.data = fifo.front().level;
+
+      ARDUINO_Move_pliers_pub.publish(msg);
+
+    } else {
+      can_msgs::ActionPliers msg;
+      msg.action = fifo.front().action;
+      msg.level = fifo.front().level;
+      ARDUINO_pliers_pub.publish(msg);
+    }
 
     fifo.erase(fifo.begin());
+    ros::Duration(0.01).sleep();
   }
 }
 

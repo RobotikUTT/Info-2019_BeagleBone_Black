@@ -1,6 +1,5 @@
 #start
-uint8 action
-uint8 level
+APliers[] act
 ---
 #result
 bool done
