@@ -59,6 +59,7 @@ void Pliers::analysisCB(const can_msgs::Finish::ConstPtr& msg)
 inline void Pliers::sendMsg() {
   //direction
   while (!fifo.empty()) {
+    ROS_INFO_STREAM("PLIERS SEND: action: " << (int)fifo.front().action << " level: " << (int)fifo.front().level);
     if (fifo.front().action == SET_PLIERS) {
       std_msgs::Int8 msg;
       msg.data = fifo.front().level;
