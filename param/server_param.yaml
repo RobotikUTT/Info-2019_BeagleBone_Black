@@ -6,7 +6,7 @@ ros_can:
 ai:
   robot_watcher:
     INIT_TIMEOUT: 15 #sec
-    GAME_LENTH: 10000 #sec
+    GAME_LENTH: 95 #sec
 
   scheduler:
     config_file: "" #set in scheduler launch file
