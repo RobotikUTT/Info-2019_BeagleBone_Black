@@ -37,7 +37,7 @@
 #define NONE            0
 
 #define SONAR_MIN_DIST_FORWARD 40 //in cm
-#define SONAR_MIN_DIST_BACKWARD  20 //in cm
+#define SONAR_MIN_DIST_BACKWARD  10 //in cm
 
 typedef actionlib::SimpleActionClient<procedures_msgs::MoveAction>  ClientMove;
 typedef actionlib::SimpleActionClient<procedures_msgs::BlockAction> ClientBlock;
@@ -66,6 +66,7 @@ private:
   ros::Publisher STM_AsserManagement_pub;
   ros::Publisher PANEL_Point_pub;
   ros::NodeHandle nh;
+  ros::Publisher ARDUINO_Move_Pliers_pub;
 
   //robot pos
   int robot_pos_x;
