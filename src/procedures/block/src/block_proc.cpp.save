@@ -1,5 +1,6 @@
 #include "block/block_proc.h"
 
+
 Block::Block(std::string name):
   act(name,false),
   acM("/procedures/move_action", true),
@@ -247,7 +248,7 @@ void Block::sendMsg() {
       temp.Opoint.y = objectif.depos_.y;
       temp.Opoint.rot = objectif.depos.angle;
       temp.type = GO_TO_ANGLE;
-      temp.direction = DEFAULT;
+      temp.direction = FORWARD;
       goal.points.push_back(temp);
 
       temp.Opoint.x = objectif.depos.x;
@@ -293,7 +294,7 @@ void Block::sendMsg() {
       temp.Opoint.x = objectif.proc_point[3].x;
       temp.Opoint.y = objectif.proc_point[3].y;
       temp.Opoint.rot = objectif.proc_point[3].angle;
-      temp.type = GO_TO_ANGLE;
+      temp.type = GO_TO;
       temp.direction = DEFAULT;
       goal.points.push_back(temp);
 

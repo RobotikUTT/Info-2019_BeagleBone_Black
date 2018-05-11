@@ -9,7 +9,7 @@
 
 #define SEMI_CUBE_LENTH 29 //mm
 #define RADIUS_ROBOT 170 //mm
-#define CENTER_PLIERS 140 //mm
+#define CENTER_PLIERS 113 //mm
 #define EPSILON 50 //mm
 
 class GroupBlocks

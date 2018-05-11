@@ -83,7 +83,7 @@ inline void Move::sendMsg() {
         break;
     }
     fifo.erase(fifo.begin());
-    ros::Duration(0.01).sleep();
+    ros::Duration(0.1).sleep();
   }
 }
 
