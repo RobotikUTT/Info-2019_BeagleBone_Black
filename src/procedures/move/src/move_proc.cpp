@@ -15,6 +15,7 @@ Move::Move(std::string name):
     this->STMGoTo_pub             = nh.advertise<can_msgs::Point>("/STM/GoTo",              1);
     this->STMRotation_pub         = nh.advertise<can_msgs::Point>("/STM/Rotation",          1);
     this->STMRotationNoModulo_pub = nh.advertise<can_msgs::Point>("/STM/RotationNoModulo",  1);
+    this->STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement",  1);
 
     service_ready("procedure", "move", 1 );
   }
@@ -26,7 +27,7 @@ void Move::goalCB(){
   procedures_msgs::MoveGoal::ConstPtr msg = act.acceptNewGoal();
   for (int i = 0; i < msg->points.size(); i++) {
     // ROS_INFO_STREAM("Point["<< i <<"] recieved: { x: " << msg->points[i].Opoint.x << "; y: " << msg->points[i].Opoint.y <<"; angle: "<< msg->points[i].Opoint.rot<< "; type: "<< (int)msg->points[i].type << "}" );
-    fifo.push_back(MovePoint(msg->points[i].Opoint.x, msg->points[i].Opoint.y, msg->points[i].Opoint.rot, msg->points[i].type, msg->points[i].direction));
+    fifo.push_back(MovePoint(msg->points[i].Opoint.x, msg->points[i].Opoint.y, msg->points[i].Opoint.rot, msg->points[i].type, msg->points[i].direction, msg->points[i].timeout));
   }
   if(temp){
     sendMsg();
@@ -45,6 +46,8 @@ void Move::analysisCB(const can_msgs::Finish::ConstPtr& msg){
   if (!act.isActive() || msg->val != MOVE)
     return;
 
+  TimerTimeout.stop();
+
   if (!fifo.empty()) {
     sendMsg();
   } else {
@@ -57,34 +60,84 @@ void Move::analysisCB(const can_msgs::Finish::ConstPtr& msg){
 inline void Move::sendMsg() {
   can_msgs::Point msg;
   //direction
-  while (!fifo.empty()) {
-     ROS_INFO_STREAM("Point send: { x: " << fifo.front()._x << "; y: " << fifo.front()._y <<"; angle: "<< fifo.front()._angle<< "}" );
+  // ROS_INFO_STREAM("size: " << fifo.size());
+  // ROS_INFO_STREAM("Point send: { x: " << fifo.front()._x << "; y: " << fifo.front()._y <<"; angle: "<< fifo.front()._angle<< " timeout: "<< fifo.front()._timeout << "}" );
+  if (fifo.front()._timeout != 0) {
     switch (fifo.front()._move_type) {
       case GO_TO_ANGLE:
+      msg.pos_x = fifo.front()._x;
+      msg.pos_y = fifo.front()._y;
+      msg.angle = fifo.front()._angle;
+      msg.direction = fifo.front()._direction;
+      STMGoToAngle_pub.publish(msg);
+      break;
+      case GO_TO:
+      msg.pos_x = fifo.front()._x;
+      msg.pos_y = fifo.front()._y;
+      msg.direction = fifo.front()._direction;
+      STMGoTo_pub.publish(msg);
+      break;
+      case ROTATION:
+      msg.angle = fifo.front()._angle;
+      STMRotation_pub.publish(msg);
+      break;
+      case ROTATION_NO_MODULO:
+      msg.angle = fifo.front()._angle;
+      STMRotationNoModulo_pub.publish(msg);
+      break;
+    }
+    // ROS_INFO_STREAM("TIMEOUT SET");
+    TimerTimeout = nh.createTimer(ros::Duration(fifo.front()._timeout), &Move::TimeoutCallback , this, true);
+    fifo.erase(fifo.begin());
+
+  } else {
+    while (!fifo.empty() && fifo.front()._timeout == 0) {
+
+      switch (fifo.front()._move_type) {
+        case GO_TO_ANGLE:
         msg.pos_x = fifo.front()._x;
         msg.pos_y = fifo.front()._y;
         msg.angle = fifo.front()._angle;
         msg.direction = fifo.front()._direction;
         STMGoToAngle_pub.publish(msg);
         break;
-      case GO_TO:
+        case GO_TO:
         msg.pos_x = fifo.front()._x;
         msg.pos_y = fifo.front()._y;
         msg.direction = fifo.front()._direction;
         STMGoTo_pub.publish(msg);
         break;
-      case ROTATION:
+        case ROTATION:
         msg.angle = fifo.front()._angle;
         STMRotation_pub.publish(msg);
         break;
-      case ROTATION_NO_MODULO:
+        case ROTATION_NO_MODULO:
         msg.angle = fifo.front()._angle;
         STMRotationNoModulo_pub.publish(msg);
         break;
+      }
+      fifo.erase(fifo.begin());
+      ros::Duration(0.1).sleep();
     }
-    fifo.erase(fifo.begin());
-    ros::Duration(0.1).sleep();
   }
+}
+
+void Move::TimeoutCallback(const ros::TimerEvent&){
+//reset all goal STM
+  // ROS_WARN_STREAM("TIMEOUT");
+  can_msgs::Status msg;
+
+  msg.value = RESET_ORDERS;
+  STM_AsserManagement_pub.publish(msg);
+
+  if (!fifo.empty()) {
+    sendMsg();
+  } else {
+    procedures_msgs::MoveResult result_;
+    result_.done = 1;
+    act.setSucceeded(result_);
+  }
+
 }
 
 void Move::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){

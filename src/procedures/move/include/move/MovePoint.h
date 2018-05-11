@@ -11,11 +11,12 @@ public:
   int16_t _angle;
   uint8_t _move_type;
   int8_t _direction;
+  uint16_t _timeout;
 
   MovePoint();
   MovePoint(int16_t, int16_t);
   MovePoint(int16_t, int16_t, int16_t);
   MovePoint(int16_t, int16_t, int16_t, uint8_t);
-  MovePoint(int16_t, int16_t, int16_t, uint8_t, int8_t);
+  MovePoint(int16_t, int16_t, int16_t, uint8_t, int8_t, uint16_t);
 };
 #endif
