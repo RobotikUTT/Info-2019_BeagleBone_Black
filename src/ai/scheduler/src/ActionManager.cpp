@@ -99,6 +99,7 @@ void ActionManager::getActionToDo(ai_msgs::GetActionToDo::Response &res){
           res.point.Opoint.x    = it->PAction.startPoint.x;
           res.point.Opoint.y    = it->PAction.startPoint.y;
           res.point.Opoint.rot  = it->PAction.startPoint.angle;
+          res.point.timeout     = *it->_param.begin();
         } else if(it->_action == BLOCK) {
           res.action_pos.x      = it->PAction.startPoint.x;
           res.action_pos.y      = it->PAction.startPoint.y;
