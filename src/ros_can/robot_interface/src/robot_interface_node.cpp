@@ -50,7 +50,7 @@ void CanInterfaceNode::updateRobotStatus(const ai_msgs::RobotStatus::ConstPtr& m
 }
 
 void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
-
+	if (msg->id == BBB_CAN_ADDR){
 	switch (msg->data[0]) {
 		case WHOAMI:{
 
@@ -142,6 +142,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			this->STM_robot_blocked_pub.publish(msg_out);
 			break;
 		}
+	}
 	}
 }
 

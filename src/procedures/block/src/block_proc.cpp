@@ -45,6 +45,19 @@ void Block::sendMsg() {
 
   switch (phase) {
     case 0:{
+
+      procedures_msgs::PliersGoal goal1;
+
+      procedures_msgs::APliers temp1;
+
+      temp1.action = SET_PLIERS;
+      temp1.level = 1;
+
+      goal1.act.push_back(temp1);
+
+
+      acP.sendGoal(goal1);
+
       procedures_msgs::MoveGoal goal;
       procedures_msgs::MPoint temp;
 

@@ -60,10 +60,10 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
   if(robot_status == ROBOT_READY){
     //init card
     // ROS_DEBUG("Robot Ready");
-    std_msgs::Int8 msg;
-    msg.data = 1;
+   // std_msgs::Int8 msg;
+   // msg.data = 1;
 
-    ARDUINO_Move_Pliers_pub.publish(msg);
+    //ARDUINO_Move_Pliers_pub.publish(msg);
 
 
   } else if (robot_status == ROBOT_RUNNING){
