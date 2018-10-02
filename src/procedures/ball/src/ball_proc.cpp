@@ -1,6 +1,16 @@
+/** @file ball_proc.cpp
+*    @brief The ball action class
+*    
+*    @author Alexis CARE
+*/
 #include "ball/ball_proc.h"
 
 
+/**
+ * @brief      Constructs the object.
+ *
+ * @param[in]  name  The name of the action server
+ */
 Ball::Ball(std::string name):
   act(name,false),
   acM("/procedures/move_action", true),
@@ -16,6 +26,9 @@ Ball::Ball(std::string name):
 
   }
 
+/**
+ * @brief      The new Goal callback
+ */
 void Ball::goalCB()
 {
   ROS_WARN("Ball: new goal");
@@ -32,6 +45,9 @@ void Ball::goalCB()
   sendMsg();
 }
 
+/**
+ * @brief      The preempt Callback
+ */
 void Ball::preemptCB()
 {
   ROS_DEBUG("Move; Preempted");
@@ -39,6 +55,9 @@ void Ball::preemptCB()
   act.setPreempted();
 }
 
+/**
+ * @brief      Sends all Ball order in the correspondate phase to the Arduino.
+ */
 void Ball::sendMsg() {
 
   if (!act.isActive())
@@ -121,10 +140,23 @@ void Ball::sendMsg() {
   // }
 }
 
+/**
+ * @brief      Sets the Robot side.
+ *
+ * @param[in]  msg   The SetSide message
+ */
 void Ball::setSide(const ai_msgs::SetSide::ConstPtr& msg){
   side = msg->side;
 }
 
+/**
+ * @brief      The action done callback
+ * 
+ * @param[in]  state    The state of the action
+ * @param[in]  result   The result message
+ *
+ * @tparam     doneMsg  The action result type
+ */
 template <class doneMsg>
 void Ball::DoneAction( const actionlib::SimpleClientGoalState& state, const doneMsg & result){
 
@@ -137,6 +169,11 @@ void Ball::DoneAction( const actionlib::SimpleClientGoalState& state, const done
   }
 }
 
+/**
+ * @brief      Gets the robot status.
+ *
+ * @param[in]  msg   The RobotStatus message
+ */
 void Ball::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
   if(msg->robot_watcher == ROBOT_HALT){
     act.shutdown();

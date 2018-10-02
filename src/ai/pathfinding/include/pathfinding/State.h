@@ -1,3 +1,9 @@
+/**  @file pathfinding/State.h
+*    @brief Defined pathfinding state for Cpp.
+*    
+*    
+*    @author Alexis CARE
+*/
 #ifndef PATH_STATE
 #define PATH_STATE
 

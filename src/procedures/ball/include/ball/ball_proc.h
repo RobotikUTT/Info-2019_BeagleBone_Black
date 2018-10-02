@@ -1,3 +1,9 @@
+/** @file ball_proc.h
+*    @brief Define the ROS Ball action server
+*    
+*    
+*    @author Alexis CARE
+*/
 #ifndef BALL_PROC_H
 #define BALL_PROC_H
 
@@ -20,6 +26,11 @@
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
 
+/**
+ * @defgroup Ball The ball package
+ * @{
+ */
+
 typedef actionlib::SimpleActionServer<procedures_msgs::BallAction>  BallSrv;
 typedef actionlib::SimpleActionClient<procedures_msgs::MoveAction>  ClientMove;
 typedef actionlib::SimpleActionClient<procedures_msgs::CanonAction> ClientCanon;
@@ -28,6 +39,9 @@ typedef boost::shared_ptr< ::procedures_msgs::MoveResult const>   MoveResultCons
 typedef boost::shared_ptr< ::procedures_msgs::CanonResult const>  CanonResultConstPtr;
 
 
+/**
+ * @brief      Class for ball Action Server.
+ */
 class  Ball
 {
 public:
@@ -58,5 +72,7 @@ private:
   void GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
 };
 
-
+/**
+ * @}
+ */
 #endif

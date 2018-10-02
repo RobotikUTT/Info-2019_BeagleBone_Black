@@ -1,4 +1,12 @@
 #!/usr/bin/python
+
+## @file robot_watcher_node.py
+##    @brief Node class wich monitor all nodes of the project.
+##    
+##    
+##    @author Alexis CARE
+##
+
 import time
 import rospy
 
@@ -8,6 +16,10 @@ from ai_msgs.srv import NodeReadiness, NodeReadinessResponse
 from robot_watcher.RStatus.State import RobotState, WatcherState, NODES_CHECKLIST, Side
 
 from std_msgs.msg import Empty
+
+## 
+## @defgroup Robot_watcher The Robot_watcher package
+## @{
 
 PIN_SIDE 	= "P8_7"
 PIN_START 	= "P8_8"
@@ -20,10 +32,18 @@ ERROR_LED	= ["P9_"+str(j) for j in [17,18,12,15,30]]
 
 WAIT_TIME = 10
 
+##
+## @brief      Class for robot watcher node.
+## 
+## @details    This node monitors all the nodes of the project and is the interface for the human
+##
 class RobotWatcherNode(object):
-	"""docstring for RobotWatcherNode
-	node to monitor robot nodes"""
 
+	##
+	## @brief      Constructs the object.
+	##
+	## @param      self  The object
+	##
 	def __init__(self):
 		rospy.init_node("ai_robot_watcher", log_level=rospy.INFO)
 
@@ -127,6 +147,13 @@ class RobotWatcherNode(object):
 		GPIO.output(PINK_LED,	GPIO.LOW)
 		GPIO.output(GREEN_LED, 	GPIO.LOW)
 
+	##
+	## @brief      Set the status led on the right combination.
+	##
+	## @param      self  The object
+	## @param      GPIO  The gpio output
+	##
+	##
 	def set_LED(self, GPIO):
 		if self.error_code != 0:
 			GPIO.output(PINK_LED, GPIO.LOW)
@@ -142,16 +169,33 @@ class RobotWatcherNode(object):
 			elif self.robot_watcher == RobotState.ROBOT_RUNNING:
 				GPIO.output(GREEN_LED, GPIO.HIGH)
 
+	##
+	## @brief      Test if all needed nodes are ready
+	##
+	## @param      self  The object
+	##
+	## @return     All nodes ready
+	##
 	def nodes_ready(self):
 		for _, val in NODES_CHECKLIST.items():
 			if val == "need" or val == False:
 				return False
 		return True
 
+	##
+	## @brief      Publish the robot status
+	##
+	## @param      self  The object
+	##
 	def publish_robot_watcher(self):
 		msg = RobotStatus(self.robot_watcher, self.nodes_status)
 		self._robot_watcher_publisher.publish(msg)
 
+	##
+	## @brief      Publish nodes status
+	##
+	## @param      self  The object
+	##
 	def publish_nodes_status(self):
 		msg = NodesStatus()
 		for node, val in NODES_CHECKLIST.items():
@@ -163,6 +207,12 @@ class RobotWatcherNode(object):
 				msg.nodes_error.append(node)
 		self._nodes_status_publisher.publish(msg)
 
+	##
+	## @brief      Change the robot status
+	##
+	## @param      self    The object
+	## @param      status  The status
+	##
 	def change_robot_watcher(self, status):
 		if status == RobotState.ROBOT_READY:
 			rospy.loginfo("All node started: Robot standing by")
@@ -173,6 +223,12 @@ class RobotWatcherNode(object):
 		self.robot_watcher = status
 		self.publish_robot_watcher()
 
+	##
+	## @brief      Change a node status
+	##
+	## @param      self    The object
+	## @param      status  The status
+	##
 	def change_nodes_status(self, status):
 		if status == WatcherState.NODES_RUNNING:
 			rospy.loginfo("All Nodes ready")
@@ -185,6 +241,12 @@ class RobotWatcherNode(object):
 		self.publish_robot_watcher()
 
 
+	##
+	## @brief      Service to set a node readiness
+	##
+	## @param      self  The object
+	## @param      msg   The service message
+	##
 	def set_readiness(self, msg):
 		if msg.node_name in NODES_CHECKLIST:
 			NODES_CHECKLIST[msg.node_name] = msg.ready
@@ -194,14 +256,39 @@ class RobotWatcherNode(object):
 			rospy.logwarn("Node {} not in cheklist".format(msg.node_name))
 			return NodeReadinessResponse()
 
+	##
+	## @brief      Stop the robot at the end of the game
+	##
+	## @param      self   The object
+	## @param      event  The end of timer event
+	##
+	##
 	def halt_game(self, event):
 		# rospy.logwarn("!!!!!!!GAME STOP!!!!!!!!")
 		self.change_robot_watcher(RobotState.ROBOT_HALT)
 		# rospy.Timer(rospy.Duration(WAIT_TIME), self.shutdown_ros, oneshot=True)
 
+	##
+	## @brief      Shutdown ros
+	##
+	## @details    Not used
+	##
+	## @param      self   The object
+	## @param      event  The end of timer event
+	## 
+	## @todo Include this methode into the project
+	##
 	def shutdown_ros(self, event):
 		rospy.signal_shutdown("shuting down: end of game")
 
+	##
+	## @brief      Chek if the LED board is connected
+	##
+	## @param      self  The object
+	##
+	## @return     LED board connected
+	## 
+	##
 	def board_ready(self):
 		for name, val in NODES_CHECKLIST.items():
 			if name.split('/')[1] == "board":
@@ -209,6 +296,13 @@ class RobotWatcherNode(object):
 					return False
 		return True
 
+	##
+	## @brief      Ping the board on the network
+	##
+	## @param      self   The object
+	## @param      event  The end of timer event
+	## 
+	##
 	def board_ping(self, event):
 		if NODES_CHECKLIST["/ros_can/interface"] != False or NODES_CHECKLIST["/ros_can/interface"] != "need" :
 			if not self.board_ready():
@@ -216,5 +310,9 @@ class RobotWatcherNode(object):
 			else:
 				self.ping_board.shutdown()
 
+
+##
+## @}
+##
 if __name__ == '__main__':
 	RobotWatcherNode()

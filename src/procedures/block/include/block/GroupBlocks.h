@@ -1,3 +1,9 @@
+/** @file GroupBlocks.h
+*    @brief Define GroupBlocks class
+*    
+*    
+*    @author Alexis CARE
+*/
 #ifndef GROUP_BLOCK_H
 #define GROUP_BLOCK_H
 
@@ -7,11 +13,19 @@
 #include <cmath>
 #include "ros/ros.h"
 
+/**
+ * @defgroup blocl The block package
+ * @{
+ */
+
 #define SEMI_CUBE_LENTH 29 //mm
 #define RADIUS_ROBOT 170 //mm
 #define CENTER_PLIERS 113 //mm
 #define EPSILON 50 //mm
 
+/**
+ * @brief      Class for group blocks action.
+ */
 class GroupBlocks
 {
 public:
@@ -28,4 +42,9 @@ public:
 private:
 
 };
+
+/**
+ * @}
+ */
+
 #endif

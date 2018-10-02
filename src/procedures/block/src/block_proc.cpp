@@ -1,5 +1,15 @@
+/** @file block_proc.cpp
+*    @brief The block action class
+*    
+*    @author Alexis CARE
+*/
 #include "block/block_proc.h"
 
+/**
+ * @brief      Constructs the object.
+ *
+ * @param[in]  name  The name of the  action server
+ */
 Block::Block(std::string name):
   act(name,false),
   acM("/procedures/move_action", true),
@@ -15,6 +25,9 @@ Block::Block(std::string name):
 
   }
 
+/**
+ * @brief      The new Goal callback
+ */
 void Block::goalCB(){
   // ROS_WARN("Block: new goal");
 
@@ -29,12 +42,18 @@ void Block::goalCB(){
   sendMsg();
 }
 
+/**
+ * @brief      The preempt Callback
+ */
 void Block::preemptCB(){
   ROS_DEBUG("Move; Preempted");
   // set the action state to preempted
   act.setPreempted();
 }
 
+/**
+ * @brief      Sends all Block order in the correspondate phase to the Arduino.
+ */
 void Block::sendMsg() {
 
   if (!act.isActive())
@@ -429,13 +448,26 @@ void Block::sendMsg() {
   }
 }
 
+/**
+ * @brief      Sets the robot side.
+ *
+ * @param[in]  msg   The SetSide message
+ */
 void Block::setSide(const ai_msgs::SetSide::ConstPtr& msg){
   ROS_WARN_STREAM("SET SIDE BLOCK");
   side = msg->side;
 }
 
+/**
+ * @brief      The action done callback
+ *
+ * @param[in]  state    The state of the action
+ * @param[in]  result   The result message
+ *
+ * @tparam     doneMsg  The action result type
+ */
 template <class doneMsg>
-void Block::DoneAction( const actionlib::SimpleClientGoalState& state, const doneMsg & result){
+void Block::DoneActioDoneActionn( const actionlib::SimpleClientGoalState& state, const doneMsg & result){
 
   if (state == actionlib::SimpleClientGoalState::SUCCEEDED){
     point += result->points_done;
@@ -446,6 +478,11 @@ void Block::DoneAction( const actionlib::SimpleClientGoalState& state, const don
   }
 }
 
+/**
+ * @brief      Gets the robot status.
+ *
+ * @param[in]  msg   The RobotStatus message
+ */
 void Block::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
   if(msg->robot_watcher == ROBOT_HALT){
     act.shutdown();

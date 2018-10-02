@@ -1,3 +1,9 @@
+/** @file RobotServices.cpp
+*    @brief Service interface for node readiness.
+*    
+*    
+*    @author Alexis CARE
+*/
 #include <robot_watcher/Services/RobotServices.h>
 
 using namespace std;
@@ -6,6 +12,15 @@ string ROBOT_SRV = "/ai/robot_watcher/node_readiness";
 float TIMEOUT = 20.0;
 
 
+/**
+ * @brief      service function
+ *
+ * @param[in]  name_space  The name space of the node
+ * @param[in]  package     The package name
+ * @param[in]  ready       Node ready
+ * @param[in]  error_code  The error code if nessesary
+ * 
+ */
 void service_ready(const string name_space, const string package, const bool ready, const uint8_t error_code){
 	string node_name = "/" + name_space + "/" + package;
 

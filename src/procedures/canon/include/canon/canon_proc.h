@@ -1,3 +1,9 @@
+/** @file canon_proc.h
+*    @brief Define the ROS canon action server
+*    
+*    
+*    @author Alexis CARE
+*/
 #ifndef CANON_PROC_H
 #define CANON_PROC_H
 
@@ -16,9 +22,17 @@
 #include <actionlib/server/simple_action_server.h>
 #include "action/action_define.h"
 
+/**
+ * @defgroup canon The canon package
+ * @{
+ */
+
 typedef actionlib::SimpleActionServer<procedures_msgs::CanonAction> CanonSrv;
 
 
+/**
+ * @brief      Class for canon action server.
+ */
 class Canon
 {
 public:
@@ -40,4 +54,8 @@ private:
   inline void sendMsg();
   void GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
 };
+
+/**
+ * @}
+ */
 #endif

@@ -1,3 +1,7 @@
+/** @file controller_node.h
+*    @brief controller_node h file
+*    
+*/
 #ifndef CONTROLLER_NODE_H
 #define CONTROLLER_NODE_H
 
@@ -36,6 +40,11 @@
 #define BACKWARD        -1
 #define NONE            0
 
+/**
+ * @defgroup Controller The Controller package
+ * @{
+ */
+
 #define SONAR_MIN_DIST_FORWARD 30 //in cm
 #define SONAR_MIN_DIST_BACKWARD  10 //in cm
 
@@ -43,6 +52,10 @@ typedef actionlib::SimpleActionClient<procedures_msgs::MoveAction>  ClientMove;
 typedef actionlib::SimpleActionClient<procedures_msgs::BlockAction> ClientBlock;
 typedef actionlib::SimpleActionClient<procedures_msgs::BallAction>  ClientBall;
 
+
+/**
+ * @brief      Controls the robot with all the other node.
+ */
 class Controller
 {
 public:
@@ -102,4 +115,8 @@ private:
   void DoneAction( const actionlib::SimpleClientGoalState& state, const doneMsg & result);
 
 };
+
+/**
+ * @}
+ */
 #endif

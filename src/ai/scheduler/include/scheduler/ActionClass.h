@@ -1,3 +1,9 @@
+/**  @file ActionClass.h
+*    @brief Class for ActionClass
+*    
+*    
+*    @author Alexis CARE
+*/
 #ifndef ACTION_CLASS_H
 #define ACTION_CLASS_H
 
@@ -6,6 +12,9 @@
 #include <vector>
 #include <string>
 
+/**
+ * @brief      Class for action class.
+ */
 class ActionClass{
 public:
 

@@ -1,15 +1,31 @@
+
+## @file RStatus/State.py
+##   @brief File to define alias
+##   
+##   File documentation
+##   
+##   
+##   @author Alexis CARE
+##
+
+## 
+## @defgroup Robot_watcher The Robot_watcher package
+## @{
+
+
+
+##@brief      Class for robot state.
+
 class RobotState(object):
-	"""docstring for status
-	class for set robot status"""
 	ROBOT_INIT     = 0 # nodes initializing
 	ROBOT_READY    = 1 # all nodes ready, waiting start
 	ROBOT_RUNNING  = 2 # robot in game
 	ROBOT_HALT     = 3 # end of game
 
 
+##@brief Class for Watcher State
+
 class WatcherState(object):
-	"""docstring for status
-	class for set watcher status"""
 
 	NODES_INIT    	= 0 # nodes initializing
 	NODES_RUNNING 	= 1 # nodes running
@@ -18,6 +34,9 @@ class WatcherState(object):
 	PIN_ON			= 0 # Game hold
 	PIN_OFF			= 1 # Game start
 
+##
+## @brief      Class for side.
+##
 class Side(object):
 	GREEN = 0
 	ORANGE = 1
@@ -42,3 +61,5 @@ NODES_CHECKLIST = {
 
 
 }
+
+## @}

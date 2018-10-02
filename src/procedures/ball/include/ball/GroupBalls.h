@@ -1,3 +1,9 @@
+/** @file GroupBalls.h
+*    @brief Define GroupBalls class
+*    
+*    
+*    @author Alexis CARE
+*/
 #ifndef GROUP_BALLS_H
 #define GROUP_BALLS_H
 
@@ -6,10 +12,18 @@
 #include <math.h>
 #include <cmath>
 
+/**
+ * @defgroup ball The ball package
+ * @{
+ */
+
 #define WALL_EPSILON 45 //mm
 #define X_CANON 50 //mm
 #define Y_CANON 145 //mm
 
+/**
+ * @brief      Class for group balls action type.
+ */
 class GroupBalls
 {
 public:
@@ -23,4 +37,9 @@ public:
 private:
 
 };
+
+/**
+ * @}
+ */
+
 #endif

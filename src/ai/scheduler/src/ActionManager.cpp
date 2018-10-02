@@ -1,15 +1,34 @@
+/** @file ActionClass.cpp
+*    @brief Class for ActionClass.
+*    
+*    
+*    @author Alexis CARE
+*/
 #include "scheduler/ActionManager.h"
 #include "ros/ros.h"
 
 using namespace rapidjson;
 
+/**
+ * @brief      Constructs the object.
+ *
+ * @param[in]  actions_file  The JSON actions file
+ */
 ActionManager::ActionManager(const char* actions_file){
   this->actionsInit(actions_file);
 }
 
+/**
+ * @brief      Constructs the default object.
+ */
 ActionManager::ActionManager(){
 }
 
+/**
+ * @brief      Parse the JSON action file to fill the ActionManager class
+ *
+ * @param[in]  actions_file  The actions file
+ */
 void ActionManager::actionsInit (const char* actions_file){
   FILE* fp = fopen(actions_file, "r");
 
@@ -71,6 +90,9 @@ void ActionManager::actionsInit (const char* actions_file){
   }
 }
 
+/**
+ * @brief      Change all ActionClass side
+ */
 void ActionManager::changeSide(){
   std::list<ActionClass>::iterator it;
   for(it = action.begin(); it != action.end(); ++it){
@@ -78,6 +100,11 @@ void ActionManager::changeSide(){
   }
 }
 
+/**
+ * @brief      Update all ActionClass Priority
+ *
+ * @param[in]  robot_pos  The robot position
+ */
 void ActionManager::updatePriority(Point robot_pos){
   std::list<ActionClass>::iterator it;
   for(it = action.begin(); it != action.end(); ++it){
@@ -85,6 +112,11 @@ void ActionManager::updatePriority(Point robot_pos){
   }
 }
 
+/**
+ * @brief      Gets the next action to execute
+ *
+ * @param[in, out]      res   The service response message
+ */
 void ActionManager::getActionToDo(ai_msgs::GetActionToDo::Response &res){
   std::string action_name;
   res.action_val = -1;
@@ -130,6 +162,11 @@ void ActionManager::getActionToDo(ai_msgs::GetActionToDo::Response &res){
   ROS_WARN_STREAM("action name: " << action_name);
 }
 
+/**
+ * @brief      Update the done's attribut current Action
+ *
+ * @param[in]  done  The done
+ */
 void ActionManager::currentActionDone(bool done){
   // ROS_INFO_STREAM("Action done: " << done);
   current_action->_done = done;

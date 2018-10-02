@@ -1,3 +1,9 @@
+/**  @file ActionManager.h
+*    @brief Class for ActionManager
+*    
+*    
+*    @author Alexis CARE
+*/
 #ifndef ACTION_MANAGER_NODE_H
 #define ACTION_MANAGER_NODE_H
 
@@ -16,6 +22,9 @@
 #include <string>
 #include <limits>
 
+/**
+ * @brief      Class for action manager.
+ */
 class ActionManager
 {
 public:

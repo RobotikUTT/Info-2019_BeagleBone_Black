@@ -1,8 +1,19 @@
+/** @file OrientedPoint.h
+*    @brief OrientedPoint h file
+*    
+*/
 #ifndef ORIENTED_POINT_H
 #define ORIENTED_POINT_H
 #include <iostream>
 
+/**
+ * @defgroup Controller The Controller package
+ * @{
+ */
 
+/**
+ * @brief      Class for oriented point.
+ */
 class OrientedPoint
 {
 public:
@@ -17,4 +28,8 @@ public:
 };
 
 std::ostream& operator<<(std::ostream&, const OrientedPoint&);
+
+/**
+ * @}
+ */
 #endif

@@ -1,15 +1,44 @@
+/** @file controller_node.cpp
+*    @brief Node class wich controls all other nodes other robot watcher.
+*    
+*    @author Alexis CARE
+*/
+
 #include "controller/controller_node.h"
 
+
+//define typedef for lisibility
 typedef boost::shared_ptr< ::procedures_msgs::MoveResult const>   MoveResultConstPtr;
 typedef boost::shared_ptr< ::procedures_msgs::BlockResult const>  BlockResultConstPtr;
 typedef boost::shared_ptr< ::procedures_msgs::BallResult const>   BallResultConstPtr;
 
+
+/**
+ * @brief      Constructs the object.
+ *
+ * @param      n     NodeHandle var
+ * 
+ */
 Controller::Controller(ros::NodeHandle* n):
 acM("/procedures/move_action", true),
 acBl("/procedures/ball_action", true),
 acB("/procedures/block_action", true){
+  //attributes
   nh = *n;
+  side            = SIDE_GREEN;
+  direction       = NONE;
+  emergency_stop  = false;
+  PANLEUp         = 0;
+  points_done     = 0;
 
+  //advertiser
+  emergency_stop_pub      = nh.advertise<ai_msgs::EmergencyStop>("emergency",             1);
+  STM_SetPose_pub         = nh.advertise<can_msgs::Point>       ("/STM/SetPose",          1);
+  STM_AsserManagement_pub = nh.advertise<can_msgs::Status>      ("/STM/AsserManagement",  1);
+  PANEL_Point_pub         = nh.advertise<std_msgs::Int8>        ("/PANEL/AddPoint",       1);
+  ARDUINO_Move_Pliers_pub = nh.advertise<std_msgs::Int8>        ("/ARDUINO/MovePliers",   1);
+
+  //subscriber
   status_sub          = nh.subscribe("robot_watcher/robot_status",  1, &Controller::GetRobotStatus,     this);
   robot_pos_sub       = nh.subscribe("/STM/Position",               1, &Controller::GetRobotPose,       this);
   robot_speed_sub     = nh.subscribe("/STM/GetSpeed",               1, &Controller::GetRobotSpeed,      this);
@@ -18,24 +47,15 @@ acB("/procedures/block_action", true){
   sonar_distance_sub  = nh.subscribe("/ARDUINO/SonarDistance",      1, &Controller::processSonars,      this);
   robot_blocked_sub   = nh.subscribe("/STM/RobotBlocked",           1, &Controller::processRobotBlocked,this);
 
-  emergency_stop_pub      = nh.advertise<ai_msgs::EmergencyStop>("emergency",             1);
-  STM_SetPose_pub         = nh.advertise<can_msgs::Point>       ("/STM/SetPose",          1);
-  STM_AsserManagement_pub = nh.advertise<can_msgs::Status>      ("/STM/AsserManagement",  1);
-  PANEL_Point_pub         = nh.advertise<std_msgs::Int8>        ("/PANEL/AddPoint",       1);
-  ARDUINO_Move_Pliers_pub         = nh.advertise<std_msgs::Int8>        ("/ARDUINO/MovePliers",       1);
 
+  // Services
   clientD = nh.serviceClient<ai_msgs::CurrentActionDone>  ("scheduler/currentActionDone");
   clientA = nh.serviceClient<ai_msgs::GetActionToDo>      ("scheduler/actionToDo");
   clientA.waitForExistence();
 
-  side            = SIDE_GREEN;
-  direction       = NONE;
-  emergency_stop  = false;
-  PANLEUp         = 0;
-  points_done     = 0;
-
   acM.waitForServer();
   acB.waitForServer();
+  // acBl.waitForServer();
   service_ready("ai", "controller", 1 );
 
 }
@@ -54,6 +74,14 @@ void Controller::GetRobotPose(const can_msgs::Point::ConstPtr & msg){
   robot_angle = msg->angle;
 }
 
+/**
+ * @brief      Gets the robot status and act accordingly
+ *              - ROBOT_READY   : Nothing
+ *              - ROBOT_RUNNING : wake up the robot and call SetAction methode
+ *              - ROBOT_HALT    : halt all compute
+ *
+ * @param[in]  msg   The RobotStatus message
+ */
 void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
   robot_status = msg->robot_watcher;
 
@@ -108,6 +136,11 @@ void Controller::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
   }
 }
 
+/**
+ * @brief      check if the LED panel is connected
+ *
+ * @param[in]  msg   The NodesStatus message
+ */
 void Controller::checkForPANEL(const ai_msgs::NodesStatus::ConstPtr & msg){
   for (int i = 0; i < msg->nodes_ready.size(); i++){
     if(msg->nodes_ready[i] == "/board/PANEL"){
@@ -118,6 +151,9 @@ void Controller::checkForPANEL(const ai_msgs::NodesStatus::ConstPtr & msg){
   }
 }
 
+/**
+ * @brief      Sends points to the LED panel
+ */
 void Controller::sendPoint(){
  // ROS_INFO_STREAM("sendPoint point " << points_done);
   std_msgs::Int8 msg;
@@ -126,6 +162,11 @@ void Controller::sendPoint(){
   points_done = 0;
 }
 
+/**
+ * @brief      Gets the robot speed.
+ *
+ * @param[in]  msg   The CurrSpeed message
+ */
 void Controller::GetRobotSpeed(const can_msgs::CurrSpeed::ConstPtr& msg)
 {
   int16_t linearSpeed = msg->linear_speed;
@@ -145,6 +186,14 @@ void Controller::GetRobotSpeed(const can_msgs::CurrSpeed::ConstPtr& msg)
   }
 }
 
+/**
+ * @brief      callback for every action message
+ *
+ * @param[in]  state    The action state
+ * @param[in]  result   The action result
+ *
+ * @tparam     doneMsg  The message type
+ */
 template <class doneMsg>
 void Controller::DoneAction( const actionlib::SimpleClientGoalState& state,
                         const doneMsg & result){
@@ -170,6 +219,9 @@ void Controller::DoneAction( const actionlib::SimpleClientGoalState& state,
 
 }
 
+/**
+ * @brief      Sets the action.to execute and call the action server associated
+ */
 void Controller::SetAction(){
   ai_msgs::GetActionToDo srv;
   srv.request.robot_pos_x = robot_pos_x;
@@ -210,6 +262,11 @@ void Controller::SetAction(){
   }
 }
 
+/**
+ * @brief      check the sonars data
+ *
+ * @param[in]  msg   The SonarDistance message
+ */
 void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
 {
   bool last_emergency_value = emergency_stop;
@@ -263,11 +320,25 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr& msg)
   }
 }
 
+/**
+ * @brief      Callback to process a blocked robot
+ *
+ * @param[in]  msg   The RobotBlocked message
+ * 
+ * @todo To dev
+ */
 void Controller::processRobotBlocked(const can_msgs::RobotBlocked::ConstPtr& msg)
 {
   ROS_WARN("Robot blocked");
 }
 
+/**
+ * @brief      main function
+ *
+ * @param[in]  argc  The argc
+ * @param      argv  The argv
+ *
+ */
 int main(int argc, char *argv[]) {
   ros::init(argc,argv, "controller_node");
 

@@ -1,6 +1,16 @@
+/** @file move_proc.cpp
+*    @brief The Move action class
+*    
+*    @author Alexis CARE
+*/
 #include "move/move_proc.h"
 
 
+/**
+ * @brief      Constructs the object.
+ *
+ * @param[in]  name  The name of the  action server
+ */
 Move::Move(std::string name):
   act(name,false)
   {
@@ -20,6 +30,9 @@ Move::Move(std::string name):
     service_ready("procedure", "move", 1 );
   }
 
+/**
+ * @brief      The new Goal callback
+ */
 void Move::goalCB(){
   // ROS_WARN("Move: new goal");
 
@@ -33,6 +46,9 @@ void Move::goalCB(){
     sendMsg();
   }
 }
+/**
+ * @brief      The preempt Callback
+ */
 void Move::preemptCB()
 {
   ROS_DEBUG("Move; Preempted");
@@ -40,6 +56,11 @@ void Move::preemptCB()
   act.setPreempted();
 }
 
+/**
+ * @brief      Callback called when the STM finished all move order
+ *
+ * @param[in]  msg   The finish message
+ */
 void Move::analysisCB(const can_msgs::Finish::ConstPtr& msg){
   // ROS_WARN_STREAM("Move; FINISH : state "<< act.isActive());
 
@@ -57,6 +78,9 @@ void Move::analysisCB(const can_msgs::Finish::ConstPtr& msg){
   }
 }
 
+/**
+ * @brief      Sends all Move order in the fifo to the STM.
+ */
 inline void Move::sendMsg() {
   can_msgs::Point msg;
   //direction
@@ -122,7 +146,14 @@ inline void Move::sendMsg() {
   }
 }
 
-void Move::TimeoutCallback(const ros::TimerEvent&){
+/**
+ * @brief      Send new order if the robot is too slow
+ * 
+ * @details    We concider that the robot is blocked at the end of the timer 
+ *
+ * @param[in]  timer  The timer event
+ */
+void Move::TimeoutCallback(const ros::TimerEvent& timer){
 //reset all goal STM
   // ROS_WARN_STREAM("TIMEOUT");
   can_msgs::Status msg;
@@ -140,6 +171,11 @@ void Move::TimeoutCallback(const ros::TimerEvent&){
 
 }
 
+/**
+ * @brief      Gets the robot status.
+ *
+ * @param[in]  msg   The message
+ */
 void Move::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
   if(msg->robot_watcher == ROBOT_HALT){
     fifo.clear();

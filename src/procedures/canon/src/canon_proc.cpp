@@ -1,6 +1,14 @@
+/** @file canon_proc.h
+*    @brief canon action server class
+*/
 #include "canon/canon_proc.h"
 
 
+/**
+ * @brief      Constructs the object.
+ *
+ * @param[in]  name  The name of the action server
+ */
 Canon::Canon(std::string name):
   act(name,false)
   {
@@ -16,6 +24,9 @@ Canon::Canon(std::string name):
     service_ready("procedure", "canon", 1 );
   }
 
+/**
+ * @brief      The new Goal callback
+ */
 void Canon::goalCB()
 {
   // ROS_WARN("Canon: new goal");
@@ -24,6 +35,10 @@ void Canon::goalCB()
   procedures_msgs::CanonGoal::ConstPtr msg = act.acceptNewGoal();
   sendMsg();
 }
+
+/**
+ * @brief      The preempt Callback
+ */
 void Canon::preemptCB()
 {
   ROS_DEBUG("Canon; Preempted");
@@ -31,6 +46,11 @@ void Canon::preemptCB()
   act.setPreempted();
 }
 
+/**
+ * @brief      Callback called when the Arduino finished all canon order
+ *
+ * @param[in]  msg   The Finish message
+ */
 void Canon::analysisCB(const can_msgs::Finish::ConstPtr& msg)
 {
   // ROS_WARN_STREAM("Canon; FINISH : state "<< act.isActive());
@@ -42,6 +62,9 @@ void Canon::analysisCB(const can_msgs::Finish::ConstPtr& msg)
     act.setSucceeded(result_);
 }
 
+/**
+ * @brief      Sends a Canon message.
+ */
 inline void Canon::sendMsg() {
   can_msgs::ThrowBalls msg;
 
@@ -49,6 +72,11 @@ inline void Canon::sendMsg() {
 
 }
 
+/**
+ * @brief      Gets the robot status.
+ *
+ * @param[in]  msg   The RobotStatus message
+ */
 void Canon::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
   if(msg->robot_watcher == ROBOT_HALT){
     act.shutdown();

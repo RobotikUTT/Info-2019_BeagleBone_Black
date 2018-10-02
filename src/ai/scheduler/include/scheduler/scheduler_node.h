@@ -1,3 +1,11 @@
+
+/**  @file scheduler_node.h
+*    @brief Define the ROS node Scheduler
+*    
+*    
+*    @author Alexis CARE
+*/
+
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
@@ -12,6 +20,9 @@
 
 #include "scheduler/ActionManager.h"
 
+/**
+ * @brief      Class for scheduler wich scedule actions To Do.
+ */
 class Scheduler{
 public:
   Scheduler(ros::NodeHandle* n);

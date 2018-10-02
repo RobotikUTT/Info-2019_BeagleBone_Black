@@ -1,3 +1,9 @@
+/** @file block_proc.h
+*    @brief Define the ROS Block action server
+*    
+*    
+*    @author Alexis CARE
+*/
 #ifndef BLOCK_PROC_H
 #define BLOCK_PROC_H
 
@@ -24,6 +30,11 @@
 #include <actionlib/client/simple_action_client.h>
 #include "action/action_define.h"
 
+/**
+ * @defgroup bloc The block package
+ * @{
+ */
+
 typedef actionlib::SimpleActionServer<procedures_msgs::BlockAction>   BlockSrv;
 typedef actionlib::SimpleActionClient<procedures_msgs::MoveAction>    ClientMove;
 typedef actionlib::SimpleActionClient<procedures_msgs::PliersAction>  ClientPliers;
@@ -32,6 +43,9 @@ typedef boost::shared_ptr< ::procedures_msgs::MoveResult const>   MoveResultCons
 typedef boost::shared_ptr< ::procedures_msgs::PliersResult const> PliersResultConstPtr;
 
 
+/**
+ * @brief      Class for block action server
+ */
 class Block
 {
 public:
@@ -62,5 +76,8 @@ private:
   void GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
 };
 
+/**
+ * @}
+ */
 
 #endif

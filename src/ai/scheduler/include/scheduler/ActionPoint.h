@@ -1,8 +1,17 @@
+/**  @file ActionPoint.h
+*    @brief Class for ActionPoint
+*    
+*    
+*    @author Alexis CARE
+*/
 #ifndef ACTION_POINT_H
 #define ACTION_POINT_H
 
 #include "scheduler/Point.h"
 
+/**
+ * @brief      Class for action point.
+ */
 class ActionPoint{
 public:
   Point startPoint;

@@ -1,6 +1,17 @@
+/** @file ActionClass.cpp
+*    @brief Class for ActionClass.
+*    
+*    
+*    @author Alexis CARE
+*/
 #include "scheduler/scheduler_node.h"
 #include "ros/ros.h"
 
+/**
+ * @brief      Constructs the object.
+ *
+ * @param      n     NodeHandler
+ */
 Scheduler::Scheduler(ros::NodeHandle* n){
   this->nh = *n;
 
@@ -19,6 +30,11 @@ Scheduler::Scheduler(ros::NodeHandle* n){
   service_ready("ai", "scheduler", 1 );
 }
 
+/**
+ * @brief      Sets the starting side.
+ *
+ * @param[in]  msg   The SetSide message
+ */
 void Scheduler::setSide(const ai_msgs::SetSide::ConstPtr& msg){
   if(this->side != msg->side){
     this->side = ! this->side;
@@ -26,6 +42,13 @@ void Scheduler::setSide(const ai_msgs::SetSide::ConstPtr& msg){
   }
 }
 
+/**
+ * @brief      Gets the action to exectute.
+ *
+ * @param      req   The service message request
+ * @param      res   The service message resource
+ *
+ */
 bool Scheduler::getActionToDo(ai_msgs::GetActionToDo::Request &req, ai_msgs::GetActionToDo::Response &res){
   // ROS_INFO_STREAM("action position x: " << req.robot_pos_x);
   // ROS_INFO_STREAM("action position y: " << req.robot_pos_y);
@@ -34,6 +57,13 @@ bool Scheduler::getActionToDo(ai_msgs::GetActionToDo::Request &req, ai_msgs::Get
   return true;
 }
 
+/**
+ * @brief      Set done's attribut Action 
+ *
+ * @param      req   The service message request
+ * @param      res   The service message resource
+ *
+ */
 bool Scheduler::currentActionDone(ai_msgs::CurrentActionDone::Request &req, ai_msgs::CurrentActionDone::Response &res){
   this->actionManager.currentActionDone(req.done);
   return true;

@@ -182,3 +182,7 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+#add_custom_target (build_doc
+#  rosdoc_lite ${CATKIN_DEVEL_PREFIX}/../src/ai/${PROJECT_NAME}
+#)

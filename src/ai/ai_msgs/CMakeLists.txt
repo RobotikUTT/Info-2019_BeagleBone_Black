@@ -44,3 +44,7 @@ catkin_package(
     std_msgs
     #procedures_msgs
 )
+
+#add_custom_target (build_doc
+#  rosdoc_lite ${CATKIN_DEVEL_PREFIX}/../src/ai/${PROJECT_NAME}
+#)

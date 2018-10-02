@@ -1,6 +1,14 @@
+/** @file ActionClass.cpp
+*    @brief Class for ActionClass.
+*    
+*    
+*    @author Alexis CARE
+*/
 #include "scheduler/ActionClass.h"
 
-//  Constructors
+/**
+ * @brief      Constructs the default object.
+ */
 ActionClass::ActionClass(){
   this->_priority = 0;
   this->_name = "";
@@ -12,6 +20,16 @@ ActionClass::ActionClass(){
   this->_diff_factor = 1;
 }
 
+/**
+ * @brief      Constructs the object.
+ *
+ * @param[in]  name     The name
+ * @param[in]  action   The action
+ * @param[in]  PAction  The p action
+ * @param[in]  point    The point
+ * @param[in]  fact     The fact
+ * @param[in]  para     The para
+ */
 ActionClass::ActionClass(std::string name, int8_t action, ActionPoint PAction , int point, float fact, std::vector<int> para){
   this->_priority = 0;
   this->_name = name;
@@ -25,6 +43,9 @@ ActionClass::ActionClass(std::string name, int8_t action, ActionPoint PAction , 
 }
 
 // Methodes
+//
+// @param      robot_pos  The robot position
+//
 void ActionClass::updatePriority(Point& robot_pos){
   if(!this->_done){
     int temp = PAction.startPoint.manhattanDist(robot_pos) / 100;
@@ -36,10 +57,18 @@ void ActionClass::updatePriority(Point& robot_pos){
   }
 }
 
+/**
+ * @brief      Check if action is possible
+ * 
+ * @todo Dev
+ */
 void ActionClass::checkPossibility(){
   /* code */
 }
 
+/**
+ * @brief      Change actionClass side
+ */
 void ActionClass::changeSide(){
   PAction.startPoint.y = (1500 - PAction.startPoint.y) + 1500;
   PAction.startPoint.angle *= -1;
@@ -49,11 +78,26 @@ void ActionClass::changeSide(){
   }
 }
 
+/**
+ * @brief      Operator '<' for two ActionClass
+ *
+ * @param[in]  B     Other ActionClass
+ *
+ * @return     This < Other
+ */
 bool ActionClass::operator< ( const ActionClass &B)const{
   if (_done) return 0;
   return (_priority < B._priority);
 }
 
+/**
+ * @brief      Transform an ActionClass to a stream
+ *
+ * @param      os    The operating system
+ * @param[in]  AC    A ActionClass
+ * 
+ * @return     A stream
+ */
 std::ostream& operator<<(std::ostream& os, const ActionClass& AC){
     os << "ActionClass : { \n name: " << AC._name << "\n value: " << AC._value << "\n priority: " << AC._priority << "\n done: " << AC._done << "\n possible: " << AC._possible << "\n " << AC.PAction << std::endl;
     return os;

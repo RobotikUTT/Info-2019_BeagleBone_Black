@@ -1,3 +1,9 @@
+/** @file pliers_proc.h
+*    @brief Define the ROS Pliers action server
+*    
+*    
+*    @author Alexis CARE
+*/
 #ifndef PLIERS_PROC_H
 #define PLIERS_PROC_H
 
@@ -20,9 +26,17 @@
 #include "pliers/PliersCommand.h"
 #include <actionlib/server/simple_action_server.h>
 
+/**
+ * @defgroup pliers The pliers package
+ * @{
+ */
+
 typedef actionlib::SimpleActionServer<procedures_msgs::PliersAction> PliersSrv;
 
 
+/**
+ * @brief      Class for pliers action server
+ */
 class Pliers
 {
 public:
@@ -47,4 +61,9 @@ private:
   inline void sendMsg();
   void GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
 };
+
+/**
+ * 
+ * @}
+ */
 #endif

@@ -1,6 +1,15 @@
+/** @file PliersCommand.h
+*    @brief Pliers action server class
+*    
+*/
 #include "pliers/pliers_proc.h"
 
 
+/**
+ * @brief      Constructs the object.
+ *
+ * @param[in]  name  The name of the action
+ */
 Pliers::Pliers(std::string name):
   act(name,false)
   {
@@ -17,6 +26,9 @@ Pliers::Pliers(std::string name):
     service_ready("procedure", "pliers", 1 );
   }
 
+/**
+ * @brief      The new Goal callback
+ */
 void Pliers::goalCB(){
   // ROS_WARN("Pliers: new goal");
 
@@ -30,6 +42,9 @@ void Pliers::goalCB(){
     sendMsg();
   }
 }
+/**
+ * @brief      The preempt Callback
+ */
 void Pliers::preemptCB()
 {
   ROS_DEBUG("Pliers; Preempted");
@@ -37,6 +52,11 @@ void Pliers::preemptCB()
   act.setPreempted();
 }
 
+/**
+ * @brief      Callback called when the Arduino finished all move order
+ *
+ * @param[in]  msg   The finish message
+ */
 void Pliers::analysisCB(const can_msgs::Finish::ConstPtr& msg)
 {
   // make sure that the action hasn't been canceled
@@ -56,6 +76,9 @@ void Pliers::analysisCB(const can_msgs::Finish::ConstPtr& msg)
   }
 }
 
+/**
+ * @brief      Sends all Pliers order in the fifo to the arduino.
+ */
 inline void Pliers::sendMsg() {
   //direction
   while (!fifo.empty()) {
@@ -78,6 +101,11 @@ inline void Pliers::sendMsg() {
   }
 }
 
+/**
+ * @brief      Gets the robot status.
+ *
+ * @param[in]  msg   The RobotStatus message
+ */
 void Pliers::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
   if(msg->robot_watcher == ROBOT_HALT){
     fifo.clear();

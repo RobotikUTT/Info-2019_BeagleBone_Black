@@ -1,3 +1,9 @@
+/** @file move_proc.h
+*    @brief Define the ROS Move action server
+*    
+*    
+*    @author Alexis CARE
+*/
 #ifndef MOVE_PROC_H
 #define MOVE_PROC_H
 
@@ -22,10 +28,17 @@
 
 #include "robot_interface/protocol.h"
 
+/**
+ * @defgroup move The move package
+ * @{
+ */
 
 typedef actionlib::SimpleActionServer<procedures_msgs::MoveAction> MoveSrv;
 
 
+/**
+ * @brief      Class for move action server.
+ */
 class Move
 {
 public:
@@ -57,4 +70,8 @@ private:
   void TimeoutCallback(const ros::TimerEvent&);
 
 };
+
+/**
+ *  @}
+ */
 #endif

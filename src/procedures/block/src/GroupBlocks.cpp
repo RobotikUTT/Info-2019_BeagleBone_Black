@@ -1,10 +1,38 @@
+/** @file GroupBlocks.cpp
+*    @brief The Group Block class
+*    
+*    @author Alexis CARE
+*/
 #include "block/GroupBlocks.h"
 
 
+/**
+ * @brief      Signe function
+ * 
+ * @details    See : https://stackoverflow.com/questions/1903954/is-there-a-standard-sign-function-signum-sgn-in-c-c
+ *
+ * @param[in]  val   The value
+ *
+ * @tparam     T     Number type
+ *
+ * @return     returns -1, 0 or 1
+ */
 template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 }
 
+/**
+ * @brief      Constructs the object.
+ * 
+ * @details    Allway take blocks clockwise
+ *
+ * @param[in]  _xg   Pos X of goal (center of blocks)
+ * @param[in]  _yg   Pos Y of goal (center of blocks)
+ * @param[in]  _rot  Where the first block will be picked
+ * @param[in]  _xd   Pos X of depos
+ * @param[in]  _yd   Pos Y of depos
+ * @param[in]  side  The side (Green or Orange  )
+ */
 GroupBlocks::GroupBlocks(int _xg, int _yg, int _rot, int _xd, int _yd, bool side){
   groupPoint = OrientedPoint(_xg,_yg);
   rot = _rot;
@@ -37,5 +65,8 @@ GroupBlocks::GroupBlocks(int _xg, int _yg, int _rot, int _xd, int _yd, bool side
 
 }
 
+/**
+ * @brief      Constructs the default object.
+ */
 GroupBlocks::GroupBlocks(){
 }

@@ -1,3 +1,7 @@
+/** @file action_define.h
+*    @brief Define the action type
+*    
+*/
 #ifndef ACTION_DEFINE_H
 #define ACTION_DEFINE_H
 

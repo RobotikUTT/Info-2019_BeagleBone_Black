@@ -1,3 +1,13 @@
+/** @file protocol.h
+*    @brief File wich defined the CAN Protocol message type
+*    
+*/
+
+/**
+ * @defgroup Robot_Interface The robot_interface package
+ * @{
+ */
+
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
@@ -49,5 +59,9 @@
 #define SET_SERVO               27
 #define ROBOT_BLOCKED           28
 #define ACTION_PLIERS           29
+
+/**
+ * @}
+ */
 
 #endif

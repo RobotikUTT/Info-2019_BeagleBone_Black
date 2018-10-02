@@ -1,8 +1,17 @@
+/**  @file Point.h
+*    @brief Class for Point
+*    
+*    
+*    @author Alexis CARE
+*/
 #ifndef POINT_H
 #define POINT_H
 #include <iostream>
 #include <cmath>
 
+/**
+ * @brief      Class for point.
+ */
 class Point{
 public:
   int x;
