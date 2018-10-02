@@ -3,6 +3,7 @@ build_isolated/
 devel/
 devel_isolated/
 *.pyc
+html/
 
 *.sublime-project
 *.sublime-workspace
