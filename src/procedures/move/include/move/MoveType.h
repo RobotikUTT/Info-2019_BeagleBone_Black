@@ -7,7 +7,7 @@
 #define MOVE_TYPE_H
 
 /**
- * @defgroup move The move package
+ * @defgroup move The move action package
  * @{
  */
 

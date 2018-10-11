@@ -27,7 +27,7 @@
 #include <actionlib/server/simple_action_server.h>
 
 /**
- * @defgroup pliers The pliers package
+ * @defgroup Pliers The pliers action package
  * @{
  */
 

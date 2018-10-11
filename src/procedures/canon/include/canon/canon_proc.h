@@ -23,7 +23,7 @@
 #include "action/action_define.h"
 
 /**
- * @defgroup canon The canon package
+ * @defgroup Canon The canon action package
  * @{
  */
 

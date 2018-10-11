@@ -29,7 +29,7 @@
 #include "robot_interface/protocol.h"
 
 /**
- * @defgroup move The move package
+ * @defgroup move The move action package
  * @{
  */
 

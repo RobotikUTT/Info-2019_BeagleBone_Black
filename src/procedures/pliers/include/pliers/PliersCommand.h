@@ -7,7 +7,7 @@
 #include "stdint.h"
 
 /**
- * @defgroup pliers The pliers package
+ * @defgroup Pliers The pliers action package
  * @{
  */
 

@@ -13,7 +13,7 @@
 #include <cmath>
 
 /**
- * @defgroup ball The ball package
+ * @defgroup Ball The Ball action package
  * @{
  */
 

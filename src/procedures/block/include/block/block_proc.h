@@ -31,7 +31,7 @@
 #include "action/action_define.h"
 
 /**
- * @defgroup bloc The block package
+ * @defgroup Block The block action package
  * @{
  */
 

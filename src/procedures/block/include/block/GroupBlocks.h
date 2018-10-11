@@ -14,7 +14,7 @@
 #include "ros/ros.h"
 
 /**
- * @defgroup blocl The block package
+ * @defgroup Block The block action package
  * @{
  */
 
