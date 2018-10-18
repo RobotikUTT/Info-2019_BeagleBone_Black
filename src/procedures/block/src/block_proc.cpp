@@ -467,7 +467,7 @@ void Block::setSide(const ai_msgs::SetSide::ConstPtr& msg){
  * @tparam     doneMsg  The action result type
  */
 template <class doneMsg>
-void Block::DoneActioDoneActionn( const actionlib::SimpleClientGoalState& state, const doneMsg & result){
+void Block::DoneAction( const actionlib::SimpleClientGoalState& state, const doneMsg & result){
 
   if (state == actionlib::SimpleClientGoalState::SUCCEEDED){
     point += result->points_done;
