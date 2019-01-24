@@ -63,6 +63,7 @@
   <exec_depend>roscpp</exec_depend>
   <exec_depend>std_msgs</exec_depend>
 
+  <depend>controller</depend>
   <depend>robot_watcher</depend>
 
 
