@@ -1,3 +1,0 @@
-<launch>
-	<node name="talker" pkg="sender" type="sender_node.py" output="screen"/>
-</launch>

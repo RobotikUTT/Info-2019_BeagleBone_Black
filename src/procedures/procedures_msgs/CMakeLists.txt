@@ -46,8 +46,6 @@ find_package(catkin REQUIRED COMPONENTS
    FILES
    MPoint.msg
    OrPoint.msg
-   APliers.msg
-#   Message2.msg
  )
 
 ## Generate services in the 'srv' folder
@@ -61,11 +59,6 @@ find_package(catkin REQUIRED COMPONENTS
  add_action_files(
    FILES
    Move.action
-   Block.action
-   Pliers.action
-   Ball.action
-   Canon.action
-#   Action2.action
  )
 
 ## Generate added messages and services with any dependencies listed here

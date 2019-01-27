@@ -1,8 +1,0 @@
-#start
-APliers[] act
----
-#result
-bool done
-int8 points_done
----
-#feedback

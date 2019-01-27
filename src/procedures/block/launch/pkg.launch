@@ -1,3 +1,0 @@
-<launch>
-	<node name="block_action" pkg="block" type="proc" output="screen"/>
-</launch>

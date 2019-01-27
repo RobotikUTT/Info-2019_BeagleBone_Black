@@ -1,3 +1,0 @@
-<launch>
-	<node name="listner" pkg="receiver" type="receiver_node.py" output="screen"/>
-</launch>

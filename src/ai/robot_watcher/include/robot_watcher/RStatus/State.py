@@ -53,11 +53,7 @@ NODES_CHECKLIST = {
 "/ros_can/interface" 	: "need",
 "/ai/scheduler" 		: "need",
 "/ai/controller" 		: "need",
-"/procedure/move" 		: "need",
-"/procedure/pliers" 	: "need",
-"/procedure/ball" 		: "need",
-"/procedure/canon" 		: "need",
-"/procedure/block" 		: "need"
+"/procedure/move" 		: "need"
 
 
 }

@@ -1,9 +1,0 @@
-#start
-OrPoint block_action
-OrPoint depot
----
-#result
-bool done
-int8 points_done
----
-#feedback

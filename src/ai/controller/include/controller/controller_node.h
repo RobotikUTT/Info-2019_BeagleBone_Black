@@ -49,8 +49,6 @@
 #define SONAR_MIN_DIST_BACKWARD  10 //in cm
 
 typedef actionlib::SimpleActionClient<procedures_msgs::MoveAction>  ClientMove;
-typedef actionlib::SimpleActionClient<procedures_msgs::BlockAction> ClientBlock;
-typedef actionlib::SimpleActionClient<procedures_msgs::BallAction>  ClientBall;
 
 
 /**
@@ -79,7 +77,6 @@ private:
   ros::Publisher STM_AsserManagement_pub;
   ros::Publisher PANEL_Point_pub;
   ros::NodeHandle nh;
-  ros::Publisher ARDUINO_Move_Pliers_pub;
 
   //robot pos
   int robot_pos_x;
@@ -94,12 +91,10 @@ private:
 
   bool emergency_stop;
   bool side;
-  bool PANLEUp;
+  bool panelUp;
 
 
   ClientMove  acM;
-  ClientBlock acB;
-  ClientBall  acBl;
 
   void GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
   void GetRobotPose(const can_msgs::Point::ConstPtr& msg);

@@ -34,4 +34,4 @@ def service_ready(namespace, package, ready, error_code = 0):
 			rospy.logerr("Node '{}' not initialized".format(node_name))
 			_ready_srv(node_name, ready, error_code)
 	except Exception as e:
-		rospy.logerr("Node '{}' could not contacte {} server".format(node_name, ROBOT_SRV))
+		rospy.logerr("Node '{}' could not contact {} server".format(node_name, ROBOT_SRV))

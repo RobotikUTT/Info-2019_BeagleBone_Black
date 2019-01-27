@@ -1,3 +1,0 @@
-<launch>
-	<node name="ball_action" pkg="ball" type="proc" output="screen"/>
-</launch>

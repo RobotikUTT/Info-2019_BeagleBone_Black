@@ -1,0 +1,5 @@
+- faire du voyageur de commerce plutôt que du passage d'une action à l'autre (priority) avec un facteur dégressif sur le temps (plus l'action est réalisée tard plus ses points estimés diminuent)
+- interface d'action
+    -> sérialise et déserialise, s'enregistre auprès du scheduler
+    -> dépendances entre les actions (action move, movemotor... par exemple) pour faire du haut niveau dans les actions
+    -> contient les actions de ce type à réaliser sur le terrain

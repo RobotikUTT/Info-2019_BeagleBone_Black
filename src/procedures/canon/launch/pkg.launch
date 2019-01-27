@@ -1,3 +1,0 @@
-<launch>
-	<node name="canon_action" pkg="canon" type="proc" output="screen"/>
-</launch>

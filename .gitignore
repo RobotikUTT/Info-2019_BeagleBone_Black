@@ -5,5 +5,6 @@ devel_isolated/
 *.pyc
 html/
 
+.vscode
 *.sublime-project
 *.sublime-workspace
