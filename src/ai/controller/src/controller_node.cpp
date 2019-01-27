@@ -15,7 +15,7 @@ typedef boost::shared_ptr<::procedures_msgs::MoveResult const> MoveResultConstPt
  * @param      n     NodeHandle var
  * 
  */
-Controller::Controller(ros::NodeHandle *n) : acM("/procedures/move_action", true)
+Controller::Controller(ros::NodeHandle *n) : move_action_client("/procedures/move_action", true)
 {
   //attributes
   nh = *n;
@@ -30,22 +30,23 @@ Controller::Controller(ros::NodeHandle *n) : acM("/procedures/move_action", true
   STM_SetPose_pub = nh.advertise<can_msgs::Point>("/STM/SetPose", 1);
   STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement", 1);
   PANEL_Point_pub = nh.advertise<std_msgs::Int8>("/PANEL/AddPoint", 1);
+  points_pub = nh.advertise<ai_msgs::PointsScored>("ai/points_scored");
 
   //subscriber
   status_sub = nh.subscribe("robot_watcher/robot_status", 1, &Controller::setRobotStatus, this);
   robot_pos_sub = nh.subscribe("/STM/Position", 1, &Controller::setRobotPosition, this);
   robot_speed_sub = nh.subscribe("/STM/GetSpeed", 1, &Controller::setRobotSpeed, this);
   side_sub = nh.subscribe("side", 1, &Controller::setSide, this);
-  nodes_status_sub = nh.subscribe("robot_watcher/nodes_status", 1, &Controller::checkForPANEL, this);
+  nodes_status_sub = nh.subscribe("robot_watcher/nodes_status", 1, &Controller::checkForPanel, this);
   sonar_distance_sub = nh.subscribe("/ARDUINO/SonarDistance", 1, &Controller::processSonars, this);
   robot_blocked_sub = nh.subscribe("/STM/RobotBlocked", 1, &Controller::processRobotBlocked, this);
 
   // Services
-  clientD = nh.serviceClient<ai_msgs::CurrentActionDone>("scheduler/currentActionDone");
-  clientA = nh.serviceClient<ai_msgs::GetActionToDo>("scheduler/actionToDo");
-  clientA.waitForExistence();
+  action_done_client = nh.serviceClient<ai_msgs::CurrentActionDone>("scheduler/currentActionDone");
+  action_todo_client = nh.serviceClient<ai_msgs::GetActionToDo>("scheduler/actionToDo");
+  action_todo_client.waitForExistence();
 
-  acM.waitForServer();
+  move_action_client.waitForServer();
 
   service_ready("ai", "controller", 1);
 }
@@ -55,7 +56,7 @@ void Controller::setSide(const ai_msgs::SetSide::ConstPtr &msg)
   side = msg->side;
 }
 
-//function to get robot pos
+// Set robot position inside controller
 void Controller::setRobotPosition(const can_msgs::Point::ConstPtr &msg)
 {
   // ROS_INFO_STREAM("robot pos_x: " << msg->pos_x
@@ -100,6 +101,7 @@ void Controller::setRobotStatus(const ai_msgs::RobotStatus::ConstPtr &msg)
       y = (1500 - y) + 1500;
       angle = -angle;
     }
+
     //init pos STM
     can_msgs::Point msg;
 
@@ -121,7 +123,7 @@ void Controller::setRobotStatus(const ai_msgs::RobotStatus::ConstPtr &msg)
   else if (robot_status == ROBOT_HALT)
   {
 
-    acM.cancelAllGoals();
+    move_action_client.cancelAllGoals();
 
     can_msgs::Status msg;
     msg.value = STOP;
@@ -137,7 +139,7 @@ void Controller::setRobotStatus(const ai_msgs::RobotStatus::ConstPtr &msg)
  *
  * @param[in]  msg   The NodesStatus message
  */
-void Controller::checkForPANEL(const ai_msgs::NodesStatus::ConstPtr &msg)
+void Controller::checkForPanel(const ai_msgs::NodesStatus::ConstPtr &msg)
 {
   for (int i = 0; i < msg->nodes_ready.size(); i++)
   {
@@ -207,6 +209,7 @@ void Controller::onActionDone(const actionlib::SimpleClientGoalState &state,
 
   //send point
   points_done += result->points_done;
+  
   if (panelUp)
   {
     sendPoint();
@@ -218,24 +221,26 @@ void Controller::onActionDone(const actionlib::SimpleClientGoalState &state,
     ai_msgs::CurrentActionDone srv;
     srv.request.done = result->done;
     // ROS_INFO_STREAM("Action in state " << result->done);
-    if (!clientD.call(srv))
+    if (!action_done_client.call(srv))
     {
       ROS_ERROR("Failed to call service currentActionDone");
     }
 
-    SetAction();
+    setAction();
   }
 }
 
 /**
  * @brief      Sets the action.to execute and call the action server associated
  */
-void Controller::SetAction()
+void Controller::setAction()
 {
   ai_msgs::GetActionToDo srv;
   srv.request.robot_pos_x = robot_pos_x;
   srv.request.robot_pos_y = robot_pos_y;
-  if (clientA.call(srv))
+
+  // retrieve action to do
+  if (action_todo_client.call(srv))
   {
     action_val = srv.response.action_val;
     // ROS_DEBUG("ACtion value: %d", action_val);
@@ -251,7 +256,7 @@ void Controller::SetAction()
     // ROS_WARN("Action MOVE");
     procedures_msgs::MoveGoal goal;
     goal.points.push_back(srv.response.point);
-    acM.sendGoal(goal, boost::bind(&Controller::onActionDone<MoveResultConstPtr>, this, _1, _2));
+    move_action_client.sendGoal(goal, boost::bind(&Controller::onActionDone<MoveResultConstPtr>, this, _1, _2));
     // ROS_WARN("Action MOVE send");
   }
   else if (action_val == BLOCK)

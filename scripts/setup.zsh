@@ -1,3 +1,8 @@
+#
+#   Script for installing ros and building code
+#   [zsh version]
+cd ..
+
 echo "Setting up ros sources..."
 
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
@@ -10,6 +15,10 @@ sudo apt install ros-melodic-ros-base
 echo "rosdep initialization..."
 sudo rosdep init
 rosdep update
+
+echo "sourcing ros..."
+echo "source /opt/ros/melodic/setup.zsh" >> ~/.zshrc
+source ~/.zshrc
 
 echo "building robot..."
 catkin_make

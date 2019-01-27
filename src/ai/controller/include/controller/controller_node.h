@@ -25,13 +25,10 @@
 #include "can_msgs/CurrSpeed.h"
 #include "can_msgs/RobotBlocked.h"
 
-#include "procedures_msgs/BallAction.h"
-#include "procedures_msgs/BlockAction.h"
 #include "procedures_msgs/MoveAction.h"
 
 #include "std_msgs/Int8.h"
 
-#include "action/action_define.h"
 #include <actionlib/client/simple_action_client.h>
 
 #include "robot_interface/protocol.h"
@@ -61,8 +58,8 @@ public:
 
 
 private:
-  ros::ServiceClient clientA;
-  ros::ServiceClient clientD;
+  ros::ServiceClient action_done_client;
+  ros::ServiceClient action_todo_client;
 
   ros::Subscriber status_sub;
   ros::Subscriber robot_pos_sub;
@@ -94,20 +91,20 @@ private:
   bool panelUp;
 
 
-  ClientMove  acM;
+  ClientMove move_ation_client;
 
-  void GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
-  void GetRobotPose(const can_msgs::Point::ConstPtr& msg);
-  void GetRobotSpeed(const can_msgs::CurrSpeed::ConstPtr& msg);
-  void SetAction();
+  void setRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
+  void setRobotPose(const can_msgs::Point::ConstPtr& msg);
+  void setRobotSpeed(const can_msgs::CurrSpeed::ConstPtr& msg);
+  void setAction();
   void setSide(const ai_msgs::SetSide::ConstPtr& msg);
-  void checkForPANEL(const ai_msgs::NodesStatus::ConstPtr & msg);
+  void checkForPanel(const ai_msgs::NodesStatus::ConstPtr & msg);
   void sendPoint();
   void processSonars(const can_msgs::SonarDistance::ConstPtr& msg);
   void processRobotBlocked(const can_msgs::RobotBlocked::ConstPtr& msg);
 
   template <class doneMsg>
-  void DoneAction( const actionlib::SimpleClientGoalState& state, const doneMsg & result);
+  void onActionDone( const actionlib::SimpleClientGoalState& state, const doneMsg & result);
 
 };
 
