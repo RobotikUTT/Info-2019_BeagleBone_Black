@@ -46,9 +46,6 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->STM_PWM_sub					= nh.subscribe("/STM/PWM",							10, 	&CanInterfaceNode::STMPWM, 				this);
 	this->STM_SetPose_sub 				= nh.subscribe("/STM/SetPose",						10, 	&CanInterfaceNode::STMSetPose, 			this);
 	this->STM_SetParam_sub 				= nh.subscribe("/STM/SetParam",						10, 	&CanInterfaceNode::STMSetParam, 		this);
-	this->ARDUINO_ActionPliers_sub 		= nh.subscribe("/ARDUINO/ActionPliers",				10, 	&CanInterfaceNode::ARDUINOActionPliers, this);
-	this->ARDUINO_MovePliers_sub 		= nh.subscribe("/ARDUINO/MovePliers",				10, 	&CanInterfaceNode::ARDUINOMovePliers, 	this);
-	this->ARDUINO_ThrowBalls_sub 		= nh.subscribe("/ARDUINO/ThrowBalls",				10, 	&CanInterfaceNode::ARDUINOThrowBalls, 	this);
 	this->PANEL_point_sub 				= nh.subscribe("/PANEL/AddPoint",					10, 	&CanInterfaceNode::PANELAddPoint, 		this);
 
 	service_ready("ros_can", "interface", 1 );
@@ -66,7 +63,7 @@ CanInterfaceNode::~CanInterfaceNode(){
  * @param[in]  msg   The RobotStatus message
  */
 void CanInterfaceNode::updateRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
-	this->robot_watcher = msg->robot_watcher;
+	this->robot_watcher = msg->robot_status;
 	// ROS_INFO("callback robot_watcher: %d", this->robot_watcher);
 }
 

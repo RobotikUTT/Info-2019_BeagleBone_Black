@@ -3,7 +3,6 @@
 
 #include "scheduler/Point.h"
 
-#include <vector>
 #include <string>
 
 #define ACTION_IDLE 0
@@ -17,10 +16,12 @@
  */
 class Action {
 public:
-  std::string _name;
+ 
 
   int priority(Point& robot_pos);
   int points();
+  int state();
+  std::string name();
 
   Point startPoint();
 
@@ -29,8 +30,9 @@ public:
 protected:
   Action(std::string name);
 
-private:
   int _state;
+  std::string _name;
+  
 };
 
 std::ostream& operator<<(std::ostream& os, const Action& AC);

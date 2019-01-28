@@ -4,7 +4,7 @@
 *    @author Alexis CARE
 */
 
-#include "controller/controller_node.h"
+#include "controller/controller_node.hpp"
 
 //define typedef for lisibility
 typedef boost::shared_ptr<::procedures_msgs::MoveResult const> MoveResultConstPtr;
@@ -30,7 +30,7 @@ Controller::Controller(ros::NodeHandle *n) : move_action_client("/procedures/mov
   STM_SetPose_pub = nh.advertise<can_msgs::Point>("/STM/SetPose", 1);
   STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement", 1);
   PANEL_Point_pub = nh.advertise<std_msgs::Int8>("/PANEL/AddPoint", 1);
-  points_pub = nh.advertise<ai_msgs::PointsScored>("ai/points_scored");
+  points_pub = nh.advertise<ai_msgs::PointsScored>("ai/points_scored", 1);
 
   //subscriber
   status_sub = nh.subscribe("robot_watcher/robot_status", 1, &Controller::setRobotStatus, this);
@@ -118,7 +118,7 @@ void Controller::setRobotStatus(const ai_msgs::RobotStatus::ConstPtr &msg)
     msg2.value = START;
     STM_AsserManagement_pub.publish(msg2);
 
-    SetAction();
+    setAction();
   }
   else if (robot_status == ROBOT_HALT)
   {
@@ -251,7 +251,7 @@ void Controller::setAction()
     action_val = -1;
   }
 
-  if (action_val == MOVE)
+  if (action_val == 0) // TODO rework
   {
     // ROS_WARN("Action MOVE");
     procedures_msgs::MoveGoal goal;
@@ -259,26 +259,7 @@ void Controller::setAction()
     move_action_client.sendGoal(goal, boost::bind(&Controller::onActionDone<MoveResultConstPtr>, this, _1, _2));
     // ROS_WARN("Action MOVE send");
   }
-  else if (action_val == BLOCK)
-  {
-
-    procedures_msgs::BlockGoal goal;
-
-    goal.block_action = srv.response.action_pos;
-    goal.depot = srv.response.depot_pos;
-
-    acB.sendGoal(goal, boost::bind(&Controller::onActionDone<BlockResultConstPtr>, this, _1, _2));
-  }
-  else if (action_val == BALL)
-  {
-    procedures_msgs::BallGoal goal;
-
-    goal.tube_pose = srv.response.action_pos;
-    goal.shoot_pose = srv.response.depot_pos;
-    goal.param = srv.response.param;
-
-    acBl.sendGoal(goal, boost::bind(&Controller::onActionDone<BallResultConstPtr>, this, _1, _2));
-  }
+  
 }
 
 /**

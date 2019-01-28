@@ -21,7 +21,6 @@
 
 #include "ai_msgs/RobotStatus.h"
 
-#include "action/action_define.h"
 #include "move/MoveType.h"
 #include "move/MovePoint.h"
 #include <actionlib/server/simple_action_server.h>

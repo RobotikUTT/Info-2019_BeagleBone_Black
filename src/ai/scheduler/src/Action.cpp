@@ -25,6 +25,14 @@ int Action::priority(Point& robot_pos) {
   return action_points * action_points / startPoint().manhattanDist(robot_pos);
 }
 
+// Getters
+std::string Action::name() {
+  return _name;
+}
+
+int Action::state() {
+  return _state;
+}
 
 /*void ActionClass::changeSide(){
   PAction.startPoint.y = (1500 - PAction.startPoint.y) + 1500;

@@ -11,6 +11,7 @@ find_package(catkin REQUIRED
 
 add_message_files(DIRECTORY msg
   FILES
+  PointsScored.msg
   NodesStatus.msg
   RobotStatus.msg
   SetSide.msg

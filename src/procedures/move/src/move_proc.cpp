@@ -64,7 +64,7 @@ void Move::preemptCB()
 void Move::analysisCB(const can_msgs::Finish::ConstPtr& msg){
   // ROS_WARN_STREAM("Move; FINISH : state "<< act.isActive());
 
-  if (!act.isActive() || msg->val != MOVE)
+  if (!act.isActive() || msg->val != 0)
     return;
 
   TimerTimeout.stop();
@@ -177,7 +177,7 @@ void Move::TimeoutCallback(const ros::TimerEvent& timer){
  * @param[in]  msg   The message
  */
 void Move::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
-  if(msg->robot_watcher == ROBOT_HALT){
+  if(msg->robot_status == ROBOT_HALT){
     fifo.clear();
     act.shutdown();
   }
