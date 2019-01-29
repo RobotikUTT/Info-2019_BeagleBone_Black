@@ -18,18 +18,22 @@ class Action {
 public:
   Action(std::string name = "unnamed action");
 
+  // Setters
+  void setBasePoints(int points);
+  void setSync(bool sync);
+
+  // Getters
+  bool isSync();
   int priority(Point& robot_pos);
   int state();
   std::string name();
 
-
   virtual int points();
   virtual Point startPoint();
-
 protected:
-  int _state;
+  int _state, _points;
   std::string _name;
-  
+  bool _sync;
 };
 
 //std::ostream& operator<<(std::ostream& os, const Action& AC);

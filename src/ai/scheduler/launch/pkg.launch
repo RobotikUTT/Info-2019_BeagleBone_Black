@@ -1,5 +1,5 @@
 <launch>
 	<node name="scheduler" pkg="scheduler" type="node" output="screen">
-		<param name="config_file" value="$(find scheduler)/include/scheduler/actions.config" />
+		<param name="config_file" value="$(find scheduler)/include/actions_files/test.json" />
 	</node>
 </launch>

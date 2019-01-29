@@ -77,17 +77,45 @@ Action ActionsParser::parseAction(const Value& object) {
                 actions.push_back(parseAction(*itr));
             }
         }
+
+        return ActionBlock(*descriptor, actions);
     }
 
-    // TODO : loop over elements of "actions" and add to a list, then create a group action, take "ordered" into consideration 
-    /*for () {
-
-    }*/
-    throw "todo";
+    throw "invalid object";
 }
 
 AtomicAction ActionsParser::parseAtomicAction(const Value& object, const bool allowNoPerfomer /* = false*/) {
-    
-    // TODO
-    throw "todo";
+    // an action must be named
+    if (!object.HasMember("name") || !object["name"].IsString()) {
+        throw "missing or invalid name";
+    }
+
+    // and most of times a perfomer
+    if (!allowNoPerfomer && (!object.HasMember("performer") || !object["performer"].IsString())) {
+        throw "missing or invalid action perfomer";
+    }
+
+    std::string name = object["name"].GetString();
+    std::string performer = allowNoPerfomer ? "" : object["performer"].GetString();
+
+    AtomicAction action(name, performer);
+
+    // parse optional content
+    if (object.HasMember("sync") && object["sync"].IsBool()) {
+        action.setSync(true);
+    }
+
+    if (object.HasMember("points") && object["points"].IsInt()) {
+        action.setBasePoints(object["points"].GetInt());
+    }
+
+    if (object.HasMember("args") && object["sync"].IsObject()) {
+        action.setArgs(parseArgs(object["sync"]));
+    }
+
+    return
+}
+
+std::list<Argument> ActionsParser::parseArgs(const Value& object) {
+    std::list<Argument>
 }

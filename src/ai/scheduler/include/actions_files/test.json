@@ -1,0 +1,46 @@
+[
+    {
+        "comment": "This block give 100 points when all actions are complete",
+        "name": "Robot super-journey",
+        "points": "100"
+    },
+    [
+        {
+            "comment": "Non optional action block (every action in the block must be completed before following actions)",
+            "name": "Wait 5 second before start",
+            "sync": true
+        },
+        {
+            "comment": "Async action with arguments (sync is false by default)",
+            "name": "Idle for 4 seconds",
+            "points": 3,
+            "performer": "idle",
+            "args": {"duration": 4}
+        },
+        {
+            "comment": "Async action with no args (default should be taken)",
+            "name": "Idle for 1 seconds",
+            "points": 1,
+            "performer": "idle"
+        }
+    ],
+    {
+        "name": "Find his friend",
+        "performer": "scan",
+        "sync": true,
+        "args": {"seek": "bob"}
+    },
+    {
+        "comment": "here we can either start with this action or the next one, depending where it starts and how many points it give",
+        "name": "Move toward his friend",
+        "performer": "move_toward",
+        "points": 5,
+        "args": {"toward": "bob"}
+    },
+    {
+        "name": "Wave his friend",
+        "performer": "wave",
+        "points": 10,
+        "args": {"toward": "bob"}
+    }
+]

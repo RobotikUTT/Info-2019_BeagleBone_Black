@@ -6,15 +6,14 @@
 #include <list>
 #include <string>
 
-class ComposedAction : public Action {
+class ActionBlock : public Action {
 public:
-  ComposedAction(std::string name, std::list<Action> actions);
-
+  ActionBlock(Action descriptor, std::list<Action> actions);
 
   int points();
   Point startPoint();
+
 private:
-  Action descriptor;
   std::list<Action> _actions;
 };
 

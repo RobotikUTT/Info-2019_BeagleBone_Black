@@ -9,7 +9,7 @@
 /**
  * @brief      Constructs the default object.
  */
-Action::Action(std::string name) :_name(name), _state(ACTION_IDLE) {
+Action::Action(std::string name) :_name(name), _state(ACTION_IDLE), _points(0), _sync(false) {
 
 }
 
@@ -31,6 +31,19 @@ std::string Action::name() {
 
 int Action::state() {
   return _state;
+}
+
+bool Action::isSync() {
+  return _sync;
+}
+
+void Action::setSync(bool sync) {
+  _sync = sync;
+}
+
+// Points setter
+void Action::setBasePoints(int points) {
+  _points = points;
 }
 
 /*void ActionClass::changeSide(){

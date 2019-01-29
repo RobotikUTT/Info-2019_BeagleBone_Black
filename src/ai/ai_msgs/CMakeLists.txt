@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 2.8.3)
 project(ai_msgs)
 
 find_package(catkin REQUIRED COMPONENTS
-    message_generation
-    actionlib_msgs
-    std_msgs
-    #procedures_msgs
+  message_generation
+  actionlib_msgs
+  std_msgs
+  #procedures_msgs
 )
 
 add_message_files(DIRECTORY msg

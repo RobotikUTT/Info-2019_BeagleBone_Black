@@ -104,14 +104,14 @@ include_directories(
 )
 
 ## Declare a C++ library
- add_library(${PROJECT_NAME}
-   src/Action.cpp
-   src/AtomicAction.cpp
-   src/ComposedAction.cpp
-   src/ActionPoint.cpp
-   src/Point.cpp
-   src/ActionsParser.cpp
- )
+add_library(${PROJECT_NAME}
+  src/Action.cpp
+  src/AtomicAction.cpp
+  src/ActionBlock.cpp
+  src/ActionPoint.cpp
+  src/Point.cpp
+  src/ActionsParser.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

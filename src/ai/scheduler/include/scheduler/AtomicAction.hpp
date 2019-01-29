@@ -4,7 +4,11 @@
 #include "scheduler/ActionPoint.h"
 #include "scheduler/Action.hpp"
 
+#include <ros/ros.h>
+#include "ai_msgs/Argument.h"
+
 #include <string>
+#include <list>
 
 /**
  * @brief class for atomic actions
@@ -17,8 +21,15 @@ public:
 
   int points();
   Point startPoint();
+
+  std::list<Argument> getArgs();
+
+  // Setters
+  void addArg(Argument arg);
+
 private:
   std::string _performer;
+  std::list<Argument> _args;
 };
 
 // TODO (or use a library?)

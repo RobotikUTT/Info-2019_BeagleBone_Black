@@ -2,7 +2,9 @@
 #define ACTION_PARSER_NODE_H
 
 #include "scheduler/AtomicAction.hpp"
-#include "scheduler/ComposedAction.hpp"
+#include "scheduler/ActionBlock.hpp"
+
+#include "ai_msgs/Argument.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
@@ -45,7 +47,7 @@
  * Example:
  * 
  *  [
- *      descriptorAction?: Action,
+ *      descriptorAction: Action,
  *      action1,
  *      action2,
  *      [
