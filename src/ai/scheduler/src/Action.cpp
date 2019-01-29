@@ -9,9 +9,8 @@
 /**
  * @brief      Constructs the default object.
  */
-Action::Action(std::string name){
-  this->_name = name;
-  this->_state = ACTION_IDLE;
+Action::Action(std::string name) :_name(name), _state(ACTION_IDLE) {
+
 }
 
 /**
@@ -55,3 +54,11 @@ int Action::state() {
   return (_priority < B._priority);
 }*/
 
+int Action::points() {
+    // todo sum of list
+    return 0;
+}
+
+Point Action::startPoint() {
+    return Point();
+}

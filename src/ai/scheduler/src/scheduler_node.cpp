@@ -25,7 +25,9 @@ Scheduler::Scheduler(ros::NodeHandle* n){
   this->action_srv  = nh.advertiseService("scheduler/actionToDo",         &Scheduler::getActionToDo,     this);
   this->actionD_srv = nh.advertiseService("scheduler/currentActionDone",  &Scheduler::currentActionDone, this);
   
-  this->actionManager = ActionManager(actions_file.c_str());
+  //this-> = ActionManager(actions_file.c_str());
+
+  ActionsParser parser = actions_file.c_str();
 
   service_ready("ai", "scheduler", 1 );
 }
@@ -38,7 +40,8 @@ Scheduler::Scheduler(ros::NodeHandle* n){
 void Scheduler::setSide(const ai_msgs::SetSide::ConstPtr& msg){
   if(this->side != msg->side){
     this->side = ! this->side;
-    this->actionManager.changeSide();
+    // TODO acm
+    // this->actionManager.changeSide();
   }
 }
 
@@ -52,8 +55,10 @@ void Scheduler::setSide(const ai_msgs::SetSide::ConstPtr& msg){
 bool Scheduler::getActionToDo(ai_msgs::GetActionToDo::Request &req, ai_msgs::GetActionToDo::Response &res){
   // ROS_INFO_STREAM("action position x: " << req.robot_pos_x);
   // ROS_INFO_STREAM("action position y: " << req.robot_pos_y);
-  this->actionManager.updatePriority(Point(req.robot_pos_x,req.robot_pos_y));
-  this->actionManager.getActionToDo(res);
+
+  // TODO acm
+  //this->actionManager.updatePriority(Point(req.robot_pos_x,req.robot_pos_y));
+  //this->actionManager.getActionToDo(res);
   return true;
 }
 
@@ -65,7 +70,8 @@ bool Scheduler::getActionToDo(ai_msgs::GetActionToDo::Request &req, ai_msgs::Get
  *
  */
 bool Scheduler::currentActionDone(ai_msgs::CurrentActionDone::Request &req, ai_msgs::CurrentActionDone::Response &res){
-  this->actionManager.currentActionDone(req.done);
+  // TODO acm
+  //this->actionManager.currentActionDone(req.done);
   return true;
 }
 

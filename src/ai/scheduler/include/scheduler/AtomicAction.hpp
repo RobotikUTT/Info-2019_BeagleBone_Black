@@ -7,7 +7,7 @@
 #include <string>
 
 /**
- * @brief      Class for action class.
+ * @brief class for atomic actions
  */
 class AtomicAction : public Action {
 public:
@@ -15,6 +15,8 @@ public:
 
   std::string performer();
 
+  int points();
+  Point startPoint();
 private:
   std::string _performer;
 };

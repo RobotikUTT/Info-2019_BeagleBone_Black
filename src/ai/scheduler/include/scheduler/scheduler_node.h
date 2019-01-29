@@ -18,7 +18,7 @@
 #include "ai_msgs/GetActionToDo.h"
 #include "ai_msgs/CurrentActionDone.h"
 
-#include "scheduler/ActionManager.h"
+#include "scheduler/ActionsParser.hpp"
 
 /**
  * @brief      Class for scheduler wich scedule actions To Do.
@@ -34,8 +34,6 @@ private:
 
   ros::ServiceServer action_srv;
   ros::ServiceServer actionD_srv;
-
-  ActionManager actionManager;
 
   bool side;
 

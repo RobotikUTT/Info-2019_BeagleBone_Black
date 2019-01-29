@@ -16,26 +16,23 @@
  */
 class Action {
 public:
- 
+  Action(std::string name = "unnamed action");
 
   int priority(Point& robot_pos);
-  int points();
   int state();
   std::string name();
 
-  Point startPoint();
 
-  bool operator< ( const Action &B) const;
+  virtual int points();
+  virtual Point startPoint();
 
 protected:
-  Action(std::string name);
-
   int _state;
   std::string _name;
   
 };
 
-std::ostream& operator<<(std::ostream& os, const Action& AC);
+//std::ostream& operator<<(std::ostream& os, const Action& AC);
 
 
 

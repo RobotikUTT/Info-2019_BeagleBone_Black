@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(ai_msgs)
 
-find_package(catkin REQUIRED
-  COMPONENTS
+find_package(catkin REQUIRED COMPONENTS
     message_generation
     actionlib_msgs
     std_msgs
@@ -17,6 +16,7 @@ add_message_files(DIRECTORY msg
   SetSide.msg
   EmergencyStop.msg
   Point2D.msg
+  Argument.msg
 )
 
 add_service_files(
@@ -27,11 +27,10 @@ add_service_files(
   ObjectManager.srv
 )
 
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
+add_action_files(
+  FILES
+  PerformAction.action
+)
 
 generate_messages(
   DEPENDENCIES

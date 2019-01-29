@@ -11,7 +11,10 @@ public:
   ComposedAction(std::string name, std::list<Action> actions);
 
 
+  int points();
+  Point startPoint();
 private:
+  Action descriptor;
   std::list<Action> _actions;
 };
 
