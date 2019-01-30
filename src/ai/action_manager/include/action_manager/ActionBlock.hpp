@@ -11,8 +11,9 @@ public:
   ActionBlock(Action descriptor, std::list<Action> actions);
 
   int points();
-  Point startPoint();
+  ActionPoint* actionPoint(Point& previousActionPoint);
 
+  int distanceToTravel(Point& robot_pos);
 private:
   std::list<Action> _actions;
 };

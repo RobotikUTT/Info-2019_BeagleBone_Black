@@ -11,9 +11,9 @@ ActionPerformer::ActionPerformer(std::string name) : name(name) {
     actionName << name;
     actionServer = new PerfomActionSrv(actionName.str());
 
-    act.registerGoalCallback(   boost::bind(&Move::goalCB,    this));
-    act.registerPreemptCallback(boost::bind(&Move::preemptCB, this));
-    act.start();
+    actionServer.registerGoalCallback(boost::bind(&Move::goalCB, this));
+    actionServer.registerPreemptCallback(boost::bind(&Move::preemptCB, this));
+    actionServer.start();
 }
 
 bool ActionPerformer::_computeActionPoint(ai_msgs::ComputeActionPoint::Request &req, ai_msgs::ComputeActionPoint::Response &res) {

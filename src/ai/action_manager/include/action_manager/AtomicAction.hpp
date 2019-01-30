@@ -21,14 +21,15 @@ public:
 
   int points();
 
-  std::list<Argument> getArgs();
+  std::list<ai_msgs::Argument> getArgs();
+  ActionPoint* actionPoint(Point& previousActionPoint);
 
   // Setters
-  void addArg(Argument arg);
+  void addArg(ai_msgs::Argument arg);
 
 private:
   std::string _performer;
-  std::list<Argument> _args;
+  std::list<ai_msgs::Argument> _args;
 
   ActionPoint* _actionPoint;
 };

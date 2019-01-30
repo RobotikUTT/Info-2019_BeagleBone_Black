@@ -30,12 +30,14 @@ public:
   int distanceToTravel(Point& robot_pos);
 
   virtual int points();
-  virtual ActionPoint actionPoint();
+  virtual ActionPoint* actionPoint(Point& previousActionPoint);
   
 protected:
   int _state, _points;
   std::string _name;
   bool _sync;
+
+  ActionPoint* _actionPoint;
 };
 
 //std::ostream& operator<<(std::ostream& os, const Action& AC);

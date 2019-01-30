@@ -29,11 +29,11 @@ ActionPoint* AtomicAction::actionPoint(ActionPoint* previousActionPoint) {
 }
 
 
-list<Argument> AtomicAction::getArgs() {
+std::list<ai_msgs::Argument> AtomicAction::getArgs() {
   return _args;
 }
 
 // Setters
-void AtomicAction::addArg(Argument arg) {
+void AtomicAction::addArg(ai_msgs::Argument arg) {
   _args.push_back(arg);
 }

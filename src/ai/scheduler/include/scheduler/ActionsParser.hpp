@@ -1,8 +1,8 @@
 #ifndef ACTION_PARSER_NODE_H
 #define ACTION_PARSER_NODE_H
 
-#include "scheduler/action/AtomicAction.hpp"
-#include "scheduler/action/ActionBlock.hpp"
+#include "action_manager/AtomicAction.hpp"
+#include "action_manager/ActionBlock.hpp"
 
 #include "ai_msgs/Argument.h"
 
