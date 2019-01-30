@@ -1,4 +1,4 @@
-#include "scheduler/ActionBlock.hpp"
+#include "action_manager/ActionBlock.hpp"
 
 ActionBlock::ActionBlock(Action descriptor, std::list<Action> actions) :
     Action(descriptor.name()), _actions(actions) {

@@ -7,7 +7,8 @@
 #ifndef ACTION_MANAGER_NODE_H
 #define ACTION_MANAGER_NODE_H
 
-#include "scheduler/Action.h"
+#include <ros/ros.h>
+#include "scheduler/action/Action.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"

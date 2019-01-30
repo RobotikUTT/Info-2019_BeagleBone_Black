@@ -1,8 +1,8 @@
 #ifndef ATOMIC_ACTION_H
 #define ATOMIC_ACTION_H
 
-#include "scheduler/ActionPoint.h"
-#include "scheduler/Action.hpp"
+#include "action_manager/ActionPoint.h"
+#include "action_manager/Action.hpp"
 
 #include <ros/ros.h>
 #include "ai_msgs/Argument.h"
@@ -20,7 +20,6 @@ public:
   std::string performer();
 
   int points();
-  Point startPoint();
 
   std::list<Argument> getArgs();
 
@@ -30,6 +29,8 @@ public:
 private:
   std::string _performer;
   std::list<Argument> _args;
+
+  ActionPoint* _actionPoint;
 };
 
 // TODO (or use a library?)

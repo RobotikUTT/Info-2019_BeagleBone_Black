@@ -4,7 +4,7 @@
 *    
 *    @author Alexis CARE
 */
-#include "scheduler/ActionPoint.h"
+#include "action_manager/ActionPoint.h"
 
 
 /**
@@ -41,6 +41,9 @@ ActionPoint::ActionPoint(int start_x, int start_y, int start_angle, int end_x, i
   this->endPoint = Point(end_x, end_y, end_angle);
 }
 
+int ActionPoint::distance() {
+  return this->startPoint.manhattanDist(this->endPoint);
+}
 
 /**
  * @brief      Transform a ActionPoint to a stream

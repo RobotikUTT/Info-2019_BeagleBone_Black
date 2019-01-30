@@ -4,7 +4,7 @@
 *    
 *    @author Alexis CARE
 */
-#include "scheduler/Action.hpp"
+#include "action_manager/Action.hpp"
 
 /**
  * @brief      Constructs the default object.
@@ -20,8 +20,9 @@ Action::Action(std::string name) :_name(name), _state(ACTION_IDLE), _points(0), 
  */
 int Action::priority(Point& robot_pos) {
   int action_points = points();
-
-  return action_points * action_points / startPoint().manhattanDist(robot_pos);
+  int distance = distanceToTravel(robot_pos);
+  //actionPoint().startPoint.manhattanDist(robot_pos)
+  return action_points * action_points / distance;
 }
 
 // Getters
@@ -72,6 +73,14 @@ int Action::points() {
     return 0;
 }
 
-Point Action::startPoint() {
-    return Point();
+/**
+ * Compute the distance to travel before the robot reach the end
+ */
+int Action::distanceToTravel(Point& robot_pos) {
+  return actionPoint().startPoint.manhattanDist(robot_pos) +
+    actionPoint().distance();
+}
+
+ActionPoint Action::actionPoint() {
+    return ActionPoint();
 }

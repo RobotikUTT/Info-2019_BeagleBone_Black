@@ -4,7 +4,7 @@
 *    
 *    @author Alexis CARE
 */
-#include "scheduler/Point.h"
+#include "action_manager/Point.h"
 
 /**
  * @brief      Constructs the object.

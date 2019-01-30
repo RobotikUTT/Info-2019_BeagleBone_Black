@@ -5,7 +5,7 @@
 *    @author Alexis CARE
 */
 #include "scheduler/ActionManager.h"
-#include "ros/ros.h"
+
 
 using namespace rapidjson;
 

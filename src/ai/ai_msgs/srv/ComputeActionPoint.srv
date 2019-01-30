@@ -1,0 +1,5 @@
+procedures_msgs/OrPoint robot_pos
+Argument[] args
+---
+Point2D start_point
+Point2D end_point

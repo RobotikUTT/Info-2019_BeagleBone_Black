@@ -1,7 +1,7 @@
 #ifndef ACTION_H
 #define ACTION_H
 
-#include "scheduler/Point.h"
+#include "action_manager/ActionPoint.h"
 
 #include <string>
 
@@ -27,9 +27,11 @@ public:
   int priority(Point& robot_pos);
   int state();
   std::string name();
+  int distanceToTravel(Point& robot_pos);
 
   virtual int points();
-  virtual Point startPoint();
+  virtual ActionPoint actionPoint();
+  
 protected:
   int _state, _points;
   std::string _name;
