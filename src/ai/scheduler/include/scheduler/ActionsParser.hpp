@@ -74,6 +74,8 @@ private:
   Action parseFile(const char* filename);
   Action parseAction(const rapidjson::Value& object);
   AtomicAction parseAtomicAction(const rapidjson::Value& object, const bool allowNoPerfomer = false);
+  
+  void parseArgs(const rapidjson::Value& object, AtomicAction& targetAction);
 };
 
 #endif

@@ -110,12 +110,20 @@ AtomicAction ActionsParser::parseAtomicAction(const Value& object, const bool al
     }
 
     if (object.HasMember("args") && object["sync"].IsObject()) {
-        action.setArgs(parseArgs(object["sync"]));
+        parseArgs(object["sync"], action);
     }
 
-    return
+    return action;
 }
 
-std::list<Argument> ActionsParser::parseArgs(const Value& object) {
-    std::list<Argument>
+void ActionsParser::parseArgs(const Value& object, AtomicAction& targetAction) {
+    ai_msgs::Argument* arg;
+
+    for (Value::ConstMemberIterator itr = object.MemberBegin(); itr != object.MemberEnd(); ++itr) {
+        arg = new ai_msgs::Argument();
+        arg->name = itr->name.GetString();
+        arg->value = itr->value.GetDouble();
+
+        targetAction.addArg(*arg);
+    }
 }

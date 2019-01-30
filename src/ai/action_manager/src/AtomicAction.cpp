@@ -13,14 +13,14 @@ int AtomicAction::points() {
  *  Return the action point according either to the previous action's actionPoint
  *  or to current coordinates
  */
-ActionPoint* AtomicAction::actionPoint(ActionPoint* previousActionPoint) {
+ActionPoint* AtomicAction::actionPoint(Point& previousActionPoint) {
   if (_actionPoint == NULL) {
     ActionPoint point;
 
     // TODO compute action point with perfomer help
 
     if (/*performer.isActionPointStatic()*/true) {
-      _actionPoint = &point
+      _actionPoint = &point;
       return _actionPoint;
     }
   } else {

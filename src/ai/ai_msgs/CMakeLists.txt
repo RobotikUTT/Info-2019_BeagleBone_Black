@@ -25,11 +25,12 @@ add_service_files(
   NodeReadiness.srv
   CurrentActionDone.srv
   ObjectManager.srv
+  ComputeActionPoint.srv
 )
 
 add_action_files(
   FILES
-  PerformAction.action
+  Perform.action
 )
 
 generate_messages(

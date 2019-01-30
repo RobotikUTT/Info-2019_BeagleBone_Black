@@ -58,7 +58,8 @@
 
   <depend>robot_watcher</depend>
   <depend>controller</depend>
-
+  <depend>action_manager</depend>
+  
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->
