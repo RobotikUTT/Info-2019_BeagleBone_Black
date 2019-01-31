@@ -10,11 +10,17 @@
 #include "ai_msgs/PerformAction.h"
 #include "ai_msgs/Argument.h"
 #include "ai_msgs/ComputeActionPoint.h"
+#include "ai_msgs/RobotStatus.h"
 
 #include "action_manager/ActionPoint.h"
 #include "action_manager/Action.hpp"
 
+#include "can_msgs/Finish.h"
+#include "can_msgs/Point.h"
+#include "can_msgs/Status.h"
+
 #include "procedures_msgs/OrPoint.h"
+#include "robot_watcher/RStatus/State.h"
 
 typedef actionlib::SimpleActionServer<ai_msgs::PerformAction> PerformActionSrv;
 
@@ -43,6 +49,7 @@ protected:
     virtual void cancel();
 
     double getArg(std::string name, double defaultValue = 0, std::vector<ai_msgs::Argument>* args = NULL);
+    bool hasArg(std::string name, std::vector<ai_msgs::Argument>* args = NULL);
 
     // Function managing the action
     void actionPerformed();
@@ -50,20 +57,23 @@ protected:
 private:
     std::vector<ai_msgs::Argument> _args;
 
-    bool _computeActionPoint(
-        ai_msgs::ComputeActionPoint::Request& req,
-        ai_msgs::ComputeActionPoint::Response& res
-    );
-
-    void onGoal(const ai_msgs::PerformActionGoalConstPtr& goal, PerformActionSrv* as);
-    void onPreempt();
-
     // Name of the perfomer
     std::string name;
 
     // Ros objects
     PerformActionSrv* actionServer;
     ros::ServiceServer actionPointSrv;
+    ros::Subscriber robotWatcherSub;
+
+    bool _computeActionPoint(
+        ai_msgs::ComputeActionPoint::Request& req,
+        ai_msgs::ComputeActionPoint::Response& res
+    );
+
+    void onGoal();
+    void onPreempt();
+
+    void onRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
 };
 
 #endif

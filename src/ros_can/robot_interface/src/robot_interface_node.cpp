@@ -39,7 +39,6 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->STM_GoToAngle_sub 			= nh.subscribe("/STM/GoToAngle",					10, 	&CanInterfaceNode::STMGoToAngle, 		this);
 	this->STM_GoTo_sub 					= nh.subscribe("/STM/GoTo",							10, 	&CanInterfaceNode::STMGoTo, 			this);
 	this->STM_Rotation_sub 				= nh.subscribe("/STM/Rotation",						10, 	&CanInterfaceNode::STMRotation, 		this);
-	this->STM_RotationNoModulo_sub 		= nh.subscribe("/STM/RotationNoModulo",				10, 	&CanInterfaceNode::STMRotationNoModulo, this);
 	this->STM_LeftPID_sub 				= nh.subscribe("/STM/LeftPID",						10, 	&CanInterfaceNode::STMLeftPID, 			this);
 	this->STM_RightPID_sub 				= nh.subscribe("/STM/RightPID",						10, 	&CanInterfaceNode::STMRightPID, 		this);
 	this->STM_AllPID_sub 				= nh.subscribe("/STM/AllPID",						10, 	&CanInterfaceNode::STMAllPID, 			this);
@@ -350,28 +349,6 @@ void CanInterfaceNode::STMGoTo(const can_msgs::Point::ConstPtr& msg){
  * @param[in]  msg   The message
  */
 void CanInterfaceNode::STMRotation(const can_msgs::Point::ConstPtr& msg){
-	can_msgs::Frame fr;
-	fr.header.stamp = ros::Time::now();
-	fr.header.frame_id = "/ros_can/interface/";
-	fr.is_rtr = 0;
-	fr.is_error = 0;
-	fr.is_extended = 0;
-
-	fr.dlc = 3;
-	fr.id = STM_CAN_ADDR;
-	fr.data[0] = ROT;
-	fr.data[1] = msg->angle >> 8;
-	fr.data[2] = msg->angle & 0x00FF;
-
-	can_pub.publish(fr);
-}
-
-/**
- * @brief      Send a rotation commande with no modulo to the STM
- *
- * @param[in]  msg   The message
- */
-void CanInterfaceNode::STMRotationNoModulo(const can_msgs::Point::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";

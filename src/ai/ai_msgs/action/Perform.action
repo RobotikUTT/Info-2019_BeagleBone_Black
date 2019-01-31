@@ -1,5 +1,5 @@
 #start
-Argument[] args
+Argument[] arguments
 ---
 #result
 int8 status

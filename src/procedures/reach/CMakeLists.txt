@@ -9,9 +9,10 @@ project(reach)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  rospy
   ai_msgs
+  can_msgs
   action_manager
+  robot_interface
 )
 
 ## System dependencies are found with CMake's conventions
@@ -30,7 +31,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES reach
-  CATKIN_DEPENDS roscpp rospy ai_msgs
+  CATKIN_DEPENDS roscpp ai_msgs can_msgs robot_interface
 #  DEPENDS system_lib
 )
 

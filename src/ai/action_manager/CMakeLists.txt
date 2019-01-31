@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   procedures_msgs
+  robot_interface
+  robot_watcher
 )
 
 ## System dependencies are found with CMake's conventions
@@ -33,7 +35,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES action_manager
-  CATKIN_DEPENDS ai_msgs roscpp std_msgs actionlib
+  CATKIN_DEPENDS ai_msgs roscpp std_msgs actionlib actionlib_msgs robot_interface robot_watcher
 #  DEPENDS system_lib
 )
 

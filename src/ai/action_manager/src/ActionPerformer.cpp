@@ -8,12 +8,15 @@ ActionPerformer::ActionPerformer( std::string name) : name(name), nh() {
     srvName << name;
     actionPointSrv  = nh.advertiseService(srvName.str(), &ActionPerformer::_computeActionPoint, this);
 
+    // Suscribe to robot status
+    robotWatcherSub = nh.subscribe("/ai/robot_watcher/robot_status", 1, &ActionPerformer::onRobotStatus, this);
+
     // Action server for this action
     std::ostringstream actionName("action_");
     actionName << name;
-    actionServer = new PerformActionSrv(actionName.str(), boost::bind(&ActionPerformer::onGoal, this), false);
+    actionServer = new PerformActionSrv(actionName.str(), false);
 
-    //actionServer->registerGoalCallback(boost::bind(&ActionPerformer::onGoal, this));
+    actionServer->registerGoalCallback(boost::bind(&ActionPerformer::onGoal, this));
     actionServer->registerPreemptCallback(boost::bind(&ActionPerformer::onPreempt, this));
     actionServer->start();
 }
@@ -32,10 +35,13 @@ bool ActionPerformer::_computeActionPoint(ai_msgs::ComputeActionPoint::Request& 
 /**
  *  Goal received
  */
-void ActionPerformer::onGoal(const ai_msgs::PerformActionGoalConstPtr& goal, PerformActionSrv* as) {
-    //ai_msgs::PerformActionGoal::ConstPtr goal = actionServer->acceptNewGoal();
-    _args = goal->args;
+void ActionPerformer::onGoal() {
+    ai_msgs::PerformGoal::ConstPtr goal = actionServer->acceptNewGoal();
 
+    // save args
+    _args = goal->arguments;
+
+    // run action
     start();
 }
 
@@ -55,7 +61,7 @@ void ActionPerformer::onPreempt() {
  */
 void ActionPerformer::actionPerformed() {
     // Create result message
-    ai_msgs::PerformActionResult result;
+    ai_msgs::PerformResult result;
     result.status = ACTION_DONE;
 
     // Send back to client
@@ -67,11 +73,20 @@ void ActionPerformer::actionPerformed() {
  */
 void ActionPerformer::actionPaused() {
     // Create result message
-    ai_msgs::PerformActionResult result;
+    ai_msgs::PerformResult result;
     result.status = ACTION_PAUSED;
 
     // Send back to client
     actionServer->setSucceeded(result);
+}
+
+/**
+ *  Monitor robot status to catch HALT signal
+ */
+void ActionPerformer::onRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg) {
+  if (msg->robot_status == ROBOT_HALT){
+    actionServer->shutdown();
+  }
 }
 
 /**
@@ -84,7 +99,7 @@ double ActionPerformer::getArg(std::string name, double defaultValue /*= 0*/, st
     }
 
     // Seek an argument with this name
-    for (const auto& next : args) {
+    for (const auto& next : *args) {
         if (name.compare(next.name) == 0) {
             return next.value;
         }
@@ -93,9 +108,25 @@ double ActionPerformer::getArg(std::string name, double defaultValue /*= 0*/, st
     return defaultValue;
 }
 
+bool ActionPerformer::hasArg(std::string name, std::vector<ai_msgs::Argument>* args /*= NULL*/) {
+    // No arg list provided -> use current action's one
+    if (args == NULL) {
+        args = &_args;
+    }
+
+    // Seek an argument with this name
+    for (const auto& next : *args) {
+        if (name.compare(next.name) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 // Virtual functions
 ActionPoint* ActionPerformer::computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, procedures_msgs::OrPoint& robot_pos) {
     return new ActionPoint();
 }
 void ActionPerformer::start() { }
-void cancel() {};
+void ActionPerformer::cancel() {};

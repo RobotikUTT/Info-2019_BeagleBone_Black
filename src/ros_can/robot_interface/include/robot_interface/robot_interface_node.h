@@ -87,7 +87,6 @@ private:
 	ros::Subscriber STM_GoToAngle_sub;
 	ros::Subscriber STM_GoTo_sub;
 	ros::Subscriber STM_Rotation_sub;
-	ros::Subscriber STM_RotationNoModulo_sub;
 	ros::Subscriber STM_LeftPID_sub;
 	ros::Subscriber STM_RightPID_sub;
 	ros::Subscriber STM_AllPID_sub;

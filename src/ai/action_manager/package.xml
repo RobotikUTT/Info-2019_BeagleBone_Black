@@ -58,8 +58,10 @@
 
   <depend>ai_msgs</depend>
   <depend>actionlib</depend>
+  <depend>actionlib_msgs</depend>
   <depend>procedures_msgs</depend>
-
+  <depend>robot_interface</depend>
+  <depend>robot_watcher</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
