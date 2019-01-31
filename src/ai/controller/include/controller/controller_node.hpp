@@ -5,7 +5,7 @@
 #ifndef CONTROLLER_NODE_H
 #define CONTROLLER_NODE_H
 
-#include "ros/ros.h"
+#include <ros/ros.h>
 
 #include "robot_watcher/Services/RobotServices.h"
 #include "robot_watcher/RStatus/State.h"

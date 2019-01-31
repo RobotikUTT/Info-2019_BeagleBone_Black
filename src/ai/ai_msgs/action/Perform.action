@@ -3,7 +3,6 @@ Argument[] args
 ---
 #result
 int8 status
-int8 points_scored
 ---
 #feedback
 

@@ -2,7 +2,7 @@
 
 using namespace rapidjson;
 
-
+// TODO add arguments for files imported actions (to have generic actions for example)
 ActionsParser::ActionsParser(const char* filepath) : actionRoot(parseFile(filepath)) {}
 
 Action ActionsParser::getAction() {

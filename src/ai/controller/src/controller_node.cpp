@@ -51,13 +51,13 @@ Controller::Controller(ros::NodeHandle *n) : move_action_client("/procedures/mov
   service_ready("ai", "controller", 1);
 }
 
-void Controller::setSide(const ai_msgs::SetSide::ConstPtr &msg)
+void Controller::setSide(const ai_msgs::SetSide::ConstPtr& msg)
 {
   side = msg->side;
 }
 
 // Set robot position inside controller
-void Controller::setRobotPosition(const can_msgs::Point::ConstPtr &msg)
+void Controller::setRobotPosition(const can_msgs::Point::ConstPtr& msg)
 {
   // ROS_INFO_STREAM("robot pos_x: " << msg->pos_x
   //  << " robot pos_y: " << msg->pos_y
@@ -75,7 +75,7 @@ void Controller::setRobotPosition(const can_msgs::Point::ConstPtr &msg)
  *
  * @param[in]  msg   The RobotStatus message
  */
-void Controller::setRobotStatus(const ai_msgs::RobotStatus::ConstPtr &msg)
+void Controller::setRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg)
 {
   robot_status = msg->robot_status;
 

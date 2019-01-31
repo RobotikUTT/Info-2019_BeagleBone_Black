@@ -1,2 +1,2 @@
 string name
-int16 value
+float64 value
