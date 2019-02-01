@@ -1,4 +1,3 @@
-
 #include "reach/reach_proc.hpp"
 
 
@@ -53,7 +52,7 @@ void ReachActionPerfomer::start() {
   /**
    * Boolean equation determining which move the action should use
    */
-  int moveType = hasArg("x") * hasArg("y") * hasArg("direction") + 2 * hasArg("angle") + 4 ;
+  int moveType = hasArg("x") * hasArg("y") * hasArg("direction") + 2 * hasArg("angle");
 
   switch (moveType)
   {
@@ -102,8 +101,7 @@ void ReachActionPerfomer::TimeoutCallback(const ros::TimerEvent& timer){
 }
 
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
   ros::init(argc, argv, "reach_procedure");
 
   ReachActionPerfomer performer(ros::this_node::getName());
