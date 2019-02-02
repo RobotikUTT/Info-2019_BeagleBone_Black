@@ -10,7 +10,7 @@ ActionBlock::ActionBlock(Action descriptor, std::list<Action> actions) :
 /**
  * Compute the sum of points earned by each value
  */
-int ActionBlock::points() {
+int ActionBlock::points() const {
     int points = _points;
 
     for (auto& next : _actions) {
@@ -18,6 +18,10 @@ int ActionBlock::points() {
     }
     
     return points;
+}
+
+std::list<Action> ActionBlock::subactions() const {
+    return _actions;
 }
 
 /**
@@ -68,4 +72,59 @@ ActionPoint* ActionBlock::actionPoint(Point& previousActionPoint) {
     );
 
     return _actionPoint;
+}
+
+bool operator==(const ActionBlock& lhs, const ActionBlock& rhs){
+    // First try basic tests
+    bool baseTests = lhs.isSync() == rhs.isSync() && // sync
+    lhs.name() == rhs.name(); // name
+
+    if (!baseTests) return false;
+
+    // Then test for subactions
+    std::list<Action> largs = lhs.subactions();
+    std::list<Action> rargs = rhs.subactions();
+
+    // as many args
+    if (largs.size() != rargs.size()) return false;
+
+    std::list<Action>::iterator rit = rargs.begin();
+    std::list<Action>::iterator lit = largs.begin();
+
+    ActionBlock* br;
+    ActionBlock* bl;
+    AtomicAction* ar;
+    AtomicAction* al;
+
+    Action* rpoint;
+    Action* lpoint;
+
+    while (rit != rargs.end()) {
+        rpoint = &(*rit);
+        lpoint = &(*lit);
+
+        br = dynamic_cast<ActionBlock*> (rpoint);
+        bl = dynamic_cast<ActionBlock*> (lpoint);
+
+        // Both action block
+        if (br != 0 && bl != 0) {
+            // TODO test if equality is well used
+            if (br != bl) {
+                return false;
+            }
+        } else {
+            ar = dynamic_cast<AtomicAction*> (rpoint);
+            al = dynamic_cast<AtomicAction*> (lpoint);
+
+            // or both atomic action
+            if (ar == 0 || al == 0 || ar != al) {
+                return false;
+            }
+        }
+
+        rit ++;
+        lit ++;
+    }
+
+    return true;
 }

@@ -28,8 +28,7 @@
 class ActionManager
 {
 public:
-  ActionManager(const char*); // init with actions.config file
-  ActionManager();
+  ActionManager(const char* file); // init with actions.config file
   void changeSide ();
 
   void getActionToDo(ai_msgs::GetActionToDo::Response &);

@@ -4,7 +4,7 @@
 *    
 *    @author Alexis CARE
 */
-#include "scheduler/ActionManager.h"
+#include "scheduler/ActionManager.hpp"
 
 
 using namespace rapidjson;
@@ -16,12 +16,6 @@ using namespace rapidjson;
  */
 ActionManager::ActionManager(const char* actions_file){
   this->actionsInit(actions_file);
-}
-
-/**
- * @brief      Constructs the default object.
- */
-ActionManager::ActionManager(){
 }
 
 /**

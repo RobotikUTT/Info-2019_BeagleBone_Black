@@ -17,11 +17,11 @@ class AtomicAction : public Action {
 public:
   AtomicAction(std::string name, std::string performer);
 
-  std::string performer();
+  std::string performer() const;
 
-  int points();
+  int points() const;
 
-  std::list<ai_msgs::Argument> getArgs();
+  std::list<ai_msgs::Argument> getArgs() const;
   ActionPoint* actionPoint(Point& previousActionPoint);
 
   // Setters
@@ -36,5 +36,6 @@ private:
 
 // TODO (or use a library?)
 //std::ostream& operator<<(std::ostream& os, const AtomicAction& obj);
+bool operator==(const AtomicAction& lhs, const AtomicAction& rhs);
 
 #endif

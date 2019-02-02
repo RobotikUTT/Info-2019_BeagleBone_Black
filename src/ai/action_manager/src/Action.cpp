@@ -27,15 +27,19 @@ int Action::priority(Point& robot_pos) {
 }
 
 // Getters
-std::string Action::name() {
+std::string Action::name() const {
   return _name;
 }
 
-int Action::state() {
+int Action::getBasePoints() const {
+  return _points;
+}
+
+int Action::state() const {
   return _state;
 }
 
-bool Action::isSync() {
+bool Action::isSync() const {
   return _sync;
 }
 
@@ -57,7 +61,7 @@ int Action::distanceToTravel(Point& robot_pos) {
 }
 
 // Virtual functions (have to be redefined into child's classes)
-int Action::points() { return 0; }
+int Action::points() const { return 0; }
 ActionPoint* Action::actionPoint(Point& previousActionPoint) {
   return _actionPoint;
 }

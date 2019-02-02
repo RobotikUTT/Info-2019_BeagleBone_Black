@@ -3,7 +3,7 @@
 using namespace rapidjson;
 
 // TODO add arguments for files imported actions (to have generic actions for example)
-ActionsParser::ActionsParser(const char* filepath) : actionRoot(parseFile(filepath)) {}
+ActionsParser::ActionsParser(const char* filepath) : actionRoot(parseFile(filepath)) { }
 
 Action ActionsParser::getAction() {
     return actionRoot;
@@ -25,7 +25,7 @@ FILE* ActionsParser::openFile(const char* filepath) {
 
     if (fileP == NULL) {
         std::stringstream message;
-        message << "unable to locate" << filepath;
+        message << "unable to locate " << filepath;
         throw message.str();
     }
 

@@ -23,13 +23,14 @@ public:
   void setSync(bool sync);
 
   // Getters
-  bool isSync();
+  bool isSync() const;
   int priority(Point& robot_pos);
-  int state();
-  std::string name();
+  int state() const;
+  std::string name() const;
   int distanceToTravel(Point& robot_pos);
+  int getBasePoints() const;
 
-  virtual int points();
+  virtual int points() const;
   virtual ActionPoint* actionPoint(Point& previousActionPoint);
   
 protected:

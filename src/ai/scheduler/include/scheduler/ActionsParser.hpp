@@ -1,5 +1,5 @@
-#ifndef ACTION_PARSER_NODE_H
-#define ACTION_PARSER_NODE_H
+#ifndef ACTION_PARSER_H
+#define ACTION_PARSER_H
 
 #include "action_manager/AtomicAction.hpp"
 #include "action_manager/ActionBlock.hpp"
@@ -56,7 +56,7 @@
  *  ]
  * 
  *  A action group is done when all its actions are complete.
-*/
+ */
 class ActionsParser
 {
 public:

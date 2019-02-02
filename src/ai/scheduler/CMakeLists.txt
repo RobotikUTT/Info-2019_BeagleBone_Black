@@ -43,7 +43,7 @@ add_dependencies(${PROJECT_NAME}
 )
 
 # Declare a C++ executable
-add_executable(${PROJECT_NAME}_node src/scheduler_node.cpp)
+add_executable(${PROJECT_NAME}_node src/scheduler_node.cpp src/ActionsParser.cpp)
 
 # Rename C++ executable without prefix
 set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
