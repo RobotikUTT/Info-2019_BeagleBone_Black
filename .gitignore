@@ -1,10 +1,16 @@
+# Compiled files
+*.pyc
+html/
+
+# Catkin-tools files and folders
 build/
 build_isolated/
 devel/
 devel_isolated/
-*.pyc
-html/
+logs/
+.catkin_tools/
 
+# Editors files
 .vscode
 *.sublime-project
 *.sublime-workspace

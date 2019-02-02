@@ -10,7 +10,7 @@ sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C
 sudo apt update
 
 echo "Installing ros..."
-sudo apt install ros-melodic-ros-base
+sudo apt install -y ros-melodic-ros-base python-catkin-tools
 
 echo "rosdep initialization..."
 sudo rosdep init
@@ -21,4 +21,4 @@ echo "source /opt/ros/melodic/setup.zsh" >> ~/.zshrc
 source ~/.zshrc
 
 echo "building robot..."
-catkin_make
+catkin build

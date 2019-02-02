@@ -1,11 +1,9 @@
 /** @file move_proc.h
-*    @brief Define the ROS Move action server
-*    
-*    
-*    @author Alexis CARE
+*    @brief define a simple movement action
+*    @author Clément de La Bourdonnaye
 */
-#ifndef MOVE_PROC_H
-#define MOVE_PROC_H
+#ifndef REACH_PROC_H
+#define REACH_PROC_H
 
 #include "action_manager/ActionPerformer.hpp"
 
@@ -13,6 +11,7 @@
 #include <vector>
 
 #include "robot_interface/protocol.h"
+
 
 /**
  * @brief class for the action of reaching a position
@@ -35,7 +34,6 @@ private:
   void start();
 
   void analysisCB(const can_msgs::Finish::ConstPtr&);
-  inline void sendMsg();
   void TimeoutCallback(const ros::TimerEvent&);
 
 };

@@ -4,42 +4,21 @@
   <version>2018.1.0</version>
   <description>The ai_msgs package</description>
 
-  <!-- One maintainer tag required, multiple allowed, one person per tag -->
-  <!-- Example:  -->
-  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
   <maintainer email="alx.care@gmail.com">Alexis CARE</maintainer>
-
-
-  <!-- One license tag required, multiple allowed, one license per tag -->
-  <!-- Commonly used license strings: -->
-  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <maintainer email="cle.bourdonnaye@gmail.com">Clément de La Bourdonnaye</maintainer>
   <license>TODO</license>
-
-
-  <!-- Url tags are optional, but multiple are allowed, one per tag -->
-  <!-- Optional attribute type can be: website, bugtracker, or repository -->
-  <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/ai_msg</url> -->
-
-
-  <!-- Author tags are optional, multiple are allowed, one per tag -->
-  <!-- Authors do not have to be maintainers, but could be -->
-  <!-- Example: -->
   <author email="alx.care@gmail.com">Alexis CARE</author>
 
-
+  <!-- Default requirements for *_msgs packages -->
   <buildtool_depend>catkin</buildtool_depend>
-
   <build_depend>message_generation</build_depend>
-  <build_depend>procedures_msgs</build_depend>
+  <build_export_depend>message_runtime</build_export_depend>
   <exec_depend>message_runtime</exec_depend>
 
+  <!-- Other msgs dependencies-->
   <depend>std_msgs</depend>
+  <depend>procedures_msgs</depend>
+  <depend>actionlib_msgs</depend>
 
-
-  <!-- The export tag contains other, unspecified, tags -->
-  <export>
-    <!-- Other tools can request additional information be placed here -->
-
-  </export>
+  <export></export>
 </package>

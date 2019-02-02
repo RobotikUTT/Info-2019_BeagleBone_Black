@@ -2,12 +2,18 @@ cmake_minimum_required(VERSION 2.8.3)
 project(ai_msgs)
 
 find_package(catkin REQUIRED COMPONENTS
-  message_generation
+  # Actions build requirements
   actionlib_msgs
+
+  # Messages and services base dependencies
+  message_generation
   std_msgs
-  #procedures_msgs
+
+  # Additional requirements
+  procedures_msgs
 )
 
+# Messages files
 add_message_files(DIRECTORY msg
   FILES
   PointsScored.msg
@@ -19,6 +25,7 @@ add_message_files(DIRECTORY msg
   Argument.msg
 )
 
+# Services files
 add_service_files(
   FILES
   GetActionToDo.srv
@@ -28,24 +35,14 @@ add_service_files(
   ComputeActionPoint.srv
 )
 
+# Actions files
 add_action_files(
   FILES
   Perform.action
 )
 
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-  procedures_msgs
-)
+# Generate added messages and services with any dependencies listed here
+generate_messages(DEPENDENCIES std_msgs actionlib_msgs procedures_msgs)
 
-catkin_package(
-  CATKIN_DEPENDS
-    message_runtime
-    std_msgs
-    #procedures_msgs
-)
-
-#add_custom_target (build_doc
-#  rosdoc_lite ${CATKIN_DEVEL_PREFIX}/../src/ai/${PROJECT_NAME}
-#)
+# Declare dependencies for external packages
+catkin_package(CATKIN_DEPENDS message_runtime std_msgs)

@@ -2,5 +2,7 @@
 	<!--<node name="scheduler" pkg="scheduler" type="node" output="screen">
 		<param name="config_file" value="$(find scheduler)/include/actions_files/test.json" />
 	</node>-->
-    <test test-name="test_scheduler" pkg="scheduler" type="test_scheduler" />
+	<param name="test_directory" value="$(find scheduler)/actions_files/test_samples" />
+	
+    <test test-name="tests_scheduler" pkg="scheduler" type="tests_scheduler" />
 </launch>
