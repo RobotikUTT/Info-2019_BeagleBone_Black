@@ -4,8 +4,7 @@
 *    
 *    @author Alexis CARE
 */
-#include "scheduler/scheduler_node.h"
-#include "ros/ros.h"
+#include "scheduler/scheduler_node.hpp"
 
 /**
  * @brief      Constructs the object.
@@ -22,12 +21,12 @@ Scheduler::Scheduler(ros::NodeHandle* n){
 
   this->side_sub = nh.subscribe("side", 1, &Scheduler::setSide, this);
 
-  this->action_srv  = nh.advertiseService("scheduler/actionToDo",         &Scheduler::getActionToDo,     this);
-  this->actionD_srv = nh.advertiseService("scheduler/currentActionDone",  &Scheduler::currentActionDone, this);
+  this->action_srv = nh.advertiseService("scheduler/actionToDo", &Scheduler::getActionToDo, this);
+  this->actionD_srv = nh.advertiseService("scheduler/currentActionDone", &Scheduler::currentActionDone, this);
   
   //this-> = ActionManager(actions_file.c_str());
 
-  ActionsParser parser = actions_file.c_str();
+  ActionsParser parser(actions_file.c_str());
 
   service_ready("ai", "scheduler", 1 );
 }

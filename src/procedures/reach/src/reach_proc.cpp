@@ -7,12 +7,12 @@
  * @param[in] name name of the action server
  */
 ReachActionPerfomer::ReachActionPerfomer(std::string name) : ActionPerformer(name) {
-  finish_sub        = nh.subscribe("/ALL/Finish",                    1, &ReachActionPerfomer::analysisCB,      this);
+  finish_sub = nh.subscribe("/ALL/Finish", 1, &ReachActionPerfomer::analysisCB, this);
   
-  this->STMGoToAngle_pub        = nh.advertise<can_msgs::Point>("/STM/GoToAngle",         1);
-  this->STMGoTo_pub             = nh.advertise<can_msgs::Point>("/STM/GoTo",              1);
-  this->STMRotation_pub         = nh.advertise<can_msgs::Point>("/STM/Rotation",          1);
-  this->STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement",  1);
+  this->STMGoToAngle_pub = nh.advertise<can_msgs::Point>("/STM/GoToAngle", 1);
+  this->STMGoTo_pub = nh.advertise<can_msgs::Point>("/STM/GoTo", 1);
+  this->STMRotation_pub = nh.advertise<can_msgs::Point>("/STM/Rotation", 1);
+  this->STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement", 1);
 
   //service_ready("procedure", name, 1);
 }

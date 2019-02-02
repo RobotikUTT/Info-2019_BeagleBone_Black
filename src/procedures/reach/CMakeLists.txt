@@ -25,7 +25,7 @@ catkin_package(
 ## Build ##
 ###########
 include_directories(
- include
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -41,8 +41,4 @@ add_dependencies(${PROJECT_NAME}_proc ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_proc
   ${catkin_LIBRARIES}
-)
-
-target_link_libraries(${PROJECT_NAME}_proc
-  ${PROJECT_NAME}
 )

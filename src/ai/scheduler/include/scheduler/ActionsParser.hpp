@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include <list>
-#include <experimental/filesystem>
 
 /**
  * @section DESCRIPTION

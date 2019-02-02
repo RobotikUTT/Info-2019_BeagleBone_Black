@@ -8,7 +8,6 @@
 #include "action_manager/ActionPerformer.hpp"
 
 #include "ros/ros.h"
-#include <vector>
 
 #include "robot_interface/protocol.h"
 
