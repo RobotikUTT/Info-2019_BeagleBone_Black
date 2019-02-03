@@ -27,6 +27,8 @@ public:
   // Setters
   void addArg(ai_msgs::Argument arg);
 
+  // Equality
+  virtual bool equals(const Action& action);
 private:
   std::string _performer;
   std::list<ai_msgs::Argument> _args;

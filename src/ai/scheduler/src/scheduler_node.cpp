@@ -26,7 +26,7 @@ Scheduler::Scheduler(ros::NodeHandle* n){
   
   //this-> = ActionManager(actions_file.c_str());
 
-  ActionsParser parser(actions_file.c_str());
+  ActionsParser parser(actions_file);
 
   service_ready("ai", "scheduler", 1 );
 }

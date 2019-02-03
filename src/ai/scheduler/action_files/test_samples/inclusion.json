@@ -1,0 +1,14 @@
+[
+    {
+        "name": "action group",
+        "points": 3,
+        "sync": true
+    },
+    {
+        "file": "atomic_action"
+    },
+    {
+        "name": "atomic test 2",
+        "performer": "none"
+    }
+]

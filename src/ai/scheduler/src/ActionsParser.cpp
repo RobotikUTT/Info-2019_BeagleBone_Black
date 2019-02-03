@@ -3,16 +3,16 @@
 using namespace rapidjson;
 
 // TODO add arguments for files imported actions (to have generic actions for example)
-ActionsParser::ActionsParser(const char* filepath) : actionRoot(parseFile(filepath)) { }
+ActionsParser::ActionsParser(std::string filepath) : actionRoot(parseFile(filepath)) { }
 
 Action ActionsParser::getAction() {
     return actionRoot;
 }
 
-FILE* ActionsParser::openFile(const char* filepath) {
+Action ActionsParser::parseFile(std::string filepath) {
     // check that the path hasn't been explored
     for(const auto& next : filesExplored) {
-        if (strcmp(next, filepath) == 0) {
+        if (next == filepath) {
             throw "circular JSON inclusion";
         }
     }
@@ -20,32 +20,21 @@ FILE* ActionsParser::openFile(const char* filepath) {
     // append path to the list
     filesExplored.push_back(filepath);
 
-    // finaly open the file
-    FILE* fileP = fopen(filepath, "r");
+    try {
+        // finaly open the file
+        std::ifstream filestream(filepath);
+        IStreamWrapper wrapper(filestream);
 
-    if (fileP == NULL) {
-        std::stringstream message;
-        message << "unable to locate " << filepath;
-        throw message.str();
+        Document d;
+        d.ParseStream(wrapper);
+
+        const Value& object = d;
+
+        // begin to parse
+        return parseAction(object);
+    } catch(std::ios_base::failure& e) {
+        throw e.what();
     }
-
-    return fileP;
-}
-
-Action ActionsParser::parseFile(const char* filename) {
-    FILE* fileP = openFile(filename);
-
-    char readBuffer[1000];
-    FileReadStream readStream(fileP, readBuffer, sizeof(readBuffer));
-
-    // reading document
-    Document document;
-    document.ParseStream(readStream);
-
-    const Value& object = document;
-
-    // begin to parse
-    return parseAction(object);
 }
 
 Action ActionsParser::parseAction(const Value& object) {

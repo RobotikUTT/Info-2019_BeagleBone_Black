@@ -11,6 +11,8 @@
 
 #include <iostream>
 #include <list>
+#include <fstream>
+#include <rapidjson/istreamwrapper.h>
 
 /**
  * @section DESCRIPTION
@@ -60,17 +62,15 @@
 class ActionsParser
 {
 public:
-  ActionsParser(const char* filename);
+  ActionsParser(std::string filename);
   
   Action getAction();
 private:
-  std::list<const char*> filesExplored;
+  std::list<std::string> filesExplored;
 
   Action actionRoot;
 
-  FILE* openFile(const char* filepath);
-
-  Action parseFile(const char* filename);
+  Action parseFile(std::string filename);
   Action parseAction(const rapidjson::Value& object);
   AtomicAction parseAtomicAction(const rapidjson::Value& object, const bool allowNoPerfomer = false);
   

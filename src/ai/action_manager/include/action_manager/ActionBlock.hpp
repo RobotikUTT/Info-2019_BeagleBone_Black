@@ -17,10 +17,11 @@ public:
   ActionPoint* actionPoint(Point& previousActionPoint);
 
   int distanceToTravel(Point& robot_pos);
+
+  // Equality
+  virtual bool equals(const Action& action);
 private:
   std::list<Action> _actions;
 };
-
-bool operator==(const ActionBlock& lhs, const ActionBlock& rhs);
 
 #endif

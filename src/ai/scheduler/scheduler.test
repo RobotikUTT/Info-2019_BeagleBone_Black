@@ -1,8 +1,8 @@
 <launch>
 	<!--<node name="scheduler" pkg="scheduler" type="node" output="screen">
-		<param name="config_file" value="$(find scheduler)/include/actions_files/test.json" />
+		<param name="config_file" value="$(find scheduler)/include/action_files/test.json" />
 	</node>-->
-	<param name="test_directory" value="$(find scheduler)/actions_files/test_samples/" />
+	<param name="test_directory" value="$(find scheduler)/action_files/test_samples/" />
 	
     <test test-name="tests_scheduler" pkg="scheduler" type="tests_scheduler" />
 </launch>

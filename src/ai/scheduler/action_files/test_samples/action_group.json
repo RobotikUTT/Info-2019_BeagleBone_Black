@@ -1,0 +1,18 @@
+[
+    {
+        "name": "action group",
+        "points": 3,
+        "sync": true
+    },
+    {
+        "name": "atomic test",
+        "performer": "none",
+        "args": {"usefull": 0, "style": 30},
+        "sync": false,
+        "points": 1
+    },
+    {
+        "name": "atomic test 2",
+        "performer": "none"
+    }
+]

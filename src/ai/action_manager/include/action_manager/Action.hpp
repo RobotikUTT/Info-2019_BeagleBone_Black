@@ -33,6 +33,8 @@ public:
   virtual int points() const;
   virtual ActionPoint* actionPoint(Point& previousActionPoint);
   
+  // Equality
+  virtual bool equals(const Action& b);
 protected:
   int _state, _points;
   std::string _name;
@@ -41,7 +43,7 @@ protected:
   ActionPoint* _actionPoint;
 };
 
-//std::ostream& operator<<(std::ostream& os, const Action& AC);
+std::ostream& operator<<(std::ostream& os, const Action& AC);
 
 
 
