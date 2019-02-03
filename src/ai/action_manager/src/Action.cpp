@@ -61,7 +61,7 @@ int Action::distanceToTravel(Point& robot_pos) {
 }
 
 // Virtual functions (have to be redefined into child's classes)
-int Action::points() const { return 0; }
+int Action::points() const { return _points; }
 ActionPoint* Action::actionPoint(Point& previousActionPoint) {
   return _actionPoint;
 }

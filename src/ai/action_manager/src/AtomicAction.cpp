@@ -5,10 +5,6 @@ AtomicAction::AtomicAction(std::string name, std::string performer) :
 
 
 // Getters
-int AtomicAction::points() const {
-	return _points;
-}
-
 std::string AtomicAction::performer() const {
 	return _performer;
 }
@@ -67,4 +63,11 @@ bool AtomicAction::equals(const Action& action) {
 	}
 
 	return false;
+}
+
+std::ostream& operator<<(std::ostream& os, const AtomicAction& ac) {
+	return os << "[" << ac.name()
+		<< "] points=" << ac.points()
+		<< ", sync=" << ac.isSync()
+		<< ", performer=" << ac.performer();
 }

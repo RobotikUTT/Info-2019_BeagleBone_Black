@@ -19,8 +19,6 @@ public:
 
   std::string performer() const;
 
-  int points() const;
-
   std::list<ai_msgs::Argument> getArgs() const;
   ActionPoint* actionPoint(Point& previousActionPoint);
 
@@ -37,7 +35,6 @@ private:
 };
 
 // TODO (or use a library?)
-//std::ostream& operator<<(std::ostream& os, const AtomicAction& obj);
-bool operator==(const AtomicAction& lhs, const AtomicAction& rhs);
+std::ostream& operator<<(std::ostream& os, const AtomicAction& obj);
 
 #endif

@@ -47,22 +47,24 @@ class ParsingFixture : public ::testing::Test {
   }
 */
 TEST_F(ParsingFixture, atomicAction) {
-  AtomicAction comparison("atomic test", "none");
-  comparison.setSync(false);
-  comparison.setBasePoints(1);
-  comparison.addArg(make_arg("usefull", 0));
-  comparison.addArg(make_arg("style", 30));
+  AtomicAction expected("atomic test", "none");
+  expected.setSync(false);
+  expected.setBasePoints(1);
+  expected.addArg(make_arg("usefull", 0));
+  expected.addArg(make_arg("style", 30));
 
   // Save for further tests
-  saved = comparison;
+  saved = expected;
 
+  ActionsParser* parser;
   try {
-    ActionsParser parser(make_path("atomic_action.json"));
-    ASSERT_TRUE(parser.getAction().equals(comparison));
-
+    parser = new ActionsParser(make_path("atomic_action.json"));
   } catch(std::string message) {
     FAIL() << message;
   }
+  //ADD_FAILURE() << expected;
+  //ADD_FAILURE() << parser->getAction();
+  ASSERT_TRUE(parser->getAction().equals(expected));
 }
 
 /* TESTED JSON FILE
@@ -150,7 +152,7 @@ TEST_F(ParsingFixture, fileInclusion) {
 TEST_F(ParsingFixture, circularInclusionPrevention) {
   // Parser should throw an exception in this case
   EXPECT_THROW({
-    ActionsParser(make_path("first.json"))
+    ActionsParser(make_path("first.json"));
   }, std::string);
 }
 
