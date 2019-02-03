@@ -67,17 +67,23 @@ ActionPoint* Action::actionPoint(Point& previousActionPoint) {
 }
 
 // Comparison operator
-bool Action::equals(const Action& b) {
+bool Action::equals(const Action& b) const {
   // First try basic tests
   return getBasePoints() == b.getBasePoints() &&
     isSync() == b.isSync() &&
     name() == b.name();
 }
 
+void Action::display(std::ostream& os) const {
+  os << "[" << name()
+		<< "] points=" << points()
+		<< ", sync=" << isSync();
+}
+
+
 // Stream output from action
 std::ostream& operator<<(std::ostream& os, const Action& ac) {
-  return os << "[Action '" << ac.name()
-    << "', points=" << ac.points()
-    << ", sync=" << ac.isSync()
-    << "]";
+  ac.display(os);
+
+  return os;
 }

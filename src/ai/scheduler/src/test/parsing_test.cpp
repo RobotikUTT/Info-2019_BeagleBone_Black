@@ -14,7 +14,7 @@ class ParsingFixture : public ::testing::Test {
   protected:
     std::string foldername;
     ros::NodeHandle nh;
-    Action saved;
+    Action* saved;
 
   // Setup
   ParsingFixture() : nh() {
@@ -47,11 +47,11 @@ class ParsingFixture : public ::testing::Test {
   }
 */
 TEST_F(ParsingFixture, atomicAction) {
-  AtomicAction expected("atomic test", "none");
-  expected.setSync(false);
-  expected.setBasePoints(1);
-  expected.addArg(make_arg("usefull", 0));
-  expected.addArg(make_arg("style", 30));
+  AtomicAction* expected = new AtomicAction("atomic test", "none");
+  expected->setSync(false);
+  expected->setBasePoints(1);
+  expected->addArg(make_arg("usefull", 0));
+  expected->addArg(make_arg("style", 30));
 
   // Save for further tests
   saved = expected;
@@ -62,9 +62,8 @@ TEST_F(ParsingFixture, atomicAction) {
   } catch(std::string message) {
     FAIL() << message;
   }
-  //ADD_FAILURE() << expected;
-  //ADD_FAILURE() << parser->getAction();
-  ASSERT_TRUE(parser->getAction().equals(expected));
+  
+  ASSERT_TRUE(parser->getAction()->equals(*expected));
 }
 
 /* TESTED JSON FILE
@@ -88,23 +87,18 @@ TEST_F(ParsingFixture, atomicAction) {
   ]
 */
 TEST_F(ParsingFixture, actionBlock) {
-  // Bloc descriptor
-  Action desc = Action("action group");
-  desc.setBasePoints(3);
-  desc.setSync(true);
-
-  // Sub actions
-  std::list<Action> list;
-  list.push_back(saved);
-  list.push_back(AtomicAction("atomic test 2", "none"));
-
   // Action block expected and parsed
-  ActionBlock expected = ActionBlock(desc, list);
+  ActionBlock* expected = new ActionBlock("action group");
+  expected->setBasePoints(3);
+  expected->setSync(true);
+
+  expected->addAction(std::make_shared<Action>(*saved));
+  expected->addAction(std::make_shared<Action>(AtomicAction("atomic test 2", "none")));
   saved = expected; // save for next test
   try {
-    Action parsed = ActionsParser(make_path("action_block.json")).getAction();
+    ActionPtr parsed = ActionsParser(make_path("action_block.json")).getAction();
   
-    ASSERT_TRUE(expected.equals(parsed));
+    ASSERT_TRUE(expected->equals(*parsed));
   } catch(std::string message) {
     FAIL() << message;
   }
@@ -128,10 +122,11 @@ TEST_F(ParsingFixture, actionBlock) {
   ]
 */
 TEST_F(ParsingFixture, fileInclusion) {
+  // TOFIX prevent test to terminate
   try {
-    Action parsed = ActionsParser(make_path("inclusion.json")).getAction();
+    ActionPtr parsed = ActionsParser(make_path("inclusion.json")).getAction();
   
-    ASSERT_TRUE(parsed.equals(saved));
+    ASSERT_TRUE(parsed->equals(*saved));
   } catch(std::string message) {
     FAIL() << message;
   }

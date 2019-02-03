@@ -6,22 +6,27 @@
 
 #include <list>
 #include <string>
+#include <memory>
+
+typedef std::shared_ptr<Action> ActionPtr;
 
 class ActionBlock : public Action {
 public:
-  ActionBlock(Action descriptor, std::list<Action> actions);
+  ActionBlock(std::string name);
 
-  int points() const;
-  std::list<Action> subactions() const;
+  int points() const override;
+  std::list<ActionPtr> subactions() const;
+  void addAction(ActionPtr action);
   
-  ActionPoint* actionPoint(Point& previousActionPoint);
+  ActionPoint* actionPoint(Point& previousActionPoint) override;
 
-  int distanceToTravel(Point& robot_pos);
+  int distanceToTravel(Point& robot_pos) override;
 
   // Equality
-  virtual bool equals(const Action& action);
+  virtual bool equals(const Action& action) const override;
+  virtual void display(std::ostream& os) const override;
 private:
-  std::list<Action> _actions;
+  std::list<ActionPtr> _actions;
 };
 
 #endif

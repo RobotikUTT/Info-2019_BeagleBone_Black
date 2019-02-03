@@ -64,17 +64,19 @@ class ActionsParser
 public:
   ActionsParser(std::string filename);
   
-  Action getAction();
+  ActionPtr getAction();
 private:
   std::list<std::string> filesExplored;
 
-  Action actionRoot;
+  ActionBlock* actionRoot;
 
-  Action parseFile(std::string filename);
-  Action parseAction(const rapidjson::Value& object);
-  AtomicAction parseAtomicAction(const rapidjson::Value& object, const bool allowNoPerfomer = false);
-  
+  void parseFile(std::string filename, ActionBlock& container);
+  void parseAction(const rapidjson::Value& object, ActionBlock& container);
+  void parseAtomicAction(const rapidjson::Value& object, ActionBlock& container);
+  void parseActionBlock(const rapidjson::Value& object, ActionBlock& container);
+
   void parseArgs(const rapidjson::Value& object, AtomicAction& targetAction);
 };
+
 
 #endif

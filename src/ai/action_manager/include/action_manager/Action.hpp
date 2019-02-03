@@ -16,8 +16,6 @@
  */
 class Action {
 public:
-  Action(std::string name = "unnamed action");
-
   // Setters
   void setBasePoints(int points);
   void setSync(bool sync);
@@ -27,15 +25,19 @@ public:
   int priority(Point& robot_pos);
   int state() const;
   std::string name() const;
-  int distanceToTravel(Point& robot_pos);
   int getBasePoints() const;
 
+  virtual int distanceToTravel(Point& robot_pos);
   virtual int points() const;
   virtual ActionPoint* actionPoint(Point& previousActionPoint);
   
-  // Equality
-  virtual bool equals(const Action& b);
+  // Equality and display
+  virtual bool equals(const Action& b) const;
+  virtual void display(std::ostream& os) const;
+  
 protected:
+  Action(std::string name = "unnamed action");
+
   int _state, _points;
   std::string _name;
   bool _sync;
@@ -43,8 +45,6 @@ protected:
   ActionPoint* _actionPoint;
 };
 
-std::ostream& operator<<(std::ostream& os, const Action& AC);
-
-
+std::ostream& operator<<(std::ostream& os, const Action& ac);
 
 #endif

@@ -39,7 +39,7 @@ void AtomicAction::addArg(ai_msgs::Argument arg) {
 }
 
 // Equality
-bool AtomicAction::equals(const Action& action) {
+bool AtomicAction::equals(const Action& action) const {
 	const AtomicAction* atomic = dynamic_cast<const AtomicAction*>(&action);
 
 	// Cast succeed and basic properties also
@@ -59,15 +59,20 @@ bool AtomicAction::equals(const Action& action) {
 			}
 		}
 
-		return false;
+		return true;
 	}
 
 	return false;
 }
 
-std::ostream& operator<<(std::ostream& os, const AtomicAction& ac) {
-	return os << "[" << ac.name()
-		<< "] points=" << ac.points()
-		<< ", sync=" << ac.isSync()
-		<< ", performer=" << ac.performer();
+void AtomicAction::display(std::ostream& os) const {
+	Action::display(os);
+	
+	// Output additional infos to not indented title
+	os << ", performer=" << performer();
+
+	// Create content to be indented
+	for (const auto& next : getArgs()) {
+		os <<  std::endl << "\t- " << next.name << "=" << next.value;
+	}
 }

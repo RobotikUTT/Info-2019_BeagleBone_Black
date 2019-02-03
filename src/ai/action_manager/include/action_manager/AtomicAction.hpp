@@ -20,13 +20,15 @@ public:
   std::string performer() const;
 
   std::list<ai_msgs::Argument> getArgs() const;
-  ActionPoint* actionPoint(Point& previousActionPoint);
+  ActionPoint* actionPoint(Point& previousActionPoint) override;
 
   // Setters
   void addArg(ai_msgs::Argument arg);
 
   // Equality
-  virtual bool equals(const Action& action);
+  virtual bool equals(const Action& action) const override;
+  virtual void display(std::ostream& os) const override;
+  
 private:
   std::string _performer;
   std::list<ai_msgs::Argument> _args;
@@ -34,7 +36,5 @@ private:
   ActionPoint* _actionPoint;
 };
 
-// TODO (or use a library?)
-std::ostream& operator<<(std::ostream& os, const AtomicAction& obj);
 
 #endif
