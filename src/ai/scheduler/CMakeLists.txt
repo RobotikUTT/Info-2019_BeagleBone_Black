@@ -19,7 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
+#  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS roscpp ai_msgs robot_watcher action_manager
 #  DEPENDS system_lib
 )
@@ -32,18 +32,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-# Declare a C++ library
-add_library(${PROJECT_NAME}
-  src/ActionsParser.cpp
-)
-
-# Add cmake target dependencies of the library
-add_dependencies(${PROJECT_NAME}
-  ${catkin_EXPORTED_TARGETS}
-)
 
 # Declare a C++ executable
-add_executable(${PROJECT_NAME}_node src/scheduler_node.cpp src/ActionsParser.cpp)
+add_executable(${PROJECT_NAME}_node src/scheduler_node.cpp src/ActionsParser.cpp src/ActionFilePath.cpp)
 
 # Rename C++ executable without prefix
 set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
@@ -56,14 +47,10 @@ target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(${PROJECT_NAME}
-  ${catkin_LIBRARIES}
-)
 
 # Unit tests
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
-  add_rostest_gtest(tests_scheduler scheduler.test src/test/parsing_test.cpp)
+  add_rostest_gtest(tests_scheduler scheduler.test src/test/parsing_test.cpp src/ActionsParser.cpp src/ActionFilePath.cpp)
   target_link_libraries(tests_scheduler ${catkin_LIBRARIES})
-  target_link_libraries(tests_scheduler ${PROJECT_NAME})
 endif()

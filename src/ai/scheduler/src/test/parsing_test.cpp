@@ -1,4 +1,5 @@
 #include "scheduler/ActionsParser.hpp"
+#include "scheduler/ActionFilePath.hpp"
 
 #include "action_manager/AtomicAction.hpp"
 #include "action_manager/ActionBlock.hpp"
@@ -12,20 +13,24 @@
 // Static content for tests
 class ParsingFixture : public ::testing::Test {
   protected:
-    std::string foldername;
     ros::NodeHandle nh;
     Action* saved;
     AtomicAction* atomicSavec;
+    ActionFilePath* path;
 
   // Setup
   ParsingFixture() : nh() {
-    nh.param<std::string>("test_directory", foldername, "");
+    // retrieve args
+    std::string root;
+    nh.param<std::string>("test_directory", root, "");
+
+    // create default path
+    path = new ActionFilePath(std::string(), root);
   }
 
-  std::string make_path(const char* string) {
-    std::stringstream stream;
-    stream << foldername << string;
-    return stream.str();
+  ActionFilePath& make_path(const char* file) {
+    path->file = file;
+    return *path;
   }
 
   ai_msgs::Argument make_arg(std::string name, double value) {
@@ -59,8 +64,8 @@ TEST_F(ParsingFixture, atomicAction) {
 
   ActionsParser* parser;
   try {
-    parser = new ActionsParser(make_path("atomic_action.json"));
-  } catch(std::string message) {
+    parser = new ActionsParser(make_path("atomic_action"));
+  } catch(const char* message) {
     FAIL() << message;
   }
   
@@ -100,11 +105,11 @@ TEST_F(ParsingFixture, actionBlock) {
 
   try {
     // Parse from file
-    ActionPtr parsed = ActionsParser(make_path("action_block.json")).getAction();
-  
+    ActionPtr parsed = ActionsParser(make_path("action_block")).getAction();
+    
     ASSERT_TRUE(expected->equals(*parsed))
       << *parsed << std::endl << "parsed result is not equal to" << std::endl << *expected;
-  } catch(std::string message) {
+  } catch(const char* message) {
     FAIL() << message;
   }
 }
@@ -127,12 +132,12 @@ TEST_F(ParsingFixture, actionBlock) {
 */
 TEST_F(ParsingFixture, fileInclusion) {
   try {
-    ActionPtr parsed = ActionsParser(make_path("inclusion.json")).getAction();
+    ActionPtr parsed = ActionsParser(make_path("inclusion")).getAction();
   
     ASSERT_TRUE(parsed->equals(*saved))
       << *parsed << std::endl << "parsed result is not equal to" << std::endl << *saved;
 
-  } catch(std::string message) {
+  } catch(const char* message) {
     FAIL() << message;
   }
 
@@ -152,8 +157,8 @@ TEST_F(ParsingFixture, fileInclusion) {
 TEST_F(ParsingFixture, circularInclusionPrevention) {
   // Parser should throw an exception in this case
   EXPECT_THROW({
-    ActionsParser(make_path("first.json"));
-  }, std::string);
+    ActionsParser(make_path("first"));
+  }, const char*);
 }
 
 int main(int argc, char **argv){

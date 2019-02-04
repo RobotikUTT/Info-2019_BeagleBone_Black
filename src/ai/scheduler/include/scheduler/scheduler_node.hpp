@@ -19,6 +19,7 @@
 #include "ai_msgs/CurrentActionDone.h"
 
 #include "scheduler/ActionsParser.hpp"
+#include "scheduler/ActionFilePath.hpp"
 
 /**
  * @brief      Class for scheduler wich scedule actions To Do.

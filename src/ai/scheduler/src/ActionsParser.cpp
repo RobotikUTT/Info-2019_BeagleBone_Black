@@ -3,33 +3,22 @@
 using namespace rapidjson;
 
 // TODO add arguments for files imported actions (to have generic actions for example)
-ActionsParser::ActionsParser(std::string filepath) {
-    actionRoot = new ActionBlock("ROOT");
-
-    parseFile(filepath, *actionRoot);
-}
-
-ActionPtr ActionsParser::getAction() {
-    return actionRoot->subactions().front();
-}
-
-void ActionsParser::parseFile(std::string filepath, ActionBlock& container) {
-    std::cout << "parsing " << filepath << std::endl;
+ActionsParser::ActionsParser(ActionFilePath filepath, ActionBlock* container /*= NULL*/, ActionsParser* parent /*= NULL*/)
+: filepath(filepath), parent(parent) {
+    if (container == NULL) {
+        actionRoot = new ActionBlock("ROOT");
+    } else {
+        actionRoot = container;
+    }
     
     // check that the path hasn't been explored
-    for(const auto& next : filesExplored) {
-        std::cout << "zero" << next << std::endl;
-        if (next == filepath) {
-            throw "circular JSON inclusion";
-        }
+    if (parent != NULL && parent->wasExplored(filepath)) {
+        throw "circular JSON inclusion";
     }
-
-    // append path to the list
-    filesExplored.push_back(filepath);
 
     try {
         // finaly open the file
-        std::ifstream filestream(filepath);
+        std::ifstream filestream(filepath.compile());
         IStreamWrapper wrapper(filestream);
 
         Document d;
@@ -38,11 +27,25 @@ void ActionsParser::parseFile(std::string filepath, ActionBlock& container) {
         const Value& object = d;
 
         // begin to parse
-        parseAction(object, container);
+        parseAction(object, *actionRoot);
     } catch(std::ios_base::failure& e) {
         std::string message = e.what();
         throw message;
     }
+}
+
+ActionPtr ActionsParser::getAction() {
+    return actionRoot->subactions().front();
+}
+
+bool ActionsParser::wasExplored(ActionFilePath path) {
+    if (path == this->filepath) {
+        return true;
+    } else if (parent != NULL) {
+        return parent->wasExplored(path);
+    }
+
+    return false;
 }
 
 void ActionsParser::parseAction(const Value& object, ActionBlock& container) {
@@ -50,8 +53,12 @@ void ActionsParser::parseAction(const Value& object, ActionBlock& container) {
     if (object.IsObject()) {
         // If the action has to be loaded from a different file
         if (object.HasMember("file") && object["file"].IsString()) {
-            // Load from file
-            parseFile(object["file"].GetString(), container);
+            // Load from file relatively to this one
+            ActionsParser(
+                filepath.relative(object["file"].GetString()),
+                &container,
+                this
+            );
         } else {
             parseAtomicAction(object, container);
         }

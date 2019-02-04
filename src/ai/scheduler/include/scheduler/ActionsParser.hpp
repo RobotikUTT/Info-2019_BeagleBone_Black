@@ -9,6 +9,8 @@
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
 
+#include "scheduler/ActionFilePath.hpp"
+
 #include <iostream>
 #include <list>
 #include <fstream>
@@ -62,15 +64,15 @@
 class ActionsParser
 {
 public:
-  ActionsParser(std::string filename);
+  ActionsParser(ActionFilePath file, ActionBlock* container = NULL, ActionsParser* parent = NULL);
   
   ActionPtr getAction();
+  bool wasExplored(ActionFilePath path);
 private:
-  std::list<std::string> filesExplored;
-
+  ActionsParser* parent;
   ActionBlock* actionRoot;
+  ActionFilePath filepath;
 
-  void parseFile(std::string filename, ActionBlock& container);
   void parseAction(const rapidjson::Value& object, ActionBlock& container);
   void parseAtomicAction(const rapidjson::Value& object, ActionBlock& container);
   void parseActionBlock(const rapidjson::Value& object, ActionBlock& container);
