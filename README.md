@@ -2,20 +2,35 @@
 
 Ce repo contient le code permettant au gros robot de fonctionner pour la coupe de france de robotique 2019.
 
+## Installation du projet
+
+Il est d'abord nécessaire de cloner le projet.
+~~~~
+git clone https://github.com/RobotikUTT/Info-2019_BeagleBone_Black.git
+cd Info-2019_BeagleBone_Black
+~~~~
+
+Un script contenant le nécessaire pour lancer le projet dans un environnement ubuntu 18 se trouve dans le dossier script. Sous windows, l'utilisation d'un sous-système linux (WSL) avec ubuntu 18 convient également.
+~~~~
+./scripts/setup.sh # ou zsh
+~~~~
+
+A noter que le script installe catkin-tools, un utilitaire de compilation optionnel.
+
+Pour d'autres distributions ou systèmes, se référer aux instructions d'installation de ros directement sur [http://www.ros.org/install/](le site).
+
 ## Compilation du projet
 
-Pour pouvoir compiler le projet, tapez la commande suivant à la racine du repo.
-
+Pour pouvoir compiler le projet, utilisez la commande fournies par catkin-tools.
 ~~~~
-catkin_make
+catkin build
 ~~~~
 
-Cette commande lancera la compilation de tout le projet. Faites attention que vos fichiers CmakeList et package.xml de chaque package soient bien configurés.
-
+Il est aussi possible d'utiliser `catkin_make`.
 
 ## Lancer le robot
 
-En simulation:
+### En simulation
 
 Creer le can virtuel:
 ~~~~
@@ -28,7 +43,8 @@ Vérifier dans le fichier *server_param.yaml* que la simulation soit activée, e
 ~~~~
 roslaunch launch/robot.launch
 ~~~~
-En reel:
+
+### En réel
 
 Vérifier dans le fichier *server_param.yaml* que la simulation soit désactivée, et que le nom de l'interface can correspond. Taper ensuite, à la racine du projet :
 ~~~~
@@ -47,19 +63,22 @@ Un lien symbolique, vers la page générée s’appelant *doc.html* vous ouvrira
 ### Introduction :
 
 Le code haut niveau permet au robot d'ordonnancer les ses actions en ayant une certaine intelligence.
-Le code s'exécute sur un Ubuntu 16 sur une Beagle Bone Black (BBB).
+Le code s'exécute sur un Ubuntu 18 sur une Beagle Bone Black (BBB).
 
 La BBB communique avec le reste du robot par un bus CAN.
 
 
 ### Structure du Repo
 
+Dossiers présents dans le repo :
 - src : le code source
 - launch : les fichiers pour lancer le projet
 - param : les fichiers de paramètre du projet
+- Doxygen : les fichier configurant Doxygen
+
+Dossiers générés lors de compilations :
 - build & devel & install : dossier que ROS créé lors de la compilation du projet.
 - html : les fichiers générés par Doxygen
-- Doxygen : les fichier configurant Doxygen
 
 ### Structure de projet 
 
@@ -69,9 +88,9 @@ Les Packages sont des dossiers contenant des codes sources, des librairie, ou di
 
 Les NameSpaces permettent de regrouper différent Packages dans un même espace de travail. Le principe est similaire que les NameSpace en C++.
 
-Dans le cadre du projet, nous avons explicité les namespaces en regroupant les différents packages dans des dossiers. Ces dossiers sont invisibles d'un point vue de la compilation, mais aide la lecture et la compréhension du projet.
+Dans le cadre du projet, nous avons explicité les namespaces en regroupant les différents packages dans des dossiers. Ces dossiers sont invisibles d'un point vue de la compilation, mais aident la lecture et la compréhension du projet.
 
-Le projet ROS peut se découper de la sorte d'un point de vu logiciel.
+Le projet ROS peut se découper de la sorte d'un point de vue logiciel.
 
 ~~~~
                            BUS CAN

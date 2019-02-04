@@ -15,6 +15,7 @@ class ParsingFixture : public ::testing::Test {
     std::string foldername;
     ros::NodeHandle nh;
     Action* saved;
+    AtomicAction* atomicSavec;
 
   // Setup
   ParsingFixture() : nh() {
@@ -54,7 +55,7 @@ TEST_F(ParsingFixture, atomicAction) {
   expected->addArg(make_arg("style", 30));
 
   // Save for further tests
-  saved = expected;
+  atomicSavec = expected;
 
   ActionsParser* parser;
   try {
@@ -63,7 +64,8 @@ TEST_F(ParsingFixture, atomicAction) {
     FAIL() << message;
   }
   
-  ASSERT_TRUE(parser->getAction()->equals(*expected));
+  ASSERT_TRUE(parser->getAction()->equals(*expected))
+      << *parser->getAction() << std::endl << "parsed result is not equal to" << std::endl << *expected;
 }
 
 /* TESTED JSON FILE
@@ -87,22 +89,24 @@ TEST_F(ParsingFixture, atomicAction) {
   ]
 */
 TEST_F(ParsingFixture, actionBlock) {
-  // Action block expected and parsed
+  // Action block expected
   ActionBlock* expected = new ActionBlock("action group");
   expected->setBasePoints(3);
   expected->setSync(true);
 
-  expected->addAction(std::make_shared<Action>(*saved));
-  expected->addAction(std::make_shared<Action>(AtomicAction("atomic test 2", "none")));
+  expected->addAction(std::make_shared<AtomicAction>(*atomicSavec));
+  expected->addAction(std::make_shared<AtomicAction>(AtomicAction("atomic test 2", "none")));
   saved = expected; // save for next test
+
   try {
+    // Parse from file
     ActionPtr parsed = ActionsParser(make_path("action_block.json")).getAction();
   
-    ASSERT_TRUE(expected->equals(*parsed));
+    ASSERT_TRUE(expected->equals(*parsed))
+      << *parsed << std::endl << "parsed result is not equal to" << std::endl << *expected;
   } catch(std::string message) {
     FAIL() << message;
   }
-
 }
 
 /* TESTED JSON FILE
@@ -122,11 +126,12 @@ TEST_F(ParsingFixture, actionBlock) {
   ]
 */
 TEST_F(ParsingFixture, fileInclusion) {
-  // TOFIX prevent test to terminate
   try {
     ActionPtr parsed = ActionsParser(make_path("inclusion.json")).getAction();
   
-    ASSERT_TRUE(parsed->equals(*saved));
+    ASSERT_TRUE(parsed->equals(*saved))
+      << *parsed << std::endl << "parsed result is not equal to" << std::endl << *saved;
+
   } catch(std::string message) {
     FAIL() << message;
   }

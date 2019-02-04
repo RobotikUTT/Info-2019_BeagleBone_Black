@@ -1,5 +1,0 @@
-- faire du voyageur de commerce plutôt que du passage d'une action à l'autre (priority) avec un facteur dégressif sur le temps (plus l'action est réalisée tard plus ses points estimés diminuent)
-- interface d'action
-    -> prends des arguments spécifiés dans les fichiers, s'enregistre auprès du scheduler ou controlleur
-    -> actions dépendante d'un performer (move, movemotor... par exemple)
-- séparer le panneau de LED dans un package à part

@@ -92,9 +92,6 @@ bool ActionBlock::equals(const Action& action) const  {
 		std::list<ActionPtr>::iterator lit = largs.begin();
 
 		while (rit != rargs.end()) {
-			//ActionPtr rptr = *rit;
-			//ActionPtr lprt = *lit;
-
 			if (!(*rit)->equals(**lit)) {
 				return false;
 			}
@@ -102,6 +99,10 @@ bool ActionBlock::equals(const Action& action) const  {
 			rit ++;
 			lit ++;
 		}
+
+		// if all subactions have proven to be equal
+		// we can ensure blocks are the same
+		return true;
 	}
 
 	return false;
@@ -115,7 +116,7 @@ void ActionBlock::display(std::ostream& os) const {
 
 	// Create content to be indented
 	for (const auto& next : subactions()) {
-		content << *next << std::endl;
+		content << std::endl << *next;
 	}
 
 	std::string line;

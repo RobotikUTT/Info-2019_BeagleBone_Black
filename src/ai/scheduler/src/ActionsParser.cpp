@@ -14,8 +14,11 @@ ActionPtr ActionsParser::getAction() {
 }
 
 void ActionsParser::parseFile(std::string filepath, ActionBlock& container) {
+    std::cout << "parsing " << filepath << std::endl;
+    
     // check that the path hasn't been explored
     for(const auto& next : filesExplored) {
+        std::cout << "zero" << next << std::endl;
         if (next == filepath) {
             throw "circular JSON inclusion";
         }
@@ -37,7 +40,8 @@ void ActionsParser::parseFile(std::string filepath, ActionBlock& container) {
         // begin to parse
         parseAction(object, container);
     } catch(std::ios_base::failure& e) {
-        throw e.what();
+        std::string message = e.what();
+        throw message;
     }
 }
 
@@ -80,7 +84,7 @@ void ActionsParser::parseActionBlock(const Value& object, ActionBlock& container
 
     // parse optional content
     if (descriptor.HasMember("sync") && descriptor["sync"].IsBool()) {
-        action.setSync(object["sync"].GetBool());
+        action.setSync(descriptor["sync"].GetBool());
     }
 
     if (descriptor.HasMember("points") && descriptor["points"].IsInt()) {
