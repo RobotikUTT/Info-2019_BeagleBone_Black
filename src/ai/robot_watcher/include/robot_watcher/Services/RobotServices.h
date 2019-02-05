@@ -1,8 +1,8 @@
 /** @file RobotServices.h
-*    @brief Service interface for node readiness for Cpp.
-*    
-*    
-*    @author Alexis CARE
+*	@brief Service interface for node readiness for Cpp.
+*	
+*	
+*	@author Alexis CARE
 */
 #ifndef ROBOT_SERVICES_H
 #define ROBOT_SERVICES_H
@@ -15,7 +15,7 @@
  * @{
  */
 
-void service_ready(const std::string, const std::string, const bool, const uint8_t error_code = 0 );
+void service_ready(const std::string, const std::string, const bool, const uint8_t error_code = 0);
 
 /**
  * @}

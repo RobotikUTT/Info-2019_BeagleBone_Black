@@ -28,7 +28,7 @@ void ActionBlock::addAction(ActionPtr action) {
 /**
  * Compute the estimated distance to travel before the robot reach the end of the action
  */
-int ActionBlock::distanceToTravel(Point& robot_pos) {
+double ActionBlock::distanceToTravel(Point& robot_pos) {
 	int distance = 0;
 	ActionPoint* currentActionPoint = new ActionPoint(robot_pos, robot_pos);
 	ActionPoint* nextActionPoint = NULL;
@@ -40,7 +40,7 @@ int ActionBlock::distanceToTravel(Point& robot_pos) {
 		distance += next->distanceToTravel(currentActionPoint->endPoint);
 	}
 
-	return  distance;
+	return distance;
 }
 
 /**
@@ -75,7 +75,7 @@ ActionPoint* ActionBlock::actionPoint(Point& previousActionPoint) {
 	return _actionPoint;
 }
 
-// From : https://stackoverflow.com/questions/2825424/comparing-objects-and-inheritance
+// Helped with https://stackoverflow.com/questions/2825424/comparing-objects-and-inheritance
 bool ActionBlock::equals(const Action& action) const  {
 	const ActionBlock* aBlock = dynamic_cast<const ActionBlock*>(&action);
 

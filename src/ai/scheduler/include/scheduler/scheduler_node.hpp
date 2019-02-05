@@ -1,9 +1,10 @@
 
-/**  @file scheduler_node.h
-*    @brief Define the ROS node Scheduler
-*    
-*    
-*    @author Alexis CARE
+/**	@file scheduler_node.h
+* @brief Define the ROS node Scheduler
+*		
+*		
+* @author Alexis CARE
+* @author Clément de La Bourdonnaye
 */
 
 #ifndef SCHEDULER_H
@@ -17,34 +18,42 @@
 #include "ai_msgs/SetSide.h"
 #include "ai_msgs/GetActionToDo.h"
 #include "ai_msgs/CurrentActionDone.h"
+#include "ai_msgs/SetSchedulerState.h"
 
 #include "scheduler/ActionsParser.hpp"
 #include "scheduler/ActionFilePath.hpp"
 
 /**
- * @brief      Class for scheduler wich scedule actions To Do.
+ * @brief scheduler node class, managing actions and their execution
  */
-class Scheduler{
+class Scheduler {
 public:
-  Scheduler(ros::NodeHandle* n);
+	Scheduler(ros::NodeHandle* n);
 
 private:
-  ros::NodeHandle nh;
+	ros::NodeHandle nh;
 
-  ros::Subscriber side_sub;
+	ros::Subscriber side_sub;
 
-  ros::ServiceServer action_srv;
-  ros::ServiceServer actionD_srv;
+	ros::ServiceServer action_srv;
+	ros::ServiceServer actionD_srv;
+	ros::ServiceServer control_srv;
 
-  bool side;
+	bool side;
+	bool running;
 
-  void setSide(const ai_msgs::SetSide::ConstPtr& msg);
+	void setSide(const ai_msgs::SetSide::ConstPtr& msg);
 
-  bool getActionToDo(ai_msgs::GetActionToDo::Request &req,
-                      ai_msgs::GetActionToDo::Response &res); //vias service
+	bool getActionToDo(ai_msgs::GetActionToDo::Request &req,
+		ai_msgs::GetActionToDo::Response &res); //vias service
 
-  bool currentActionDone(ai_msgs::CurrentActionDone::Request &req,
-                      ai_msgs::CurrentActionDone::Response &res); //vias service
+	bool currentActionDone(ai_msgs::CurrentActionDone::Request &req,
+		ai_msgs::CurrentActionDone::Response &res); //vias service
+	
+	bool setState(ai_msgs::SetSchedulerState::Request &req, ai_msgs::SetSchedulerState::Response &res);
+	
+	void stop();
+	void resume();
 
 };
 #endif

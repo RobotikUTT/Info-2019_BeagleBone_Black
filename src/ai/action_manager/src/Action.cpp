@@ -1,89 +1,85 @@
 /** @file Action.cpp
-*    @brief class for generic action
-*    
-*    
-*    @author Alexis CARE
-*    @author Clément de La Bourdonnaye
+*	@brief class for generic action
+* 	@author Clément de La Bourdonnaye
 */
 #include "action_manager/Action.hpp"
 
 /**
- * @brief      Constructs the default object.
+ * @brief default constructor
  */
-Action::Action(std::string name) :_name(name), _state(ACTION_IDLE), _points(0), _sync(false), _actionPoint(NULL) {
-
-}
+Action::Action(std::string name)
+	: _name(name), _state(ACTION_IDLE), _points(0), _sync(false), _actionPoint(NULL) { }
 
 /**
  * @brief return the priority of the action according to it's points and distance
  *
  * @param robot_pos current robot position
  */
-int Action::priority(Point& robot_pos) {
-  int action_points = points();
-  int distance = distanceToTravel(robot_pos);
-  
-  return action_points * action_points / distance;
+double Action::priority(Point& robot_pos) {
+	int action_points = points();
+	int distance = distanceToTravel(robot_pos);
+	
+	return action_points * action_points / distance;
 }
 
 // Getters
 std::string Action::name() const {
-  return _name;
+	return _name;
 }
 
 int Action::getBasePoints() const {
-  return _points;
+	return _points;
 }
 
 int Action::state() const {
-  return _state;
+	return _state;
 }
 
 bool Action::isSync() const {
-  return _sync;
+	return _sync;
 }
 
 // Setters
 void Action::setSync(bool sync) {
-  _sync = sync;
+	_sync = sync;
 }
 
 void Action::setBasePoints(int points) {
-  _points = points;
+	_points = points;
 }
 
 /**
  * Compute the distance to travel before the robot reach the end
  */
-int Action::distanceToTravel(Point& robot_pos) {
-  return actionPoint(robot_pos)->startPoint.manhattanDist(robot_pos) +
-    actionPoint(robot_pos)->distance();
+double Action::distanceToTravel(Point& robot_pos) {
+	return actionPoint(robot_pos)->startPoint.manhattanDist(robot_pos) +
+		actionPoint(robot_pos)->distance();
 }
 
 // Virtual functions (have to be redefined into child's classes)
 int Action::points() const { return _points; }
 ActionPoint* Action::actionPoint(Point& previousActionPoint) {
-  return _actionPoint;
+	return _actionPoint;
 }
 
 // Comparison operator
 bool Action::equals(const Action& b) const {
-  // First try basic tests
-  return getBasePoints() == b.getBasePoints() &&
-    isSync() == b.isSync() &&
-    name() == b.name();
+	// First try basic tests
+	return getBasePoints() == b.getBasePoints() &&
+		isSync() == b.isSync() &&
+		name() == b.name();
 }
 
 void Action::display(std::ostream& os) const {
-  os << "[" << name()
-		<< "] points=" << points()
-		<< ", sync=" << isSync();
+	os << "[" << name()
+				<< "] points=" << points()
+				<< ", sync=" << isSync();
 }
 
 
 // Stream output from action
 std::ostream& operator<<(std::ostream& os, const Action& ac) {
-  ac.display(os);
+	ac.display(os);
 
-  return os;
+	return os;
 }

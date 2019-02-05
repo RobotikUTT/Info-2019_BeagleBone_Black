@@ -20,6 +20,8 @@
 #include "can_msgs/Status.h"
 
 #include "procedures_msgs/OrPoint.h"
+
+#include "robot_watcher/Services/RobotServices.h"
 #include "robot_watcher/RStatus/State.h"
 
 typedef actionlib::SimpleActionServer<ai_msgs::PerformAction> PerformActionSrv;
@@ -34,46 +36,47 @@ typedef actionlib::SimpleActionServer<ai_msgs::PerformAction> PerformActionSrv;
 class ActionPerformer
 {
 public:
-    ActionPerformer(std::string name);
+	ActionPerformer(std::string name);
 
-    // Call adequate service to retrieve the action point
-    static ActionPoint* computeActionPoint(std::string performer);
+	// Call adequate service to retrieve the action point
+	static ActionPoint* computeActionPoint(std::string performer);
 
 protected:
-    // ROS nodehandle is protected to let child use ros
-    ros::NodeHandle nh;
+	// ROS nodehandle is protected to let child use ros
+	ros::NodeHandle nh;
 
-    // Function defined by inherited actions
-    virtual ActionPoint* computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, procedures_msgs::OrPoint& robot_pos);
-    virtual void start();
-    virtual void cancel();
+	// Function defined by inherited actions
+	virtual ActionPoint* computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, procedures_msgs::OrPoint& robot_pos);
+	virtual void start();
+	virtual void cancel();
 
-    double getArg(std::string name, double defaultValue = 0, std::vector<ai_msgs::Argument>* args = NULL);
-    bool hasArg(std::string name, std::vector<ai_msgs::Argument>* args = NULL);
+	double getArg(std::string name, double defaultValue = 0, std::vector<ai_msgs::Argument>* args = NULL);
+	bool hasArg(std::string name, std::vector<ai_msgs::Argument>* args = NULL);
 
-    // Function managing the action
-    void actionPerformed();
-    void actionPaused();
+	// Function managing the action
+	void actionPerformed();
+	void actionPaused();
+	void ready();
 private:
-    std::vector<ai_msgs::Argument> _args;
+	std::vector<ai_msgs::Argument> _args;
 
-    // Name of the perfomer
-    std::string name;
+	// Name of the perfomer
+	std::string name;
 
-    // Ros objects
-    PerformActionSrv* actionServer;
-    ros::ServiceServer actionPointSrv;
-    ros::Subscriber robotWatcherSub;
+	// Ros objects
+	PerformActionSrv* actionServer;
+	ros::ServiceServer actionPointSrv;
+	ros::Subscriber robotWatcherSub;
 
-    bool _computeActionPoint(
-        ai_msgs::ComputeActionPoint::Request& req,
-        ai_msgs::ComputeActionPoint::Response& res
-    );
+	bool _computeActionPoint(
+		ai_msgs::ComputeActionPoint::Request& req,
+		ai_msgs::ComputeActionPoint::Response& res
+	);
 
-    void onGoal();
-    void onPreempt();
+	void onGoal();
+	void onPreempt();
 
-    void onRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
+	void onRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
 };
 
 #endif

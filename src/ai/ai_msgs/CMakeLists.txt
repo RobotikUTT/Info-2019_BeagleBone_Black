@@ -33,6 +33,7 @@ add_service_files(
   CurrentActionDone.srv
   ObjectManager.srv
   ComputeActionPoint.srv
+  SetSchedulerState.srv
 )
 
 # Actions files

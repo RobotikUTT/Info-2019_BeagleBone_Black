@@ -20,7 +20,7 @@ public:
   
   ActionPoint* actionPoint(Point& previousActionPoint) override;
 
-  int distanceToTravel(Point& robot_pos) override;
+  double distanceToTravel(Point& robot_pos) override;
 
   // Equality
   virtual bool equals(const Action& action) const override;

@@ -11,6 +11,7 @@
 #define ACTION_IMPOSSIBLE 3
 #define ACTION_DONE 4
 
+
 /**
  * class for a general action
  */
@@ -22,12 +23,12 @@ public:
 
   // Getters
   bool isSync() const;
-  int priority(Point& robot_pos);
+  double priority(Point& robot_pos);
   int state() const;
   std::string name() const;
   int getBasePoints() const;
 
-  virtual int distanceToTravel(Point& robot_pos);
+  virtual double distanceToTravel(Point& robot_pos);
   virtual int points() const;
   virtual ActionPoint* actionPoint(Point& previousActionPoint);
   

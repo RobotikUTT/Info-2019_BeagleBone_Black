@@ -17,7 +17,7 @@ Un script contenant le nécessaire pour lancer le projet dans un environnement u
 
 A noter que le script installe catkin-tools, un utilitaire de compilation optionnel.
 
-Pour d'autres distributions ou systèmes, se référer aux instructions d'installation de ros directement sur [http://www.ros.org/install/](le site).
+Pour d'autres distributions ou systèmes, se référer aux instructions d'installation de ros directement sur [le site](http://www.ros.org/install/).
 
 ## Compilation du projet
 
@@ -27,6 +27,14 @@ catkin build
 ~~~~
 
 Il est aussi possible d'utiliser `catkin_make`.
+
+### Lancer les tests
+
+Les tests unitaires peuvent être lancés à l'aide de la commande suivante :
+~~~~
+catkin run_tests
+~~~~
+Les résultats sont disponibles dans le dossier `build` dans les dossiers `tests_results` de chaque package.
 
 ## Lancer le robot
 
@@ -129,8 +137,8 @@ Le projet ROS peut se découper de la sorte d'un point de vue logiciel.
 
 
 
-Source:
+Sources et documentation :
 [Packages](http://wiki.ros.org/Packages)
 [ROS Names](http://wiki.ros.org/Names)
 [Tuto](http://wiki.ros.org/catkin/Tutorials)
-[Cmaklist](http://wiki.ros.org/catkin/CMakeLists.txt)
+[CMakeList.txt](http://wiki.ros.org/catkin/CMakeLists.txt)
