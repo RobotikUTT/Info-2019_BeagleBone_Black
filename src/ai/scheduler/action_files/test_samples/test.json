@@ -28,19 +28,19 @@
         "name": "Find his friend",
         "performer": "scan",
         "sync": true,
-        "args": {"seek": "bob"}
+        "args": {"seek": 3}
     },
     {
         "comment": "here we can either start with this action or the next one, depending where it starts and how many points it give",
         "name": "Move toward his friend",
         "performer": "move_toward",
         "points": 5,
-        "args": {"toward": "bob"}
+        "args": {"toward": 5}
     },
     {
         "name": "Wave his friend",
         "performer": "wave",
         "points": 10,
-        "args": {"toward": "bob"}
+        "args": {"toward": 7}
     }
 ]

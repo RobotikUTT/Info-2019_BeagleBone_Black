@@ -42,6 +42,7 @@ add_library(${PROJECT_NAME}
   src/ActionPoint.cpp
   src/Point.cpp
   src/ActionPerformer.cpp
+  src/PerformClient.cpp
 )
 
 # Add cmake target dependencies of the library

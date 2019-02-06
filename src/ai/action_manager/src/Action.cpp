@@ -52,15 +52,13 @@ void Action::setBasePoints(int points) {
  * Compute the distance to travel before the robot reach the end
  */
 double Action::distanceToTravel(Point& robot_pos) {
-	return actionPoint(robot_pos)->startPoint.manhattanDist(robot_pos) +
-		actionPoint(robot_pos)->distance();
+	return actionPoint(robot_pos).startPoint.manhattanDist(robot_pos) +
+		actionPoint(robot_pos).distance();
 }
 
 // Virtual functions (have to be redefined into child's classes)
 int Action::points() const { return _points; }
-ActionPoint* Action::actionPoint(Point& previousActionPoint) {
-	return _actionPoint;
-}
+
 
 // Comparison operator
 bool Action::equals(const Action& b) const {
@@ -82,4 +80,18 @@ std::ostream& operator<<(std::ostream& os, const Action& ac) {
 	ac.display(os);
 
 	return os;
+}
+
+/*
+ *	Static names factory
+ */
+std::string getActionPointService(std::string performer) {
+	std::ostringstream output;
+	output << "action_manager/" << performer << "/actionpoint";
+	return output.str();
+}
+std::string getActionServer(std::string performer) {
+	std::ostringstream output;
+	output << "action_" << performer;
+	return output.str();
 }

@@ -28,9 +28,9 @@ private:
   ros::Publisher STMRotation_pub;
   ros::Publisher STM_AsserManagement_pub;
   ros::Timer TimerTimeout;
-
-  ActionPoint* computeActionPoint(std::vector<ai_msgs::Argument> actionArgs, procedures_msgs::OrPoint robot_pos);
-  void start();
+  
+  ActionPoint computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, procedures_msgs::OrPoint& robot_pos) override;
+  void start() override;
 
   void analysisCB(const can_msgs::Finish::ConstPtr&);
   void TimeoutCallback(const ros::TimerEvent&);

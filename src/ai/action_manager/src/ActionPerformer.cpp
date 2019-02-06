@@ -2,19 +2,22 @@
 
 // TODO take robot status into consideration to handle ROBOT_HALT
 
-ActionPerformer::ActionPerformer( std::string name) : name(name), nh() {
+ActionPerformer::ActionPerformer(std::string name) : name(name), nh() {
 	// Service for action point computation
-	std::ostringstream srvName("action_manager/actionPoint/");
-	srvName << name;
-	actionPointSrv  = nh.advertiseService(srvName.str(), &ActionPerformer::_computeActionPoint, this);
+	actionPointSrv  = nh.advertiseService(
+		getActionPointService(name),
+		&ActionPerformer::_computeActionPoint,
+		this
+	);
 
 	// Suscribe to robot status
 	robotWatcherSub = nh.subscribe("/ai/robot_watcher/robot_status", 1, &ActionPerformer::onRobotStatus, this);
 
 	// Action server for this action
-	std::ostringstream actionName("action_");
-	actionName << name;
-	actionServer = new PerformActionSrv(actionName.str(), false);
+	actionServer = new PerformActionSrv(
+		getActionServer(name),
+		false
+	);
 
 	actionServer->registerGoalCallback(boost::bind(&ActionPerformer::onGoal, this));
 	actionServer->registerPreemptCallback(boost::bind(&ActionPerformer::onPreempt, this));
@@ -27,13 +30,15 @@ void ActionPerformer::ready() {
 
 bool ActionPerformer::_computeActionPoint(ai_msgs::ComputeActionPoint::Request& req, ai_msgs::ComputeActionPoint::Response& res) {
 	// Extract data from request and call performer function
-	ActionPoint* result = computeActionPoint(&req.args, req.robot_pos);
+	ActionPoint result = computeActionPoint(&req.args, req.robot_pos);
 
 	// Copy result to response
-	res.start_point.x = result->startPoint.x;
-	res.start_point.y = result->startPoint.y;
-	res.end_point.x = result->endPoint.x;
-	res.end_point.y = result->endPoint.y;
+	res.start_point.x = result.startPoint.x;
+	res.start_point.y = result.startPoint.y;
+	res.start_point.rot = result.startPoint.angle;
+	res.end_point.x = result.endPoint.x;
+	res.end_point.y = result.endPoint.y;
+	res.end_point.rot = result.endPoint.angle;
 }
 
 /**
@@ -127,10 +132,3 @@ bool ActionPerformer::hasArg(std::string name, std::vector<ai_msgs::Argument>* a
 
 	return false;
 }
-
-// Virtual functions
-ActionPoint* ActionPerformer::computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, procedures_msgs::OrPoint& robot_pos) {
-	return new ActionPoint();
-}
-void ActionPerformer::start() { }
-void ActionPerformer::cancel() {};

@@ -4,6 +4,8 @@
 #include "action_manager/ActionPoint.h"
 
 #include <string>
+#include <sstream>
+#include <memory>
 
 #define ACTION_IDLE 0
 #define ACTION_RUNNING 1
@@ -30,7 +32,7 @@ public:
 
   virtual double distanceToTravel(Point& robot_pos);
   virtual int points() const;
-  virtual ActionPoint* actionPoint(Point& previousActionPoint);
+  virtual ActionPoint& actionPoint(Point& previousPoint) = 0;
   
   // Equality and display
   virtual bool equals(const Action& b) const;
@@ -43,8 +45,11 @@ protected:
   std::string _name;
   bool _sync;
 
-  ActionPoint* _actionPoint;
+  std::shared_ptr<ActionPoint> _actionPoint;
 };
+
+std::string getActionPointService(std::string performer);
+std::string getActionServer(std::string performer);
 
 std::ostream& operator<<(std::ostream& os, const Action& ac);
 

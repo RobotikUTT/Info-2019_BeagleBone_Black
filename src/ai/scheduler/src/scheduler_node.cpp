@@ -5,19 +5,13 @@
  *
  * @param n NodeHandler
  */
-Scheduler::Scheduler(ros::NodeHandle* n){
-	this->nh = *n;
-
+Scheduler::Scheduler() : PerformClient() {
 	// Retrieve action
 	std::string actions_file;
 	nh.getParam("scheduler/actions_directory", actions_file);
 
 	this->side = SIDE_GREEN;
 	this->side_sub = nh.subscribe("side", 1, &Scheduler::setSide, this);
-
-	//this->action_srv = nh.advertiseService("scheduler/actionToDo", &Scheduler::getActionToDo, this);
-	//this->actionD_srv = nh.advertiseService("scheduler/currentActionDone", &Scheduler::currentActionDone, this);
-	//this-> = ActionManager(actions_file.c_str());
 
 	this->control_srv = nh.advertiseService("scheduler/do", &Scheduler::setState, this);
 	
@@ -44,11 +38,36 @@ bool Scheduler::setState(ai_msgs::SetSchedulerState::Request &req, ai_msgs::SetS
 	return true;
 }
 
-void Scheduler::stop() {
-	// TODO
+void Scheduler::nextAction() {
+	// TODO run next action
+	/*
+	ActionChoice action = getOptimalNextAtomic(...)
+
+	if (action.action != NULL) {
+		// call then onfinished or onpause
+		PerformClient::performAction(...);
+	}
+	*/
 }
+
+void Scheduler::onFinished(const actionlib::SimpleClientGoalState& state, const ai_msgs::PerformResultConstPtr& result) {
+	// TODO mark current action as finished
+
+	nextAction();
+}
+
+void Scheduler::onPaused() {
+	// TODO mark current action as paused
+
+	nextAction();
+}
+
+void Scheduler::stop() {
+	// TODO stop current action (mark it as idle instead of paused to resume afterward)
+}
+
 void Scheduler::resume() {
-	// TODO
+	// TODO resume current action or run next one
 }
 
 /**
@@ -64,42 +83,10 @@ void Scheduler::setSide(const ai_msgs::SetSide::ConstPtr& msg){
 	}
 }
 
-/**
- * @brief Gets the action to exectute.
- *
- * @param req The service message request
- * @param res The service message resource
- *
- */
-bool Scheduler::getActionToDo(ai_msgs::GetActionToDo::Request &req, ai_msgs::GetActionToDo::Response &res){
-	// ROS_INFO_STREAM("action position x: " << req.robot_pos_x);
-	// ROS_INFO_STREAM("action position y: " << req.robot_pos_y);
-
-	// TODO acm
-	//this->actionManager.updatePriority(Point(req.robot_pos_x,req.robot_pos_y));
-	//this->actionManager.getActionToDo(res);
-	return true;
-}
-
-/**
- * @brief Set done's attribut Action 
- *
- * @param req The service message request
- * @param res The service message resource
- *
- */
-bool Scheduler::currentActionDone(ai_msgs::CurrentActionDone::Request &req, ai_msgs::CurrentActionDone::Response &res){
-	// TODO acm
-	//this->actionManager.currentActionDone(req.done);
-	return true;
-}
-
 
 int main(int argc, char *argv[]) {
 	ros::init(argc,argv, "scheduler_node");
 
-	ros::NodeHandle* nmh = new ros::NodeHandle();
-	Scheduler node (nmh);
-
+	Scheduler node();
 	ros::spin();
 }

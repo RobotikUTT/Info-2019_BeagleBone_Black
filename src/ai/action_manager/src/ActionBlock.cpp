@@ -30,14 +30,14 @@ void ActionBlock::addAction(ActionPtr action) {
  */
 double ActionBlock::distanceToTravel(Point& robot_pos) {
 	int distance = 0;
-	ActionPoint* currentActionPoint = new ActionPoint(robot_pos, robot_pos);
-	ActionPoint* nextActionPoint = NULL;
+	Point currentPoint = robot_pos;
 	
 	for (auto& next : _actions) {
-		nextActionPoint = next->actionPoint(currentActionPoint->endPoint);
-
 		// Add distance between the end of the previous action and the begin of this one
-		distance += next->distanceToTravel(currentActionPoint->endPoint);
+		distance += next->distanceToTravel(currentPoint);
+
+		// Then compute new action point
+		currentPoint = next->actionPoint(currentPoint).endPoint;
 	}
 
 	return distance;
@@ -46,33 +46,33 @@ double ActionBlock::distanceToTravel(Point& robot_pos) {
 /**
  * Compute the initial and final point of the action
  */
-ActionPoint* ActionBlock::actionPoint(Point& previousActionPoint) {
+ActionPoint& ActionBlock::actionPoint(Point& previousPoint) {
 	// Test whether the action point was already computed
 	if (_actionPoint != NULL) {
-		return _actionPoint;
+		return *_actionPoint;
 	}
 
-	Point* start = &_actions.front()->actionPoint(previousActionPoint)->startPoint;
-	Point& current = previousActionPoint;
-	ActionPoint* actionPoint;
+	Point* start = NULL; // computed later
+	Point& current = previousPoint;
+	ActionPoint actionPoint;
 
 	// Compute all actionPoints
 	for (auto& next : _actions) {
 		actionPoint = next->actionPoint(current);
-		current = actionPoint->endPoint;
+		current = actionPoint.endPoint;
 
 		if (start == NULL) {
-			start = &actionPoint->startPoint;
+			start = &actionPoint.startPoint;
 		}
 	}
 
 	// take first and last position
-	_actionPoint = new ActionPoint(
+	_actionPoint = std::make_shared<ActionPoint>(
 		*start, // first startPoint
 		current // last endPoint
 	);
 
-	return _actionPoint;
+	return *_actionPoint;
 }
 
 // Helped with https://stackoverflow.com/questions/2825424/comparing-objects-and-inheritance

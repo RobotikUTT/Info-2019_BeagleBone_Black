@@ -18,7 +18,7 @@ public:
   std::list<ActionPtr> subactions() const;
   void addAction(ActionPtr action);
   
-  ActionPoint* actionPoint(Point& previousActionPoint) override;
+  ActionPoint& actionPoint(Point& previousPoint) override;
 
   double distanceToTravel(Point& robot_pos) override;
 

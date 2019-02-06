@@ -4,11 +4,13 @@
 #include "action_manager/ActionPoint.h"
 #include "action_manager/Action.hpp"
 
+#include "ai_msgs/ComputeActionPoint.h"
+
 #include <ros/ros.h>
 #include "ai_msgs/Argument.h"
 
 #include <string>
-#include <list>
+#include <vector>
 
 /**
  * @brief class for atomic actions
@@ -19,8 +21,8 @@ public:
 
   std::string performer() const;
 
-  std::list<ai_msgs::Argument> getArgs() const;
-  ActionPoint* actionPoint(Point& previousActionPoint) override;
+  std::vector<ai_msgs::Argument> getArgs() const;
+  ActionPoint& actionPoint(Point& previousPoint) override;
 
   // Setters
   void addArg(ai_msgs::Argument arg);
@@ -31,9 +33,7 @@ public:
   
 private:
   std::string _performer;
-  std::list<ai_msgs::Argument> _args;
-
-  ActionPoint* _actionPoint;
+  std::vector<ai_msgs::Argument> _args;
 };
 
 

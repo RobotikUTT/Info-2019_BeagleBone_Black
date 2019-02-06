@@ -1,7 +1,7 @@
 #include "action_manager/AtomicAction.hpp"
 
 AtomicAction::AtomicAction(std::string name, std::string performer) :
-	Action(name), _performer(performer), _actionPoint(NULL) { }
+	Action(name), _performer(performer) { }
 
 
 // Getters
@@ -11,25 +11,42 @@ std::string AtomicAction::performer() const {
 
 /**
  *	Return the action point according either to the previous action's actionPoint
- *	or to current coordinates
+ *	or to current coordinates.
+ *
+ * 	Calls associated performer service to let it compute the point based on args 
  */
-ActionPoint* AtomicAction::actionPoint(Point& previousActionPoint) {
+ActionPoint& AtomicAction::actionPoint(Point& previousPoint) {
 	if (_actionPoint == NULL) {
-		ActionPoint point;
+		// create client
+		ros::NodeHandle nh;
+		ros::ServiceClient client = nh.serviceClient<ai_msgs::ComputeActionPoint>(
+			getActionPointService(performer())
+		);
 
-		// TODO compute action point with perfomer help
-
-		if (/*performer.isActionPointStatic()*/true) {
-			_actionPoint = &point;
-			return _actionPoint;
+		ai_msgs::ComputeActionPoint srv;
+		srv.request.robot_pos.x = previousPoint.x;
+		srv.request.robot_pos.y = previousPoint.y;
+		srv.request.robot_pos.rot = previousPoint.angle;
+		srv.request.args = getArgs();
+		
+		if (client.call(srv)) {
+			_actionPoint = std::make_shared<ActionPoint>(
+				srv.response.start_point.x,
+				srv.response.start_point.y,
+				srv.response.start_point.rot,
+				srv.response.end_point.x,
+				srv.response.end_point.y,
+				srv.response.end_point.rot
+			);
+		} else {
+			throw "failed to call service" + getActionPointService(performer());
 		}
-	} else {
-		return _actionPoint;
 	}
+	
+	return *_actionPoint;
 }
 
-
-std::list<ai_msgs::Argument> AtomicAction::getArgs() const {
+std::vector<ai_msgs::Argument> AtomicAction::getArgs() const {
 	return _args;
 }
 
@@ -45,8 +62,8 @@ bool AtomicAction::equals(const Action& action) const {
 	// Cast succeed and basic properties also
 	if (atomic != NULL && Action::equals(action) && performer() == atomic->performer()) {
 		// Then test for arguments
-		std::list<ai_msgs::Argument> args = getArgs();
-		std::list<ai_msgs::Argument> compArgs = atomic->getArgs();
+		std::vector<ai_msgs::Argument> args = getArgs();
+		std::vector<ai_msgs::Argument> compArgs = atomic->getArgs();
 
 		// as many args
 		if (args.size() != compArgs.size()) return false;

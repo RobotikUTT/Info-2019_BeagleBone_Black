@@ -17,9 +17,9 @@ ReachActionPerfomer::ReachActionPerfomer(std::string name) : ActionPerformer(nam
 	ready();
 }
 
-ActionPoint* ReachActionPerfomer::computeActionPoint(std::vector<ai_msgs::Argument> actionArgs, procedures_msgs::OrPoint robot_pos) {
+ActionPoint ReachActionPerfomer::computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, procedures_msgs::OrPoint& robot_pos) {
 	// TODO
-	return new ActionPoint();
+	return ActionPoint();
 }
 
 /**

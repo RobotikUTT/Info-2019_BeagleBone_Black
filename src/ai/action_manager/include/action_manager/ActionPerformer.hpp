@@ -37,18 +37,14 @@ class ActionPerformer
 {
 public:
 	ActionPerformer(std::string name);
-
-	// Call adequate service to retrieve the action point
-	static ActionPoint* computeActionPoint(std::string performer);
-
 protected:
 	// ROS nodehandle is protected to let child use ros
 	ros::NodeHandle nh;
 
 	// Function defined by inherited actions
-	virtual ActionPoint* computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, procedures_msgs::OrPoint& robot_pos);
-	virtual void start();
-	virtual void cancel();
+	virtual ActionPoint computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, procedures_msgs::OrPoint& robot_pos) = 0;
+	virtual void start() = 0;
+	virtual void cancel() {};
 
 	double getArg(std::string name, double defaultValue = 0, std::vector<ai_msgs::Argument>* args = NULL);
 	bool hasArg(std::string name, std::vector<ai_msgs::Argument>* args = NULL);
