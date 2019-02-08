@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>simple_test</name>
+  <version>2018.1.0</version>
+  <description>The simple_test package</description>
+
+  <maintainer email="cle.bourdonnaye@gmail.com">Clément de La Bourdonnaye</maintainer>
+  <license>TODO</license>
+
+  <!-- Dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+
+  <!-- Packages -->
+  <depend>robot_interface</depend>
+
+  <!-- Messages -->
+  <depend>can_msgs</depend>
+
+  <export></export>
+</package>
