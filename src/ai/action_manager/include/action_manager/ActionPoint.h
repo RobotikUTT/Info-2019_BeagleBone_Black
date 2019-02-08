@@ -7,7 +7,7 @@
 #ifndef ACTION_POINT_H
 #define ACTION_POINT_H
 
-#include "action_manager/Point.h"
+#include "action_manager/Point.hpp"
 
 /**
  * @brief decription of where the action begins and ends
@@ -25,5 +25,6 @@ public:
 };
 
 std::ostream& operator<<(std::ostream&, const ActionPoint&);
+bool operator ==(const ActionPoint &a, const ActionPoint &b);
 
 #endif

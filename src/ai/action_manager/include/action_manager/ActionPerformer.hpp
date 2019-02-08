@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <ros/ros.h>
+#include <ros/console.h>
 #include <actionlib/server/simple_action_server.h>
 
 #include "ai_msgs/PerformAction.h"
@@ -37,12 +38,13 @@ class ActionPerformer
 {
 public:
 	ActionPerformer(std::string name);
+	
 protected:
 	// ROS nodehandle is protected to let child use ros
 	ros::NodeHandle nh;
 
 	// Function defined by inherited actions
-	virtual ActionPoint computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, procedures_msgs::OrPoint& robot_pos) = 0;
+	virtual ActionPoint computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, Point robotPos) = 0;
 	virtual void start() = 0;
 	virtual void cancel() {};
 

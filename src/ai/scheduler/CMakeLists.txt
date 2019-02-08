@@ -50,7 +50,21 @@ target_link_libraries(${PROJECT_NAME}_node
 
 # Unit tests
 if(CATKIN_ENABLE_TESTING)
-  find_package(rostest REQUIRED)
-  add_rostest_gtest(tests_scheduler scheduler.test src/test/parsing_test.cpp src/ActionsParser.cpp src/ActionFilePath.cpp)
-  target_link_libraries(tests_scheduler ${catkin_LIBRARIES})
+  find_package(rostest REQUIRED COMPONENTS
+    std_msgs
+  )
+
+  # Tests for action parsing
+  add_rostest_gtest(tests_action_parsing
+    launch/parsing.test
+    src/test/parsing_test.cpp src/ActionsParser.cpp src/ActionFilePath.cpp
+  )
+  target_link_libraries(tests_action_parsing ${catkin_LIBRARIES})
+
+  # Tests for action performing
+  add_rostest_gtest(tests_performing
+    launch/performing.test
+    src/test/performing_test.cpp include/scheduler/test/SampleActions.hpp
+  )
+  target_link_libraries(tests_performing ${catkin_LIBRARIES})
 endif()

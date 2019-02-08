@@ -2,7 +2,7 @@
 
 PerformClient::PerformClient() : nh() { }
 
-void PerformClient::performAction(AtomicAction& action, procedures_msgs::OrPoint& robot_pos) {
+void PerformClient::performAction(AtomicAction& action, Point robot_pos) {
 	// TODO check for previously launched clients
 	client = new PerformActionClt(getActionServer(action.performer()), true);
 
@@ -12,6 +12,9 @@ void PerformClient::performAction(AtomicAction& action, procedures_msgs::OrPoint
 	// send a goal to the action
 	ai_msgs::PerformGoal goal;
 	goal.arguments = action.getArgs();
+	goal.robot_pos.x = robot_pos.x;
+	goal.robot_pos.y = robot_pos.x;
+	goal.robot_pos.rot = robot_pos.angle;
 
 	client->sendGoal(
 		goal,

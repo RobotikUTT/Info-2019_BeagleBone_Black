@@ -58,3 +58,7 @@ std::ostream& operator<<(std::ostream& os, const ActionPoint& AP)
     os <<  "ActionPoint : { \n\t start_" << AP.startPoint << "\n\t end_" << AP.endPoint << "\n}";
     return os;
 }
+
+bool operator ==(const ActionPoint &a, const ActionPoint &b) {
+  return a.startPoint == b.startPoint && a.endPoint == b.endPoint;
+}

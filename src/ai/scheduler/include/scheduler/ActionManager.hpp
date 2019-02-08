@@ -28,18 +28,14 @@
 class ActionManager
 {
 public:
-  ActionManager(const char* file); // init with actions.config file
+  ActionManager(ActionPtr rootAction);
   void changeSide ();
 
-  void getActionToDo(ai_msgs::GetActionToDo::Response &);
-  void updatePriority(Point robot_pos);
   void currentActionDone(bool done);
 
 private:
   std::list<ActionClass> action;
   std::list<ActionClass>::iterator current_action;
-
-  void actionsInit(const char*); //parse actions.config
 
 };
 

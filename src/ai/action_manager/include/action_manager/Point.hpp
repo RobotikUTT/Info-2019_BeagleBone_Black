@@ -4,8 +4,9 @@
 *    
 *    @author Alexis CARE
 */
-#ifndef POINT_H
-#define POINT_H
+#ifndef POINT_HPP
+#define POINT_HPP
+
 #include <iostream>
 #include <cmath>
 
@@ -28,5 +29,6 @@ public:
 };
 
 std::ostream& operator<<(std::ostream&, const Point&);
+bool operator ==(const Point &a, const Point &b);
 
 #endif

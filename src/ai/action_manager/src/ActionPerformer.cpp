@@ -30,7 +30,10 @@ void ActionPerformer::ready() {
 
 bool ActionPerformer::_computeActionPoint(ai_msgs::ComputeActionPoint::Request& req, ai_msgs::ComputeActionPoint::Response& res) {
 	// Extract data from request and call performer function
-	ActionPoint result = computeActionPoint(&req.args, req.robot_pos);
+	ActionPoint result = computeActionPoint(
+		&req.args,
+		Point(req.robot_pos.x, req.robot_pos.y, req.robot_pos.rot)
+	);
 
 	// Copy result to response
 	res.start_point.x = result.startPoint.x;
@@ -39,6 +42,8 @@ bool ActionPerformer::_computeActionPoint(ai_msgs::ComputeActionPoint::Request& 
 	res.end_point.x = result.endPoint.x;
 	res.end_point.y = result.endPoint.y;
 	res.end_point.rot = result.endPoint.angle;
+	
+	return true;
 }
 
 /**

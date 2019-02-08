@@ -1,0 +1,5 @@
+<launch>
+	<param name="test_directory" value="$(find scheduler)/action_files/test_samples" />
+	
+    <test test-name="tests_action_parsing" pkg="scheduler" type="tests_action_parsing" />
+</launch>

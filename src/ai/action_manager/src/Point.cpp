@@ -4,7 +4,7 @@
 *    
 *    @author Alexis CARE
 */
-#include "action_manager/Point.h"
+#include "action_manager/Point.hpp"
 
 /**
  * @brief      Constructs the object.
@@ -83,4 +83,8 @@ Point Point::operator- (const Point& P){
 std::ostream& operator<<(std::ostream& os, const Point& P){
     os << "point : { x: " << P.x << " ; y: " << P.y << " }";
     return os;
+}
+
+bool operator ==(const Point &a, const Point &b) {
+  return a.x == b.x && a.y == b.y && a.angle == b.angle;
 }
