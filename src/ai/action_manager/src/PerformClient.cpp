@@ -5,7 +5,7 @@ PerformClient::PerformClient() : nh() { }
 void PerformClient::performAction(AtomicAction& action, Point robot_pos) {
 	// TODO check for previously launched clients
 	client = new PerformActionClt(getActionServer(action.performer()), true);
-
+	
 	// wait for the action server to start
 	client->waitForServer(); // TODO wait for finite time and throw
 

@@ -15,6 +15,7 @@ ActionPerformer::ActionPerformer(std::string name) : name(name), nh() {
 
 	// Action server for this action
 	actionServer = new PerformActionSrv(
+		nh,
 		getActionServer(name),
 		false
 	);
@@ -50,13 +51,15 @@ bool ActionPerformer::_computeActionPoint(ai_msgs::ComputeActionPoint::Request& 
  *  Goal received
  */
 void ActionPerformer::onGoal() {
-	ai_msgs::PerformGoal::ConstPtr goal = actionServer->acceptNewGoal();
+	if (actionServer->isNewGoalAvailable()) {
+		ai_msgs::PerformGoal::ConstPtr goal = actionServer->acceptNewGoal();
 
-	// save args
-	_args = goal->arguments;
-
-	// run action
-	start();
+		// save args
+		_args = goal->arguments;
+	
+		// run action
+		start();
+	}
 }
 
 /**

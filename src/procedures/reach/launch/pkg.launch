@@ -1,3 +1,3 @@
 <launch>
-	<node name="move_action" pkg="move" type="proc" output="screen"/>
+	<node name="reach_action" pkg="reach" type="proc" output="screen"/>
 </launch>

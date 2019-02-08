@@ -7,7 +7,7 @@
  * @param[in] name name of the action server
  */
 ReachActionPerfomer::ReachActionPerfomer(std::string name) : ActionPerformer(name) {
-	finish_sub = nh.subscribe("/ALL/Finish", 1, &ReachActionPerfomer::analysisCB, this);
+	finish_sub = nh.subscribe("/ALL/Finish", 1, &ReachActionPerfomer::movementDone, this);
 	
 	this->STMGoToAngle_pub = nh.advertise<can_msgs::Point>("/STM/GoToAngle", 1);
 	this->STMGoTo_pub = nh.advertise<can_msgs::Point>("/STM/GoTo", 1);
@@ -17,23 +17,22 @@ ReachActionPerfomer::ReachActionPerfomer(std::string name) : ActionPerformer(nam
 	ready();
 }
 
-ActionPoint ReachActionPerfomer::computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, procedures_msgs::OrPoint& robot_pos) {
+ActionPoint ReachActionPerfomer::computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, Point robotPos) {
 	// TODO
 	return ActionPoint();
 }
 
 /**
- * @brief      Callback called when the STM finished all move order
- *
+ * @brief Callback called when the STM finished all move order
  * @param[in]  msg   The finish message
  */
-void ReachActionPerfomer::analysisCB(const can_msgs::Finish::ConstPtr& msg){
+void ReachActionPerfomer::movementDone(const can_msgs::Finish::ConstPtr& msg){
 	// ROS_WARN_STREAM("Move; FINISH : state "<< act.isActive());
 
 	if (/*!actionServer->isActive() ||*/ msg->val != 0)
 		return;
 
-	TimerTimeout.stop();
+	timerTimeout.stop();
 
 	actionPerformed();
 }
@@ -73,31 +72,31 @@ void ReachActionPerfomer::start() {
 			break;
 	}
 
-	[[deprecated("timeout should be handled by actionperformer himself")]]
-	{
-		int timeout = getArg("timeout", 0);
-		if (timeout > 0) {
-			TimerTimeout = nh.createTimer(ros::Duration(timeout), &ReachActionPerfomer::TimeoutCallback , this, true);
-		}
+	int timeout = getArg("timeout", 0);
+	if (timeout > 0) {
+		timerTimeout = nh.createTimer(ros::Duration(timeout), &ReachActionPerfomer::timeoutCallback , this, true);
 	}
 }
 
-/**
- * @brief send new order if the robot is too slow
- * 
- * @details we consider that the robot is blocked at the end of the timer 
- *
- * @param[in] timer timer event
- */
-void ReachActionPerfomer::TimeoutCallback(const ros::TimerEvent& timer){
+void ReachActionPerfomer::cancel() {
 	// reset all goal in the STM
 	can_msgs::Status msg;
 
 	msg.value = RESET_ORDERS;
 	STM_AsserManagement_pub.publish(msg);
+}
 
-	actionPerformed();
+/**
+ * @brief send new order if the robot is too slow
+ * @details we consider that the robot is blocked at the end of the timer
+ * @param[in] timer timer event
+ */
+void ReachActionPerfomer::timeoutCallback(const ros::TimerEvent& timer){
+	// Cancel action
+	cancel();
 
+	// Pause it
+	actionPaused();
 }
 
 

@@ -7,8 +7,6 @@
 
 #include "action_manager/ActionPerformer.hpp"
 
-#include "ros/ros.h"
-
 #include "robot_interface/protocol.h"
 
 
@@ -27,13 +25,14 @@ private:
   ros::Publisher STMGoTo_pub;
   ros::Publisher STMRotation_pub;
   ros::Publisher STM_AsserManagement_pub;
-  ros::Timer TimerTimeout;
+  ros::Timer timerTimeout;
   
-  ActionPoint computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, procedures_msgs::OrPoint& robot_pos) override;
+  ActionPoint computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, Point robot_pos) override;
   void start() override;
+  void cancel() override;
 
-  void analysisCB(const can_msgs::Finish::ConstPtr&);
-  void TimeoutCallback(const ros::TimerEvent&);
+  void movementDone(const can_msgs::Finish::ConstPtr&);
+  void timeoutCallback(const ros::TimerEvent&);
 
 };
 

@@ -64,7 +64,7 @@ if(CATKIN_ENABLE_TESTING)
   # Tests for action performing
   add_rostest_gtest(tests_performing
     launch/performing.test
-    src/test/performing_test.cpp include/scheduler/test/SampleActions.hpp
+    src/test/performing_test.cpp
   )
   target_link_libraries(tests_performing ${catkin_LIBRARIES})
 endif()
