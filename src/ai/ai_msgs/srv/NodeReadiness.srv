@@ -1,4 +1,11 @@
+# Give a node status or ask for it
 string node_name
-bool ready
+int8 status
 int8 error_code
+
+# TODO remove
+bool ready
 ---
+# Resultant node status
+int8 status
+int8 error_code

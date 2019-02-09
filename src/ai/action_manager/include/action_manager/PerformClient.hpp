@@ -8,6 +8,8 @@
 
 #include "ai_msgs/PerformAction.h"
 
+#include "node_watcher/Node.hpp"
+
 #include "action_manager/Point.hpp"
 #include "action_manager/ActionPoint.h"
 #include "action_manager/AtomicAction.hpp"
@@ -15,9 +17,9 @@
 
 typedef actionlib::SimpleActionClient<ai_msgs::PerformAction> PerformActionClt;
 
-class PerformClient {
+class PerformClient : public Node {
 public:
-	PerformClient();
+	PerformClient(std::string name, std::string package);
 
 	virtual void onFinished(const actionlib::SimpleClientGoalState& state,
 		const ai_msgs::PerformResultConstPtr& result) = 0;

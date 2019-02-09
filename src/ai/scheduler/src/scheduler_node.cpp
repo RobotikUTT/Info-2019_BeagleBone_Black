@@ -5,7 +5,7 @@
  *
  * @param n NodeHandler
  */
-Scheduler::Scheduler() : PerformClient() {
+Scheduler::Scheduler() : PerformClient("scheduler", "ai") {
 	// Retrieve action
 	std::string actions_file;
 	nh.getParam("scheduler/actions_directory", actions_file);
@@ -13,14 +13,19 @@ Scheduler::Scheduler() : PerformClient() {
 	this->side = SIDE_GREEN;
 	this->side_sub = nh.subscribe("side", 1, &Scheduler::setSide, this);
 
-	this->control_srv = nh.advertiseService("scheduler/do", &Scheduler::setState, this);
-	
+	this->control_srv = nh.advertiseService("/scheduler/do", &Scheduler::setState, this);
 
 	// Parse actions file
-	ActionsParser parser(ActionFilePath("main", actions_file));
-	ActionPtr root = parser.getAction();
-
+	try {
+		ActionsParser parser(ActionFilePath("main", actions_file));
+		ActionPtr root = parser.getAction();
+	} catch(const char* error) {
+		ROS_ERROR_STREAM("unable to initialize scheduler due to parsing error: " << error);
+		setNodeStatus(NODE_ERROR, 1);
+	}
+	
 	service_ready("ai", "scheduler", 1);
+	setNodeStatus(NODE_READY);
 }
 
 bool Scheduler::setState(ai_msgs::SetSchedulerState::Request &req, ai_msgs::SetSchedulerState::Response &res) {
@@ -85,8 +90,8 @@ void Scheduler::setSide(const ai_msgs::SetSide::ConstPtr& msg){
 
 
 int main(int argc, char *argv[]) {
-	ros::init(argc,argv, "scheduler_node");
-
-	Scheduler node();
+	ros::init(argc, argv, "scheduler_node");
+	
+	Scheduler node;
 	ros::spin();
 }

@@ -1,6 +1,6 @@
 #include "action_manager/PerformClient.hpp"
 
-PerformClient::PerformClient() : nh() { }
+PerformClient::PerformClient(std::string name, std::string package) : Node(name, package) { }
 
 void PerformClient::performAction(AtomicAction& action, Point robot_pos) {
 	// TODO check for previously launched clients

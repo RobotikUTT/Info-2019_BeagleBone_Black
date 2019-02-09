@@ -1,6 +1,6 @@
 /** @file controller_node.h
-*    @brief controller_node h file
-*    
+*	@brief controller_node h file
+*		
 */
 #ifndef CONTROLLER_NODE_H
 #define CONTROLLER_NODE_H
@@ -13,11 +13,10 @@
 
 #include "ai_msgs/RobotStatus.h"
 #include "ai_msgs/SetSide.h"
-#include "ai_msgs/GetActionToDo.h"
-#include "ai_msgs/CurrentActionDone.h"
 #include "ai_msgs/NodesStatus.h"
 #include "ai_msgs/EmergencyStop.h"
 #include "ai_msgs/PointsScored.h"
+#include "ai_msgs/SetSchedulerState.h"
 
 #include "can_msgs/Point.h"
 #include "can_msgs/Status.h"
@@ -30,85 +29,70 @@
 
 #include "std_msgs/Int8.h"
 
-#include <actionlib/client/simple_action_client.h>
 
 #include "robot_interface/protocol.h"
 
-#define FORWARD         1
-#define BACKWARD        -1
-#define NONE            0
+#define FORWARD 1
+#define BACKWARD -1
+#define NONE 0
 
 /**
  * @defgroup Controller The Controller package
  * @{
  */
 
-#define SONAR_MIN_DIST_FORWARD 30 //in cm
-#define SONAR_MIN_DIST_BACKWARD  10 //in cm
-
-typedef actionlib::SimpleActionClient<procedures_msgs::MoveAction>  ClientMove;
+#define SONAR_MIN_DIST_FORWARD 30 // in cm
+#define SONAR_MIN_DIST_BACKWARD	10 // in cm
 
 
 /**
- * @brief      Controls the robot with all the other node.
+ * @brief process inputs and change robot behavior according to that
  */
 class Controller
 {
 public:
-  Controller(ros::NodeHandle* n);
+	Controller(ros::NodeHandle* n);
 
 
 private:
-  ros::ServiceClient action_done_client;
-  ros::ServiceClient action_todo_client;
+	ros::Subscriber status_sub;
+	ros::Subscriber robot_pos_sub;
+	ros::Subscriber nodes_status_sub;
+	ros::Subscriber robot_speed_sub;
+	ros::Subscriber sonar_distance_sub;
+	ros::Subscriber side_sub;
+	ros::Subscriber robot_blocked_sub;
 
-  ros::Subscriber status_sub;
-  ros::Subscriber robot_pos_sub;
-  ros::Subscriber nodes_status_sub;
-  ros::Subscriber robot_speed_sub;
-  ros::Subscriber sonar_distance_sub;
-  ros::Subscriber side_sub;
-  ros::Subscriber robot_blocked_sub;
+	ros::Publisher points_pub;
+	ros::Publisher emergency_stop_pub;
+	ros::Publisher STM_SetPose_pub;
+	ros::Publisher STM_AsserManagement_pub;
+	ros::Publisher PANEL_Point_pub;
 
-  ros::Publisher points_pub;
-  ros::Publisher emergency_stop_pub;
-  ros::Publisher STM_SetPose_pub;
-  ros::Publisher STM_AsserManagement_pub;
-  ros::Publisher PANEL_Point_pub;
+	ros::ServiceClient schedulerController;
 
-  ros::NodeHandle nh;
+	ros::NodeHandle nh;
 
-  //robot pos
-  int robot_pos_x;
-  int robot_pos_y;
-  int robot_angle;
+	//robot pos
+	int robot_pos_x;
+	int robot_pos_y;
+	int robot_angle;
 
-  int points_done;
+	int points_done;
 
-  uint8_t robot_status;
-  int8_t direction;
-  int8_t action_val;
+	int8_t direction;
 
-  bool emergency_stop;
-  bool side;
-  bool panelUp;
+	bool emergency_stop;
+	bool side;
+	bool panelUp;
 
-
-  ClientMove move_action_client;
-
-  void setRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
-  void setRobotPosition(const can_msgs::Point::ConstPtr& msg);
-  void setRobotSpeed(const can_msgs::CurrSpeed::ConstPtr& msg);
-  void setAction();
-  void setSide(const ai_msgs::SetSide::ConstPtr& msg);
-  void checkForPanel(const ai_msgs::NodesStatus::ConstPtr & msg);
-  void sendPoint();
-  void processSonars(const can_msgs::SonarDistance::ConstPtr& msg);
-  void processRobotBlocked(const can_msgs::RobotBlocked::ConstPtr& msg);
-
-  template <class doneMsg>
-  void onActionDone( const actionlib::SimpleClientGoalState& state, const doneMsg & result);
-
+	void setRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
+	void setRobotPosition(const can_msgs::Point::ConstPtr& msg);
+	void setRobotSpeed(const can_msgs::CurrSpeed::ConstPtr& msg);
+	void setSide(const ai_msgs::SetSide::ConstPtr& msg);
+	void checkForPanel(const ai_msgs::NodesStatus::ConstPtr & msg);
+	void processSonars(const can_msgs::SonarDistance::ConstPtr& msg);
+	void processRobotBlocked(const can_msgs::RobotBlocked::ConstPtr& msg);
 };
 
 /**

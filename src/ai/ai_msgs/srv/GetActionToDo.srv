@@ -1,8 +1,0 @@
-int16 robot_pos_x #mm
-int16 robot_pos_y #mm
----
-int8 action_val
-procedures_msgs/MPoint point
-procedures_msgs/OrPoint action_pos
-procedures_msgs/OrPoint depot_pos
-int16[] param

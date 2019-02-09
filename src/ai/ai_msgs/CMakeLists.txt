@@ -28,9 +28,7 @@ add_message_files(DIRECTORY msg
 # Services files
 add_service_files(
   FILES
-  GetActionToDo.srv
   NodeReadiness.srv
-  CurrentActionDone.srv
   ObjectManager.srv
   ComputeActionPoint.srv
   SetSchedulerState.srv

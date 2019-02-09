@@ -18,8 +18,6 @@
 #include "action_manager/PerformClient.hpp"
 
 #include "ai_msgs/SetSide.h"
-#include "ai_msgs/GetActionToDo.h"
-#include "ai_msgs/CurrentActionDone.h"
 #include "ai_msgs/SetSchedulerState.h"
 
 #include "scheduler/ActionsParser.hpp"
@@ -34,10 +32,10 @@ public:
 
 private:
 	ros::NodeHandle nh;
-
 	ros::Subscriber side_sub;
-
 	ros::ServiceServer control_srv;
+
+	ActionPtr rootAction;
 
 	bool side;
 	bool running;

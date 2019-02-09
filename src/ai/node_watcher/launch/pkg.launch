@@ -1,0 +1,3 @@
+<launch>
+	<node name="node_watcher" pkg="node_watcher" type="node" output="screen" required="True"/>
+</launch>

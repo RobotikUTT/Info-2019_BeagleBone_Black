@@ -1,7 +1,7 @@
 #
 #   Script for installing ros and building code
 #   [sh version]
-cd ..
+#cd ..
 
 echo "Setting up ros sources..."
 
