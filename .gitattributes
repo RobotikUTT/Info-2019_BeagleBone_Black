@@ -1,0 +1,12 @@
+# This file allow to configure line ending in case
+# the code is developped under differents operating
+# systems
+
+# Default behavior (same as git config --global core.autocrlf input on linux)
+* text=auto
+
+# Explicitly declared files formats
+*.cpp text
+*.hpp text
+*.py text
+
