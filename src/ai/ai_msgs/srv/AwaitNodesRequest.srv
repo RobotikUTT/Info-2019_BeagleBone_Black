@@ -1,0 +1,6 @@
+# send nodes required
+NodeRequirement[] nodes
+int16 timeout # seconds
+---
+# get a request code to filter result channel
+int16 request_code

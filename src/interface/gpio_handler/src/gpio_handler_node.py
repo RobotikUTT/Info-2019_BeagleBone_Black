@@ -59,13 +59,12 @@ class GPIOHandlerNode(object):
 		#rospy.Service('/robot/gpio_handler/get', SetGPIO, self.setGPIO)
 
 		# init states
-		self.pin = WatcherState.PIN_ON
 		self.side = -1 # impossible value that will get the side updated in the loop
 		self.started = GAME_IDLE
 		self.monitoring = True
 		
 	# Loop until ros terminate to monitor GPIO
-	def loop():
+	def loop(self):
 		GPIO = self.GPIO
 
 		# Monitor data

@@ -21,25 +21,40 @@ Controller::Controller() : Node("controller", "ai") {
 	direction = NONE;
 	emergency_stop = false;
 	panelUp = 0;
+	started = false;
+	robot_state = ROBOT_INIT;
 
 	// Advertisers
 	emergency_stop_pub = nh.advertise<ai_msgs::EmergencyStop>("emergency", 1);
 	STM_SetPose_pub = nh.advertise<can_msgs::Point>("/STM/SetPose", 1);
 	STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement", 1);
-	// TODO : side_pub = nh.advertise<ai_msgs::SetSide>("side", 1);
 
 
 	// Subscribers
 	status_sub = nh.subscribe("robot_watcher/robot_status", 1, &Controller::setRobotStatus, this);
 	robot_pos_sub = nh.subscribe("/STM/Position", 1, &Controller::setRobotPosition, this);
 	robot_speed_sub = nh.subscribe("/STM/GetSpeed", 1, &Controller::setRobotSpeed, this);
-	side_sub = nh.subscribe("side", 1, &Controller::setSide, this);
 	sonar_distance_sub = nh.subscribe("/ARDUINO/SonarDistance", 1, &Controller::processSonars, this);
 	robot_blocked_sub = nh.subscribe("/STM/RobotBlocked", 1, &Controller::processRobotBlocked, this);
+	
+	side_sub = nh.subscribe("side", 1, &Controller::setSide, this);
+	start_sub = nh.subscribe("start", 1, &Controller::onStartSignal, this);
 	
 	schedulerController = nh.serviceClient<ai_msgs::SetSchedulerState>("/scheduler/do");
 
 	setNodeStatus(NODE_READY);
+}
+
+void Controller::onStartSignal(const std_msgs::Empty& msg) {
+	started = true;
+
+	// If the scheduler is ready to go (it wait itself for required actions)
+	if (robot_state == NODE_READY) {
+		// We can start it !
+		ai_msgs::SetSchedulerState setter;
+		setter.request.running = true;
+		schedulerController.call(setter);
+	}
 }
 
 void Controller::setSide(const ai_msgs::SetSide::ConstPtr& msg) {
@@ -124,12 +139,12 @@ void Controller::setRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg) {
  *
  * @param[in]	msg	 The NodesStatus message
  */
-[[deprecated("panels and points should be handled in a separate package")]]
+/*[[deprecated("panels and points should be handled in a separate package")]]
 void Controller::checkForPanel(const ai_msgs::NodesStatus::ConstPtr &msg) {
 	if (getNodeStatus("PANEL", "board").status == NODE_READY) {
 		panelUp = 1;
 	}
-}
+}*/
 
 /**
  * @brief retrieve robot speed from can

@@ -17,6 +17,6 @@
 	</group>
 
 	<group ns="interface">
-		<include file="./src/robot/gpio_handler/launch/pkg.launch"/>
+		<include file="./src/interface/gpio_handler/launch/pkg.launch"/>
 	</group>
 </launch>

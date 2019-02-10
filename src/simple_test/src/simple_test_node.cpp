@@ -6,6 +6,7 @@ SimpleNode::SimpleNode(std::string name) : wentHere(true) {
     this->STMGoTo_pub = nh.advertise<can_msgs::Point>("/STM/GoTo", 1);
     this->STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement", 1);
 
+    ROS_INFO("Beginning movement !");
     moveSomewhereElse();
 }
 
@@ -16,7 +17,7 @@ void SimpleNode::moveDone(const can_msgs::Finish::ConstPtr& msg){
 
 void SimpleNode::moveSomewhereElse() {
     ros::Duration(5).sleep();
-    ROS_INFO("Start moving !");
+    ROS_INFO("Changing direction !");
     
     // Revert direction
     wentHere = !wentHere;

@@ -14,7 +14,6 @@
 
 #include "ai_msgs/RobotStatus.h"
 #include "ai_msgs/SetSide.h"
-#include "ai_msgs/NodesStatus.h"
 #include "ai_msgs/EmergencyStop.h"
 #include "ai_msgs/PointsScored.h"
 #include "ai_msgs/SetSchedulerState.h"
@@ -29,7 +28,7 @@
 #include "procedures_msgs/MoveAction.h"
 
 #include "std_msgs/Int8.h"
-
+#include "std_msgs/Empty.h"
 
 #include "robot_interface/protocol.h"
 
@@ -60,8 +59,9 @@ private:
 	ros::Subscriber nodes_status_sub;
 	ros::Subscriber robot_speed_sub;
 	ros::Subscriber sonar_distance_sub;
-	ros::Subscriber side_sub;
 	ros::Subscriber robot_blocked_sub;
+	ros::Subscriber side_sub;
+	ros::Subscriber start_sub;
 
 	ros::Publisher emergency_stop_pub;
 	ros::Publisher STM_SetPose_pub;
@@ -75,8 +75,11 @@ private:
 	int robot_pos_y;
 	int robot_angle;
 
+	int robot_state;
+
 	int8_t direction;
 
+	bool started;
 	bool emergency_stop;
 	bool side;
 	bool panelUp;
@@ -85,9 +88,10 @@ private:
 	void setRobotPosition(const can_msgs::Point::ConstPtr& msg);
 	void setRobotSpeed(const can_msgs::CurrSpeed::ConstPtr& msg);
 	void setSide(const ai_msgs::SetSide::ConstPtr& msg);
-	void checkForPanel(const ai_msgs::NodesStatus::ConstPtr & msg);
+	//void checkForPanel(const ai_msgs::NodesStatus::ConstPtr & msg);
 	void processSonars(const can_msgs::SonarDistance::ConstPtr& msg);
 	void processRobotBlocked(const can_msgs::RobotBlocked::ConstPtr& msg);
+	void onStartSignal(const std_msgs::Empty& msg);
 };
 
 /**

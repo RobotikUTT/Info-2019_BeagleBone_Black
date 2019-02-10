@@ -1,0 +1,2 @@
+string nodename
+bool optional

@@ -23,6 +23,8 @@ add_message_files(DIRECTORY msg
   Point2D.msg
   Argument.msg
   NodeStatusUpdate.msg
+  NodeRequirement.msg
+  AwaitNodesResult.msg
 )
 
 # Services files
@@ -32,6 +34,7 @@ add_service_files(
   ObjectManager.srv
   ComputeActionPoint.srv
   SetSchedulerState.srv
+  AwaitNodesRequest.srv
 )
 
 # Actions files
