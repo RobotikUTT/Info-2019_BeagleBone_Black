@@ -2,6 +2,7 @@
 
 NodeWatcher::NodeWatcher() : nh() {
     watcherService = nh.advertiseService(WATCHER_SERVICE, &NodeWatcher::nodeStatus, this);
+    updatePublisher = nh.advertise<ai_msgs::NodeStatusUpdate>("/ai/node_watcher/update", 10);
 }
 
 bool NodeWatcher::nodeStatus(ai_msgs::NodeReadiness::Request& req, ai_msgs::NodeReadiness::Response& res) {
@@ -20,6 +21,15 @@ bool NodeWatcher::nodeStatus(ai_msgs::NodeReadiness::Request& req, ai_msgs::Node
         // Return same data
         res.status = req.status;
         res.error_code = req.error_code;
+
+        // Publish update to subscribers
+        ai_msgs::NodeStatusUpdate updateMsg;
+        updateMsg.status = req.status;
+        updateMsg.error_code = req.error_code;
+        updateMsg.node_name = req.node_name;
+
+        updatePublisher.publish(updateMsg);
+
     } else {
         // Otherwise it is a getter
         auto found = nodes.find(req.node_name);

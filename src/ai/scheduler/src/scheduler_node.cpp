@@ -24,7 +24,6 @@ Scheduler::Scheduler() : PerformClient("scheduler", "ai") {
 		setNodeStatus(NODE_ERROR, 1);
 	}
 	
-	service_ready("ai", "scheduler", 1);
 	setNodeStatus(NODE_READY);
 }
 

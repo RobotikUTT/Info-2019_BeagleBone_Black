@@ -9,7 +9,9 @@
 
 #include <string>
 #include <ros/ros.h>
-#include <ai_msgs/NodeReadiness.h>
+#include "ai_msgs/NodeReadiness.h"
+
+#include "node_watcher/Node.hpp"
 /**
  * @defgroup Robot_watcher The Robot_watcher package
  * @{

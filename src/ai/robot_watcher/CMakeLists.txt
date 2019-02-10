@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   ai_msgs
+  node_watcher
 )
 
 catkin_python_setup()
@@ -17,7 +18,7 @@ catkin_python_setup()
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp rospy std_msgs ai_msgs
+  CATKIN_DEPENDS roscpp rospy std_msgs ai_msgs node_watcher
 #  DEPENDS system_lib
 )
 

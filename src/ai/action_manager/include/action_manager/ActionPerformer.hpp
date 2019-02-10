@@ -16,13 +16,14 @@
 #include "action_manager/ActionPoint.h"
 #include "action_manager/Action.hpp"
 
+#include "node_watcher/Node.hpp"
+
 #include "can_msgs/Finish.h"
 #include "can_msgs/Point.h"
 #include "can_msgs/Status.h"
 
 #include "procedures_msgs/OrPoint.h"
 
-#include "robot_watcher/Services/RobotServices.h"
 #include "robot_watcher/RStatus/State.h"
 
 typedef actionlib::SimpleActionServer<ai_msgs::PerformAction> PerformActionSrv;
@@ -34,15 +35,12 @@ typedef actionlib::SimpleActionServer<ai_msgs::PerformAction> PerformActionSrv;
  * It provide simple interface for creating robot action, and avoid tedious ROS objects
  * manipulation.
  */
-class ActionPerformer
+class ActionPerformer : public Node
 {
 public:
 	ActionPerformer(std::string name);
 	
 protected:
-	// ROS nodehandle is protected to let child use ros
-	ros::NodeHandle nh;
-
 	// Function defined by inherited actions
 	virtual ActionPoint computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, Point robotPos) = 0;
 	virtual void start() = 0;

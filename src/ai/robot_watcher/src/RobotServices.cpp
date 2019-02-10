@@ -8,7 +8,6 @@
 
 using namespace std;
 
-const string ROBOT_SRV = "/ai/robot_watcher/node_readiness";
 const float TIMEOUT = 20.0;
 
 
@@ -24,13 +23,15 @@ const float TIMEOUT = 20.0;
 void service_ready(const string name_space, const string package, const bool ready, const uint8_t error_code /*= 0*/) {
 	string node_name = "/" + name_space + "/" + package;
 
+	ROS_WARN_STREAM("Deprecated use of robot_watcher services functions for " << node_name << "");
+
 	try {
-		if (!ros::service::waitForService(ROBOT_SRV)) {
+		if (!ros::service::waitForService(WATCHER_SERVICE)) {
 			throw;
 		}
 
 		ros::NodeHandle nh;
-		ros::ServiceClient readyPub = nh.serviceClient<ai_msgs::NodeReadiness>(ROBOT_SRV);
+		ros::ServiceClient readyPub = nh.serviceClient<ai_msgs::NodeReadiness>(WATCHER_SERVICE);
 
 		ai_msgs::NodeReadiness msg;
 		msg.request.ready = ready;

@@ -19,12 +19,13 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   robot_watcher
   robot_interface
+  node_watcher
 )
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS can_msgs ai_msgs procedures_msgs std_msgs actionlib robot_watcher robot_interface
+  CATKIN_DEPENDS can_msgs ai_msgs procedures_msgs std_msgs actionlib robot_watcher robot_interface node_watcher
 #  DEPENDS system_lib
 )
 

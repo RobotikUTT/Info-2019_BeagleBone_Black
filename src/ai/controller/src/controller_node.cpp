@@ -15,33 +15,31 @@ typedef boost::shared_ptr<::procedures_msgs::MoveResult const> MoveResultConstPt
  * @param n	NodeHandle var
  * 
  */
-Controller::Controller(ros::NodeHandle *n) {
-	//attributes
-	nh = *n;
+Controller::Controller() : Node("controller", "ai") {
+	// attributes
 	side = SIDE_GREEN;
 	direction = NONE;
 	emergency_stop = false;
 	panelUp = 0;
-	points_done = 0;
 
 	// Advertisers
 	emergency_stop_pub = nh.advertise<ai_msgs::EmergencyStop>("emergency", 1);
 	STM_SetPose_pub = nh.advertise<can_msgs::Point>("/STM/SetPose", 1);
 	STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement", 1);
-	points_pub = nh.advertise<ai_msgs::PointsScored>("ai/points_scored", 1);
+	// TODO : side_pub = nh.advertise<ai_msgs::SetSide>("side", 1);
+
 
 	// Subscribers
 	status_sub = nh.subscribe("robot_watcher/robot_status", 1, &Controller::setRobotStatus, this);
 	robot_pos_sub = nh.subscribe("/STM/Position", 1, &Controller::setRobotPosition, this);
 	robot_speed_sub = nh.subscribe("/STM/GetSpeed", 1, &Controller::setRobotSpeed, this);
 	side_sub = nh.subscribe("side", 1, &Controller::setSide, this);
-	nodes_status_sub = nh.subscribe("robot_watcher/nodes_status", 1, &Controller::checkForPanel, this);
 	sonar_distance_sub = nh.subscribe("/ARDUINO/SonarDistance", 1, &Controller::processSonars, this);
 	robot_blocked_sub = nh.subscribe("/STM/RobotBlocked", 1, &Controller::processRobotBlocked, this);
 	
 	schedulerController = nh.serviceClient<ai_msgs::SetSchedulerState>("/scheduler/do");
 
-	service_ready("ai", "controller", 1);
+	setNodeStatus(NODE_READY);
 }
 
 void Controller::setSide(const ai_msgs::SetSide::ConstPtr& msg) {
@@ -128,12 +126,8 @@ void Controller::setRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg) {
  */
 [[deprecated("panels and points should be handled in a separate package")]]
 void Controller::checkForPanel(const ai_msgs::NodesStatus::ConstPtr &msg) {
-	for (int i = 0; i < msg->nodes_ready.size(); i++) {
-		if (msg->nodes_ready[i] == "/board/PANEL") {
-			panelUp = 1;
-			nodes_status_sub.shutdown();
-			//sendPoint();
-		}
+	if (getNodeStatus("PANEL", "board").status == NODE_READY) {
+		panelUp = 1;
 	}
 }
 
@@ -237,9 +231,6 @@ void Controller::processRobotBlocked(const can_msgs::RobotBlocked::ConstPtr &msg
 
 int main(int argc, char *argv[]) {
 	ros::init(argc, argv, "controller_node");
-
-	ros::NodeHandle nmh;
-	Controller node(&nmh);
-
+	Controller node;
 	ros::spin();
 }

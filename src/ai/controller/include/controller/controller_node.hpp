@@ -7,9 +7,10 @@
 
 #include <ros/ros.h>
 
-#include "robot_watcher/Services/RobotServices.h"
 #include "robot_watcher/RStatus/State.h"
 #include "robot_watcher/RStatus/Side.h"
+
+#include "node_watcher/Node.hpp"
 
 #include "ai_msgs/RobotStatus.h"
 #include "ai_msgs/SetSide.h"
@@ -48,11 +49,10 @@
 /**
  * @brief process inputs and change robot behavior according to that
  */
-class Controller
+class Controller : public Node
 {
 public:
-	Controller(ros::NodeHandle* n);
-
+	Controller();
 
 private:
 	ros::Subscriber status_sub;
@@ -63,7 +63,6 @@ private:
 	ros::Subscriber side_sub;
 	ros::Subscriber robot_blocked_sub;
 
-	ros::Publisher points_pub;
 	ros::Publisher emergency_stop_pub;
 	ros::Publisher STM_SetPose_pub;
 	ros::Publisher STM_AsserManagement_pub;
@@ -71,14 +70,10 @@ private:
 
 	ros::ServiceClient schedulerController;
 
-	ros::NodeHandle nh;
-
 	//robot pos
 	int robot_pos_x;
 	int robot_pos_y;
 	int robot_angle;
-
-	int points_done;
 
 	int8_t direction;
 

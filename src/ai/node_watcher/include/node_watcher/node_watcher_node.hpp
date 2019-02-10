@@ -9,11 +9,7 @@
 #include "node_watcher/Node.hpp"
 
 #include "ai_msgs/NodeReadiness.h"
-
-struct NodeStatus {
-    int status;
-    int errorCode;
-};
+#include "ai_msgs/NodeStatusUpdate.h"
 
 
 class NodeWatcher
@@ -21,6 +17,8 @@ class NodeWatcher
 private:
     ros::NodeHandle nh;
     ros::ServiceServer watcherService;
+    ros::Publisher updatePublisher;
+
     std::map<std::string, NodeStatus> nodes;
 public:
     NodeWatcher();

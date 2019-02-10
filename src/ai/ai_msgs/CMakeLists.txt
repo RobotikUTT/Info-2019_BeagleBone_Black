@@ -17,12 +17,12 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(DIRECTORY msg
   FILES
   PointsScored.msg
-  NodesStatus.msg
   RobotStatus.msg
   SetSide.msg
   EmergencyStop.msg
   Point2D.msg
   Argument.msg
+  NodeStatusUpdate.msg
 )
 
 # Services files

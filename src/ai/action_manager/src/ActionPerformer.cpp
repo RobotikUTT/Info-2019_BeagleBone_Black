@@ -2,7 +2,7 @@
 
 // TODO take robot status into consideration to handle ROBOT_HALT
 
-ActionPerformer::ActionPerformer(std::string name) : name(name), nh() {
+ActionPerformer::ActionPerformer(std::string name) : Node(name, "action"), name(name) {
 	// Service for action point computation
 	actionPointSrv  = nh.advertiseService(
 		getActionPointService(name),
@@ -26,7 +26,7 @@ ActionPerformer::ActionPerformer(std::string name) : name(name), nh() {
 }
 
 void ActionPerformer::ready() {
-	service_ready("performer", name, 1);
+	setNodeStatus(NODE_READY);
 }
 
 bool ActionPerformer::_computeActionPoint(ai_msgs::ComputeActionPoint::Request& req, ai_msgs::ComputeActionPoint::Response& res) {

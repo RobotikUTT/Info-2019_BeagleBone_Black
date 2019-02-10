@@ -27,9 +27,9 @@ class RobotState(object):
 
 class WatcherState(object):
 
-	NODES_INIT    	= 0 # nodes initializing
-	NODES_RUNNING 	= 1 # nodes running
-	NODES_ERROR 	= 2 # at least 1 node error
+	NODES_INIT    	= 1 # nodes initializing
+	NODES_RUNNING 	= 2 # nodes running
+	NODES_ERROR 	= 3 # at least 1 node error
 
 	PIN_ON			= 0 # Game hold
 	PIN_OFF			= 1 # Game start

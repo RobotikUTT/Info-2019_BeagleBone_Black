@@ -15,4 +15,8 @@
 	<group ns="procedures">
 		<include file="./src/procedures/move/launch/pkg.launch"/>
 	</group>
+
+	<group ns="interface">
+		<include file="./src/robot/gpio_handler/launch/pkg.launch"/>
+	</group>
 </launch>

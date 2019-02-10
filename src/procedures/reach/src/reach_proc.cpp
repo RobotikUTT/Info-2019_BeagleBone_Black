@@ -101,9 +101,9 @@ void ReachActionPerfomer::timeoutCallback(const ros::TimerEvent& timer){
 
 
 int main(int argc, char** argv) {
-	ros::init(argc, argv, "reach_procedure");
+	ros::init(argc, argv, "reach");
 
-	ReachActionPerfomer performer(ros::this_node::getName());
+	ReachActionPerfomer performer("reach");
 	ros::spin();
 
 	return 0;

@@ -18,21 +18,38 @@ const int NODE_DESTROYED = 4;
 const std::string WATCHER_SERVICE = "/ai/node_watcher/node_readiness";
 
 /**
+ * Struct containing a node status
+ */
+struct NodeStatus {
+    int status;
+    int errorCode;
+};
+
+
+/**
  * Class describing a generic ROS node, registered to
  * the node_watcher_node.
  */
 class Node {
 private:
     std::string nodename;
+    NodeStatus status;
 
     ros::ServiceClient watcherClient;
 public:
-    Node(std::string name, std::string package, bool callInit = true);
+    Node(std::string name, std::string package);
     ~Node();
+
 protected:
     ros::NodeHandle nh;
 
+    // Status setter
     void setNodeStatus(int status, int errorCode = 0);
+
+    // Status getter
+    NodeStatus getNodeStatus(bool remote = false);
+    NodeStatus getNodeStatus(std::string nodename, std::string package);
+    NodeStatus getNodeStatus(std::string nodename);
 };
 
 #endif

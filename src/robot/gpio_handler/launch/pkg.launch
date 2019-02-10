@@ -1,0 +1,3 @@
+<launch>
+	<node name="gpio_handler" pkg="gpio_handler" type="gpio_handler_node.py" output="screen" required="True" />
+</launch>
