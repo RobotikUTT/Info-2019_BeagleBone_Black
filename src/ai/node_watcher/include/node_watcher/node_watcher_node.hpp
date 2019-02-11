@@ -6,6 +6,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <memory>
 
 #include "node_watcher/Node.hpp"
 #include "node_watcher/NodesAwaiter.hpp"
@@ -30,7 +31,7 @@ private:
 
     std::map<std::string, NodeStatus> nodes;
 
-    std::vector<NodesAwaiter> waiters;
+    std::vector<std::shared_ptr<NodesAwaiter>> waiters;
 public:
     NodeWatcher();
 

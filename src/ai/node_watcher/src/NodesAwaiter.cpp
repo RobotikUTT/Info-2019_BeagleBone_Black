@@ -50,15 +50,11 @@ void NodesAwaiter::updateStatus(std::string nodename, NodeStatus status) {
  */
 void NodesAwaiter::checkFinished() {
 	for (const auto& next : this->requirements) {
-		ROS_INFO_STREAM("node " << next.first << " has state " << next.second);
 		// If some node isn't alive
 		if ((next.second & ALIVE) == 0) {
-			ROS_INFO_STREAM("not alive leaving");
 			return;
 		}
 	}
-
-	ROS_INFO_STREAM("sending results");
 
 
 	// If all nodes are alive
@@ -85,8 +81,6 @@ void NodesAwaiter::sendResults(bool timered /*= false*/) {
 	
 	// Add missing nodes if any
 	for (const auto& next : this->requirements) {
-		ROS_INFO_STREAM("node " << next.first << " has state " << next.second);
-
 		// If some node isn't alive
 		if ((next.second & ALIVE) == 0) {
 			// Rebuild requirement
@@ -107,7 +101,6 @@ void NodesAwaiter::sendResults(bool timered /*= false*/) {
 
 	// Publish result
 	this->resultPub.publish(result);
-
 }
 
 bool NodesAwaiter::isFinished() const {

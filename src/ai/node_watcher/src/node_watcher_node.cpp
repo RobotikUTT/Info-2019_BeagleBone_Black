@@ -23,15 +23,15 @@ NodeStatus NodeWatcher::getNodeStatus(std::string name) {
 }
 
 bool NodeWatcher::awaitNodes(ai_msgs::AwaitNodesRequest::Request& req, ai_msgs::AwaitNodesRequest::Response& res) {
-    NodesAwaiter waiter(req, res, waitResultPublisher, nh);
+    std::shared_ptr<NodesAwaiter> waiter = std::make_shared<NodesAwaiter>(req, res, waitResultPublisher, nh);
 
     // Add all current states to node
     for (const auto& next : this->nodes) {
-		waiter.updateStatus(next.first, next.second);
+		waiter->updateStatus(next.first, next.second);
 	}
     
     // Add to list of waiters if not already done
-    if (!waiter.isFinished()) {
+    if (!waiter->isFinished()) {
         this->waiters.push_back(waiter);
     }
 }
@@ -40,18 +40,18 @@ bool NodeWatcher::awaitNodes(ai_msgs::AwaitNodesRequest::Request& req, ai_msgs::
  * Change a node status for all waiters, and clear done waiters as well
  */
 void NodeWatcher::updateWaiters(std::string name, NodeStatus status) {
-    std::vector<NodesAwaiter>::iterator i = waiters.begin();
+    std::vector<std::shared_ptr<NodesAwaiter>>::iterator i = waiters.begin();
 
     // Loop from [https://stackoverflow.com/questions/596162/can-you-remove-elements-from-a-stdlist-while-iterating-through-it]
     while (i != waiters.end()) {
         // Remove done elements
-        if (!(*i).isFinished()) {
+        if (!(*i)->isFinished()) {
             i = waiters.erase(i);
         }
         
         // Otherwise update them
         else {
-            (*i).updateStatus(name, status);
+            (*i)->updateStatus(name, status);
             ++i;
         }
     }
