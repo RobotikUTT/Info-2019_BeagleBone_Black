@@ -160,7 +160,7 @@ public:
     virtual bool init(const std::string &device, bool loopback) = 0;
     
     /**
-     * Recover interface after errors and emergency stops
+     * Recover interface after errors and proximity stops
      * 
      * @return true if device was recovered succesfully, false otherwise
      */

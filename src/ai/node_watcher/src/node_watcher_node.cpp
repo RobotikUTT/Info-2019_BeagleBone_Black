@@ -46,7 +46,7 @@ void NodeWatcher::updateWaiters(std::string name, NodeStatus status) {
     // Loop from [https://stackoverflow.com/questions/596162/can-you-remove-elements-from-a-stdlist-while-iterating-through-it]
     while (i != waiters.end()) {
         // Remove done elements
-        if (!(*i)->isFinished()) {
+        if ((*i)->isFinished()) {
             i = waiters.erase(i);
         }
         

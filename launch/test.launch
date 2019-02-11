@@ -1,7 +1,6 @@
 <launch>
-	<!--<rosparam command="load" file="param/server_param.yaml" />
+	<rosparam command="load" file="param/server_param.yaml" />
 	<group ns="ai">
-		<include file="./src/ai/robot_watcher/launch/pkg.launch"/>
 		<include file="./src/ai/node_watcher/launch/pkg.launch"/>
 	</group>
 	<group ns="test_controller">
@@ -11,25 +10,6 @@
 		<include file="./src/ros_can/robot_interface/launch/pkg.launch"/>
 		<include file="./src/ros_can/socketcan_bridge/launch/pkg.launch"/>
 	</group>
-	<group ns="interface">
-		<include file="./src/interface/gpio_handler/launch/pkg.launch"/>
-	</group>-->
-	<rosparam command="load" file="param/server_param.yaml" />
-	<group ns="ai">
-		<include file="./src/ai/node_watcher/launch/pkg.launch"/>
-		<include file="./src/ai/controller/launch/pkg.launch"/>
-		<include file="./src/ai/scheduler/launch/pkg.launch"/>
-	</group>
-	
-	<group ns="ros_can">
-		<include file="./src/ros_can/robot_interface/launch/pkg.launch"/>
-		<include file="./src/ros_can/socketcan_bridge/launch/pkg.launch"/>
-	</group>
-
-	<group ns="procedures">
-		<include file="./src/procedures/move/launch/pkg.launch"/>
-	</group>
-
 	<group ns="interface">
 		<include file="./src/interface/gpio_handler/launch/pkg.launch"/>
 	</group>

@@ -20,7 +20,7 @@ const float TIMEOUT = 20.0;
  * @param[in]  error_code  The error code if nessesary
  * 
  */
-void service_ready(const string name_space, const string package, const bool ready, const uint8_t error_code /*= 0*/) {
+void service_ready(const string name_space, const string package, const int state, const uint8_t error_code /*= 0*/) {
 	string node_name = "/" + name_space + "/" + package;
 
 	ROS_WARN_STREAM("Deprecated use of robot_watcher services functions for " << node_name << "");
@@ -34,16 +34,9 @@ void service_ready(const string name_space, const string package, const bool rea
 		ros::ServiceClient readyPub = nh.serviceClient<ai_msgs::NodeReadiness>(WATCHER_SERVICE);
 
 		ai_msgs::NodeReadiness msg;
-		msg.request.ready = ready;
+		msg.request.status = state;
 		msg.request.node_name = node_name;
-
-		if (ready) {
-			ROS_INFO_STREAM("Node " << node_name << " initialized.");
-			msg.request.error_code = 0;
-		} else {
-			ROS_ERROR_STREAM("Node " << node_name << " not initialized.");
-			msg.request.error_code = error_code;
-		}
+		msg.request.error_code = error_code;
 
 		if (!readyPub.call(msg)) {
 			throw;

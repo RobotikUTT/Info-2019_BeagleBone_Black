@@ -10,13 +10,13 @@ Controller::Controller() : Node("controller", "ai") {
 	// attributes
 	side = SIDE_GREEN;
 	direction = NONE;
-	emergency_stop = false;
+	proximity_stop = false;
 	panelUp = 0;
-	started = false;
+	startSignalReceived = false;
 	robot_state = ROBOT_INIT;
 
 	// Advertisers
-	emergency_stop_pub = nh.advertise<ai_msgs::EmergencyStop>("emergency", 1);
+	proximity_stop_pub = nh.advertise<ai_msgs::ProximityStop>("proximity", 1);
 	STM_SetPose_pub = nh.advertise<can_msgs::Point>("/STM/SetPose", 1);
 	STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement", 1);
 
@@ -37,6 +37,10 @@ Controller::Controller() : Node("controller", "ai") {
 	if (waitForNodes(2)) {
 		// Set as ready
 		setNodeStatus(NODE_READY);
+
+		// If start signal was received during waiting
+		this->robot_state = ROBOT_READY;
+		start();
 	} else {
 		setNodeStatus(NODE_ERROR);
 	}
@@ -44,10 +48,13 @@ Controller::Controller() : Node("controller", "ai") {
 }
 
 void Controller::onStartSignal(const std_msgs::Empty& msg) {
-	started = true;
+	this->startSignalReceived = true;
+	start();
+}
 
-	// If the scheduler is ready to go (it wait itself for required actions)
-	if (robot_state == NODE_READY) {
+void Controller::start() {
+	// If nodes are ready and start signal is received
+	if (this->robot_state == ROBOT_READY) {
 		// We can start it !
 		ai_msgs::SetSchedulerState setter;
 		setter.request.running = true;
@@ -170,13 +177,13 @@ void Controller::setRobotSpeed(const can_msgs::CurrSpeed::ConstPtr &msg) {
 }
 
 /**
- * @brief process sonars data to detect if an emergency stop is
+ * @brief process sonars data to detect if an proximity stop is
  * mandatory
  *
  * @param[in] msg message containing sonars data
  */
 void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr &msg) {
-	bool last_emergency_value = emergency_stop;
+	bool last_proximity_value = proximity_stop;
 	uint8_t front_left, front_right,
 		back_left, back_right;
 
@@ -185,11 +192,11 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr &msg) {
 	back_left = msg->dist_back_left;
 	back_right = msg->dist_back_right;
 	/*
-	 * Emergency stop is enabled in case the distance
+	 * Proximity stop is enabled in case the distance
 	 * become less or equals than limit distances in
 	 * the current direction.
 	 */
-	emergency_stop = (
+	proximity_stop = (
 		direction == FORWARD && (
 			front_left <= SONAR_MIN_DIST_FORWARD + 6 ||
 			front_right <= SONAR_MIN_DIST_FORWARD + 16
@@ -201,19 +208,19 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr &msg) {
 		)
 	);
 
-	if (last_emergency_value != emergency_stop) {
-		ai_msgs::EmergencyStop emergency_msg;
-		emergency_msg.emergency_set = emergency_stop;
-		emergency_stop_pub.publish(emergency_msg);
+	if (last_proximity_value != proximity_stop) {
+		ai_msgs::ProximityStop proximity_msg;
+		proximity_msg.proximity_set = proximity_stop;
+		proximity_stop_pub.publish(proximity_msg);
 
-		if (emergency_stop) {
+		if (proximity_stop) {
 			ROS_WARN("SET EMG");
 		} else {
 			ROS_WARN("UNSET EMG");
 		}
 
 		can_msgs::Status can_msg;
-		if (emergency_stop) {
+		if (proximity_stop) {
 			can_msg.value = SETEMERGENCYSTOP;
 		}
 		else {

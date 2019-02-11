@@ -35,6 +35,7 @@
   <depend>can_msgs</depend>
   <depend>robot_watcher</depend>
   <exec_depend>message_runtime</exec_depend>
+  <depend>node_watcher</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

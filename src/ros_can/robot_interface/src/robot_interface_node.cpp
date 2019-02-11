@@ -47,7 +47,7 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->STM_SetParam_sub 				= nh.subscribe("/STM/SetParam",						10, 	&CanInterfaceNode::STMSetParam, 		this);
 	this->PANEL_point_sub 				= nh.subscribe("/PANEL/AddPoint",					10, 	&CanInterfaceNode::PANELAddPoint, 		this);
 
-	service_ready("ros_can", "interface", 2);
+	service_ready("ros_can", "interface", NODE_READY);
 }
 
 /**
@@ -271,7 +271,7 @@ void CanInterfaceNode::PANELAddPoint(const std_msgs::Int8::ConstPtr& msg){
  * 				-5 = set emrg stop
  * 				-6 = next order
  * 				-7 = reset orders
- * 				-8 = reset emergency stop 
+ * 				-8 = reset proximity stop 
  *
  * @param[in]  msg   The message
  */

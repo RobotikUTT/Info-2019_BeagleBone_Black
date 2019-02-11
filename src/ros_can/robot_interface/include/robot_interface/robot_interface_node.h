@@ -27,6 +27,8 @@
 #include "std_msgs/Empty.h"
 #include "std_msgs/Int8.h"
 
+#include "node_watcher/Node.hpp"
+
 /**
  * @defgroup Robot_Interface The robot_interface package
  * @{

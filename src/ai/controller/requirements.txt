@@ -4,4 +4,3 @@
 /board/PANEL optional
 /ros_can/interface required
 /ai/scheduler required
-/procedure/move required

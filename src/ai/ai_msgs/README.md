@@ -8,20 +8,20 @@ Ce package permet de définir tout les [messages](#Msgs) et [services](#Srvs) li
 ### Msgs : 
 Les différents messages défini dans ce package sont : 
 
- - [EmergencyStop](#EmergencyStop): message contrôlant l'arret d'urgence
+ - [ProximityStop](#ProximityStop): message contrôlant l'arret d'urgence
  - [NodeStatus](#NodeStatus): message publiant le status de chaque node
  - [Point2D](#Point2D): message passant un point 2D
  - [RobotStatus](#RobotStatus): message publiant le statut du robot
  - [SetSide](#SetSide): message publiant le camp du robot
 
-#### *EmergencyStop*
+#### *ProximityStop*
 used between :
 
  - node ==> node
 
 | Type | Var name | Units | comments |
 |--|:--:|:--:|--|
-| Bool | emergency_set | X | 0: emergency off <br> 1: emergency on |
+| Bool | proximity_set | X | 0: proximity off <br> 1: proximity on |
 
 #### *NodeStatus*
 used between :

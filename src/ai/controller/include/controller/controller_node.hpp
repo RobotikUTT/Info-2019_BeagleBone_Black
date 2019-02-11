@@ -14,7 +14,7 @@
 
 #include "ai_msgs/RobotStatus.h"
 #include "ai_msgs/SetSide.h"
-#include "ai_msgs/EmergencyStop.h"
+#include "ai_msgs/ProximityStop.h"
 #include "ai_msgs/PointsScored.h"
 #include "ai_msgs/SetSchedulerState.h"
 
@@ -63,7 +63,7 @@ private:
 	ros::Subscriber side_sub;
 	ros::Subscriber start_sub;
 
-	ros::Publisher emergency_stop_pub;
+	ros::Publisher proximity_stop_pub;
 	ros::Publisher STM_SetPose_pub;
 	ros::Publisher STM_AsserManagement_pub;
 	ros::Publisher PANEL_Point_pub;
@@ -75,12 +75,13 @@ private:
 	int robot_pos_y;
 	int robot_angle;
 
+	// Robot state
 	int robot_state;
+	bool startSignalReceived;
 
 	int8_t direction;
 
-	bool started;
-	bool emergency_stop;
+	bool proximity_stop;
 	bool side;
 	bool panelUp;
 
@@ -92,6 +93,8 @@ private:
 	void processSonars(const can_msgs::SonarDistance::ConstPtr& msg);
 	void processRobotBlocked(const can_msgs::RobotBlocked::ConstPtr& msg);
 	void onStartSignal(const std_msgs::Empty& msg);
+
+	void start();
 };
 
 /**

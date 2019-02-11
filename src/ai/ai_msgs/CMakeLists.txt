@@ -19,7 +19,7 @@ add_message_files(DIRECTORY msg
   PointsScored.msg
   RobotStatus.msg
   SetSide.msg
-  EmergencyStop.msg
+  ProximityStop.msg
   Point2D.msg
   Argument.msg
   NodeStatusUpdate.msg

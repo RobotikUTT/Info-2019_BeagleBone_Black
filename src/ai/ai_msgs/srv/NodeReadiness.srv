@@ -2,9 +2,6 @@
 string node_name
 int8 status
 int8 error_code
-
-# TODO remove
-bool ready
 ---
 # Resultant node status
 int8 status
