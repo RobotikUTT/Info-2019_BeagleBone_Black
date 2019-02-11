@@ -49,6 +49,6 @@ void service_ready(const string name_space, const string package, const bool rea
 			throw;
 		}
 	} catch(...) {
-		ROS_ERROR_STREAM("status_services for '"<< node_name <<"' couldn't contact ai/game_status to send init notification.");
+		ROS_ERROR_STREAM("status_services for '"<< node_name <<"' couldn't contact node_watcher");
 	}
 }

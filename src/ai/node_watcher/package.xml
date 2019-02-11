@@ -12,6 +12,7 @@
   <!-- Dependencies -->
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
+  <depend>roslib</depend>
 
   <!-- Messages -->
   <depend>ai_msgs</depend>

@@ -1,3 +1,4 @@
 <launch>
+	<param name="controller_reqs" value="$(find controller)/nodeRequirements.txt" />
 	<node name="controller" pkg="controller" type="node" output="screen"/>
 </launch>

@@ -1,10 +1,11 @@
 #include "node_watcher/Node.hpp"
 
-Node::Node(std::string nodename, std::string package)
-    : nh(), nodename("/" + package + "/" + nodename) {
+Node::Node(string nodename, string package)
+    : nh(), nodepath("/" + package + "/" + nodename), nodename(nodename) {
 
     // Init node_watcher service client
-    watcherClient = nh.serviceClient<ai_msgs::NodeReadiness>(WATCHER_SERVICE);
+    watcherClient = nh.serviceClient<NodeReadiness>(WATCHER_SERVICE);
+    waiterClient = nh.serviceClient<AwaitNodesRequest>(NODES_AWAITER_SERVICE);
 
     // Wait for service to send init signal
     if (ros::service::waitForService(WATCHER_SERVICE)) {
@@ -18,6 +19,102 @@ Node::~Node() {
 }
 
 /**
+ * Wait for nodes described in node's package requirements.txt file
+ * 
+ * @return whether required nodes have proven to be alive
+ */
+bool Node::waitForNodes(int timeout) {
+    string filename = ros::package::getPath(this->nodename) + "/requirements.txt";
+
+    return waitForNodes(filename, timeout);
+}
+
+/**
+ * Wait for nodes described in given file
+ * 
+ * @return whether required nodes have proven to be alive
+ */
+bool Node::waitForNodes(string file, int timeout) {
+    std::vector<NodeRequirement> nodes;
+    std::ifstream filestream;
+    
+    filestream.open(file);
+
+    if (filestream.fail()) {
+        ROS_ERROR_STREAM("Unable to load dependency file : " + file);
+        return false;
+    }
+
+    // Parse file
+    string nodename;
+    string status;
+    int linenumber = 1;
+
+    // First element of line parsed as nodename
+    while(std::getline(filestream, nodename, ' ')) {
+        // Then the node optional argument
+        if (std::getline(filestream, status)) {
+            // Create requirement object
+            NodeRequirement currentNode;
+            currentNode.nodename = nodename;
+            currentNode.optional = status == "optional";
+
+            // Check for error
+            if (!currentNode.optional && status != "required") {
+                ROS_WARN_STREAM("parsing requirements from " << file << ": " << status
+                    << " is not a valid optional argument (optional or required)");
+            }
+
+            // Push it to the list
+            nodes.push_back(currentNode);
+        } else {
+            ROS_WARN_STREAM("parsing requirements from " << file << ": line " << linenumber
+                << " ignored due to lack of args");
+        }
+
+        linenumber += 1;
+    }
+
+    return waitForNodes(nodes, timeout);
+}
+
+/**
+ * Wait for given nodes to be alive
+ * 
+ * @return whether required nodes have proven to be alive
+ */
+bool Node::waitForNodes(std::vector<NodeRequirement>& nodes, int timeout) {
+    ROS_INFO_STREAM("Node " << nodename << " is waiting for " << nodes.size() << " other nodes to start");
+    
+    // Prepare request
+    AwaitNodesRequest request;
+    request.request.nodes = nodes;
+    request.request.timeout = timeout;
+    
+    // Call service to retrieve code
+    if (waiterClient.call(request)) {
+        int code = request.response.request_code;
+        boost::shared_ptr<AwaitNodesResult const> sharedResult;
+
+        // Wait for result
+        do {
+            sharedResult = ros::topic::waitForMessage<AwaitNodesResult>(NODES_AWAITER_RESULT_TOPIC, nh);
+            
+            // Result not retrieved
+            if(sharedResult == NULL){
+                ROS_ERROR_STREAM("Unable to wait for message");
+                return false;
+            }
+        } while(sharedResult->request_code != code);
+
+        return sharedResult->success;
+    } else {
+        ROS_ERROR_STREAM("Unabled to call nodes waiting service");
+        return false;
+    }
+}
+
+/**
  * Set current node status 
  */
 void Node::setNodeStatus(int status, int errorCode /*= 0*/) {
@@ -26,9 +123,9 @@ void Node::setNodeStatus(int status, int errorCode /*= 0*/) {
     this->status.errorCode = errorCode;
 
     // update remote version
-    ai_msgs::NodeReadiness msg;
+    NodeReadiness msg;
     msg.request.status = status;
-    msg.request.node_name = nodename;
+    msg.request.node_name = nodepath;
     msg.request.error_code = errorCode;
 
     if (watcherClient.call(msg)) {
@@ -36,7 +133,7 @@ void Node::setNodeStatus(int status, int errorCode /*= 0*/) {
     }
 
     ROS_ERROR_STREAM(
-        "unable to call watcher for " << nodename
+        "Unable to call watcher for " << nodename
     );
 }
 
@@ -45,7 +142,7 @@ void Node::setNodeStatus(int status, int errorCode /*= 0*/) {
  */
 NodeStatus Node::getNodeStatus(bool remote /*= false*/) {
     if (remote) {
-        return getNodeStatus(this->nodename);
+        return getNodeStatus(this->nodepath);
     } else {
         return this->status;
     }
@@ -54,17 +151,17 @@ NodeStatus Node::getNodeStatus(bool remote /*= false*/) {
 /**
  * Get an other node's status, with it's package name provided
  */
-NodeStatus Node::getNodeStatus(std::string nodename, std::string package) {
+NodeStatus Node::getNodeStatus(string nodename, string package) {
     return getNodeStatus("/" + package + "/" + nodename);
 }
 
 /**
  * Get an other node's status
  */
-NodeStatus Node::getNodeStatus(std::string nodename) {
-    ai_msgs::NodeReadiness msg;
+NodeStatus Node::getNodeStatus(string nodepath) {
+    NodeReadiness msg;
     msg.request.status = NODE_ASKING; // ask for status
-    msg.request.node_name = nodename;
+    msg.request.node_name = nodepath;
 
     if (watcherClient.call(msg)) {
         NodeStatus response;
@@ -74,6 +171,6 @@ NodeStatus Node::getNodeStatus(std::string nodename) {
     }
 
     ROS_ERROR_STREAM(
-        "unable to call watcher for " << nodename
+        "Unable to call watcher for " << nodepath
     );
 }

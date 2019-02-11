@@ -4,8 +4,8 @@ NodeWatcher::NodeWatcher() : nh() {
     watcherService = nh.advertiseService(WATCHER_SERVICE, &NodeWatcher::nodeStatus, this);
     waiterService = nh.advertiseService(NODES_AWAITER_SERVICE, &NodeWatcher::awaitNodes, this);
 
-    updatePublisher = nh.advertise<ai_msgs::NodeStatusUpdate>("/ai/node_watcher/update", 10);
-    waitResultPublisher = nh.advertise<ai_msgs::AwaitNodesResult>(NODES_AWAITER_RESULT_TOPIC, 10);
+    updatePublisher = nh.advertise<ai_msgs::NodeStatusUpdate>("/ai/node_watcher/update", 100);
+    waitResultPublisher = nh.advertise<ai_msgs::AwaitNodesResult>(NODES_AWAITER_RESULT_TOPIC, 100);
 }
 
 NodeStatus NodeWatcher::getNodeStatus(std::string name) {
@@ -23,7 +23,7 @@ NodeStatus NodeWatcher::getNodeStatus(std::string name) {
 }
 
 bool NodeWatcher::awaitNodes(ai_msgs::AwaitNodesRequest::Request& req, ai_msgs::AwaitNodesRequest::Response& res) {
-    std::shared_ptr<NodesAwaiter> waiter = std::make_shared<NodesAwaiter>(req, res, waitResultPublisher, nh);
+    std::shared_ptr<NodesAwaiter> waiter = std::make_shared<NodesAwaiter>(req, res, waitResultPublisher);
 
     // Add all current states to node
     for (const auto& next : this->nodes) {
@@ -34,8 +34,9 @@ bool NodeWatcher::awaitNodes(ai_msgs::AwaitNodesRequest::Request& req, ai_msgs::
     if (!waiter->isFinished()) {
         this->waiters.push_back(waiter);
     }
-}
 
+    return true;
+}
 /**
  * Change a node status for all waiters, and clear done waiters as well
  */
@@ -83,6 +84,8 @@ bool NodeWatcher::nodeStatus(ai_msgs::NodeReadiness::Request& req, ai_msgs::Node
         updatePublisher.publish(updateMsg);
 
         this->updateWaiters(req.node_name, status);
+
+        ROS_INFO_STREAM("Node " << req.node_name << " registered with status " << STATUS_STRINGS[req.status]);
     } else {
         // Otherwise it is a getter
         NodeStatus got = getNodeStatus(req.node_name);

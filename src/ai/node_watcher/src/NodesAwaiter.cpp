@@ -1,7 +1,7 @@
 #include "node_watcher/NodesAwaiter.hpp"
 
-NodesAwaiter::NodesAwaiter(ai_msgs::AwaitNodesRequest::Request& req, ai_msgs::AwaitNodesRequest::Response& res, ros::Publisher& pub, ros::NodeHandle& nh)
-	: finished(false), resultPub(pub) {
+NodesAwaiter::NodesAwaiter(ai_msgs::AwaitNodesRequest::Request& req, ai_msgs::AwaitNodesRequest::Response& res, ros::Publisher& pub)
+	: finished(false), resultPub(pub), nh() {
 
 	// Get a request code and set it as response
 	this->requestCode = NodesAwaiter::lastRequestCode++;
@@ -15,7 +15,10 @@ NodesAwaiter::NodesAwaiter(ai_msgs::AwaitNodesRequest::Request& req, ai_msgs::Aw
 	// Set timeout callback (last true is for oneshot parameter)
 	timeout = nh.createTimer(ros::Duration(req.timeout), &NodesAwaiter::onTimeout, this, true);
 
-	this->checkFinished();
+	// Send result now	
+	if (req.nodes.size() == 0) {
+		this->sendResults();
+	}
 }
 
 // Static request code counter 
@@ -57,23 +60,22 @@ void NodesAwaiter::checkFinished() {
 	}
 
 
-	// If all nodes are alive
-	this->sendResults();
+	// If all nodes are alive, we wait just enough for service to return request_code
+	// in case it was called before return
+	nh.createTimer(ros::Duration(0.1), &NodesAwaiter::onTimeout, this, true);
 	return;
 }
 
 void NodesAwaiter::onTimeout(const ros::TimerEvent& timer) {
-	this->sendResults(true);
+	this->sendResults();
 }
 
-void NodesAwaiter::sendResults(bool timered /*= false*/) {
+void NodesAwaiter::sendResults() {
 	// Make sure result is sent once and cancel timeout
 	if (this->finished) return;
 	this->finished = true;
 
-	if (!timered) {
-		timeout.stop();
-	}
+	timeout.stop();
 
 	ai_msgs::AwaitNodesResult result;
 	result.success = true;
@@ -85,16 +87,21 @@ void NodesAwaiter::sendResults(bool timered /*= false*/) {
 		if ((next.second & ALIVE) == 0) {
 			// Rebuild requirement
 			ai_msgs::NodeRequirement requirement;
-			requirement.nodename = next.first; // duplicate string to avoid error
+			requirement.nodename = next.first;
 			requirement.optional = (next.second & OPTIONAL) > 0;
 
 			// Push to missing ones
 			result.missing_nodes.push_back(requirement);
 
+			
 			// If that node is mandatory
 			if ((next.second & OPTIONAL) == 0) {
+				ROS_ERROR_STREAM("Some node required " << next.first << " but it did not woke up in time");
+
 				// Set success to false
 				result.success = false;
+			} else {
+				ROS_WARN_STREAM("Some node required " << next.first << " but it did not woke up in time");
 			}
 		}
 	}

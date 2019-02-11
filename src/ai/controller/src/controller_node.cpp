@@ -1,13 +1,4 @@
-/** @file controller_node.cpp
-*		@brief Node class wich controls all other nodes other robot watcher.
-*		
-*		@author Alexis CARE
-*/
-
 #include "controller/controller_node.hpp"
-
-//define typedef for lisibility
-typedef boost::shared_ptr<::procedures_msgs::MoveResult const> MoveResultConstPtr;
 
 /**
  * @brief Constructs the object.
@@ -42,7 +33,14 @@ Controller::Controller() : Node("controller", "ai") {
 	
 	schedulerController = nh.serviceClient<ai_msgs::SetSchedulerState>("/scheduler/do");
 
-	setNodeStatus(NODE_READY);
+	// Wait for required nodes
+	if (waitForNodes(2)) {
+		// Set as ready
+		setNodeStatus(NODE_READY);
+	} else {
+		setNodeStatus(NODE_ERROR);
+	}
+	
 }
 
 void Controller::onStartSignal(const std_msgs::Empty& msg) {
@@ -186,12 +184,6 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr &msg) {
 	front_right = msg->dist_front_right;
 	back_left = msg->dist_back_left;
 	back_right = msg->dist_back_right;
-
-	// ROS_INFO_STREAM("DIST|" << front_left << "|" << front_right
-	// << "|" << left << "|"	<< right << "|" << back);
-	/*ROS_INFO("DIST|%u|%u|%u|%u|",front_left,
-		front_right, back_left, back_right);*/
-
 	/*
 	 * Emergency stop is enabled in case the distance
 	 * become less or equals than limit distances in

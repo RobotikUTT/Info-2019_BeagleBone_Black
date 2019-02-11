@@ -22,6 +22,7 @@ Scheduler::Scheduler() : PerformClient("scheduler", "ai") {
 	} catch(const char* error) {
 		ROS_ERROR_STREAM("unable to initialize scheduler due to parsing error: " << error);
 		setNodeStatus(NODE_ERROR, 1);
+		return;
 	}
 	
 	setNodeStatus(NODE_READY);

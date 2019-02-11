@@ -25,10 +25,6 @@ ActionPerformer::ActionPerformer(std::string name) : Node(name, "action"), name(
 	actionServer->start();
 }
 
-void ActionPerformer::ready() {
-	setNodeStatus(NODE_READY);
-}
-
 bool ActionPerformer::_computeActionPoint(ai_msgs::ComputeActionPoint::Request& req, ai_msgs::ComputeActionPoint::Response& res) {
 	// Extract data from request and call performer function
 	ActionPoint result = computeActionPoint(

@@ -52,7 +52,6 @@ protected:
 	// Function managing the action
 	void actionPerformed();
 	void actionPaused();
-	void ready();
 private:
 	std::vector<ai_msgs::Argument> _args;
 

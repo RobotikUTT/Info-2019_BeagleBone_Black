@@ -82,14 +82,21 @@ class GPIOHandlerNode(object):
 
 			# Wait for next cycle
 			r.sleep()
-		
+			
 		# Monitoring over : idling
-		rospy.spin()
+		if not rospy.is_shutdown():
+			rospy.spin()
 
 		# After spinning, setting LEDs to low as it shutdown
 		GPIO.output(RED_LED, GPIO.LOW)
 		GPIO.output(PINK_LED, GPIO.LOW)
 		GPIO.output(GREEN_LED, GPIO.LOW)
+
+		# Leave GPIO guy if need
+		simulated = rospy.get_param("/simulation", False)
+		if simulated:
+			from gpio_handler.GPIOemulator.EmulatorGUI import app
+			app.callback()
 
 
 	# Initialize GPIOs ports depending on whether it is a simulation or not

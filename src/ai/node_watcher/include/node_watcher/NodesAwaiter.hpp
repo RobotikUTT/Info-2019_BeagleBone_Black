@@ -13,9 +13,6 @@
 #include <map>
 #include <vector>
 
-const std::string NODES_AWAITER_SERVICE = "/ai/node_watcher/wait"; 
-const std::string NODES_AWAITER_RESULT_TOPIC = "/ai/node_watcher/wait_result"; 
-
 const int OPTIONAL = 1;
 const int ALIVE = 2;
 
@@ -25,8 +22,7 @@ public:
 	NodesAwaiter(
 		ai_msgs::AwaitNodesRequest::Request& req,
 		ai_msgs::AwaitNodesRequest::Response& res,
-		ros::Publisher& resultPub,
-		ros::NodeHandle& nh
+		ros::Publisher& resultPub
 	);
 
 	void updateStatus(std::string nodename, NodeStatus status);
@@ -36,13 +32,14 @@ public:
 protected:
 	ros::Publisher resultPub;
 	ros::Timer timeout;
+	ros::NodeHandle nh;
 
 	int requestCode;
 	bool finished;
 	std::map<std::string, int> requirements;
 
 	void checkFinished();
-	void sendResults(bool timered = false);
+	void sendResults();
 	void onTimeout(const ros::TimerEvent& timer);
 };
 

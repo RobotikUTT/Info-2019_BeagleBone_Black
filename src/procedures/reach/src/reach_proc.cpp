@@ -14,7 +14,7 @@ ReachActionPerfomer::ReachActionPerfomer(std::string name) : ActionPerformer(nam
 	this->STMRotation_pub = nh.advertise<can_msgs::Point>("/STM/Rotation", 1);
 	this->STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement", 1);
 
-	ready();
+	setNodeStatus(NODE_READY);
 }
 
 ActionPoint ReachActionPerfomer::computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, Point robotPos) {

@@ -1,0 +1,7 @@
+/board/STM optional
+/board/ARDUINO optional
+/board/ZIGBEE optional
+/board/PANEL optional
+/ros_can/interface required
+/ai/scheduler required
+/procedure/move required
