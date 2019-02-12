@@ -8,9 +8,9 @@
 #include <string>
 #include <memory>
 
-typedef std::shared_ptr<Action> ActionPtr;
+class ActionBlock;
 
-class ActionBlock : public Action {
+class ActionBlock : public Action, public std::enable_shared_from_this<ActionBlock> {
 public:
   ActionBlock(std::string name);
 
@@ -21,6 +21,9 @@ public:
   ActionPoint& actionPoint(Point& previousPoint) override;
 
   double distanceToTravel(Point& robot_pos) override;
+
+  // Inherited setter for action state
+  void setState(int state) override;
 
   // Equality
   virtual bool equals(const Action& action) const override;

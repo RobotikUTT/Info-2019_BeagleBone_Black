@@ -8,7 +8,8 @@
  * @brief default constructor
  */
 Action::Action(std::string name)
-	: _name(name), _state(ActionStatus::IDLE), _points(0), _sync(false), _actionPoint(NULL) { }
+	: _name(name), _state(ActionStatus::IDLE), _points(0), _sync(false),
+		_actionPoint(NULL), _parent(NULL) { }
 
 /**
  * @brief return the priority of the action according to it's points and distance
@@ -44,8 +45,21 @@ void Action::setSync(bool sync) {
 	_sync = sync;
 }
 
+void Action::setParent(ActionPtr parent) {
+	this->_parent = parent;
+}
+
 void Action::setBasePoints(int points) {
 	_points = points;
+}
+
+void Action::setState(int state) {
+	_state = state;
+
+	// If not resuming, we propagate to parent
+	if (state != ActionStatus::IDLE && this->_parent != NULL) {
+		this->_parent->setState(state);
+	}
 }
 
 /**

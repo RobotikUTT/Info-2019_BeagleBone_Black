@@ -13,9 +13,12 @@
 #include <ros/ros.h>
 
 #include "action_manager/PerformClient.hpp"
+#include "action_manager/Point.hpp"
 
 #include "ai_msgs/Side.h"
 #include "ai_msgs/SetSchedulerState.h"
+
+#include "can_msgs/Point.h"
 
 #include "scheduler/ActionsParser.hpp"
 #include "scheduler/ActionFilePath.hpp"
@@ -34,14 +37,19 @@ public:
 private:
 	ros::NodeHandle nh;
 	ros::ServiceServer control_srv;
-
+	ros::Subscriber robotPosition_sub;
+	
 	ActionPtr rootAction;
+	ActionPtr currentAction;
+
+	Point robotPosition;
 
 	bool side;
 	bool running;
 
 	bool setState(SetSchedulerState::Request &req, SetSchedulerState::Response &res);
-	
+	void setRobotPosition(const can_msgs::Point::ConstPtr& msg);
+
 	void stop();
 	void resume();
 	void nextAction();

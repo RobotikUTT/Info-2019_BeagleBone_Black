@@ -21,6 +21,9 @@ std::list<ActionPtr> ActionBlock::subactions() const {
 }
 
 void ActionBlock::addAction(ActionPtr action) {
+	// Set ourself as this little node's parent
+	action->setParent(shared_from_this());
+
 	// copy and store reference here
 	_actions.push_back(std::move(action));
 }
@@ -73,6 +76,51 @@ ActionPoint& ActionBlock::actionPoint(Point& previousPoint) {
 	);
 
 	return *_actionPoint;
+}
+
+/**
+ * Set action block state, in case the action is requested to be paused
+ * or finished, it first check all possible action inside the block is
+ * paused or finished, and then pause parent, or do not pause
+ */
+void ActionBlock::setState(int state) {
+	// If we set action as something else than waiting
+	// we do a ascending recursion
+	if (state != ActionStatus::IDLE) {
+		// If we encounter a pause, the new state become paused
+		bool translateToPause = false;
+
+		// Check all children make the state valid
+		for (const auto& next : subactions()) {
+			// Action to be performed found
+			if (next->state() == ActionStatus::IDLE) {
+				// deny state
+				return;
+			} else if (next->state() == ActionStatus::PAUSED) {
+				// If one action is done, it cannot be finished or impossible
+				translateToPause = true;
+			}
+
+			// If it's a unfinished sync action
+			if (next->isSync() && next->state() != ActionStatus::DONE) {
+				// No need to proceed further, we can apply state
+				break;
+			}
+		}
+
+		// Apply state
+		Action::setState(translateToPause ? ActionStatus::PAUSED : state);
+	}
+	
+	// Otherwise if we resume action
+	else if (this->state() == ActionStatus::PAUSED) {
+		// We perform a descending unpause without questions
+		for (const auto& next : subactions()) {
+			if (next->state() == ActionStatus::PAUSED) {
+				next->setState(ActionStatus::IDLE);
+			}
+		}
+	}
 }
 
 // Helped with https://stackoverflow.com/questions/2825424/comparing-objects-and-inheritance

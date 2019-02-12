@@ -16,19 +16,7 @@ public:
 	double score;
 };
 
-/**
- * Compute optimal atomic action to run from now, based on time of
- * realisation and points it give.
- * 
- * This function respect the sync parameter and therefore return the
- * right action to do.
- */
-ActionChoice getOptimalNextAtomic(ActionPtr action, Point& robotPos);
-
-/**
- * Remove actions from paused state
- * @return whether some actions were previously paused and now resumed
- */
-bool unpauseActions(ActionPtr action); // TODO
-
+namespace ActionTools {
+	ActionChoice getOptimalNextAtomic(ActionPtr action, Point& robotPos);
+}
 #endif
