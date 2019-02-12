@@ -9,13 +9,13 @@ Node::Node(string nodename, string package)
 
     // Wait for service to send init signal
     if (ros::service::waitForService(WATCHER_SERVICE)) {
-        setNodeStatus(NODE_INIT);
+        setNodeStatus(NodeStatus::NODE_INIT);
     }
 
 }
 
 Node::~Node() {
-    setNodeStatus(NODE_DESTROYED);
+    setNodeStatus(NodeStatus::NODE_DESTROYED);
 }
 
 /**
@@ -117,16 +117,15 @@ bool Node::waitForNodes(std::vector<NodeRequirement>& nodes, int timeout) {
 /**
  * Set current node status 
  */
-void Node::setNodeStatus(int status, int errorCode /*= 0*/) {
+void Node::setNodeStatus(int state_code, int errorCode /*= 0*/) {
     // update self status
-    this->status.status = status;
-    this->status.errorCode = errorCode;
+    this->status.state_code = state_code;
+    this->status.error_code = errorCode;
 
     // update remote version
     NodeReadiness msg;
-    msg.request.status = status;
+    msg.request.status = this->status;
     msg.request.node_name = nodepath;
-    msg.request.error_code = errorCode;
 
     if (watcherClient.call(msg)) {
         return;
@@ -160,14 +159,11 @@ NodeStatus Node::getNodeStatus(string nodename, string package) {
  */
 NodeStatus Node::getNodeStatus(string nodepath) {
     NodeReadiness msg;
-    msg.request.status = NODE_ASKING; // ask for status
+    msg.request.status.state_code = NodeStatus::NODE_ASKING; // ask for status
     msg.request.node_name = nodepath;
 
     if (watcherClient.call(msg)) {
-        NodeStatus response;
-        response.status = msg.response.status;
-        response.errorCode = msg.response.error_code;
-        return response;
+        return msg.response.status;
     }
 
     ROS_ERROR_STREAM(

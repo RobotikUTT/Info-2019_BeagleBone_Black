@@ -51,7 +51,7 @@ namespace socketcan_bridge
 
   void SocketCANToTopic::frameCallback(const can::Frame& f)
     {
-      // ROS_DEBUG("Message came in: %s", can::tostring(f, true).c_str());
+      ROS_DEBUG("Message came in: %s", can::tostring(f, true).c_str());
       can::Frame frame = f;  // copy the frame first, cannot call isValid() on const.
       if (!frame.isValid())
       {

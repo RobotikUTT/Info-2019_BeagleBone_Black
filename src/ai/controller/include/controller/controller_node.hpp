@@ -7,19 +7,19 @@
 
 #include <ros/ros.h>
 
-#include "robot_watcher/RStatus/State.h"
-#include "robot_watcher/RStatus/Side.h"
-
 #include "node_watcher/Node.hpp"
 
+#include "ai_msgs/NodeStatus.h"
+#include "ai_msgs/Side.h"
+
 #include "ai_msgs/RobotStatus.h"
-#include "ai_msgs/SetSide.h"
 #include "ai_msgs/ProximityStop.h"
+#include "ai_msgs/StartRobot.h"
 #include "ai_msgs/PointsScored.h"
 #include "ai_msgs/SetSchedulerState.h"
 
 #include "can_msgs/Point.h"
-#include "can_msgs/Status.h"
+#include "can_msgs/STMStatus.h"
 #include "can_msgs/SonarDistance.h"
 #include "can_msgs/Frame.h"
 #include "can_msgs/CurrSpeed.h"
@@ -28,13 +28,6 @@
 #include "procedures_msgs/MoveAction.h"
 
 #include "std_msgs/Int8.h"
-#include "std_msgs/Empty.h"
-
-#include "robot_interface/protocol.h"
-
-#define FORWARD 1
-#define BACKWARD -1
-#define NONE 0
 
 /**
  * @defgroup Controller The Controller package
@@ -44,6 +37,14 @@
 #define SONAR_MIN_DIST_FORWARD 30 // in cm
 #define SONAR_MIN_DIST_BACKWARD	10 // in cm
 
+using ros::Subscriber;
+using ros::Publisher;
+using ros::ServiceClient;
+
+// Use ai_msgs namespace to simplify usage
+using namespace ai_msgs;
+
+using can_msgs::Point;
 
 /**
  * @brief process inputs and change robot behavior according to that
@@ -54,47 +55,41 @@ public:
 	Controller();
 
 private:
-	ros::Subscriber status_sub;
-	ros::Subscriber robot_pos_sub;
-	ros::Subscriber nodes_status_sub;
-	ros::Subscriber robot_speed_sub;
-	ros::Subscriber sonar_distance_sub;
-	ros::Subscriber robot_blocked_sub;
-	ros::Subscriber side_sub;
-	ros::Subscriber start_sub;
+	Subscriber status_sub;
+	Subscriber nodes_status_sub;
+	Subscriber sonar_distance_sub;
+	Subscriber robot_blocked_sub;
+	Subscriber robot_speed_sub;
+	Subscriber side_sub;
+	Subscriber start_sub;
 
-	ros::Publisher proximity_stop_pub;
-	ros::Publisher STM_SetPose_pub;
-	ros::Publisher STM_AsserManagement_pub;
-	ros::Publisher PANEL_Point_pub;
+	Publisher robot_status_pub;
+	Publisher proximity_stop_pub;
+	Publisher STM_SetPose_pub;
+	Publisher STM_AsserManagement_pub;
+	Publisher PANEL_Point_pub;
 
-	ros::ServiceClient schedulerController;
-
-	//robot pos
-	int robot_pos_x;
-	int robot_pos_y;
-	int robot_angle;
+	ServiceClient schedulerController;
 
 	// Robot state
-	int robot_state;
+	int robotState;
 	bool startSignalReceived;
 
 	int8_t direction;
+	int8_t side;
 
 	bool proximity_stop;
-	bool side;
 	bool panelUp;
 
-	void setRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
+	//void setRobotStatus(const RobotStatus::ConstPtr& msg);
 	void setRobotPosition(const can_msgs::Point::ConstPtr& msg);
 	void setRobotSpeed(const can_msgs::CurrSpeed::ConstPtr& msg);
-	void setSide(const ai_msgs::SetSide::ConstPtr& msg);
-	//void checkForPanel(const ai_msgs::NodesStatus::ConstPtr & msg);
+
 	void processSonars(const can_msgs::SonarDistance::ConstPtr& msg);
-	void processRobotBlocked(const can_msgs::RobotBlocked::ConstPtr& msg);
-	void onStartSignal(const std_msgs::Empty& msg);
+	void onStartSignal(const ai_msgs::StartRobot& msg);
 
 	void start();
+	void stop();
 };
 
 /**

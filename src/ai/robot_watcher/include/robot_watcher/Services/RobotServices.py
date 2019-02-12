@@ -9,7 +9,7 @@
 import rospy
 from ai_msgs.srv import NodeReadiness
 
-ROBOT_SRV = "/ai/robot_watcher/node_readiness"
+ROBOT_SRV = "/ai/node_watcher/node_readiness"
 TIMEOUT = 20.0
 
 ##

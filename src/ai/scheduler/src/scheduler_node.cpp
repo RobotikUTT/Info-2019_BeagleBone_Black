@@ -5,14 +5,12 @@
  *
  * @param n NodeHandler
  */
-Scheduler::Scheduler() : PerformClient("scheduler", "ai") {
+Scheduler::Scheduler() : PerformClient("scheduler", "ai"), side(Side::LEFT) {
 	// Retrieve action
 	std::string actions_file;
 	nh.getParam("scheduler/actions_directory", actions_file);
 
-	this->side = SIDE_GREEN;
-	this->side_sub = nh.subscribe("side", 1, &Scheduler::setSide, this);
-
+	this->side = Side::LEFT;
 	this->control_srv = nh.advertiseService("/scheduler/do", &Scheduler::setState, this);
 
 	// Parse actions file
@@ -21,23 +19,25 @@ Scheduler::Scheduler() : PerformClient("scheduler", "ai") {
 		ActionPtr root = parser.getAction();
 	} catch(const char* error) {
 		ROS_ERROR_STREAM("unable to initialize scheduler due to parsing error: " << error);
-		setNodeStatus(NODE_ERROR, 1);
+		setNodeStatus(NodeStatus::NODE_ERROR, 1);
 		return;
 	}
 	
-	setNodeStatus(NODE_READY);
+	setNodeStatus(NodeStatus::NODE_READY);
 }
 
-bool Scheduler::setState(ai_msgs::SetSchedulerState::Request &req, ai_msgs::SetSchedulerState::Response &res) {
+bool Scheduler::setState(SetSchedulerState::Request &req, SetSchedulerState::Response &res) {
 	// If there is a change in state
 	if (this->running != req.running) {
 		// apply change
 		if (req.running) {
+			this->side = req.side;
 			this->resume();
 		} else {
 			this->stop();
 		}
 	}
+
 	this->running = req.running;
 
 	return true;
@@ -75,18 +75,6 @@ void Scheduler::resume() {
 	// TODO resume current action or run next one
 }
 
-/**
- * @brief Sets the starting side.
- *
- * @param[in] msg The SetSide message
- */
-void Scheduler::setSide(const ai_msgs::SetSide::ConstPtr& msg){
-	if(this->side != msg->side) {
-		this->side = ! this->side;
-		// TODO acm
-		// this->actionManager.changeSide();
-	}
-}
 
 
 int main(int argc, char *argv[]) {

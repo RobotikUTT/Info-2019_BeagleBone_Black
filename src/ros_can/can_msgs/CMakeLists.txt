@@ -21,11 +21,9 @@ add_message_files(DIRECTORY msg
     STMParam.msg
     SonarDistance.msg
     Speed.msg
-    Status.msg
+    STMStatus.msg
     ThrowBalls.msg
     WheelsDistance.msg
-
-
 )
 
 generate_messages(

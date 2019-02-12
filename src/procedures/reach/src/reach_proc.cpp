@@ -12,9 +12,9 @@ ReachActionPerfomer::ReachActionPerfomer(std::string name) : ActionPerformer(nam
 	this->STMGoToAngle_pub = nh.advertise<can_msgs::Point>("/STM/GoToAngle", 1);
 	this->STMGoTo_pub = nh.advertise<can_msgs::Point>("/STM/GoTo", 1);
 	this->STMRotation_pub = nh.advertise<can_msgs::Point>("/STM/Rotation", 1);
-	this->STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement", 1);
+	this->STM_AsserManagement_pub = nh.advertise<can_msgs::STMStatus>("/STM/AsserManagement", 1);
 
-	setNodeStatus(NODE_READY);
+	setNodeStatus(NodeStatus::NODE_READY);
 }
 
 ActionPoint ReachActionPerfomer::computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, Point robotPos) {
@@ -80,9 +80,9 @@ void ReachActionPerfomer::start() {
 
 void ReachActionPerfomer::cancel() {
 	// reset all goal in the STM
-	can_msgs::Status msg;
+	can_msgs::STMStatus msg;
 
-	msg.value = RESET_ORDERS;
+	msg.value = can_msgs::STMStatus::RESET_ORDERS;
 	STM_AsserManagement_pub.publish(msg);
 }
 

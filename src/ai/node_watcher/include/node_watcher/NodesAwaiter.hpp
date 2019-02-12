@@ -1,17 +1,18 @@
 #ifndef NODES_AWAITER_HPP
 #define NODES_AWAITER_HPP
 
-#include "node_watcher/Node.hpp"
+#include <ros/ros.h>
 
 #include "ai_msgs/NodeRequirement.h"
 #include "ai_msgs/AwaitNodesRequest.h"
 #include "ai_msgs/AwaitNodesResult.h"
-
-#include <ros/ros.h>
+#include "ai_msgs/NodeStatus.h"
 
 #include <iostream>
 #include <map>
 #include <vector>
+
+using namespace ai_msgs;
 
 const int OPTIONAL = 1;
 const int ALIVE = 2;
@@ -20,8 +21,8 @@ class NodesAwaiter
 {
 public:
 	NodesAwaiter(
-		ai_msgs::AwaitNodesRequest::Request& req,
-		ai_msgs::AwaitNodesRequest::Response& res,
+		AwaitNodesRequest::Request& req,
+		AwaitNodesRequest::Response& res,
 		ros::Publisher& resultPub
 	);
 
@@ -43,6 +44,6 @@ protected:
 	void onTimeout(const ros::TimerEvent& timer);
 };
 
-bool operator <(const ai_msgs::NodeRequirement &lhs, const ai_msgs::NodeRequirement &rhs);
+bool operator <(const NodeRequirement &lhs, const NodeRequirement &rhs);
 
 #endif

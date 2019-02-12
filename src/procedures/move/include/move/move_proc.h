@@ -11,11 +11,10 @@
 #include <vector>
 
 #include <robot_watcher/Services/RobotServices.h>
-#include "robot_watcher/RStatus/State.h"
 
 #include "can_msgs/Point.h"
 #include "can_msgs/Finish.h"
-#include "can_msgs/Status.h"
+#include "can_msgs/STMStatus.h"
 
 #include "procedures_msgs/MoveAction.h"
 
@@ -24,8 +23,6 @@
 #include "move/MoveType.h"
 #include "move/MovePoint.h"
 #include <actionlib/server/simple_action_server.h>
-
-#include "robot_interface/protocol.h"
 
 /**
  * @defgroup move The move action package

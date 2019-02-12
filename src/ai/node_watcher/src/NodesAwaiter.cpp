@@ -1,6 +1,6 @@
 #include "node_watcher/NodesAwaiter.hpp"
 
-NodesAwaiter::NodesAwaiter(ai_msgs::AwaitNodesRequest::Request& req, ai_msgs::AwaitNodesRequest::Response& res, ros::Publisher& pub)
+NodesAwaiter::NodesAwaiter(AwaitNodesRequest::Request& req, AwaitNodesRequest::Response& res, ros::Publisher& pub)
 	: finished(false), resultPub(pub), nh() {
 
 	// Get a request code and set it as response
@@ -8,7 +8,7 @@ NodesAwaiter::NodesAwaiter(ai_msgs::AwaitNodesRequest::Request& req, ai_msgs::Aw
 	res.request_code = this->requestCode;
 
 	// Extract data
-	for (ai_msgs::NodeRequirement& node : req.nodes) {
+	for (NodeRequirement& node : req.nodes) {
 		this->requirements[node.nodename] = node.optional ? OPTIONAL : 0;
 	}
 
@@ -30,7 +30,7 @@ void NodesAwaiter::updateStatus(std::string nodename, NodeStatus status) {
 		return;
 	}
 
-	bool nodealive = (status.status == NODE_READY);
+	bool nodealive = (status.state_code == NodeStatus::NODE_READY);
 
 	// Search for element with given name
 	auto found = this->requirements.find(nodename);
@@ -77,7 +77,7 @@ void NodesAwaiter::sendResults() {
 
 	timeout.stop();
 
-	ai_msgs::AwaitNodesResult result;
+	AwaitNodesResult result;
 	result.success = true;
 	result.request_code = this->requestCode;
 	
@@ -86,7 +86,7 @@ void NodesAwaiter::sendResults() {
 		// If some node isn't alive
 		if ((next.second & ALIVE) == 0) {
 			// Rebuild requirement
-			ai_msgs::NodeRequirement requirement;
+			NodeRequirement requirement;
 			requirement.nodename = next.first;
 			requirement.optional = (next.second & OPTIONAL) > 0;
 
@@ -114,6 +114,6 @@ bool NodesAwaiter::isFinished() const {
 	return this->finished;
 }
 
-bool operator <(const ai_msgs::NodeRequirement &lhs, const ai_msgs::NodeRequirement &rhs) {
+bool operator <(const NodeRequirement &lhs, const NodeRequirement &rhs) {
 	return lhs.nodename < rhs.nodename;
 }

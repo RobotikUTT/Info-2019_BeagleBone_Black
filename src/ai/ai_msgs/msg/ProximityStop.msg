@@ -1,0 +1,1 @@
+bool proximity_set 

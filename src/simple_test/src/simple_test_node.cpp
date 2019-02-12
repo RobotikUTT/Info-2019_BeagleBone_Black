@@ -1,10 +1,28 @@
 #include "simple_test/simple_test_node.hpp"
 
-SimpleNode::SimpleNode(std::string name) : wentHere(true) {
+SimpleNode::SimpleNode(std::string name) : Node("simple_test", "none"), wentHere(true) {
     finish_sub = nh.subscribe("/ALL/Finish", 1, &SimpleNode::moveDone, this);
 
     this->STMGoTo_pub = nh.advertise<can_msgs::Point>("/STM/GoTo", 1);
-    this->STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement", 1);
+	this->STM_SetPose_pub = nh.advertise<can_msgs::Point>("/STM/SetPose", 1);
+	this->STM_AsserManagement_pub = nh.advertise<can_msgs::STMStatus>("/STM/AsserManagement", 1);
+
+    if (!this->waitForNodes(5)) {
+        ROS_ERROR_STREAM("unable to start tests");
+        return;
+    }
+
+    // init STM position
+    can_msgs::Point msg;
+    msg.pos_x = 0;
+    msg.pos_y = 0;
+    msg.angle = 0;
+    STM_SetPose_pub.publish(msg);
+
+    // make it running
+    can_msgs::STMStatus msg2;
+    msg2.value = can_msgs::STMStatus::START;
+    STM_AsserManagement_pub.publish(msg2);
 
     ROS_INFO("Beginning movement !");
     moveSomewhereElse();

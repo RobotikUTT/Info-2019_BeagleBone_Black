@@ -34,9 +34,9 @@ void service_ready(const string name_space, const string package, const int stat
 		ros::ServiceClient readyPub = nh.serviceClient<ai_msgs::NodeReadiness>(WATCHER_SERVICE);
 
 		ai_msgs::NodeReadiness msg;
-		msg.request.status = state;
+		msg.request.status.state_code = state;
 		msg.request.node_name = node_name;
-		msg.request.error_code = error_code;
+		msg.request.status.error_code = error_code;
 
 		if (!readyPub.call(msg)) {
 			throw;

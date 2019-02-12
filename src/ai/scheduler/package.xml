@@ -14,7 +14,6 @@
   <depend>roscpp</depend>
 
   <!-- Packages -->
-  <depend>robot_watcher</depend>
   <depend>action_manager</depend>
 
   <!-- Messages -->

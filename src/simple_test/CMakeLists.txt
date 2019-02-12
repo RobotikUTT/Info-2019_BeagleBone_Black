@@ -11,15 +11,17 @@ find_package(catkin REQUIRED COMPONENTS
 
   # Required messages
   can_msgs
+  ai_msgs
 
   # Other packages
   robot_interface
+  node_watcher
 )
 
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp can_msgs robot_interface
+  CATKIN_DEPENDS roscpp can_msgs robot_interface node_watcher ai_msgs
 #  DEPENDS system_lib
 )
 

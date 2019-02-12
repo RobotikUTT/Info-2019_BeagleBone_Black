@@ -18,6 +18,7 @@
 #include "ai_msgs/AwaitNodesRequest.h"
 #include "ai_msgs/AwaitNodesResult.h"
 
+using namespace ai_msgs;
 
 class NodeWatcher
 {
@@ -35,8 +36,8 @@ private:
 public:
     NodeWatcher();
 
-    bool nodeStatus(ai_msgs::NodeReadiness::Request& req, ai_msgs::NodeReadiness::Response& res);
-    bool awaitNodes(ai_msgs::AwaitNodesRequest::Request& req, ai_msgs::AwaitNodesRequest::Response& res);
+    bool nodeStatus(NodeReadiness::Request& req, NodeReadiness::Response& res);
+    bool awaitNodes(AwaitNodesRequest::Request& req, AwaitNodesRequest::Response& res);
     
     void updateWaiters(std::string name, NodeStatus status);
     NodeStatus getNodeStatus(std::string name);

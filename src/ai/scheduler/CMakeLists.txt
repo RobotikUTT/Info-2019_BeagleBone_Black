@@ -13,14 +13,13 @@ find_package(catkin REQUIRED COMPONENTS
   ai_msgs
 
   # Other packages
-  robot_watcher
   action_manager
 )
 
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp ai_msgs robot_watcher action_manager
+  CATKIN_DEPENDS roscpp ai_msgs action_manager
 #  DEPENDS system_lib
 )
 

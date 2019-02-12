@@ -12,15 +12,17 @@
 
 #include <ros/ros.h>
 
-#include "robot_watcher/RStatus/Side.h"
-
 #include "action_manager/PerformClient.hpp"
 
-#include "ai_msgs/SetSide.h"
+#include "ai_msgs/Side.h"
 #include "ai_msgs/SetSchedulerState.h"
 
 #include "scheduler/ActionsParser.hpp"
 #include "scheduler/ActionFilePath.hpp"
+
+using ai_msgs::Side;
+using ai_msgs::SetSchedulerState;
+using ai_msgs::NodeStatus;
 
 /**
  * @brief scheduler node class, managing actions and their execution
@@ -31,7 +33,6 @@ public:
 
 private:
 	ros::NodeHandle nh;
-	ros::Subscriber side_sub;
 	ros::ServiceServer control_srv;
 
 	ActionPtr rootAction;
@@ -39,8 +40,7 @@ private:
 	bool side;
 	bool running;
 
-	void setSide(const ai_msgs::SetSide::ConstPtr& msg);
-	bool setState(ai_msgs::SetSchedulerState::Request &req, ai_msgs::SetSchedulerState::Response &res);
+	bool setState(SetSchedulerState::Request &req, SetSchedulerState::Response &res);
 	
 	void stop();
 	void resume();

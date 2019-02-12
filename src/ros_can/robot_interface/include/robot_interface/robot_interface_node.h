@@ -2,11 +2,15 @@
 #define CAN_INTERFACE_NODE
 
 #include <ros/ros.h>
-#include <can_msgs/Frame.h>
-#include <ai_msgs/RobotStatus.h>
-#include <robot_watcher/Services/RobotServices.h>
+#include <iterator>
 #include <algorithm>
-#include "robot_interface/protocol.h"
+
+#include <robot_watcher/Services/RobotServices.h>
+
+#include "ai_msgs/RobotStatus.h"
+#include "ai_msgs/NodeStatus.h"
+
+#include "can_msgs/Frame.h"
 
 #include "can_msgs/ActionPliers.h"
 #include "can_msgs/CurrSpeed.h"
@@ -19,7 +23,7 @@
 #include "can_msgs/STMParam.h"
 #include "can_msgs/SonarDistance.h"
 #include "can_msgs/Speed.h"
-#include "can_msgs/Status.h"
+#include "can_msgs/STMStatus.h"
 #include "can_msgs/ThrowBalls.h"
 #include "can_msgs/WheelsDistance.h"
 #include "can_msgs/ActionPliers.h"
@@ -28,6 +32,9 @@
 #include "std_msgs/Int8.h"
 
 #include "node_watcher/Node.hpp"
+
+
+using can_msgs::Frame;
 
 /**
  * @defgroup Robot_Interface The robot_interface package
@@ -46,9 +53,9 @@ public:
 	void canMsgProcess			(const can_msgs::Frame::ConstPtr& msg);
 
 	void ALLPing				(const std_msgs::Empty::ConstPtr& msg);
-	void STMSetMode				(const can_msgs::Status::ConstPtr& msg);
+	void STMSetMode				(const can_msgs::STMStatus::ConstPtr& msg);
 	void STMSpeed				(const can_msgs::Speed::ConstPtr& msg);
-	void STMAsserManagement		(const can_msgs::Status::ConstPtr& msg);
+	void STMAsserManagement		(const can_msgs::STMStatus::ConstPtr& msg);
 	void STMGoToAngle			(const can_msgs::Point::ConstPtr& msg);
 	void STMGoTo				(const can_msgs::Point::ConstPtr& msg);
 	void STMRotation			(const can_msgs::Point::ConstPtr& msg);

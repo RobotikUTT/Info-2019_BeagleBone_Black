@@ -13,12 +13,20 @@ find_package(catkin REQUIRED COMPONENTS
   procedures_msgs
 )
 
-# Messages files
+# Message containing only constants shared by multiple messages
+add_message_files(DIRECTORY const
+  FILES
+  Side.msg
+  NodeStatus.msg
+  ActionStatus.msg
+)
+
+# Regular messages files
 add_message_files(DIRECTORY msg
   FILES
   PointsScored.msg
   RobotStatus.msg
-  SetSide.msg
+  StartRobot.msg
   ProximityStop.msg
   Point2D.msg
   Argument.msg

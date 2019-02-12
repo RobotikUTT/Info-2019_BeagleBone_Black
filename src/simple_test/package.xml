@@ -13,9 +13,11 @@
 
   <!-- Packages -->
   <depend>robot_interface</depend>
+  <depend>node_watcher</depend>
 
   <!-- Messages -->
   <depend>can_msgs</depend>
+  <depend>ai_msgs</depend>
 
   <export></export>
 </package>

@@ -5,13 +5,15 @@
 #include <ros/console.h>
 #include <vector>
 
+#include "node_watcher/Node.hpp"
+
 #include "can_msgs/Point.h"
 #include "can_msgs/Finish.h"
-#include "can_msgs/Status.h"
+#include "can_msgs/STMStatus.h"
 
-#include "robot_interface/protocol.h"
+#include "ai_msgs/NodeRequirement.h"
 
-class SimpleNode {
+class SimpleNode : public Node {
 public:
     SimpleNode(std::string name);
 
@@ -20,7 +22,7 @@ private:
 
     ros::Subscriber finish_sub;
     ros::Publisher STMGoTo_pub;
-
+    ros::Publisher STM_SetPose_pub;
     ros::Publisher STM_AsserManagement_pub;
 
     bool wentHere;

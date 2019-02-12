@@ -3,16 +3,13 @@
 
 #include "action_manager/ActionPoint.h"
 
+#include "ai_msgs/ActionStatus.h"
+
 #include <string>
 #include <sstream>
 #include <memory>
 
-#define ACTION_IDLE 0
-#define ACTION_RUNNING 1
-#define ACTION_PAUSED 2
-#define ACTION_IMPOSSIBLE 3
-#define ACTION_DONE 4
-
+using ai_msgs::ActionStatus;
 
 /**
  * class for a general action
@@ -39,7 +36,7 @@ public:
   virtual void display(std::ostream& os) const;
   
 protected:
-  Action(std::string name = "unnamed action");
+  Action(std::string name = "unnamed");
 
   int _state, _points;
   std::string _name;

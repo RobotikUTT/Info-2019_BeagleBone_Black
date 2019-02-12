@@ -8,7 +8,7 @@
  * @brief default constructor
  */
 Action::Action(std::string name)
-	: _name(name), _state(ACTION_IDLE), _points(0), _sync(false), _actionPoint(NULL) { }
+	: _name(name), _state(ActionStatus::IDLE), _points(0), _sync(false), _actionPoint(NULL) { }
 
 /**
  * @brief return the priority of the action according to it's points and distance

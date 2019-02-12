@@ -1,8 +1,6 @@
 # Give a node status or ask for it
 string node_name
-int8 status
-int8 error_code
+NodeStatus status
 ---
 # Resultant node status
-int8 status
-int8 error_code
+NodeStatus status

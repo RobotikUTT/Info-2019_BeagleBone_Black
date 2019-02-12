@@ -12,6 +12,7 @@
 #include "ai_msgs/Argument.h"
 #include "ai_msgs/ComputeActionPoint.h"
 #include "ai_msgs/RobotStatus.h"
+#include "ai_msgs/ActionStatus.h"
 
 #include "action_manager/ActionPoint.h"
 #include "action_manager/Action.hpp"
@@ -24,9 +25,10 @@
 
 #include "procedures_msgs/OrPoint.h"
 
-#include "robot_watcher/RStatus/State.h"
-
 typedef actionlib::SimpleActionServer<ai_msgs::PerformAction> PerformActionSrv;
+
+using ai_msgs::RobotStatus;
+using ai_msgs::ActionStatus;
 
 /**
  * Represent an performer for a specific action, it advertise a service for
@@ -71,7 +73,7 @@ private:
 	void onGoal();
 	void onPreempt();
 
-	void onRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg);
+	void onRobotStatus(const RobotStatus::ConstPtr& msg);
 };
 
 #endif

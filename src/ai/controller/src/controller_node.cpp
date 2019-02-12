@@ -6,154 +6,97 @@
  * @param n	NodeHandle var
  * 
  */
-Controller::Controller() : Node("controller", "ai") {
+Controller::Controller() : Node("controller", "ai"), side(Side::LEFT) {
 	// attributes
-	side = SIDE_GREEN;
-	direction = NONE;
+	direction = Point::DIRECTION_NONE;
 	proximity_stop = false;
 	panelUp = 0;
 	startSignalReceived = false;
-	robot_state = ROBOT_INIT;
+	robotState = RobotStatus::ROBOT_INIT;
 
 	// Advertisers
-	proximity_stop_pub = nh.advertise<ai_msgs::ProximityStop>("proximity", 1);
+	proximity_stop_pub = nh.advertise<ProximityStop>("proximity", 1);
 	STM_SetPose_pub = nh.advertise<can_msgs::Point>("/STM/SetPose", 1);
-	STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement", 1);
-
+	STM_AsserManagement_pub = nh.advertise<can_msgs::STMStatus>("/STM/AsserManagement", 1);
+	robot_status_pub = nh.advertise<RobotStatus>("/ai/controller/robot_status", 1);
 
 	// Subscribers
-	status_sub = nh.subscribe("robot_watcher/robot_status", 1, &Controller::setRobotStatus, this);
-	robot_pos_sub = nh.subscribe("/STM/Position", 1, &Controller::setRobotPosition, this);
 	robot_speed_sub = nh.subscribe("/STM/GetSpeed", 1, &Controller::setRobotSpeed, this);
 	sonar_distance_sub = nh.subscribe("/ARDUINO/SonarDistance", 1, &Controller::processSonars, this);
-	robot_blocked_sub = nh.subscribe("/STM/RobotBlocked", 1, &Controller::processRobotBlocked, this);
 	
-	side_sub = nh.subscribe("side", 1, &Controller::setSide, this);
-	start_sub = nh.subscribe("start", 1, &Controller::onStartSignal, this);
+	start_sub = nh.subscribe("/signal/start", 1, &Controller::onStartSignal, this);
 	
-	schedulerController = nh.serviceClient<ai_msgs::SetSchedulerState>("/scheduler/do");
+	schedulerController = nh.serviceClient<SetSchedulerState>("/scheduler/do");
 
 	// Wait for required nodes
 	if (waitForNodes(2)) {
 		// Set as ready
-		setNodeStatus(NODE_READY);
+		setNodeStatus(NodeStatus::NODE_READY);
 
 		// If start signal was received during waiting
-		this->robot_state = ROBOT_READY;
+		this->robotState = RobotStatus::ROBOT_READY;
 		start();
 	} else {
-		setNodeStatus(NODE_ERROR);
+		setNodeStatus(NodeStatus::NODE_ERROR);
 	}
 	
 }
 
-void Controller::onStartSignal(const std_msgs::Empty& msg) {
+void Controller::onStartSignal(const StartRobot& msg) {
 	this->startSignalReceived = true;
+	this->side = msg.side;
 	start();
 }
 
 void Controller::start() {
-	// If nodes are ready and start signal is received
-	if (this->robot_state == ROBOT_READY) {
-		// We can start it !
-		ai_msgs::SetSchedulerState setter;
-		setter.request.running = true;
-		schedulerController.call(setter);
-	}
-}
+	// Compute initial position
+	int x, y, angle;
+	nh.getParam("controller/robot_pos/x", x);
+	nh.getParam("controller/robot_pos/y", y);
+	nh.getParam("controller/robot_pos/angle", angle);
 
-void Controller::setSide(const ai_msgs::SetSide::ConstPtr& msg) {
-	side = msg->side;
-}
+	// init STM position
+	can_msgs::Point msg;
+	msg.pos_x = x;
+	msg.pos_y = y;
+	msg.angle = angle;
+	STM_SetPose_pub.publish(msg);
 
-// Set robot position inside controller
-void Controller::setRobotPosition(const can_msgs::Point::ConstPtr& msg) {
-	// ROS_INFO_STREAM("robot pos_x: " << msg->pos_x
-	//	<< " robot pos_y: " << msg->pos_y
-	//	<< " robot angle: " << msg->angle);
-	robot_pos_x = msg->pos_x;
-	robot_pos_y = msg->pos_y;
-	robot_angle = msg->angle;
+	// make it running
+	can_msgs::STMStatus msg2;
+	msg2.value = can_msgs::STMStatus::START;
+	STM_AsserManagement_pub.publish(msg2);
+
+	// start actions by calling scheduler service
+	SetSchedulerState setter;
+	setter.request.running = true;
+	setter.request.side = this->side;
+	schedulerController.call(setter);
+
+	this->robotState = RobotStatus::ROBOT_RUNNING;
 }
 
 /**
- * @brief Gets the robot status and act accordingly
- * - ROBOT_READY and ROBOT_INIT : do nothing and wait for it to be running
- * - ROBOT_RUNNING : wake up the robot run actions
- * - ROBOT_HALT : stop all actions
- *
+ * @brief stop all actions
  * @param[in]	msg	 The RobotStatus message
  */
-void Controller::setRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg) {
-	uint8_t robot_status = msg->robot_status;
+void Controller::stop() {
+	// stop actions by calling scheduler service
+	SetSchedulerState setter;
+	setter.request.running = false;
+	schedulerController.call(setter);
 
-	if (robot_status == ROBOT_READY) {
-		// ??? unused state here
-	} else if (robot_status == ROBOT_RUNNING) {
-		// ROS_DEBUG("Robot Running");
+	// stop all movements and actions
+	can_msgs::STMStatus msg;
+	msg.value = can_msgs::STMStatus::STOP;
+	STM_AsserManagement_pub.publish(msg);
 
-		// Compute initial position
-		int x, y, angle;
-		nh.getParam("controller/robot_pos/x", x);
-		nh.getParam("controller/robot_pos/y", y);
-		nh.getParam("controller/robot_pos/angle", angle);
-
-		if (side) { // if orange
-			y = (1500 - y) + 1500;
-			angle = -angle;
-		}
-
-		// init STM position
-		can_msgs::Point msg;
-		robot_pos_x = x;
-		robot_pos_y = y;
-		robot_angle = angle;
-		msg.pos_x = x;
-		msg.pos_y = y;
-		msg.angle = angle;
-		STM_SetPose_pub.publish(msg);
-
-		// make it running
-		can_msgs::Status msg2;
-		msg2.value = START;
-		STM_AsserManagement_pub.publish(msg2);
-
-		// start actions by calling scheduler service
-		ai_msgs::SetSchedulerState setter;
-		setter.request.running = true;
-		schedulerController.call(setter);
-
-	} else if (robot_status == ROBOT_HALT) {
-		// stop actions by calling scheduler service
-		ai_msgs::SetSchedulerState setter;
-		setter.request.running = false;
-		schedulerController.call(setter);
-
-		// stop all movements and actions
-		can_msgs::Status msg;
-		msg.value = STOP;
-		STM_AsserManagement_pub.publish(msg);
-
-		msg.value = RESET_ORDERS;
-		STM_AsserManagement_pub.publish(msg);
-	}
+	msg.value = can_msgs::STMStatus::RESET_ORDERS;
+	STM_AsserManagement_pub.publish(msg);
 }
-
-/**
- * @brief check if the LED panel is connected
- *
- * @param[in]	msg	 The NodesStatus message
- */
-/*[[deprecated("panels and points should be handled in a separate package")]]
-void Controller::checkForPanel(const ai_msgs::NodesStatus::ConstPtr &msg) {
-	if (getNodeStatus("PANEL", "board").status == NODE_READY) {
-		panelUp = 1;
-	}
-}*/
 
 /**
  * @brief retrieve robot speed from can
- *
  * @param[in] msg message containing current speed
  */
 void Controller::setRobotSpeed(const can_msgs::CurrSpeed::ConstPtr &msg) {
@@ -161,18 +104,14 @@ void Controller::setRobotSpeed(const can_msgs::CurrSpeed::ConstPtr &msg) {
 	int16_t leftSpeed = msg->left_speed;
 	int16_t rightSpeed = msg->right_speed;
 
-	//	ROS_INFO_STREAM("SPEEDS|linear: " << linearSpeed
-	//	<< " left: " << leftSpeed
-	//	<< " right: " << rightSpeed);
-
 	if (linearSpeed > 0) {
-		direction = FORWARD;
+		direction = Point::DIRECTION_FORWARD;
 	}
 	else if (linearSpeed < 0) {
-		direction = BACKWARD;
+		direction = Point::DIRECTION_BACKWARD;
 	}
 	else {
-		direction = NONE;
+		direction = Point::DIRECTION_NONE;
 	}
 }
 
@@ -197,19 +136,19 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr &msg) {
 	 * the current direction.
 	 */
 	proximity_stop = (
-		direction == FORWARD && (
+		direction == Point::DIRECTION_FORWARD && (
 			front_left <= SONAR_MIN_DIST_FORWARD + 6 ||
 			front_right <= SONAR_MIN_DIST_FORWARD + 16
 		)
 	) || (
-		direction == BACKWARD && (
+		direction == Point::DIRECTION_BACKWARD && (
 			back_left <= SONAR_MIN_DIST_BACKWARD ||
 			back_right <= SONAR_MIN_DIST_BACKWARD
 		)
 	);
 
 	if (last_proximity_value != proximity_stop) {
-		ai_msgs::ProximityStop proximity_msg;
+		ProximityStop proximity_msg;
 		proximity_msg.proximity_set = proximity_stop;
 		proximity_stop_pub.publish(proximity_msg);
 
@@ -219,27 +158,15 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr &msg) {
 			ROS_WARN("UNSET EMG");
 		}
 
-		can_msgs::Status can_msg;
+		can_msgs::STMStatus can_msg;
 		if (proximity_stop) {
-			can_msg.value = SETEMERGENCYSTOP;
-		}
-		else {
-			can_msg.value = UNSETEMERGENCYSTOP;
+			can_msg.value = can_msgs::STMStatus::SETEMERGENCYSTOP;
+		} else {
+			can_msg.value = can_msgs::STMStatus::UNSETEMERGENCYSTOP;
 		}
 
 		STM_AsserManagement_pub.publish(can_msg);
 	}
-}
-
-/**
- * @brief callback to process a blocked robot
- *
- * @param[in] msg RobotBlocked message
- * 
- * @todo To dev
- */
-void Controller::processRobotBlocked(const can_msgs::RobotBlocked::ConstPtr &msg) {
-	ROS_WARN("Robot blocked");
 }
 
 

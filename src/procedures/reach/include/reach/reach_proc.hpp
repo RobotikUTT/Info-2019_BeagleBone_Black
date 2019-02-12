@@ -7,8 +7,7 @@
 
 #include "action_manager/ActionPerformer.hpp"
 
-#include "robot_interface/protocol.h"
-
+#include "can_msgs/STMStatus.h"
 
 /**
  * @brief class for the action of reaching a position

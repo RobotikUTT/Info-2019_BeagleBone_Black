@@ -1,6 +1,5 @@
 #include "action_manager/ActionPerformer.hpp"
 
-// TODO take robot status into consideration to handle ROBOT_HALT
 
 ActionPerformer::ActionPerformer(std::string name) : Node(name, "action"), name(name) {
 	// Service for action point computation
@@ -11,7 +10,8 @@ ActionPerformer::ActionPerformer(std::string name) : Node(name, "action"), name(
 	);
 
 	// Suscribe to robot status
-	robotWatcherSub = nh.subscribe("/ai/robot_watcher/robot_status", 1, &ActionPerformer::onRobotStatus, this);
+	// TODO remove to handle only cancelling via scheduler
+	robotWatcherSub = nh.subscribe("/ai/controller/robot_status", 1, &ActionPerformer::onRobotStatus, this);
 
 	// Action server for this action
 	actionServer = new PerformActionSrv(
@@ -75,7 +75,7 @@ void ActionPerformer::onPreempt() {
 void ActionPerformer::actionPerformed() {
 	// Create result message
 	ai_msgs::PerformResult result;
-	result.status = ACTION_DONE;
+	result.status.state_code = ActionStatus::DONE;
 
 	// Send back to client
 	actionServer->setSucceeded(result);
@@ -87,7 +87,7 @@ void ActionPerformer::actionPerformed() {
 void ActionPerformer::actionPaused() {
 	// Create result message
 	ai_msgs::PerformResult result;
-	result.status = ACTION_PAUSED;
+	result.status.state_code = ActionStatus::PAUSED;
 
 	// Send back to client
 	actionServer->setSucceeded(result);
@@ -96,8 +96,8 @@ void ActionPerformer::actionPaused() {
 /**
  *  Monitor robot status to catch HALT signal
  */
-void ActionPerformer::onRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg) {
-  if (msg->robot_status == ROBOT_HALT){
+void ActionPerformer::onRobotStatus(const RobotStatus::ConstPtr& msg) {
+  if (msg->robot_status == RobotStatus::ROBOT_HALT){
 	actionServer->shutdown();
   }
 }

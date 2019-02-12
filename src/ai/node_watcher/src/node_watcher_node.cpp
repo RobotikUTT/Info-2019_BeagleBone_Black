@@ -4,8 +4,8 @@ NodeWatcher::NodeWatcher() : nh() {
     watcherService = nh.advertiseService(WATCHER_SERVICE, &NodeWatcher::nodeStatus, this);
     waiterService = nh.advertiseService(NODES_AWAITER_SERVICE, &NodeWatcher::awaitNodes, this);
 
-    updatePublisher = nh.advertise<ai_msgs::NodeStatusUpdate>("/ai/node_watcher/update", 100);
-    waitResultPublisher = nh.advertise<ai_msgs::AwaitNodesResult>(NODES_AWAITER_RESULT_TOPIC, 100);
+    updatePublisher = nh.advertise<NodeStatusUpdate>("/ai/node_watcher/update", 100);
+    waitResultPublisher = nh.advertise<AwaitNodesResult>(NODES_AWAITER_RESULT_TOPIC, 100);
 }
 
 NodeStatus NodeWatcher::getNodeStatus(std::string name) {
@@ -16,13 +16,13 @@ NodeStatus NodeWatcher::getNodeStatus(std::string name) {
         return found->second;
     } else { // otherwise
         NodeStatus unknowStatus;
-        unknowStatus.status = NODE_UNKNOW;
+        unknowStatus.state_code = NodeStatus::NODE_UNKNOW;
         
         return unknowStatus;
     }
 }
 
-bool NodeWatcher::awaitNodes(ai_msgs::AwaitNodesRequest::Request& req, ai_msgs::AwaitNodesRequest::Response& res) {
+bool NodeWatcher::awaitNodes(AwaitNodesRequest::Request& req, AwaitNodesRequest::Response& res) {
     std::shared_ptr<NodesAwaiter> waiter = std::make_shared<NodesAwaiter>(req, res, waitResultPublisher);
 
     // Add all current states to node
@@ -58,39 +58,29 @@ void NodeWatcher::updateWaiters(std::string name, NodeStatus status) {
     }
 }
 
-bool NodeWatcher::nodeStatus(ai_msgs::NodeReadiness::Request& req, ai_msgs::NodeReadiness::Response& res) {
-    int statusCode = req.status;
+bool NodeWatcher::nodeStatus(NodeReadiness::Request& req, NodeReadiness::Response& res) {
+    NodeStatus status = req.status;
     
     // If we are not asking for the status (eg: use function as setter)
-    if (statusCode != NODE_ASKING) {
-        NodeStatus status;
-
-        // Save data
-        status.status = req.status;
-        status.errorCode = req.error_code;
-
+    if (status.state_code != NodeStatus::NODE_ASKING) {
         nodes[req.node_name] = status;
 
         // Return same data
-        res.status = req.status;
-        res.error_code = req.error_code;
+        res.status = status;
 
         // Publish update to subscribers
-        ai_msgs::NodeStatusUpdate updateMsg;
-        updateMsg.status = req.status;
-        updateMsg.error_code = req.error_code;
+        NodeStatusUpdate updateMsg;
+        updateMsg.status = status;
         updateMsg.node_name = req.node_name;
 
         updatePublisher.publish(updateMsg);
 
         this->updateWaiters(req.node_name, status);
 
-        ROS_INFO_STREAM("Node " << req.node_name << " registered with status " << STATUS_STRINGS[req.status]);
+        ROS_INFO_STREAM("Node " << req.node_name << " registered with status " << STATUS_STRINGS[req.status.state_code]);
     } else {
         // Otherwise it is a getter
-        NodeStatus got = getNodeStatus(req.node_name);
-        res.status = got.status;
-        res.error_code = got.errorCode;
+        res.status = getNodeStatus(req.node_name);
     }
 
     return true;

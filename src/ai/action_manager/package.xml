@@ -14,7 +14,6 @@
 
   <!-- Packages -->
   <depend>actionlib</depend>
-  <depend>robot_watcher</depend>
   <depend>node_watcher</depend>
 
   <!-- Messages -->

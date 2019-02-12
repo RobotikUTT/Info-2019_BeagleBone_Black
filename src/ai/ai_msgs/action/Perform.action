@@ -3,7 +3,7 @@ Argument[] arguments
 procedures_msgs/OrPoint robot_pos
 ---
 #result
-int8 status
+ActionStatus status
 ---
 #feedback
 

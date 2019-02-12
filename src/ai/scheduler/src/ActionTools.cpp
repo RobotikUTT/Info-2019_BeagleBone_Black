@@ -12,7 +12,7 @@ ActionChoice::ActionChoice(std::shared_ptr<AtomicAction> action /*= nullptr*/, d
  */
 ActionChoice getOptimalNextAtomic(ActionPtr action, Point& robotPos) {
 	// Filter actions paused or finished
-	if (action->state() != ACTION_IDLE) {
+	if (action->state() != ActionStatus::IDLE) {
 		return ActionChoice();
 	}
 
@@ -39,7 +39,7 @@ ActionChoice getOptimalNextAtomic(ActionPtr action, Point& robotPos) {
 
 			// If we hit a unfinished sync action, it has to be performed
 			// before anything else, so we break the loop
-			if (next->isSync() && next->state() != ACTION_DONE) {
+			if (next->isSync() && next->state() != ActionStatus::DONE) {
 				break;
 			}
 		}

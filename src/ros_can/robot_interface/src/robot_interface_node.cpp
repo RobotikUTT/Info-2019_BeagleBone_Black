@@ -7,7 +7,6 @@
 */
 
 #include <robot_interface/robot_interface_node.h>
-#include <iterator>
 
 
 /**
@@ -47,7 +46,7 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->STM_SetParam_sub 				= nh.subscribe("/STM/SetParam",						10, 	&CanInterfaceNode::STMSetParam, 		this);
 	this->PANEL_point_sub 				= nh.subscribe("/PANEL/AddPoint",					10, 	&CanInterfaceNode::PANELAddPoint, 		this);
 
-	service_ready("ros_can", "interface", NODE_READY);
+	service_ready("ros_can", "interface", NodeStatus::NODE_READY);
 }
 
 /**
@@ -72,28 +71,28 @@ void CanInterfaceNode::updateRobotStatus(const ai_msgs::RobotStatus::ConstPtr& m
  * @param[in]  msg   The Can message
  */
 void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
-	if (msg->id == BBB_CAN_ADDR){
+	if (msg->id == Frame::BBB_CAN_ADDR){
 	switch (msg->data[0]) {
-		case WHOAMI:{
+		case Frame::ORDER_WHOAMI:{
 
 			uint8_t status = msg->data[2];
 
 			std::string boardName;
 
 			switch (msg->data[1]) {
-				case STM_CAN_ADDR:{
+				case Frame::STM_CAN_ADDR:{
 					boardName = "STM";
 					break;
 				}
-				case ARDUINO_CAN_ADDR:{
+				case Frame::ARDUINO_CAN_ADDR:{
 					boardName = "ARDUINO";
 					break;
 				}
-				case ZIGBEE_CAN_ADDR:{
+				case Frame::ZIGBEE_CAN_ADDR:{
 					boardName = "ZIGBEE";
 					break;
 				}
-				case PANEL_CAN_ADDR:{
+				case Frame::PANEL_CAN_ADDR:{
 					boardName = "PANEL";
 					break;
 				}
@@ -102,7 +101,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			service_ready("board", boardName, status );
 			break;
 			}
-		case GET_CODER:{
+		case Frame::ORDER_GET_CODER:{
 			can_msgs::WheelsDistance msg_out;
 			msg_out.right_wheel_dist = msg->data[2] | msg->data[1] << 8; //mm
 			msg_out.left_wheel_dist = msg->data[4] | msg->data[3] << 8; //mm
@@ -110,7 +109,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			this->STM_coder_pub.publish(msg_out);
 			break;
 		}
-		case CURRENT_POS:{
+		case Frame::ORDER_CURRENT_POS:{
 		can_msgs::Point msg_out;
 
 			msg_out.pos_x = msg->data[2] | msg->data[1] << 8; //mm
@@ -120,7 +119,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			this->STM_pos_pub.publish(msg_out);
 			break;
 		}
-		case CURRENT_PWM:{
+		case Frame::ORDER_CURRENT_PWM:{
 			can_msgs::PWMs msg_out;
 
 			msg_out.left_pwm = msg->data[2] | msg->data[1] << 8;
@@ -129,7 +128,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			this->STM_pwm_pub.publish(msg_out);
 			break;
 		}
-		case CURRENT_SPD:{
+		case Frame::ORDER_CURRENT_SPD:{
 			can_msgs::CurrSpeed msg_out;
 
 			msg_out.linear_speed = msg->data[2] | msg->data[1] << 8; //mm/s
@@ -139,7 +138,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			this->STM_speed_pub.publish(msg_out);
 			break;
 		}
-		case SONAR_DISTANCE:{
+		case Frame::ORDER_SONAR_DISTANCE:{
 			can_msgs::SonarDistance msg_out;
 
 			msg_out.dist_front_left 	= msg->data[1];
@@ -150,7 +149,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			this->ARDUINO_sonar_distance_pub.publish(msg_out);
 			break;
 		}
-		case ORDER_COMPLETED:{
+		case Frame::ORDER_ORDER_COMPLETED:{
 			can_msgs::Finish msg_out;
 
 			msg_out.val = msg->data[1];
@@ -158,7 +157,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			this->ALL_finish_pub.publish(msg_out);
 			break;
 		}
-		case ROBOT_BLOCKED:{
+		case Frame::ORDER_ROBOT_BLOCKED:{
 			can_msgs::RobotBlocked msg_out;
 
 			this->STM_robot_blocked_pub.publish(msg_out);
@@ -182,8 +181,8 @@ void CanInterfaceNode::ALLPing(const std_msgs::Empty::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 1;
-	fr.id = ALL_CAN_ADDR;
-	fr.data[0] = HANDSHAKE;
+	fr.id = Frame::ALL_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_HANDSHAKE;
 
 	can_pub.publish(fr);
 }
@@ -193,7 +192,7 @@ void CanInterfaceNode::ALLPing(const std_msgs::Empty::ConstPtr& msg){
  *
  * @param[in]  msg   The message
  */
-void CanInterfaceNode::STMSetMode(const can_msgs::Status::ConstPtr& msg){
+void CanInterfaceNode::STMSetMode(const can_msgs::STMStatus::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -202,8 +201,8 @@ void CanInterfaceNode::STMSetMode(const can_msgs::Status::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 2;
-	fr.id = STM_CAN_ADDR;
-	fr.data[0] = SET_MODE;
+	fr.id = Frame::STM_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_SET_MODE;
 	fr.data[1] = msg->value;
 
 	can_pub.publish(fr);
@@ -224,8 +223,8 @@ void CanInterfaceNode::STMSpeed(const can_msgs::Speed::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 7;
-	fr.id = STM_CAN_ADDR;
-	fr.data[0] = SPD;
+	fr.id = Frame::STM_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_SPD;
 	fr.data[1] = msg->linear_speed >> 8;
 	fr.data[2] = msg->linear_speed & 0x00FF;
 	fr.data[3] = msg->angular_speed >> 8;
@@ -251,8 +250,8 @@ void CanInterfaceNode::PANELAddPoint(const std_msgs::Int8::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 2;
-	fr.id = PANEL_CAN_ADDR;
-	fr.data[0] = SEND_POINT;
+	fr.id = Frame::PANEL_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_SEND_POINT;
 	fr.data[1] = msg->data;
 
 	can_pub.publish(fr);
@@ -275,7 +274,7 @@ void CanInterfaceNode::PANELAddPoint(const std_msgs::Int8::ConstPtr& msg){
  *
  * @param[in]  msg   The message
  */
-void CanInterfaceNode::STMAsserManagement(const can_msgs::Status::ConstPtr& msg){
+void CanInterfaceNode::STMAsserManagement(const can_msgs::STMStatus::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -284,8 +283,8 @@ void CanInterfaceNode::STMAsserManagement(const can_msgs::Status::ConstPtr& msg)
 	fr.is_extended = 0;
 
 	fr.dlc = 2;
-	fr.id = STM_CAN_ADDR;
-	fr.data[0] = MANAGEMENT;
+	fr.id = Frame::STM_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_MANAGEMENT;
 	fr.data[1] = msg->value;
 
 	can_pub.publish(fr);
@@ -305,8 +304,8 @@ void CanInterfaceNode::STMGoToAngle(const can_msgs::Point::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 8;
-	fr.id = STM_CAN_ADDR;
-	fr.data[0] = GOTOA;
+	fr.id = Frame::STM_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_GOTOA;
 	fr.data[1] = msg->pos_x >> 8;
 	fr.data[2] = msg->pos_x & 0x00FF;
 	fr.data[3] = msg->pos_y >> 8;
@@ -332,8 +331,8 @@ void CanInterfaceNode::STMGoTo(const can_msgs::Point::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 6;
-	fr.id = STM_CAN_ADDR;
-	fr.data[0] = GOTO;
+	fr.id = Frame::STM_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_GOTO;
 	fr.data[1] = msg->pos_x >> 8;
 	fr.data[2] = msg->pos_x & 0x00FF;
 	fr.data[3] = msg->pos_y >> 8;
@@ -357,8 +356,8 @@ void CanInterfaceNode::STMRotation(const can_msgs::Point::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 3;
-	fr.id = STM_CAN_ADDR;
-	fr.data[0] = ROT;
+	fr.id = Frame::STM_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_ROT;
 	fr.data[1] = msg->angle >> 8;
 	fr.data[2] = msg->angle & 0x00FF;
 
@@ -379,8 +378,8 @@ void CanInterfaceNode::STMLeftPID(const can_msgs::PID::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 7;
-	fr.id = STM_CAN_ADDR;
-	fr.data[0] = PIDLEFT;
+	fr.id = Frame::STM_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_PIDLEFT;
 	fr.data[1] = msg->P >> 8;
 	fr.data[2] = msg->P & 0x00FF;
 	fr.data[3] = msg->I >> 8;
@@ -405,8 +404,8 @@ void CanInterfaceNode::STMRightPID(const can_msgs::PID::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 7;
-	fr.id = STM_CAN_ADDR;
-	fr.data[0] = PIDRIGHT;
+	fr.id = Frame::STM_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_PIDRIGHT;
 	fr.data[1] = msg->P >> 8;
 	fr.data[2] = msg->P & 0x00FF;
 	fr.data[3] = msg->I >> 8;
@@ -431,8 +430,8 @@ void CanInterfaceNode::STMAllPID(const can_msgs::PID::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 7;
-	fr.id = STM_CAN_ADDR;
-	fr.data[0] = PIDALL;
+	fr.id = Frame::STM_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_PIDALL;
 	fr.data[1] = msg->P >> 8;
 	fr.data[2] = msg->P & 0x00FF;
 	fr.data[3] = msg->I >> 8;
@@ -457,8 +456,8 @@ void CanInterfaceNode::STMPWM(const can_msgs::PWMs::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 5;
-	fr.id = STM_CAN_ADDR;
-	fr.data[0] = PWM;
+	fr.id = Frame::STM_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_PWM;
 	fr.data[1] = msg->left_pwm >> 8;
 	fr.data[2] = msg->left_pwm & 0x00FF;
 	fr.data[3] = msg->right_pwm >> 8;
@@ -484,8 +483,8 @@ void CanInterfaceNode::STMSetPose(const can_msgs::Point::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 7;
-	fr.id = STM_CAN_ADDR;
-	fr.data[0] = SET_POS;
+	fr.id = Frame::STM_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_SET_POS;
 	fr.data[1] = msg->pos_x >> 8;
 	fr.data[2] = msg->pos_x & 0x00FF;
 	fr.data[3] = msg->pos_y >> 8;
@@ -515,8 +514,8 @@ void CanInterfaceNode::STMSetParam(const can_msgs::STMParam::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 7;
-	fr.id = STM_CAN_ADDR;
-	fr.data[0] = SET_PARAM;
+	fr.id = Frame::STM_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_SET_PARAM;
 	fr.data[1] = msg->max_linear_speed >> 8;
 	fr.data[2] = msg->max_linear_speed & 0x00FF;
 	fr.data[3] = msg->max_angular_speed >> 8;
@@ -541,8 +540,8 @@ void CanInterfaceNode::ARDUINOActionPliers(const can_msgs::ActionPliers::ConstPt
 	fr.is_extended = 0;
 
 	fr.dlc = 3;
-	fr.id = ARDUINO_CAN_ADDR;
-	fr.data[0] = ACTION_PLIERS;
+	fr.id = Frame::ARDUINO_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_ACTION_PLIERS;
 	fr.data[1] = msg->action;
 	fr.data[2] = msg->level;
 
@@ -563,8 +562,8 @@ void CanInterfaceNode::ARDUINOMovePliers(const std_msgs::Int8::ConstPtr& msg){
 	fr.is_extended = 0;
 
 	fr.dlc = 2;
-	fr.id = ARDUINO_CAN_ADDR;
-	fr.data[0] = MOVE_PLIERS;
+	fr.id = Frame::ARDUINO_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_MOVE_PLIERS;
 	fr.data[1] = msg->data;
 
 	can_pub.publish(fr);
@@ -585,8 +584,8 @@ void CanInterfaceNode::ARDUINOThrowBalls(const can_msgs::ThrowBalls::ConstPtr& m
 	fr.is_extended = 0;
 
 	fr.dlc = 1;
-	fr.id = ARDUINO_CAN_ADDR;
-	fr.data[0] = THROW_BALLS;
+	fr.id = Frame::ARDUINO_CAN_ADDR;
+	fr.data[0] = Frame::ORDER_THROW_BALLS;
 
 	can_pub.publish(fr);
 }

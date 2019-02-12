@@ -25,7 +25,7 @@ Move::Move(std::string name):
     this->STMGoTo_pub             = nh.advertise<can_msgs::Point>("/STM/GoTo",              1);
     this->STMRotation_pub         = nh.advertise<can_msgs::Point>("/STM/Rotation",          1);
     this->STMRotationNoModulo_pub = nh.advertise<can_msgs::Point>("/STM/RotationNoModulo",  1);
-    this->STM_AsserManagement_pub = nh.advertise<can_msgs::Status>("/STM/AsserManagement",  1);
+    this->STM_AsserManagement_pub = nh.advertise<can_msgs::STMStatus>("/STM/AsserManagement",  1);
 
     service_ready("procedure", "move", 1 );
   }
@@ -156,9 +156,9 @@ inline void Move::sendMsg() {
 void Move::TimeoutCallback(const ros::TimerEvent& timer){
 //reset all goal STM
   // ROS_WARN_STREAM("TIMEOUT");
-  can_msgs::Status msg;
+  can_msgs::STMStatus msg;
 
-  msg.value = RESET_ORDERS;
+  msg.value = can_msgs::STMStatus::RESET_ORDERS;
   STM_AsserManagement_pub.publish(msg);
 
   if (!fifo.empty()) {
@@ -177,7 +177,7 @@ void Move::TimeoutCallback(const ros::TimerEvent& timer){
  * @param[in]  msg   The message
  */
 void Move::GetRobotStatus(const ai_msgs::RobotStatus::ConstPtr& msg){
-  if(msg->robot_status == ROBOT_HALT){
+  if(msg->robot_status == RobotStatus::ROBOT_HALT){
     fifo.clear();
     act.shutdown();
   }

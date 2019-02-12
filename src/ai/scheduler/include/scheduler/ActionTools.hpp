@@ -1,7 +1,8 @@
 #ifndef ACTION_TOOLS_HPP
 #define ACTION_TOOLS_HPP
 
-#include "action_manager/Action.hpp"
+#include "ai_msgs/ActionStatus.h"
+
 #include "action_manager/AtomicAction.hpp"
 #include "action_manager/ActionBlock.hpp"
 
