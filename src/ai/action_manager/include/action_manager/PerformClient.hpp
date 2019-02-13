@@ -11,11 +11,14 @@
 #include "node_watcher/Node.hpp"
 
 #include "action_manager/Point.hpp"
-#include "action_manager/ActionPoint.h"
 #include "action_manager/AtomicAction.hpp"
-#include "action_manager/Action.hpp"
+#include "action_manager/ActionBlock.hpp"
+
+#include "ai_msgs/NodeRequirement.h"
 
 typedef actionlib::SimpleActionClient<ai_msgs::PerformAction> PerformActionClt;
+
+using actionlib::SimpleClientGoalState;
 
 class PerformClient : public Node {
 public:
@@ -26,9 +29,11 @@ public:
 	virtual void onPaused() = 0;
 
 protected:
-	void performAction(AtomicAction& action, Point robot_pos);
+	void performAction(AtomicActionPtr action, Point robot_pos);
+	void cancelAction();
+	bool isOnAction();
 
-	ros::NodeHandle nh;
+	void getRequired(std::vector<NodeRequirement>& requirements, ActionPtr action);
 private:
 	PerformActionClt* client;
 };

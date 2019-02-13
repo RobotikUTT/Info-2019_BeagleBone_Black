@@ -32,4 +32,6 @@ private:
   std::list<ActionPtr> _actions;
 };
 
+typedef std::shared_ptr<ActionBlock> ActionBlockPtr;
+
 #endif

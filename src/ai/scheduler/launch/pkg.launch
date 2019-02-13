@@ -1,5 +1,4 @@
 <launch>
-	<node name="scheduler" pkg="scheduler" type="node" output="screen">
-		<param name="actions_directory" value="$(find scheduler)/action_files" />
-	</node>
+	<param name="actions_directory" value="$(find scheduler)/action_files" />
+	<node name="scheduler" pkg="scheduler" type="node" output="screen" />
 </launch>

@@ -3,10 +3,10 @@
 using namespace rapidjson;
 
 // TODO add arguments for files imported actions (to have generic actions for example)
-ActionsParser::ActionsParser(ActionFilePath filepath, ActionBlock* container /*= NULL*/, ActionsParser* parent /*= NULL*/)
+ActionsParser::ActionsParser(ActionFilePath filepath, ActionBlockPtr container /*= NULL*/, ActionsParser* parent /*= NULL*/)
 : filepath(filepath), parent(parent) {
     if (container == NULL) {
-        actionRoot = new ActionBlock("ROOT");
+        actionRoot = std::make_shared<ActionBlock>("ROOT");
     } else {
         actionRoot = container;
     }
@@ -27,7 +27,7 @@ ActionsParser::ActionsParser(ActionFilePath filepath, ActionBlock* container /*=
         const Value& object = d;
 
         // begin to parse
-        parseAction(object, *actionRoot);
+        parseAction(object, actionRoot);
     } catch(std::ios_base::failure& e) {
         std::string message = e.what();
         throw message;
@@ -48,7 +48,7 @@ bool ActionsParser::wasExplored(ActionFilePath path) {
     return false;
 }
 
-void ActionsParser::parseAction(const Value& object, ActionBlock& container) {
+void ActionsParser::parseAction(const Value& object, ActionBlockPtr container) {
     // objects define atomic action
     if (object.IsObject()) {
         // If the action has to be loaded from a different file
@@ -56,7 +56,7 @@ void ActionsParser::parseAction(const Value& object, ActionBlock& container) {
             // Load from file relatively to this one
             ActionsParser(
                 filepath.relative(object["file"].GetString()),
-                &container,
+                container,
                 this
             );
         } else {
@@ -74,7 +74,7 @@ void ActionsParser::parseAction(const Value& object, ActionBlock& container) {
     }
 }
 
-void ActionsParser::parseActionBlock(const Value& object, ActionBlock& container) {
+void ActionsParser::parseActionBlock(const Value& object, ActionBlockPtr container) {
     Value::ConstValueIterator itr = object.Begin();
     const Value& descriptor = *itr;
 
@@ -87,15 +87,15 @@ void ActionsParser::parseActionBlock(const Value& object, ActionBlock& container
         throw "missing or invalid name";
     }
 
-    ActionBlock action(std::string(descriptor["name"].GetString()));
+    ActionBlockPtr action = std::make_shared<ActionBlock>(std::string(descriptor["name"].GetString()));
 
     // parse optional content
     if (descriptor.HasMember("sync") && descriptor["sync"].IsBool()) {
-        action.setSync(descriptor["sync"].GetBool());
+        action->setSync(descriptor["sync"].GetBool());
     }
 
     if (descriptor.HasMember("points") && descriptor["points"].IsInt()) {
-        action.setBasePoints(descriptor["points"].GetInt());
+        action->setBasePoints(descriptor["points"].GetInt());
     }
 
     // then all following ones are contained inside
@@ -104,10 +104,10 @@ void ActionsParser::parseActionBlock(const Value& object, ActionBlock& container
         parseAction(*itr, action);
     }
     
-    container.addAction(std::make_shared<ActionBlock>(action));
+    container->addAction(action);
 }
 
-void ActionsParser::parseAtomicAction(const Value& object, ActionBlock& container) {
+void ActionsParser::parseAtomicAction(const Value& object, ActionBlockPtr container) {
     // an action must be named
     if (!object.HasMember("name") || !object["name"].IsString()) {
         throw "missing or invalid name";
@@ -136,7 +136,7 @@ void ActionsParser::parseAtomicAction(const Value& object, ActionBlock& containe
         parseArgs(object["args"], action);
     }
 
-    container.addAction(std::make_shared<AtomicAction>(action));
+    container->addAction(std::make_shared<AtomicAction>(action));
 }
 
 void ActionsParser::parseArgs(const Value& object, AtomicAction& targetAction) {

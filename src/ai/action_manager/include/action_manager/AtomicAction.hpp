@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 
+
 /**
  * @brief class for atomic actions
  */
@@ -36,5 +37,6 @@ private:
   std::vector<ai_msgs::Argument> _args;
 };
 
+typedef std::shared_ptr<AtomicAction> AtomicActionPtr;
 
 #endif

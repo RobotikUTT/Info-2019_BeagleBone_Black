@@ -1,0 +1,42 @@
+[
+    {
+        "name": "Robot super-journey",
+        "points": "100"
+    },
+    [
+        {
+            "name": "Wait 5 second before start",
+            "sync": true
+        },
+        {
+            "name": "Idle for 4 seconds",
+            "points": 3,
+            "performer": "test",
+            "args": {"what_action": 1, "duration": 4}
+        },
+        {
+            "name": "Idle for 1 seconds",
+            "points": 1,
+            "performer": "test",
+            "args": {"what_action": 1, "duration": 1}
+        }
+    ],
+    {
+        "name": "Find his friend",
+        "performer": "test",
+        "sync": true,
+        "args": {"what_action": 5337, "target": 3}
+    },
+    {
+        "name": "Move toward his friend",
+        "performer": "test",
+        "points": 5,
+        "args": {"what_action": 5337, "toward": 3}
+    },
+    {
+        "name": "Wave his friend",
+        "performer": "wave",
+        "points": 10,
+        "args": {"toward": 7}
+    }
+]

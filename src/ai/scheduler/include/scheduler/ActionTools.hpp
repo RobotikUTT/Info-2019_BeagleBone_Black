@@ -19,4 +19,5 @@ public:
 namespace ActionTools {
 	ActionChoice getOptimalNextAtomic(ActionPtr action, Point& robotPos);
 }
+
 #endif

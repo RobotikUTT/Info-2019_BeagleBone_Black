@@ -1,0 +1,7 @@
+<launch>
+	<param name="actions_directory" value="$(find scheduler)/action_files/test_samples" />
+	<node name="scheduler" pkg="scheduler" type="node" output="screen" />
+	<node name="scheduler_test" pkg="scheduler" type="node" output="screen" />
+	
+    <test test-name="tests_scheduler" pkg="scheduler" type="tests_scheduler" />
+</launch>

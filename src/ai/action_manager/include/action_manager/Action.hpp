@@ -11,9 +11,6 @@
 
 using ai_msgs::ActionStatus;
 
-class Action;
-typedef std::shared_ptr<Action> ActionPtr;
-
 /**
  * class for a general action
  */
@@ -23,7 +20,7 @@ public:
   void setBasePoints(int points);
   void setSync(bool sync);
   virtual void setState(int state);
-  void setParent(ActionPtr);
+  void setParent(std::shared_ptr<Action> parent);
 
   // Getters
   bool isSync() const;
@@ -43,7 +40,7 @@ public:
 protected:
   Action(std::string name = "unnamed");
 
-  ActionPtr _parent;
+  std::shared_ptr<Action> _parent;
 
   int _state, _points;
   std::string _name;
@@ -51,6 +48,8 @@ protected:
 
   std::shared_ptr<ActionPoint> _actionPoint;
 };
+
+typedef std::shared_ptr<Action> ActionPtr;
 
 std::string getActionPointService(std::string performer);
 std::string getActionServer(std::string performer);

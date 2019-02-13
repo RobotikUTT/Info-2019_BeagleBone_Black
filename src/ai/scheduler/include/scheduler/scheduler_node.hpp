@@ -1,11 +1,10 @@
 
-/**	@file scheduler_node.h
-* @brief Define the ROS node Scheduler
-*		
-*		
-* @author Alexis CARE
-* @author Clément de La Bourdonnaye
-*/
+/**
+ * @file scheduler_node.h
+ * @brief Define the ROS node Scheduler
+ *
+ * @author Clément de La Bourdonnaye
+ */
 
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
@@ -21,6 +20,7 @@
 #include "can_msgs/Point.h"
 
 #include "scheduler/ActionsParser.hpp"
+#include "scheduler/ActionTools.hpp"
 #include "scheduler/ActionFilePath.hpp"
 
 using ai_msgs::Side;
@@ -50,8 +50,6 @@ private:
 	bool setState(SetSchedulerState::Request &req, SetSchedulerState::Response &res);
 	void setRobotPosition(const can_msgs::Point::ConstPtr& msg);
 
-	void stop();
-	void resume();
 	void nextAction();
 
 	void onFinished(const actionlib::SimpleClientGoalState& state,

@@ -64,18 +64,18 @@
 class ActionsParser
 {
 public:
-  ActionsParser(ActionFilePath file, ActionBlock* container = NULL, ActionsParser* parent = NULL);
+  ActionsParser(ActionFilePath file, ActionBlockPtr container = nullptr, ActionsParser* parent = NULL);
   
   ActionPtr getAction();
   bool wasExplored(ActionFilePath path);
 private:
   ActionsParser* parent;
-  ActionBlock* actionRoot;
+  ActionBlockPtr actionRoot;
   ActionFilePath filepath;
 
-  void parseAction(const rapidjson::Value& object, ActionBlock& container);
-  void parseAtomicAction(const rapidjson::Value& object, ActionBlock& container);
-  void parseActionBlock(const rapidjson::Value& object, ActionBlock& container);
+  void parseAction(const rapidjson::Value& object, ActionBlockPtr container);
+  void parseAtomicAction(const rapidjson::Value& object, ActionBlockPtr container);
+  void parseActionBlock(const rapidjson::Value& object, ActionBlockPtr container);
 
   void parseArgs(const rapidjson::Value& object, AtomicAction& targetAction);
 };

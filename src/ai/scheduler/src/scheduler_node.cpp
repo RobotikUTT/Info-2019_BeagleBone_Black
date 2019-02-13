@@ -8,7 +8,7 @@
 Scheduler::Scheduler() : PerformClient("scheduler", "ai"), side(Side::LEFT), robotPosition() {
 	// Retrieve action
 	std::string actions_file;
-	nh.getParam("scheduler/actions_directory", actions_file);
+	nh.getParam("actions_directory", actions_file);
 
 	this->side = Side::LEFT;
 	this->control_srv = nh.advertiseService("/scheduler/do", &Scheduler::setState, this);
@@ -20,11 +20,20 @@ Scheduler::Scheduler() : PerformClient("scheduler", "ai"), side(Side::LEFT), rob
 		ActionsParser parser(ActionFilePath("main", actions_file));
 		this->rootAction = parser.getAction();
 	} catch(const char* error) {
-		ROS_ERROR_STREAM("unable to initialize scheduler due to parsing error: " << error);
+		ROS_ERROR_STREAM("Unable to initialize scheduler due to parsing error: " << error);
 		setNodeStatus(NodeStatus::NODE_ERROR, 1);
 		return;
 	}
-	
+
+	std::vector<NodeRequirement> reqs;
+	this->getRequired(reqs, this->rootAction);
+
+	if (!this->waitForNodes(reqs, 3)) {
+		ROS_ERROR_STREAM("Some actions are missing, unable to start node");
+		setNodeStatus(NodeStatus::NODE_ERROR, 2);
+		return;
+	}
+
 	setNodeStatus(NodeStatus::NODE_READY);
 }
 
@@ -34,9 +43,11 @@ bool Scheduler::setState(SetSchedulerState::Request &req, SetSchedulerState::Res
 		// apply change
 		if (req.running) {
 			this->side = req.side;
-			this->resume();
+
+			// Resume action
+			this->nextAction();
 		} else {
-			this->stop();
+			cancelAction();
 		}
 	}
 
@@ -46,6 +57,11 @@ bool Scheduler::setState(SetSchedulerState::Request &req, SetSchedulerState::Res
 }
 
 void Scheduler::nextAction() {
+	if (isOnAction()) {
+		ROS_WARN_STREAM("Tried to run action while previous action was not done");
+		return;
+	}
+
 	// If pause cancer has spread into the root of the action tree
 	if (this->rootAction->state() == ActionStatus::PAUSED) {
 		// We cure it
@@ -55,12 +71,17 @@ void Scheduler::nextAction() {
 	ActionChoice choice =
 		ActionTools::getOptimalNextAtomic(this->rootAction, this->robotPosition);
 
+	ROS_INFO_STREAM("[Current action tree]" << std::endl << this->rootAction);
+
 	if (choice.action != NULL) {
 		// save current action
 		this->currentAction = choice.action;
 
 		// call then onfinished or onpause
 		this->performAction(choice.action, this->robotPosition);
+		ROS_INFO_STREAM("Perfoming : " << this->currentAction);
+	} else {
+		ROS_INFO_STREAM("No action to be performed");
 	}
 }
 
@@ -74,18 +95,10 @@ void Scheduler::onPaused() {
 	nextAction();
 }
 
-void Scheduler::stop() {
-	// TODO stop current action (mark it as idle instead of paused to resume afterward)
-}
-
-void Scheduler::resume() {
-	// TODO resume current action or run next one
-}
-
 void Scheduler::setRobotPosition(const can_msgs::Point::ConstPtr& msg) {
-	this->robotPosition.x = msg.x;
-	this->robotPosition.y = msg.y;
-	this->robotPosition.angle = msg.rotation;
+	this->robotPosition.x = msg->pos_x;
+	this->robotPosition.y = msg->pos_y;
+	this->robotPosition.angle = msg->angle;
 }
 
 int main(int argc, char *argv[]) {
