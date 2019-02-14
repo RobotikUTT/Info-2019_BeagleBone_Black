@@ -20,7 +20,11 @@ double Action::priority(Point& robot_pos) {
 	int action_points = points();
 	int distance = distanceToTravel(robot_pos);
 	
-	return action_points * action_points / distance;
+	if (distance == 0) {
+		return std::numeric_limits<double>::infinity();
+	} else {
+		return action_points * action_points / distance;
+	}
 }
 
 // Getters
@@ -101,11 +105,18 @@ std::ostream& operator<<(std::ostream& os, const Action& ac) {
  */
 std::string getActionPointService(std::string performer) {
 	std::ostringstream output;
-	output << "action_manager/" << performer << "/actionpoint";
+	output << "/action_manager/" << performer << "/actionpoint";
 	return output.str();
 }
+
 std::string getActionServer(std::string performer) {
 	std::ostringstream output;
 	output << "action_" << performer;
+	return output.str();
+}
+
+std::string getActionNodePath(std::string performer) {
+	std::ostringstream output;
+	output << "/action/" << performer;
 	return output.str();
 }

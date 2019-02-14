@@ -34,9 +34,9 @@
         "args": {"what_action": 5337, "toward": 3}
     },
     {
-        "name": "Wave his friend",
-        "performer": "wave",
+        "name": "Always pause action",
+        "performer": "test",
         "points": 10,
-        "args": {"toward": 7}
+        "args": {"what_action": 666}
     }
 ]

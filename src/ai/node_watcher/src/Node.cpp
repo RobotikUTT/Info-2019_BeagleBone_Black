@@ -86,6 +86,11 @@ bool Node::waitForNodes(string file, int timeout) {
 bool Node::waitForNodes(std::vector<NodeRequirement>& nodes, int timeout) {
     ROS_INFO_STREAM("Node " << nodename << " is waiting for " << nodes.size() << " other nodes to start");
     
+    if (nodes.size() == 0) {
+        ROS_INFO_STREAM("Node " << nodename << " is done waiting for nodes");
+        return true;
+    }
+
     // Prepare request
     AwaitNodesRequest request;
     request.request.nodes = nodes;
@@ -107,6 +112,7 @@ bool Node::waitForNodes(std::vector<NodeRequirement>& nodes, int timeout) {
             }
         } while(sharedResult->request_code != code);
 
+        ROS_INFO_STREAM("Node " << nodename << " is done waiting for nodes");
         return sharedResult->success;
     } else {
         ROS_ERROR_STREAM("Unabled to call nodes waiting service");

@@ -28,7 +28,7 @@ Scheduler::Scheduler() : PerformClient("scheduler", "ai"), side(Side::LEFT), rob
 	std::vector<NodeRequirement> reqs;
 	this->getRequired(reqs, this->rootAction);
 
-	if (!this->waitForNodes(reqs, 3)) {
+	if (!this->waitForNodes(reqs, 5)) {
 		ROS_ERROR_STREAM("Some actions are missing, unable to start node");
 		setNodeStatus(NodeStatus::NODE_ERROR, 2);
 		return;
@@ -40,25 +40,26 @@ Scheduler::Scheduler() : PerformClient("scheduler", "ai"), side(Side::LEFT), rob
 bool Scheduler::setState(SetSchedulerState::Request &req, SetSchedulerState::Response &res) {
 	// If there is a change in state
 	if (this->running != req.running) {
+		this->running = req.running;
+		
 		// apply change
 		if (req.running) {
+			ROS_INFO("Scheduler actions resumed !");
 			this->side = req.side;
 
 			// Resume action
 			this->nextAction();
 		} else {
+			ROS_INFO("Scheduler actions paused...");
 			cancelAction();
 		}
 	}
-
-	this->running = req.running;
 
 	return true;
 }
 
 void Scheduler::nextAction() {
-	if (isOnAction()) {
-		ROS_WARN_STREAM("Tried to run action while previous action was not done");
+	if (!this->running) {
 		return;
 	}
 
@@ -67,21 +68,27 @@ void Scheduler::nextAction() {
 		// We cure it
 		this->rootAction->setState(ActionStatus::IDLE);
 	}
+	
+	if (this->rootAction->state() == ActionStatus::IDLE) {
+		ActionChoice choice =
+			getOptimalNextAtomic(this->rootAction, this->robotPosition);
 
-	ActionChoice choice =
-		ActionTools::getOptimalNextAtomic(this->rootAction, this->robotPosition);
+		ROS_INFO_STREAM("[Current action tree]" << std::endl << *this->rootAction);
 
-	ROS_INFO_STREAM("[Current action tree]" << std::endl << this->rootAction);
+		if (choice.action != NULL) {
+			// save current action
+			this->currentAction = choice.action;
 
-	if (choice.action != NULL) {
-		// save current action
-		this->currentAction = choice.action;
+			ROS_INFO_STREAM("Perfoming : " << *this->currentAction);
 
-		// call then onfinished or onpause
-		this->performAction(choice.action, this->robotPosition);
-		ROS_INFO_STREAM("Perfoming : " << this->currentAction);
+			// call then onfinished or onpause
+			this->performAction(choice.action, this->robotPosition);
+		} else {
+			ROS_INFO_STREAM("No action to be performed");
+			this->rootAction->setState(ActionStatus::DONE);
+		}
 	} else {
-		ROS_INFO_STREAM("No action to be performed");
+		ROS_INFO_STREAM("Root action is in state " << this->rootAction->state());
 	}
 }
 
@@ -103,7 +110,6 @@ void Scheduler::setRobotPosition(const can_msgs::Point::ConstPtr& msg) {
 
 int main(int argc, char *argv[]) {
 	ros::init(argc, argv, "scheduler_node");
-	
 	Scheduler node;
 	ros::spin();
 }

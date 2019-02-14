@@ -29,11 +29,6 @@ void PerformClient::cancelAction() {
 	onPaused();
 }
 
-bool PerformClient::isOnAction() {
-	return client->getState() == SimpleClientGoalState::ACTIVE ||
-		client->getState() == SimpleClientGoalState::PENDING;
-}
-
 void PerformClient::getRequired(std::vector<NodeRequirement>& requirements, ActionPtr action) {
 	// Try to cast as block to add all subactions requirements
 	const auto block = std::dynamic_pointer_cast<ActionBlock>(action);
@@ -46,7 +41,7 @@ void PerformClient::getRequired(std::vector<NodeRequirement>& requirements, Acti
 	// Try to cast as block to add all subactions requirements
 	const auto atomic = std::dynamic_pointer_cast<AtomicAction>(action);
 	if (atomic) {
-		std::string perfomer = getActionServer(atomic->performer());
+		std::string perfomer = getActionNodePath(atomic->performer());
 
 		// Check if the performer is not already required
 		for (const auto& nextReq : requirements) {

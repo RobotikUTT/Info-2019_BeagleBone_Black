@@ -1,5 +1,6 @@
 #include "node_watcher/NodesAwaiter.hpp"
 
+// TODO implement action server with multiple goals
 NodesAwaiter::NodesAwaiter(AwaitNodesRequest::Request& req, AwaitNodesRequest::Response& res, ros::Publisher& pub)
 	: finished(false), resultPub(pub), nh() {
 
@@ -15,9 +16,9 @@ NodesAwaiter::NodesAwaiter(AwaitNodesRequest::Request& req, AwaitNodesRequest::R
 	// Set timeout callback (last true is for oneshot parameter)
 	timeout = nh.createTimer(ros::Duration(req.timeout), &NodesAwaiter::onTimeout, this, true);
 
-	// Send result now	
+	// Send result now if there is no action to wait
 	if (req.nodes.size() == 0) {
-		this->sendResults();
+		this->checkFinished();
 	}
 }
 
@@ -62,7 +63,9 @@ void NodesAwaiter::checkFinished() {
 
 	// If all nodes are alive, we wait just enough for service to return request_code
 	// in case it was called before return
-	nh.createTimer(ros::Duration(0.1), &NodesAwaiter::onTimeout, this, true);
+	timeout.stop();
+	timeout.setPeriod(ros::Duration(0.5));
+	timeout.start();
 	return;
 }
 

@@ -42,7 +42,7 @@ class GPIOHandlerNode(object):
 		rospy.Subscriber("/ai/controller/status", RobotStatus, self.setLED)
 
 		# Publishers
-		self._start_publisher = rospy.Publisher("/signal/start", Empty, queue_size = 1, latch=True)
+		self._start_publisher = rospy.Publisher("/signal/start", StartRobot, queue_size = 1, latch=True)
 
 		# init states
 		self.side = -1 # impossible value that will get the side updated in the loop

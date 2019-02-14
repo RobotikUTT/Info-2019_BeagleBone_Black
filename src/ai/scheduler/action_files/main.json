@@ -1,7 +1,59 @@
 [
     {
         "name": "Root action",
-        "points": 30,
-        "sync": true
+        "points": 30
+    },
+    {
+        "name": "Set angle",
+        "points": 0,
+        "sync": true,
+        "performer": "reach",
+        "args": {
+            "angle": 0
+        }
+    },
+    {
+        "name": "Point 1",
+        "points": 0,
+        "sync": true,
+        "performer": "reach",
+        "args": {
+            "x": 200,
+            "y": 0,
+            "angle": 0
+        }
+    },
+    {
+        "name": "Point 2",
+        "points": 0,
+        "sync": true,
+        "performer": "reach",
+        "args": {
+            "x": 200,
+            "y": 200,
+            "angle": 90
+        }
+    },
+    {
+        "name": "Point 3",
+        "points": 0,
+        "sync": true,
+        "performer": "reach",
+        "args": {
+            "x": 0,
+            "y": 200,
+            "angle": 180
+        }
+    },
+    {
+        "name": "Return to start",
+        "points": 0,
+        "sync": true,
+        "performer": "reach",
+        "args": {
+            "x": 200,
+            "y": 200,
+            "angle": 240
+        }
     }
 ]

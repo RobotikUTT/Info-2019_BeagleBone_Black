@@ -10,14 +10,12 @@
 
 class ActionChoice {
 public:
-	ActionChoice(std::shared_ptr<AtomicAction> action = nullptr, double score = 0);
+	ActionChoice(AtomicActionPtr action = nullptr, double score = 0);
 
-	std::shared_ptr<AtomicAction> action;
+	AtomicActionPtr action;
 	double score;
 };
 
-namespace ActionTools {
-	ActionChoice getOptimalNextAtomic(ActionPtr action, Point& robotPos);
-}
+ActionChoice getOptimalNextAtomic(ActionPtr action, Point& robotPos);
 
 #endif

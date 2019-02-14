@@ -1,3 +1,9 @@
 <launch>
+    <!-- Test action node -->
+    <node name="scheduler_test" pkg="scheduler" type="node" output="screen" />
+	
+	<!-- node_watcher -->
+	<node name="node_watcher" pkg="node_watcher" type="node" output="screen" />
+
     <test test-name="tests_performing" pkg="scheduler" type="tests_performing"  time-limit="5.0" />
 </launch>

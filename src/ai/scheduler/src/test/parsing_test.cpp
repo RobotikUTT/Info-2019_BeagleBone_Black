@@ -14,8 +14,10 @@
 class ParsingFixture : public ::testing::Test {
   protected:
     ros::NodeHandle nh;
-    Action* saved;
-    AtomicAction* atomicSavec;
+
+    ActionBlockPtr block;
+    AtomicActionPtr atomic;
+
     ActionFilePath* path;
 
   // Setup
@@ -26,6 +28,20 @@ class ParsingFixture : public ::testing::Test {
 
     // create default path
     path = new ActionFilePath(std::string(), root);
+
+    // init theorical blocks
+    atomic = std::make_shared<AtomicAction>("atomic test", "none");
+    atomic->setSync(false);
+    atomic->setBasePoints(1);
+    atomic->addArg(make_arg("usefull", 0));
+    atomic->addArg(make_arg("style", 30));
+
+    block = std::make_shared<ActionBlock>("action group");
+    block->setBasePoints(3);
+    block->setSync(true);
+
+    block->addAction(atomic);
+    block->addAction(std::make_shared<AtomicAction>("atomic test 2", "none"));
   }
 
   ActionFilePath& make_path(const char* file) {
@@ -53,15 +69,6 @@ class ParsingFixture : public ::testing::Test {
   }
 */
 TEST_F(ParsingFixture, atomicAction) {
-  AtomicAction* expected = new AtomicAction("atomic test", "none");
-  expected->setSync(false);
-  expected->setBasePoints(1);
-  expected->addArg(make_arg("usefull", 0));
-  expected->addArg(make_arg("style", 30));
-
-  // Save for further tests
-  atomicSavec = expected;
-
   ActionsParser* parser;
   try {
     parser = new ActionsParser(make_path("atomic_action"));
@@ -69,8 +76,8 @@ TEST_F(ParsingFixture, atomicAction) {
     FAIL() << message;
   }
   
-  ASSERT_TRUE(parser->getAction()->equals(*expected))
-      << *parser->getAction() << std::endl << "parsed result is not equal to" << std::endl << *expected;
+  ASSERT_TRUE(parser->getAction()->equals(*atomic))
+      << *parser->getAction() << std::endl << "parsed result is not equal to" << std::endl << *atomic;
 }
 
 /* TESTED JSON FILE
@@ -94,21 +101,12 @@ TEST_F(ParsingFixture, atomicAction) {
   ]
 */
 TEST_F(ParsingFixture, actionBlock) {
-  // Action block expected
-  ActionBlock* expected = new ActionBlock("action group");
-  expected->setBasePoints(3);
-  expected->setSync(true);
-
-  expected->addAction(std::make_shared<AtomicAction>(*atomicSavec));
-  expected->addAction(std::make_shared<AtomicAction>(AtomicAction("atomic test 2", "none")));
-  saved = expected; // save for next test
-
   try {
     // Parse from file
     ActionPtr parsed = ActionsParser(make_path("action_block")).getAction();
     
-    ASSERT_TRUE(expected->equals(*parsed))
-      << *parsed << std::endl << "parsed result is not equal to" << std::endl << *expected;
+    ASSERT_TRUE(parsed->equals(*block))
+      << *parsed << std::endl << "parsed result is not equal to" << std::endl << *block;
   } catch(const char* message) {
     FAIL() << message;
   }
@@ -134,8 +132,8 @@ TEST_F(ParsingFixture, fileInclusion) {
   try {
     ActionPtr parsed = ActionsParser(make_path("inclusion")).getAction();
   
-    ASSERT_TRUE(parsed->equals(*saved))
-      << *parsed << std::endl << "parsed result is not equal to" << std::endl << *saved;
+    ASSERT_TRUE(parsed->equals(*block))
+      << *parsed << std::endl << "parsed result is not equal to" << std::endl << *block;
 
   } catch(const char* message) {
     FAIL() << message;

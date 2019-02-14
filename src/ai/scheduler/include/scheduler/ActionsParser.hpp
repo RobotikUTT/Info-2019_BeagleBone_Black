@@ -64,7 +64,7 @@
 class ActionsParser
 {
 public:
-  ActionsParser(ActionFilePath file, ActionBlockPtr container = nullptr, ActionsParser* parent = NULL);
+  ActionsParser(ActionFilePath file, ActionBlockPtr container = nullptr, ActionsParser* parent = nullptr);
   
   ActionPtr getAction();
   bool wasExplored(ActionFilePath path);

@@ -66,16 +66,16 @@ if(CATKIN_ENABLE_TESTING)
 #    src/test/performing_test.cpp
 #  )
 #  target_link_libraries(tests_performing ${catkin_LIBRARIES})
-#
-#  # Executable for scheduler tests
-#  add_executable(${PROJECT_NAME}_test_node src/test/test_node.cpp)
-#  set_target_properties(${PROJECT_NAME}_test_node PROPERTIES OUTPUT_NAME node PREFIX "")
-#  target_link_libraries(${PROJECT_NAME}_test_node ${catkin_LIBRARIES})
-#
-#  # Tests for scheduler
-#  add_rostest_gtest(tests_scheduler
-#    launch/scheduler.test
-#    src/test/performing_test.cpp
-#  )
-#  target_link_libraries(tests_performing ${catkin_LIBRARIES})
+
+  # Executable for scheduler tests
+  add_executable(${PROJECT_NAME}_test_node src/test/test_node.cpp)
+  set_target_properties(${PROJECT_NAME}_test_node PROPERTIES OUTPUT_NAME node PREFIX "")
+  target_link_libraries(${PROJECT_NAME}_test_node ${catkin_LIBRARIES})
+
+  # Tests for scheduler
+  add_rostest_gtest(tests_scheduler
+    launch/scheduler.test
+    src/test/scheduler_test.cpp
+  )
+  target_link_libraries(tests_scheduler ${catkin_LIBRARIES})
 endif()

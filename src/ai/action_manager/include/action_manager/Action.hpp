@@ -5,6 +5,7 @@
 
 #include "ai_msgs/ActionStatus.h"
 
+#include <iostream>
 #include <string>
 #include <sstream>
 #include <memory>
@@ -53,6 +54,7 @@ typedef std::shared_ptr<Action> ActionPtr;
 
 std::string getActionPointService(std::string performer);
 std::string getActionServer(std::string performer);
+std::string getActionNodePath(std::string performer);
 
 std::ostream& operator<<(std::ostream& os, const Action& ac);
 

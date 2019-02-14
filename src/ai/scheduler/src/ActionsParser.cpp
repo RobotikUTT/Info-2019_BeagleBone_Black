@@ -5,14 +5,15 @@ using namespace rapidjson;
 // TODO add arguments for files imported actions (to have generic actions for example)
 ActionsParser::ActionsParser(ActionFilePath filepath, ActionBlockPtr container /*= NULL*/, ActionsParser* parent /*= NULL*/)
 : filepath(filepath), parent(parent) {
-    if (container == NULL) {
+
+    if (container == nullptr) {
         actionRoot = std::make_shared<ActionBlock>("ROOT");
     } else {
         actionRoot = container;
     }
     
     // check that the path hasn't been explored
-    if (parent != NULL && parent->wasExplored(filepath)) {
+    if (parent != nullptr && parent->wasExplored(filepath)) {
         throw "circular JSON inclusion";
     }
 
@@ -86,7 +87,7 @@ void ActionsParser::parseActionBlock(const Value& object, ActionBlockPtr contain
      if (!descriptor.HasMember("name") || !descriptor["name"].IsString()) {
         throw "missing or invalid name";
     }
-
+    
     ActionBlockPtr action = std::make_shared<ActionBlock>(std::string(descriptor["name"].GetString()));
 
     // parse optional content
@@ -145,8 +146,15 @@ void ActionsParser::parseArgs(const Value& object, AtomicAction& targetAction) {
     for (Value::ConstMemberIterator itr = object.MemberBegin(); itr != object.MemberEnd(); ++itr) {
         arg = new ai_msgs::Argument();
         arg->name = itr->name.GetString();
-        arg->value = itr->value.GetDouble();
 
-        targetAction.addArg(*arg);
+        if (itr->value.IsDouble()) {
+            arg->value = itr->value.GetDouble();
+            targetAction.addArg(*arg);
+        } else if (itr->value.IsInt()) {
+            arg->value = itr->value.GetInt();
+            targetAction.addArg(*arg);
+        } else {
+            ROS_WARN_STREAM("arg " << arg->name << " does not have a double value (ignored)");
+        }
     }
 }

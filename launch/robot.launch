@@ -4,7 +4,6 @@
 		<include file="./src/ai/node_watcher/launch/pkg.launch"/>
 		<include file="./src/ai/scheduler/launch/pkg.launch"/>
 		<include file="./src/ai/controller/launch/pkg.launch"/>
-		<!-- <include file="./src/ai/pathfinding/launch/pkg.launch"/> -->
 	</group>
 	<group ns="ros_can">
 		<include file="./src/ros_can/robot_interface/launch/pkg.launch"/>
@@ -12,7 +11,7 @@
 	</group>
 
 	<group ns="procedures">
-		<include file="./src/procedures/move/launch/pkg.launch"/>
+		<include file="./src/procedures/reach/launch/pkg.launch"/>
 	</group>
 
 	<group ns="interface">

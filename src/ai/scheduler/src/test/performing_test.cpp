@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include <ros/ros.h>
 
+#include "scheduler/test/test_node.hpp"
+
 #include "std_msgs/String.h"
 
 #include "action_manager/ActionPerformer.hpp"
@@ -11,34 +13,6 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-
-// Example test performer
-class MessageActionPerformer : public ActionPerformer {
-	ros::Publisher messagePub;
-
-public:
-	MessageActionPerformer() : ActionPerformer("test_message") {
-		messagePub = nh.advertise<std_msgs::String>("/test_messages", 3);
-	}
-
-	ActionPoint computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, Point robot_pos) override {
-		// The robot teleports at twice it's coordinates
-		return ActionPoint(robot_pos, Point(2*robot_pos.x, 2*robot_pos.y));
-	}
-	
-	void start() override {
-		std_msgs::String msg;
-		std::ostringstream output;
-		output << "got: ";
-		output << getArg("content");
-		msg.data = output.str();
-
-		messagePub.publish(msg);
-
-		// Action is finished
-		actionPerformed();
-	}
-};
 
 // Static content for tests
 class PerformingFixture : public ::testing::Test, public PerformClient {
@@ -56,25 +30,22 @@ protected:
 	
 	// Setup
 	PerformingFixture() : PerformClient(),
-		messageAction("simple message action", "test_message"), msgPerf(), spinner(4) {
+		messageAction("simple message action", "test") {
 		
 		// Init states
 		reset();
 		messageAction.addArg(make_arg("content", 45.5));
 
 		// Subscribe to answers
-		sub = nh.subscribe("test_messages", 3, &PerformingFixture::messageCallback, this);
-	
-		// Spin ros
-		spinner.start();
+		sub = nh.subscribe(MESSAGE_TOPIC, 3, &PerformingFixture::messageCallback, this);
 	}
 
 	void onFinished(const actionlib::SimpleClientGoalState& state,
-		const ai_msgs::PerformResultConstPtr& result) {
+		const ai_msgs::PerformResultConstPtr& result) override {
 		finished = true;
 	}
 
-	virtual void onPaused() {
+	virtual void onPaused() override {
 		paused = true;
 	}
 
@@ -130,8 +101,6 @@ TEST_F(PerformingFixture, performing) {
 int main(int argc, char **argv) {
 	testing::InitGoogleTest(&argc, argv);
 	ros::init(argc, argv, "performing_test");
-
-	
 
 	return RUN_ALL_TESTS();
 }

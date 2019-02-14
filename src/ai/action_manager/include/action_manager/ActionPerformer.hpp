@@ -21,7 +21,6 @@
 
 #include "can_msgs/Finish.h"
 #include "can_msgs/Point.h"
-#include "can_msgs/Status.h"
 
 #include "procedures_msgs/OrPoint.h"
 
