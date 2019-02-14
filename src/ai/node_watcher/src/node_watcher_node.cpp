@@ -2,7 +2,10 @@
 
 NodeWatcher::NodeWatcher() : nh() {
     watcherService = nh.advertiseService(WATCHER_SERVICE, &NodeWatcher::nodeStatus, this);
-    waiterService = nh.advertiseService(NODES_AWAITER_SERVICE, &NodeWatcher::awaitNodes, this);
+    waiterService = nh.advertiseService(NODES_AWAITER_INIT_SERVICE, &NodeWatcher::awaitNodes, this);
+	
+    // Subscribe to start signal topic
+	waitStartSubscriber = nh.subscribe(NODES_AWAITER_START_TOPIC, 10, &NodeWatcher::waitStartRequested, this);
 
     updatePublisher = nh.advertise<NodeStatusUpdate>("/ai/node_watcher/update", 100);
     waitResultPublisher = nh.advertise<AwaitNodesResult>(NODES_AWAITER_RESULT_TOPIC, 100);
@@ -22,6 +25,12 @@ NodeStatus NodeWatcher::getNodeStatus(std::string name) {
     }
 }
 
+void NodeWatcher::waitStartRequested(const std_msgs::Int32::ConstPtr& msg) {
+    for (const auto& next : this->waiters) {
+		next->startRequested(msg->data);
+	}
+}
+
 bool NodeWatcher::awaitNodes(AwaitNodesRequest::Request& req, AwaitNodesRequest::Response& res) {
     std::shared_ptr<NodesAwaiter> waiter = std::make_shared<NodesAwaiter>(req, res, waitResultPublisher);
 
@@ -31,12 +40,11 @@ bool NodeWatcher::awaitNodes(AwaitNodesRequest::Request& req, AwaitNodesRequest:
 	}
     
     // Add to list of waiters if not already done
-    if (!waiter->isFinished()) {
-        this->waiters.push_back(waiter);
-    }
+    this->waiters.push_back(waiter);
 
     return true;
 }
+
 /**
  * Change a node status for all waiters, and clear done waiters as well
  */
@@ -46,7 +54,7 @@ void NodeWatcher::updateWaiters(std::string name, NodeStatus status) {
     // Loop from [https://stackoverflow.com/questions/596162/can-you-remove-elements-from-a-stdlist-while-iterating-through-it]
     while (i != waiters.end()) {
         // Remove done elements
-        if ((*i)->isFinished()) {
+        if ((*i)->isSent()) {
             i = waiters.erase(i);
         }
         

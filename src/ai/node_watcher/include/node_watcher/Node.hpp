@@ -8,11 +8,15 @@
 #include <string>
 #include <fstream>
 
+#include <mutex>
+#include <condition_variable>
+
 #include "ai_msgs/NodeReadiness.h"
 #include "ai_msgs/AwaitNodesRequest.h"
 #include "ai_msgs/AwaitNodesResult.h"
-
 #include "ai_msgs/NodeStatus.h"
+
+#include "std_msgs/Int32.h"
 
 using std::string;
 using ros::ServiceClient;
@@ -23,7 +27,8 @@ const string STATUS_STRINGS[] = { "UNKNOW", "INIT", "READY", "ERROR", "DESTROYED
 
 const string WATCHER_SERVICE = "/ai/node_watcher/node_readiness";
 
-const string NODES_AWAITER_SERVICE = "/ai/node_watcher/wait"; 
+const string NODES_AWAITER_INIT_SERVICE = "/ai/node_watcher/wait"; 
+const string NODES_AWAITER_START_TOPIC = "/ai/node_watcher/wait_start"; 
 const string NODES_AWAITER_RESULT_TOPIC = "/ai/node_watcher/wait_result"; 
 
 /**
@@ -37,14 +42,22 @@ private:
 
     NodeStatus status;
 
+    int waitRequestCode;
+
     ServiceClient watcherClient;
     ServiceClient waiterClient;
+    ros::Publisher startPub;
+    ros::Subscriber answerSub;
+
+    void onAwaitResponse(const AwaitNodesResult& msg);
 public:
     Node(string name, string package);
     ~Node();
 
 protected:
     ros::NodeHandle nh;
+
+    virtual void onWaitingResult(bool success) { }
 
     // Status setter
     void setNodeStatus(int state_code, int errorCode = 0);
@@ -55,9 +68,9 @@ protected:
     NodeStatus getNodeStatus(string nodename);
 
     // Function to await nodes
-    bool waitForNodes(int timeout);
-    bool waitForNodes(string file, int timeout);
-    bool waitForNodes(std::vector<NodeRequirement>& nodes, int timeout);
+    void waitForNodes(int timeout);
+    void waitForNodes(string file, int timeout);
+    void waitForNodes(std::vector<NodeRequirement>& nodes, int timeout);
 };
 
 #endif

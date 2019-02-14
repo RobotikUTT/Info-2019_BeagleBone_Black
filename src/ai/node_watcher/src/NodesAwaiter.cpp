@@ -1,8 +1,7 @@
 #include "node_watcher/NodesAwaiter.hpp"
 
-// TODO implement action server with multiple goals
 NodesAwaiter::NodesAwaiter(AwaitNodesRequest::Request& req, AwaitNodesRequest::Response& res, ros::Publisher& pub)
-	: finished(false), resultPub(pub), nh() {
+	: finished(false), sent(false), started(false), resultPub(pub), nh() {
 
 	// Get a request code and set it as response
 	this->requestCode = NodesAwaiter::lastRequestCode++;
@@ -13,17 +12,30 @@ NodesAwaiter::NodesAwaiter(AwaitNodesRequest::Request& req, AwaitNodesRequest::R
 		this->requirements[node.nodename] = node.optional ? OPTIONAL : 0;
 	}
 
-	// Set timeout callback (last true is for oneshot parameter)
-	timeout = nh.createTimer(ros::Duration(req.timeout), &NodesAwaiter::onTimeout, this, true);
+	this->timeout = req.timeout;
 
 	// Send result now if there is no action to wait
 	if (req.nodes.size() == 0) {
-		this->checkFinished();
+		finished = true;
 	}
 }
 
 // Static request code counter 
 int NodesAwaiter::lastRequestCode = 0;
+
+void NodesAwaiter::startRequested(int code) {
+	if (code == this->requestCode) {
+		started = true;
+
+		if (finished) {
+			// If finished send results right away
+			sendResults();
+		} else {
+			// Set timeout callback (last true is for oneshot parameter)
+			timer = nh.createTimer(ros::Duration(this->timeout), &NodesAwaiter::onTimeout, this, true);
+		}
+	}
+}
 
 void NodesAwaiter::updateStatus(std::string nodename, NodeStatus status) {
 	// Do not update when finished
@@ -60,13 +72,9 @@ void NodesAwaiter::checkFinished() {
 		}
 	}
 
-
-	// If all nodes are alive, we wait just enough for service to return request_code
-	// in case it was called before return
-	timeout.stop();
-	timeout.setPeriod(ros::Duration(0.5));
-	timeout.start();
-	return;
+	// If all nodes are alive, we send result
+	finished = true;
+	sendResults();
 }
 
 void NodesAwaiter::onTimeout(const ros::TimerEvent& timer) {
@@ -75,10 +83,10 @@ void NodesAwaiter::onTimeout(const ros::TimerEvent& timer) {
 
 void NodesAwaiter::sendResults() {
 	// Make sure result is sent once and cancel timeout
-	if (this->finished) return;
-	this->finished = true;
+	if (this->sent || !this->started) return;
+	this->sent = true;
 
-	timeout.stop();
+	timer.stop();
 
 	AwaitNodesResult result;
 	result.success = true;
@@ -113,8 +121,8 @@ void NodesAwaiter::sendResults() {
 	this->resultPub.publish(result);
 }
 
-bool NodesAwaiter::isFinished() const {
-	return this->finished;
+bool NodesAwaiter::isSent() const {
+	return this->sent;
 }
 
 bool operator <(const NodeRequirement &lhs, const NodeRequirement &rhs) {

@@ -8,6 +8,10 @@
 #include "ai_msgs/AwaitNodesResult.h"
 #include "ai_msgs/NodeStatus.h"
 
+#include "node_watcher/Node.hpp"
+
+#include "std_msgs/Int32.h"
+
 #include <iostream>
 #include <map>
 #include <vector>
@@ -27,16 +31,21 @@ public:
 	);
 
 	void updateStatus(std::string nodename, NodeStatus status);
-	bool isFinished() const;
-
+	bool isSent() const;
+	void startRequested(int code);
+	
 	static int lastRequestCode;
 protected:
 	ros::Publisher resultPub;
-	ros::Timer timeout;
+
+	ros::Timer timer;
 	ros::NodeHandle nh;
 
 	int requestCode;
+	int timeout;
 	bool finished;
+	bool started;
+	bool sent;
 	std::map<std::string, int> requirements;
 
 	void checkFinished();

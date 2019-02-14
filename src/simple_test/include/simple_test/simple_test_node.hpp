@@ -29,6 +29,8 @@ private:
 
     void moveDone(const can_msgs::Finish::ConstPtr&);
     void moveSomewhereElse();
+
+    void onWaitingResult(bool success) override;
 };
 
 #endif

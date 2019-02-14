@@ -7,25 +7,29 @@ SimpleNode::SimpleNode(std::string name) : Node("simple_test", "none"), wentHere
 	this->STM_SetPose_pub = nh.advertise<can_msgs::Point>("/STM/SetPose", 1);
 	this->STM_AsserManagement_pub = nh.advertise<can_msgs::STMStatus>("/STM/AsserManagement", 1);
 
-    if (!this->waitForNodes(5)) {
-        ROS_ERROR_STREAM("unable to start tests");
+    this->waitForNodes(5);
+}
+
+void SimpleNode::onWaitingResult(bool success) {
+	if (success) {
+		// init STM position
+        can_msgs::Point msg;
+        msg.pos_x = 0;
+        msg.pos_y = 0;
+        msg.angle = 0;
+        STM_SetPose_pub.publish(msg);
+
+        // make it running
+        can_msgs::STMStatus msg2;
+        msg2.value = can_msgs::STMStatus::START;
+        STM_AsserManagement_pub.publish(msg2);
+
+        ROS_INFO("Beginning movement !");
+        moveSomewhereElse();
+	} else {
+		ROS_ERROR_STREAM("unable to start tests");
         return;
-    }
-
-    // init STM position
-    can_msgs::Point msg;
-    msg.pos_x = 0;
-    msg.pos_y = 0;
-    msg.angle = 0;
-    STM_SetPose_pub.publish(msg);
-
-    // make it running
-    can_msgs::STMStatus msg2;
-    msg2.value = can_msgs::STMStatus::START;
-    STM_AsserManagement_pub.publish(msg2);
-
-    ROS_INFO("Beginning movement !");
-    moveSomewhereElse();
+	}
 }
 
 // Get STM signal it's done

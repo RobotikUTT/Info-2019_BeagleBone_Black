@@ -56,5 +56,6 @@ private:
 		const ai_msgs::PerformResultConstPtr& result) override;
 	void onPaused() override;
 
+	void onWaitingResult(bool success) override;
 };
 #endif

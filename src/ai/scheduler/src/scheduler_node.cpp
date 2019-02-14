@@ -28,13 +28,17 @@ Scheduler::Scheduler() : PerformClient("scheduler", "ai"), side(Side::LEFT), rob
 	std::vector<NodeRequirement> reqs;
 	this->getRequired(reqs, this->rootAction);
 
-	if (!this->waitForNodes(reqs, 5)) {
+	this->waitForNodes(reqs, 5);
+}
+
+void Scheduler::onWaitingResult(bool success) {
+	if (success) {
+		setNodeStatus(NodeStatus::NODE_READY);
+	} else {
 		ROS_ERROR_STREAM("Some actions are missing, unable to start node");
 		setNodeStatus(NodeStatus::NODE_ERROR, 2);
 		return;
 	}
-
-	setNodeStatus(NodeStatus::NODE_READY);
 }
 
 bool Scheduler::setState(SetSchedulerState::Request &req, SetSchedulerState::Response &res) {

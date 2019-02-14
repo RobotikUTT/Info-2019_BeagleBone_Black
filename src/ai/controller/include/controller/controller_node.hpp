@@ -90,6 +90,8 @@ private:
 
 	void start();
 	void stop();
+
+	void onWaitingResult(bool success) override;
 };
 
 /**

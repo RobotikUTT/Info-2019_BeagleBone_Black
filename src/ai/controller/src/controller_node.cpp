@@ -29,7 +29,10 @@ Controller::Controller() : Node("controller", "ai"), side(Side::LEFT) {
 	schedulerController = nh.serviceClient<SetSchedulerState>("/scheduler/do");
 
 	// Wait for required nodes
-	if (waitForNodes(3)) {
+	waitForNodes(3);
+}
+void Controller::onWaitingResult(bool success) {
+	if (success) {
 		// Set as ready
 		setNodeStatus(NodeStatus::NODE_READY);
 
@@ -39,7 +42,6 @@ Controller::Controller() : Node("controller", "ai"), side(Side::LEFT) {
 	} else {
 		setNodeStatus(NodeStatus::NODE_ERROR);
 	}
-	
 }
 
 void Controller::onStartSignal(const StartRobot& msg) {

@@ -30,6 +30,8 @@ private:
     ros::Publisher updatePublisher;
     ros::Publisher waitResultPublisher;
 
+    ros::Subscriber waitStartSubscriber;
+
     std::map<std::string, NodeStatus> nodes;
 
     std::vector<std::shared_ptr<NodesAwaiter>> waiters;
@@ -41,6 +43,9 @@ public:
     
     void updateWaiters(std::string name, NodeStatus status);
     NodeStatus getNodeStatus(std::string name);
+
+    void waitStartRequested(const std_msgs::Int32::ConstPtr& msg);
+
 };
 
 
