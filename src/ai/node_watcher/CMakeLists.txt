@@ -17,7 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp ai_msgs
+  CATKIN_DEPENDS roscpp roslib ai_msgs
 #  DEPENDS system_lib
 )
 

@@ -1,5 +1,4 @@
 #include "scheduler/ActionFilePath.hpp"
-#include <sstream>
 
 #define FILE_EXTENSION ".json"
 
