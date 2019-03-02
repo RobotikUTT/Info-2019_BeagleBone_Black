@@ -105,13 +105,13 @@ std::ostream& operator<<(std::ostream& os, const Action& ac) {
  */
 std::string getActionPointService(std::string performer) {
 	std::ostringstream output;
-	output << "/action_manager/" << performer << "/actionpoint";
+	output << "/action/" << performer << "/actionpoint";
 	return output.str();
 }
 
 std::string getActionServer(std::string performer) {
 	std::ostringstream output;
-	output << "action_" << performer;
+	output << "/action/" << performer;
 	return output.str();
 }
 

@@ -51,6 +51,12 @@ void Controller::onStartSignal(const StartRobot& msg) {
 }
 
 void Controller::start() {
+	// If the robot is not ready or is not supposed to start
+	if (!this->startSignalReceived ||
+		this->robotState != RobotStatus::ROBOT_READY) {
+		return;
+	}
+
 	// Compute initial position
 	int x, y, angle;
 	nh.getParam("controller/robot_pos/x", x);

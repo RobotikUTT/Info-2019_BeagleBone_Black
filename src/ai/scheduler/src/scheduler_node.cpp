@@ -115,5 +115,6 @@ void Scheduler::setRobotPosition(const can_msgs::Point::ConstPtr& msg) {
 int main(int argc, char *argv[]) {
 	ros::init(argc, argv, "scheduler_node");
 	Scheduler node;
+
 	ros::spin();
 }
