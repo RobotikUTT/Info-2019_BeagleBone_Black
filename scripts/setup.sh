@@ -9,8 +9,8 @@ sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main
 sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
 sudo apt update
 
-echo "Installing ros and catkin-tools..."
-sudo apt install -y ros-melodic-ros-base python-catkin-tools
+echo "Installing ros, catkin-tools and gazebo..."
+sudo apt install -y ros-melodic-ros-base python-catkin-tools gazebo
 
 echo "rosdep initialization..."
 sudo rosdep init
