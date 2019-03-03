@@ -9,16 +9,10 @@
   <!-- Dependencies -->
   <buildtool_depend>catkin</buildtool_depend>
 
-  <!-- Packages -->
   <!-- Gazebo -->
   <build_depend>gazebo_ros</build_depend>
   <build_export_depend>gazebo_ros</build_export_depend>
   <exec_depend>gazebo_ros</exec_depend>
-
-  <!-- Messages -->
-  <depend>ai_msgs</depend>
-  <depend>procedures_msgs</depend>
-  <depend>can_msgs</depend>
 
   <export></export>
 </package>

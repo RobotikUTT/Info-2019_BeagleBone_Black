@@ -19,6 +19,7 @@ add_message_files(DIRECTORY const
   Side.msg
   NodeStatus.msg
   ActionStatus.msg
+  Topics.msg
 )
 
 # Regular messages files

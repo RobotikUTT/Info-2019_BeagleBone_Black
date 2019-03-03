@@ -8,15 +8,16 @@
 #include "ai_msgs/AwaitNodesResult.h"
 #include "ai_msgs/NodeStatus.h"
 
-#include "node_watcher/Node.hpp"
-
 #include "std_msgs/Int32.h"
 
 #include <iostream>
 #include <map>
 #include <vector>
+#include <string>
 
 using namespace ai_msgs;
+
+const std::string STATUS_STRINGS[] = { "UNKNOW", "INIT", "READY", "ERROR", "DESTROYED" };
 
 const int OPTIONAL = 1;
 const int ALIVE = 2;

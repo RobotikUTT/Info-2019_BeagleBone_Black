@@ -8,11 +8,11 @@
 #include <vector>
 #include <memory>
 
-#include "node_watcher/Node.hpp"
 #include "node_watcher/NodesAwaiter.hpp"
 
 #include "ai_msgs/NodeReadiness.h"
 #include "ai_msgs/NodeStatusUpdate.h"
+#include "ai_msgs/Topics.h"
 
 #include "ai_msgs/NodeRequirement.h"
 #include "ai_msgs/AwaitNodesRequest.h"

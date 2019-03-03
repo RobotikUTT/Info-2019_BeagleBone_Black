@@ -31,6 +31,7 @@ include_directories(
 
 # Declare a C++ library
 add_library(${PROJECT_NAME}
+  src/NodeStatusHandler.cpp
   src/Node.cpp
 )
 
@@ -38,7 +39,7 @@ add_library(${PROJECT_NAME}
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 # Declare a C++ executable
-add_executable(${PROJECT_NAME}_node src/node_watcher_node.cpp src/Node.cpp src/NodesAwaiter.cpp)
+add_executable(${PROJECT_NAME}_node src/node_watcher_node.cpp src/NodesAwaiter.cpp)
 
 # Rename C++ executable without prefix
 set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")

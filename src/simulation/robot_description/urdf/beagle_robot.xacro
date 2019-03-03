@@ -1,23 +1,32 @@
 <?xml version="1.0"?>
 <robot name="beagle_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
-	<property name="PI" value="3.1415926535897931"/>
+	<xacro:property name="PI" value="3.1415926535897931"/>
 
-	<property name="robotWidth" value="0.28"/>
-	<property name="robotLength" value="0.27"/>
-	<property name="robotHeight" value="0.35"/>
+	<xacro:property name="robotWidth" value="0.28"/>
+	<xacro:property name="robotLength" value="0.27"/>
+	<xacro:property name="robotHeight" value="0.35"/>
 
-	<property name="wheelRadius" value="0.03"/>
-	<property name="wheelLength" value="0.01"/>
+	<xacro:property name="wheelRadius" value="0.03"/>
+	<xacro:property name="wheelLength" value="0.01"/>
 
 	<xacro:include filename="$(find robot_description)/urdf/materials.xacro" />
+	<xacro:include filename="$(find robot_description)/urdf/robot.gazebo" />
 
 	<link name="base_link">
+		<pose>0 0 ${robotHeight} 0 0 0</pose>
+
 		<visual>
 			<geometry>
 				<box size="${robotWidth} ${robotLength} ${robotHeight}"/>
 			</geometry>
 			<material name="green"/>
 		</visual>
+
+		<collision name='collision'>
+			<geometry>
+				<box size="${robotWidth} ${robotLength} ${robotHeight}" />
+			</geometry>
+		</collision>
 	</link>
 
 	<link name="left_wheel">

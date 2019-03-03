@@ -1,22 +1,21 @@
 #include "node_watcher/Node.hpp"
 
 Node::Node(string nodename, string package)
-    : nh(), nodepath("/" + package + "/" + nodename), nodename(nodename), waitRequestCode(-1) {
+    : NodeStatusHandler(), nodename(nodename), waitRequestCode(-1) {
     
+    this->nodepath = NodeStatusHandler::makeNodePath(nodename, package);
+
     // Send signal to start waiting
-    startPub = nh.advertise<std_msgs::Int32>(NODES_AWAITER_START_TOPIC, 10);
+    startPub = nh.advertise<std_msgs::Int32>(Topics::NODES_AWAITER_START_TOPIC, 10);
     
     // Init node_watcher service client
-    watcherClient = nh.serviceClient<NodeReadiness>(WATCHER_SERVICE);
-    waiterClient = nh.serviceClient<AwaitNodesRequest>(NODES_AWAITER_INIT_SERVICE);
+    waiterClient = nh.serviceClient<AwaitNodesRequest>(Topics::NODES_AWAITER_INIT_SERVICE);
     
     // Listen for answers
-    answerSub = nh.subscribe(NODES_AWAITER_RESULT_TOPIC, 10, &Node::onAwaitResponse, this);
+    answerSub = nh.subscribe(Topics::NODES_AWAITER_RESULT_TOPIC, 10, &Node::onAwaitResponse, this);
 
     // Wait for service to send init signal
-    if (ros::service::waitForService(WATCHER_SERVICE)) {
-        setNodeStatus(NodeStatus::NODE_INIT);
-    }
+    setNodeStatus(NodeStatus::NODE_INIT);
 }
 
 Node::~Node() {
@@ -139,18 +138,8 @@ void Node::setNodeStatus(int state_code, int errorCode /*= 0*/) {
     this->status.state_code = state_code;
     this->status.error_code = errorCode;
 
-    // update remote version
-    NodeReadiness msg;
-    msg.request.status = this->status;
-    msg.request.node_name = nodepath;
-
-    if (watcherClient.call(msg)) {
-        return;
-    }
-
-    ROS_ERROR_STREAM(
-        "Unable to call watcher for " << nodename
-    );
+    // update remotely
+    NodeStatusHandler::setNodeStatus(nodepath, state_code, errorCode);
 }
 
 /**
@@ -158,32 +147,8 @@ void Node::setNodeStatus(int state_code, int errorCode /*= 0*/) {
  */
 NodeStatus Node::getNodeStatus(bool remote /*= false*/) {
     if (remote) {
-        return getNodeStatus(this->nodepath);
+        return NodeStatusHandler::getNodeStatus(this->nodepath);
     } else {
         return this->status;
     }
-}
-
-/**
- * Get an other node's status, with it's package name provided
- */
-NodeStatus Node::getNodeStatus(string nodename, string package) {
-    return getNodeStatus("/" + package + "/" + nodename);
-}
-
-/**
- * Get an other node's status
- */
-NodeStatus Node::getNodeStatus(string nodepath) {
-    NodeReadiness msg;
-    msg.request.status.state_code = NodeStatus::NODE_ASKING; // ask for status
-    msg.request.node_name = nodepath;
-
-    if (watcherClient.call(msg)) {
-        return msg.response.status;
-    }
-
-    ROS_ERROR_STREAM(
-        "Unable to call watcher for " << nodepath
-    );
 }

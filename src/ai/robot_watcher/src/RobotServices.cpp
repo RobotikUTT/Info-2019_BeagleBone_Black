@@ -26,12 +26,12 @@ void service_ready(const string name_space, const string package, const int stat
 	ROS_WARN_STREAM("Deprecated use of robot_watcher services functions for " << node_name << "");
 
 	try {
-		if (!ros::service::waitForService(WATCHER_SERVICE)) {
+		if (!ros::service::waitForService(Topics::NODE_WATCHER_SERVICE)) {
 			throw;
 		}
 
 		ros::NodeHandle nh;
-		ros::ServiceClient readyPub = nh.serviceClient<ai_msgs::NodeReadiness>(WATCHER_SERVICE);
+		ros::ServiceClient readyPub = nh.serviceClient<ai_msgs::NodeReadiness>(Topics::NODE_WATCHER_SERVICE);
 
 		ai_msgs::NodeReadiness msg;
 		msg.request.status.state_code = state;

@@ -1,14 +1,14 @@
 #include "node_watcher/node_watcher_node.hpp"
 
 NodeWatcher::NodeWatcher() : nh() {
-    watcherService = nh.advertiseService(WATCHER_SERVICE, &NodeWatcher::nodeStatus, this);
-    waiterService = nh.advertiseService(NODES_AWAITER_INIT_SERVICE, &NodeWatcher::awaitNodes, this);
+    watcherService = nh.advertiseService(Topics::NODE_WATCHER_SERVICE, &NodeWatcher::nodeStatus, this);
+    waiterService = nh.advertiseService(Topics::NODES_AWAITER_INIT_SERVICE, &NodeWatcher::awaitNodes, this);
 	
     // Subscribe to start signal topic
-	waitStartSubscriber = nh.subscribe(NODES_AWAITER_START_TOPIC, 10, &NodeWatcher::waitStartRequested, this);
+	waitStartSubscriber = nh.subscribe(Topics::NODES_AWAITER_START_TOPIC, 10, &NodeWatcher::waitStartRequested, this);
 
     updatePublisher = nh.advertise<NodeStatusUpdate>("/ai/node_watcher/update", 100);
-    waitResultPublisher = nh.advertise<AwaitNodesResult>(NODES_AWAITER_RESULT_TOPIC, 100);
+    waitResultPublisher = nh.advertise<AwaitNodesResult>(Topics::NODES_AWAITER_RESULT_TOPIC, 100);
 }
 
 NodeStatus NodeWatcher::getNodeStatus(std::string name) {

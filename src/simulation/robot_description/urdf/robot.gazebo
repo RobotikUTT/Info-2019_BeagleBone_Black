@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<robot name="beagle_robot">
+	<gazebo reference="left_wheel">
+		<material>Gazebo/Orange</material>
+	</gazebo>
+	<gazebo reference="right_wheel">
+		<material>Gazebo/Orange</material>
+	</gazebo>
+
+	<gazebo reference="base_link">
+		<material>Gazebo/Red</material>
+
+		<plugin name="robot_gps_sim" filename="libhector_gazebo_ros_gps.so">
+			<alwaysOn>1</alwaysOn>
+			<updateRate>10.0</updateRate>
+			<bodyName>base_link</bodyName>
+			<topicName>robot_position</topicName>
+			<velocityTopicName>robot_velocity</velocityTopicName>
+			<drift>5.0 5.0 5.0</drift>
+			<gaussianNoise>0.1 0.1 0.1</gaussianNoise>
+			<velocityDrift>0 0 0</velocityDrift>
+			<velocityGaussianNoise>0.1 0.1 0.1</velocityGaussianNoise>
+		</plugin>
+	</gazebo>
+</robot>

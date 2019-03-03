@@ -11,6 +11,7 @@
 #include <ros/ros.h>
 
 #include "ai_msgs/NodeReadiness.h"
+#include "ai_msgs/Topics.h"
 
 #include "node_watcher/Node.hpp"
 /**
