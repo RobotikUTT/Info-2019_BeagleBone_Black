@@ -1,0 +1,16 @@
+<launch>
+	<rosparam command="load" file="param/server_param.yaml" />
+	<group ns="ai">
+		<include file="./src/ai/node_watcher/launch/pkg.launch"/>
+		<include file="./src/ai/scheduler/launch/pkg.launch"/>
+		<include file="./src/ai/controller/launch/pkg.launch"/>
+	</group>
+
+	<group ns="procedures">
+		<include file="./src/procedures/reach/launch/pkg.launch"/>
+	</group>
+
+	<group ns="simulation">
+		<include file="./src/simulation/input_simulation/launch/pkg.launch"/>
+	</group>
+</launch>

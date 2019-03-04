@@ -10,7 +10,6 @@
 
 #include "node_watcher/NodeStatusHandler.hpp"
 
-#include "ai_msgs/AwaitNodesRequest.h"
 #include "ai_msgs/AwaitNodesResult.h"
 #include "ai_msgs/Topics.h"
 
@@ -32,13 +31,7 @@ private:
 
     NodeStatus status;
 
-    int waitRequestCode;
-
-    ServiceClient waiterClient;
-    ros::Publisher startPub;
-    ros::Subscriber answerSub;
-
-    void onAwaitResponse(const AwaitNodesResult& msg);
+    virtual void onAwaitResponse(const AwaitNodesResult& msg);
 public:
     Node(string name, string package);
     ~Node();
@@ -57,9 +50,13 @@ protected:
     NodeStatus getNodeStatus(bool remote = false); // add self status getter
 
     // Function to await nodes
-    void waitForNodes(int timeout);
-    void waitForNodes(string file, int timeout);
-    void waitForNodes(std::vector<NodeRequirement>& nodes, int timeout);
+    using NodeStatusHandler::waitForNodes;
+    void waitForNodes(int timeout) override;
+    void waitForNodes(int timeout, bool useFile);
+
+    // Requirements
+    using NodeStatusHandler::require;
+    using NodeStatusHandler::isRequired;
 };
 
 #endif

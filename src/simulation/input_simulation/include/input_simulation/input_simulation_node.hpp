@@ -5,8 +5,16 @@
 
 #include "node_watcher/NodeStatusHandler.hpp"
 
-class InputSimulationNode {
+#include "ai_msgs/NodeStatus.h"
 
+using ai_msgs::NodeStatus;
+
+class InputSimulationNode {
+private:
+	NodeStatusHandler nodes;
+
+public:
+	InputSimulationNode();
 };
 
 #endif

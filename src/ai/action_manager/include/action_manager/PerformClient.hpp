@@ -32,7 +32,7 @@ protected:
 	void performAction(AtomicActionPtr action, Point robot_pos);
 	void cancelAction();
 
-	void getRequired(std::vector<NodeRequirement>& requirements, ActionPtr action);
+	void saveRequired(ActionPtr action);
 private:
 	PerformActionClt* client;
 };

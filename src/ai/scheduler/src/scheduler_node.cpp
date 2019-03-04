@@ -25,10 +25,9 @@ Scheduler::Scheduler() : PerformClient("scheduler", "ai"), side(Side::LEFT), rob
 		return;
 	}
 
-	std::vector<NodeRequirement> reqs;
-	this->getRequired(reqs, this->rootAction);
-
-	this->waitForNodes(reqs, 5);
+	// Wait for actions to be up
+	this->saveRequired(this->rootAction);
+	this->waitForNodes(5, false);
 }
 
 void Scheduler::onWaitingResult(bool success) {
