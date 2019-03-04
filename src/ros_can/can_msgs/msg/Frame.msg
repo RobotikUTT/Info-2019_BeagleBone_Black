@@ -18,7 +18,7 @@ uint32 PANEL_CAN_ADDR = 5
 # Constants for data[0] - represent the order
 uint8 ORDER_HANDSHAKE = 0
 uint8 ORDER_WHOAMI = 1
-uint8 ORDER_SET_MODE = 2
+uint8 ORDER_SET_MODE_ARDUINO = 2
 uint8 ORDER_SPD = 4
 uint8 ORDER_GET_CODER = 5
 uint8 ORDER_SEND_POINT = 6

@@ -188,7 +188,7 @@ void CanInterfaceNode::ALLPing(const std_msgs::Empty::ConstPtr& msg){
 }
 
 /**
- * @brief      Send a SetMode msg to the STM
+ * @brief      Send a SetMode msg to the arduino?
  *
  * @param[in]  msg   The message
  */
@@ -202,7 +202,7 @@ void CanInterfaceNode::STMSetMode(const can_msgs::STMStatus::ConstPtr& msg){
 
 	fr.dlc = 2;
 	fr.id = Frame::STM_CAN_ADDR;
-	fr.data[0] = Frame::ORDER_SET_MODE;
+	fr.data[0] = Frame::ORDER_SET_MODE_ARDUINO;
 	fr.data[1] = msg->value;
 
 	can_pub.publish(fr);
