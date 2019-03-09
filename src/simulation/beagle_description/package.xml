@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>beagle_description</name>
+  <version>0.0.0</version>
+  <description>Robot and environment description package</description>
+
+  <maintainer email="cle.bourdonnaye@gmail.com">Clément de La Bourdonnaye</maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>gazebo_ros</depend>
+
+  <export>
+    <!-- Settings for gazebo ros -->                                    
+    <!-- More :
+      gazebo_media_path="${prefix}:/another/path"
+      gazebo_plugin_path="${prefix}/lib"
+    -->  
+
+    <gazebo_ros
+      gazebo_model_path="${prefix}/models"           
+      gazebo_resource_path="${prefix}/stl" />
+  </export>
+</package>

@@ -9,8 +9,8 @@
 	<xacro:property name="wheelRadius" value="0.03"/>
 	<xacro:property name="wheelLength" value="0.01"/>
 
-	<xacro:include filename="$(find robot_description)/urdf/materials.xacro" />
-	<xacro:include filename="$(find robot_description)/urdf/robot.gazebo" />
+	<xacro:include filename="$(find beagle_description)/urdf/materials.xacro" />
+	<xacro:include filename="$(find beagle_description)/urdf/robot.gazebo" />
 
 	<link name="base_link">
 		<pose>0 0 ${robotHeight} 0 0 0</pose>
