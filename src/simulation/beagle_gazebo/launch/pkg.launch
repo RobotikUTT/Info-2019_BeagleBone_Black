@@ -2,12 +2,12 @@
 	<env name="GAZEBO_MODEL_PATH" value="$(find beagle_description)/models:$(optenv GAZEBO_MODEL_PATH)" />
 	<env name="GAZEBO_RESOURCE_PATH" value="$(find beagle_description)/stl:$(optenv GAZEBO_RESOURCE_PATH)" />
 
-	<param name="beagle_description" command="$(find xacro)/xacro '$(find beagle_description)/urdf/beagle_robot.xacro'" />  
+	<!-- Spawn world -->
 	<include file="$(find gazebo_ros)/launch/empty_world.launch">	    
 		<arg name="world_name" value="$(find beagle_gazebo)/worlds/table.world" />	    
 		<arg name="gui" value="true" />
 	</include>
 
-	<node name="robot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
-		args="-urdf -param beagle_description -model beagle_robot" />
+	<!-- Spawn robot -->
+	<include file="spawn_robot.launch" />
 </launch>

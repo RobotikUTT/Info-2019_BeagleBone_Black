@@ -27,6 +27,11 @@
 				<box size="${robotWidth} ${robotLength} ${robotHeight}" />
 			</geometry>
 		</collision>
+		<inertial>
+			<mass value="1.0"/>
+			<!-- TODO -->
+			<inertia ixx="0.015" iyy="0.0375" izz="0.0375" ixy="0" ixz="0" iyz="0"/>
+		</inertial>
 	</link>
 
 	<link name="left_wheel">

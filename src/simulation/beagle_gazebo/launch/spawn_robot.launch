@@ -1,0 +1,9 @@
+<launch>
+	<param name="robot_description" command="$(find xacro)/xacro '$(find beagle_description)/urdf/beagle_robot.xacro'" />  
+
+	<node name="robot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
+		args="-urdf -param robot_description -model beagle_robot
+			-x 1
+			-y -1
+			-z 1" />
+</launch>
