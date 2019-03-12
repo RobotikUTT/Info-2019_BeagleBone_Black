@@ -9,5 +9,5 @@
 	</include>
 
 	<!-- Spawn robot -->
-	<include file="spawn_robot.launch" />
+	<include file="$(find beagle_gazebo)/launch/spawn_robot.launch" />
 </launch>

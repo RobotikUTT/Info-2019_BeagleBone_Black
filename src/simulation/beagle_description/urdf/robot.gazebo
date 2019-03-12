@@ -9,18 +9,21 @@
 	</gazebo>
 
 	<gazebo reference="base_link">
-		<material>Gazebo/Red</material>
+		<material>Gazebo/Red</material>		
+	</gazebo>
 
-		<plugin name="robot_gps_sim" filename="libhector_gazebo_ros_gps.so">
+	<gazebo>
+		<plugin name="beagle_gps_sim" filename="libhector_gazebo_ros_gps.so">
 			<alwaysOn>1</alwaysOn>
 			<updateRate>10.0</updateRate>
 			<bodyName>base_link</bodyName>
-			<topicName>robot_position</topicName>
-			<velocityTopicName>robot_velocity</velocityTopicName>
+			<topicName>fix</topicName>
+			<velocityTopicName>fix_velocity</velocityTopicName>
 			<drift>5.0 5.0 5.0</drift>
 			<gaussianNoise>0.1 0.1 0.1</gaussianNoise>
 			<velocityDrift>0 0 0</velocityDrift>
 			<velocityGaussianNoise>0.1 0.1 0.1</velocityGaussianNoise>
 		</plugin>
+		<plugin name="beagle_gazebo_model" filename="libbeagle_gazebo_model.so"></plugin>
 	</gazebo>
 </robot>

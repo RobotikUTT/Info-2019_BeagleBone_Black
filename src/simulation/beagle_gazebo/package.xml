@@ -8,11 +8,18 @@
 
   <!-- Dependencies -->
   <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
 
-  <!-- Gazebo -->
-  <build_depend>gazebo_ros</build_depend>
-  <build_export_depend>gazebo_ros</build_export_depend>
-  <exec_depend>gazebo_ros</exec_depend>
+  <!-- Packages -->
+  <depend>node_watcher</depend>
+  <depend>gazebo_ros</depend>
+  <depend>hector_gazebo_plugins</depend>
 
-  <export></export>
+  <!-- Messages -->
+  <depend>can_msgs</depend>
+  <depend>ai_msgs</depend>
+
+  <export>
+    <gazebo_ros plugin_path="${prefix}/lib" gazebo_media_path="${prefix}" />
+  </export>
 </package>

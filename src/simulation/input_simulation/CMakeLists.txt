@@ -18,7 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES input_simulation
-#  CATKIN_DEPENDS ai_msgs can_msgs node_watcher roscpp
+  CATKIN_DEPENDS ai_msgs can_msgs node_watcher roscpp
 #  DEPENDS system_lib
 )
 
