@@ -1,6 +1,6 @@
 #start
 Argument[] arguments
-procedures_msgs/OrPoint robot_pos
+OrientedPoint robot_pos
 ---
 #result
 ActionStatus status

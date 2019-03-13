@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(robot_interface)
+project(can_interface)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
  add_compile_options(-std=c++11)
@@ -10,6 +10,7 @@ project(robot_interface)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
+  interface_msgs
   can_msgs
   std_msgs
   robot_watcher
@@ -84,7 +85,7 @@ catkin_package(
   INCLUDE_DIRS include
   #LIBRARIES can_interface
 
-  CATKIN_DEPENDS roscpp rospy std_msgs can_msgs robot_watcher
+  CATKIN_DEPENDS roscpp rospy std_msgs can_msgs robot_watcher interface_msgs
   #DEPENDS system_lib
 )
 

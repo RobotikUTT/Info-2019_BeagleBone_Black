@@ -1,5 +1,5 @@
-procedures_msgs/OrPoint robot_pos
+OrientedPoint robot_pos
 Argument[] args
 ---
-procedures_msgs/OrPoint start_point
-procedures_msgs/OrPoint end_point
+OrientedPoint start_point
+OrientedPoint end_point

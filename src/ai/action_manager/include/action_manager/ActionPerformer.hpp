@@ -19,10 +19,8 @@
 
 #include "node_watcher/Node.hpp"
 
-#include "can_msgs/Finish.h"
-#include "can_msgs/Point.h"
-
-#include "procedures_msgs/OrPoint.h"
+#include "interface_msgs/StmDone.h"
+#include "interface_msgs/Point.h"
 
 typedef actionlib::SimpleActionServer<ai_msgs::PerformAction> PerformActionSrv;
 

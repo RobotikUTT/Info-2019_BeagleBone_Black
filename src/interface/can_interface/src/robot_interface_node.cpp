@@ -19,14 +19,14 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 
 	this->can_pub 						= nh.advertise<can_msgs::Frame>(			"sent_messages", 			1000);
 
-	this->STM_coder_pub 				= nh.advertise<can_msgs::WheelsDistance>(	"/STM/GetCoder", 			10);
-	this->STM_pos_pub 				 	= nh.advertise<can_msgs::Point>(			"/STM/Position", 			10);
-	this->STM_pwm_pub 				 	= nh.advertise<can_msgs::PWMs>(				"/STM/GetPWM", 				10);
-	this->STM_speed_pub 			 	= nh.advertise<can_msgs::CurrSpeed>(		"/STM/GetSpeed", 			10);
-	this->ALL_finish_pub	 		 	= nh.advertise<can_msgs::Finish>(			"/ALL/Finish", 				10);
-	this->ARDUINO_sonar_distance_pub 	= nh.advertise<can_msgs::SonarDistance>(	"/ARDUINO/SonarDistance",	10);
-	this->STM_robot_blocked_pub 	 	= nh.advertise<can_msgs::RobotBlocked>(		"/STM/RobotBlocked", 		10);
-	//this->LIDAR_object_on_map_pub = nh.advertise<can_msgs::ObjectOnMap>("LIDAR/ObjectOnMap",10);
+	this->STM_coder_pub 				= nh.advertise<interface_msgs::WheelsDistance>(	"/STM/GetCoder", 			10);
+	this->STM_pos_pub 				 	= nh.advertise<interface_msgs::Point>(			"/STM/Position", 			10);
+	this->STM_pwm_pub 				 	= nh.advertise<interface_msgs::Pwms>(				"/STM/GetPWM", 				10);
+	this->STM_speed_pub 			 	= nh.advertise<interface_msgs::WheelsSpeed>(		"/STM/GetSpeed", 			10);
+	this->ALL_finish_pub	 		 	= nh.advertise<interface_msgs::StmDone>(			"/ALL/Finish", 				10);
+	this->ARDUINO_sonar_distance_pub 	= nh.advertise<interface_msgs::SonarDistance>(	"/ARDUINO/SonarDistance",	10);
+	this->STM_robot_blocked_pub 	 	= nh.advertise<interface_msgs::RobotBlocked>(		"/STM/RobotBlocked", 		10);
+	//this->LIDAR_object_on_map_pub = nh.advertise<interface_msgs::ObjectOnMap>("LIDAR/ObjectOnMap",10);
 
 	this->robot_watcher_sub 			= nh.subscribe("/ai/robot_watcher/robot_watcher",	10, 	&CanInterfaceNode::updateRobotStatus,	this);
 	this->can_sub 						= nh.subscribe("received_messages", 				100, 	&CanInterfaceNode::canMsgProcess, 		this);
@@ -38,9 +38,9 @@ CanInterfaceNode::CanInterfaceNode(ros::NodeHandle *n){
 	this->STM_GoToAngle_sub 			= nh.subscribe("/STM/GoToAngle",					10, 	&CanInterfaceNode::STMGoToAngle, 		this);
 	this->STM_GoTo_sub 					= nh.subscribe("/STM/GoTo",							10, 	&CanInterfaceNode::STMGoTo, 			this);
 	this->STM_Rotation_sub 				= nh.subscribe("/STM/Rotation",						10, 	&CanInterfaceNode::STMRotation, 		this);
-	this->STM_LeftPID_sub 				= nh.subscribe("/STM/LeftPID",						10, 	&CanInterfaceNode::STMLeftPID, 			this);
-	this->STM_RightPID_sub 				= nh.subscribe("/STM/RightPID",						10, 	&CanInterfaceNode::STMRightPID, 		this);
-	this->STM_AllPID_sub 				= nh.subscribe("/STM/AllPID",						10, 	&CanInterfaceNode::STMAllPID, 			this);
+	this->STM_LeftPid_sub 				= nh.subscribe("/STM/LeftPID",						10, 	&CanInterfaceNode::STMLeftPid, 			this);
+	this->STM_RightPid_sub 				= nh.subscribe("/STM/RightPID",						10, 	&CanInterfaceNode::STMRightPid, 		this);
+	this->STM_AllPid_sub 				= nh.subscribe("/STM/AllPID",						10, 	&CanInterfaceNode::STMAllPid, 			this);
 	this->STM_PWM_sub					= nh.subscribe("/STM/PWM",							10, 	&CanInterfaceNode::STMPWM, 				this);
 	this->STM_SetPose_sub 				= nh.subscribe("/STM/SetPose",						10, 	&CanInterfaceNode::STMSetPose, 			this);
 	this->STM_SetParam_sub 				= nh.subscribe("/STM/SetParam",						10, 	&CanInterfaceNode::STMSetParam, 		this);
@@ -102,7 +102,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			break;
 			}
 		case Frame::ORDER_GET_CODER:{
-			can_msgs::WheelsDistance msg_out;
+			interface_msgs::WheelsDistance msg_out;
 			msg_out.right_wheel_dist = msg->data[2] | msg->data[1] << 8; //mm
 			msg_out.left_wheel_dist = msg->data[4] | msg->data[3] << 8; //mm
 
@@ -110,7 +110,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			break;
 		}
 		case Frame::ORDER_CURRENT_POS:{
-		can_msgs::Point msg_out;
+		interface_msgs::Point msg_out;
 
 			msg_out.pos_x = msg->data[2] | msg->data[1] << 8; //mm
 			msg_out.pos_y = msg->data[4] | msg->data[3] << 8; //mm
@@ -120,7 +120,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			break;
 		}
 		case Frame::ORDER_CURRENT_PWM:{
-			can_msgs::PWMs msg_out;
+			interface_msgs::Pwms msg_out;
 
 			msg_out.left_pwm = msg->data[2] | msg->data[1] << 8;
 			msg_out.right_pwm = msg->data[4] | msg->data[3] << 8;
@@ -129,7 +129,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			break;
 		}
 		case Frame::ORDER_CURRENT_SPD:{
-			can_msgs::CurrSpeed msg_out;
+			interface_msgs::WheelsSpeed msg_out;
 
 			msg_out.linear_speed = msg->data[2] | msg->data[1] << 8; //mm/s
 			msg_out.left_speed = msg->data[4] | msg->data[3] << 8; //mm/s
@@ -139,7 +139,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			break;
 		}
 		case Frame::ORDER_SONAR_DISTANCE:{
-			can_msgs::SonarDistance msg_out;
+			interface_msgs::SonarDistance msg_out;
 
 			msg_out.dist_front_left 	= msg->data[1];
 			msg_out.dist_front_right 	= msg->data[2];
@@ -150,7 +150,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			break;
 		}
 		case Frame::ORDER_ORDER_COMPLETED:{
-			can_msgs::Finish msg_out;
+			interface_msgs::StmDone msg_out;
 
 			msg_out.val = msg->data[1];
 
@@ -158,7 +158,7 @@ void CanInterfaceNode::canMsgProcess(const can_msgs::Frame::ConstPtr& msg){
 			break;
 		}
 		case Frame::ORDER_ROBOT_BLOCKED:{
-			can_msgs::RobotBlocked msg_out;
+			interface_msgs::RobotBlocked msg_out;
 
 			this->STM_robot_blocked_pub.publish(msg_out);
 			break;
@@ -192,7 +192,7 @@ void CanInterfaceNode::ALLPing(const std_msgs::Empty::ConstPtr& msg){
  *
  * @param[in]  msg   The message
  */
-void CanInterfaceNode::STMSetMode(const can_msgs::STMStatus::ConstPtr& msg){
+void CanInterfaceNode::STMSetMode(const interface_msgs::StmMode::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -213,7 +213,7 @@ void CanInterfaceNode::STMSetMode(const can_msgs::STMStatus::ConstPtr& msg){
  *
  * @param[in]  msg   The message
  */
-void CanInterfaceNode::STMSpeed(const can_msgs::Speed::ConstPtr& msg){
+void CanInterfaceNode::STMSpeed(const interface_msgs::Speed::ConstPtr& msg){
 
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
@@ -274,7 +274,7 @@ void CanInterfaceNode::PANELAddPoint(const std_msgs::Int8::ConstPtr& msg){
  *
  * @param[in]  msg   The message
  */
-void CanInterfaceNode::STMAsserManagement(const can_msgs::STMStatus::ConstPtr& msg){
+void CanInterfaceNode::STMAsserManagement(const interface_msgs::StmMode::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -295,7 +295,7 @@ void CanInterfaceNode::STMAsserManagement(const can_msgs::STMStatus::ConstPtr& m
  *
  * @param[in]  msg   The message
  */
-void CanInterfaceNode::STMGoToAngle(const can_msgs::Point::ConstPtr& msg){
+void CanInterfaceNode::STMGoToAngle(const interface_msgs::Point::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -322,7 +322,7 @@ void CanInterfaceNode::STMGoToAngle(const can_msgs::Point::ConstPtr& msg){
  *
  * @param[in]  msg   The message
  */
-void CanInterfaceNode::STMGoTo(const can_msgs::Point::ConstPtr& msg){
+void CanInterfaceNode::STMGoTo(const interface_msgs::Point::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -347,7 +347,7 @@ void CanInterfaceNode::STMGoTo(const can_msgs::Point::ConstPtr& msg){
  *
  * @param[in]  msg   The message
  */
-void CanInterfaceNode::STMRotation(const can_msgs::Point::ConstPtr& msg){
+void CanInterfaceNode::STMRotation(const interface_msgs::Point::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -365,11 +365,11 @@ void CanInterfaceNode::STMRotation(const can_msgs::Point::ConstPtr& msg){
 }
 
 /**
- * @brief      Set Left PID
+ * @brief      Set Left Pid
  *
  * @param[in]  msg   The message
  */
-void CanInterfaceNode::STMLeftPID(const can_msgs::PID::ConstPtr& msg){
+void CanInterfaceNode::STMLeftPid(const interface_msgs::Pid::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -391,11 +391,11 @@ void CanInterfaceNode::STMLeftPID(const can_msgs::PID::ConstPtr& msg){
 }
 
 /**
- * @brief      Set Right PID
+ * @brief      Set Right Pid
  *
  * @param[in]  msg   The message
  */
-void CanInterfaceNode::STMRightPID(const can_msgs::PID::ConstPtr& msg){
+void CanInterfaceNode::STMRightPid(const interface_msgs::Pid::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -417,11 +417,11 @@ void CanInterfaceNode::STMRightPID(const can_msgs::PID::ConstPtr& msg){
 }
 
 /**
- * @brief      Set Right ans Left PID
+ * @brief      Set Right ans Left Pid
  *
  * @param[in]  msg   The message
  */
-void CanInterfaceNode::STMAllPID(const can_msgs::PID::ConstPtr& msg){
+void CanInterfaceNode::STMAllPid(const interface_msgs::Pid::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -447,7 +447,7 @@ void CanInterfaceNode::STMAllPID(const can_msgs::PID::ConstPtr& msg){
  *
  * @param[in]  msg   The message
  */
-void CanInterfaceNode::STMPWM(const can_msgs::PWMs::ConstPtr& msg){
+void CanInterfaceNode::STMPWM(const interface_msgs::Pwms::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -471,7 +471,7 @@ void CanInterfaceNode::STMPWM(const can_msgs::PWMs::ConstPtr& msg){
  *
  * @param[in]  msg   The message
  */
-void CanInterfaceNode::STMSetPose(const can_msgs::Point::ConstPtr& msg){
+void CanInterfaceNode::STMSetPose(const interface_msgs::Point::ConstPtr& msg){
 	ROS_INFO_STREAM("SET POSE X: " << msg->pos_x);
 	ROS_INFO_STREAM("SET POSE Y: " << msg->pos_y);
 	ROS_INFO_STREAM("SET ANGLE: " << msg->angle);
@@ -505,7 +505,7 @@ void CanInterfaceNode::STMSetPose(const can_msgs::Point::ConstPtr& msg){
  *
  * @param[in]  msg   The message
  */
-void CanInterfaceNode::STMSetParam(const can_msgs::STMParam::ConstPtr& msg){
+void CanInterfaceNode::STMSetParam(const interface_msgs::StmParams::ConstPtr& msg){
 	can_msgs::Frame fr;
 	fr.header.stamp = ros::Time::now();
 	fr.header.frame_id = "/ros_can/interface/";
@@ -526,69 +526,6 @@ void CanInterfaceNode::STMSetParam(const can_msgs::STMParam::ConstPtr& msg){
 	can_pub.publish(fr);
 }
 
-/**
- * @brief      Send a Action Pliers Command to the Arduino
- *
- * @param[in]  msg   The message
- */
-void CanInterfaceNode::ARDUINOActionPliers(const can_msgs::ActionPliers::ConstPtr& msg){
-	can_msgs::Frame fr;
-	fr.header.stamp = ros::Time::now();
-	fr.header.frame_id = "/ros_can/interface/";
-	fr.is_rtr = 0;
-	fr.is_error = 0;
-	fr.is_extended = 0;
-
-	fr.dlc = 3;
-	fr.id = Frame::ARDUINO_CAN_ADDR;
-	fr.data[0] = Frame::ORDER_ACTION_PLIERS;
-	fr.data[1] = msg->action;
-	fr.data[2] = msg->level;
-
-	can_pub.publish(fr);
-}
-
-/**
- * @brief      Send a Move Pliers Command to the Arduino
- *
- * @param[in]  msg   The message
- */
-void CanInterfaceNode::ARDUINOMovePliers(const std_msgs::Int8::ConstPtr& msg){
-	can_msgs::Frame fr;
-	fr.header.stamp = ros::Time::now();
-	fr.header.frame_id = "/ros_can/interface/";
-	fr.is_rtr = 0;
-	fr.is_error = 0;
-	fr.is_extended = 0;
-
-	fr.dlc = 2;
-	fr.id = Frame::ARDUINO_CAN_ADDR;
-	fr.data[0] = Frame::ORDER_MOVE_PLIERS;
-	fr.data[1] = msg->data;
-
-	can_pub.publish(fr);
-}
-
-/**
- * @brief      Send a Throw ball Command to the Arduino
- *
- * @param[in]  msg   The message
- */
-void CanInterfaceNode::ARDUINOThrowBalls(const can_msgs::ThrowBalls::ConstPtr& msg)
-{
-	can_msgs::Frame fr;
-	fr.header.stamp = ros::Time::now();
-	fr.header.frame_id = "/ros_can/interface";
-	fr.is_rtr = 0;
-	fr.is_error = 0;
-	fr.is_extended = 0;
-
-	fr.dlc = 1;
-	fr.id = Frame::ARDUINO_CAN_ADDR;
-	fr.data[0] = Frame::ORDER_THROW_BALLS;
-
-	can_pub.publish(fr);
-}
 
 int main(int argc, char **argv)
 {

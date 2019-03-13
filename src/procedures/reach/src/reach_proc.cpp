@@ -9,10 +9,10 @@
 ReachActionPerfomer::ReachActionPerfomer(std::string name) : ActionPerformer(name) {
 	finish_sub = nh.subscribe("/ALL/Finish", 1, &ReachActionPerfomer::movementDone, this);
 	
-	this->STMGoToAngle_pub = nh.advertise<can_msgs::Point>("/STM/GoToAngle", 1);
-	this->STMGoTo_pub = nh.advertise<can_msgs::Point>("/STM/GoTo", 1);
-	this->STMRotation_pub = nh.advertise<can_msgs::Point>("/STM/Rotation", 1);
-	this->STM_AsserManagement_pub = nh.advertise<can_msgs::STMStatus>("/STM/AsserManagement", 1);
+	this->STMGoToAngle_pub = nh.advertise<interface_msgs::Point>("/STM/GoToAngle", 1);
+	this->STMGoTo_pub = nh.advertise<interface_msgs::Point>("/STM/GoTo", 1);
+	this->STMRotation_pub = nh.advertise<interface_msgs::Point>("/STM/Rotation", 1);
+	this->STM_AsserManagement_pub = nh.advertise<interface_msgs::StmMode>("/STM/AsserManagement", 1);
 
 	setNodeStatus(NodeStatus::NODE_READY);
 }
@@ -26,7 +26,7 @@ ActionPoint ReachActionPerfomer::computeActionPoint(std::vector<ai_msgs::Argumen
  * @brief Callback called when the STM finished all move order
  * @param[in]  msg   The finish message
  */
-void ReachActionPerfomer::movementDone(const can_msgs::Finish::ConstPtr& msg){
+void ReachActionPerfomer::movementDone(const interface_msgs::StmDone::ConstPtr& msg){
 	// ROS_WARN_STREAM("Move; FINISH : state "<< act.isActive());
 
 	if (/*!actionServer->isActive() ||*/ msg->val != 0)
@@ -41,7 +41,7 @@ void ReachActionPerfomer::movementDone(const can_msgs::Finish::ConstPtr& msg){
  * @brief run action toward a new goal and send the appropriate to the STM
  */
 void ReachActionPerfomer::start() {
-	can_msgs::Point msg;
+	interface_msgs::Point msg;
 
 	msg.pos_x = getArg("x", 0);
 	msg.pos_y = getArg("y", 0);
@@ -80,9 +80,9 @@ void ReachActionPerfomer::start() {
 
 void ReachActionPerfomer::cancel() {
 	// reset all goal in the STM
-	can_msgs::STMStatus msg;
+	interface_msgs::StmMode msg;
 
-	msg.value = can_msgs::STMStatus::RESET_ORDERS;
+	msg.value = interface_msgs::StmMode::RESET_ORDERS;
 	STM_AsserManagement_pub.publish(msg);
 }
 

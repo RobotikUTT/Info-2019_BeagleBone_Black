@@ -10,17 +10,16 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
 
   # Message dependencies
-  can_msgs
+  interface_msgs
 
   # Other packages
   action_manager
-  robot_interface
 )
 
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES reach
-  CATKIN_DEPENDS roscpp robot_interface action_manager can_msgs
+  CATKIN_DEPENDS roscpp robot_interface action_manager interface_msgs
 #  DEPENDS system_lib
 )
 

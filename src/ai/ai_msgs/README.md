@@ -94,8 +94,8 @@ NONE
 |--|:--:|:--:|--|
 | int8 | action_val | X | DEF STATE |
 | [procedures_msgs/MPoint]() | point | X | TO DO |
-| [procedures_msgs/OrPoint]() | action_pos | X | TO DO |
-| [procedures_msgs/OrPoint]()| depot_pos | X | TO DO |
+| [OrientedPoint]() | action_pos | X | TO DO |
+| [OrientedPoint]()| depot_pos | X | TO DO |
 | int16[] | param | X | Array to pass different parameters |
 #### *NodeReadiness*
 ##### request

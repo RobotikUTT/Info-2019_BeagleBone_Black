@@ -16,12 +16,11 @@
   <!-- Packages -->
   <depend>actionlib</depend>
   <depend>node_watcher</depend>
-  <depend>robot_interface</depend>
 
   <!-- Messages -->
   <depend>std_msgs</depend>
   <depend>ai_msgs</depend>
-  <depend>can_msgs</depend>
+  <depend>interface_msgs</depend>
   <depend>procedures_msgs</depend>
 
   <export></export>

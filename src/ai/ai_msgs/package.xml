@@ -17,7 +17,6 @@
 
   <!-- Other msgs dependencies-->
   <depend>std_msgs</depend>
-  <depend>procedures_msgs</depend>
   <depend>actionlib_msgs</depend>
 
   <export></export>

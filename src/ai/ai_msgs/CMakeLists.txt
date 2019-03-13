@@ -8,9 +8,6 @@ find_package(catkin REQUIRED COMPONENTS
   # Messages and services base dependencies
   message_generation
   std_msgs
-
-  # Additional requirements
-  procedures_msgs
 )
 
 # Message containing only constants shared by multiple messages
@@ -30,6 +27,7 @@ add_message_files(DIRECTORY msg
   StartRobot.msg
   ProximityStop.msg
   Point2D.msg
+  OrientedPoint.msg
   Argument.msg
   NodeStatusUpdate.msg
   NodeRequirement.msg
@@ -53,7 +51,7 @@ add_action_files(
 )
 
 # Generate added messages and services with any dependencies listed here
-generate_messages(DEPENDENCIES std_msgs actionlib_msgs procedures_msgs)
+generate_messages(DEPENDENCIES std_msgs actionlib_msgs)
 
 # Declare dependencies for external packages
 catkin_package(CATKIN_DEPENDS message_runtime std_msgs)

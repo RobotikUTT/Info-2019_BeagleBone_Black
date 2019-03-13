@@ -7,9 +7,9 @@
 
 #include "node_watcher/Node.hpp"
 
-#include "can_msgs/Point.h"
-#include "can_msgs/Finish.h"
-#include "can_msgs/STMStatus.h"
+#include "interface_msgs/Point.h"
+#include "interface_msgs/StmDone.h"
+#include "interface_msgs/StmMode.h"
 
 #include "ai_msgs/NodeRequirement.h"
 
@@ -27,7 +27,7 @@ private:
 
     bool wentHere;
 
-    void moveDone(const can_msgs::Finish::ConstPtr&);
+    void moveDone(const interface_msgs::StmDone::ConstPtr&);
     void moveSomewhereElse();
 
     void onWaitingResult(bool success) override;

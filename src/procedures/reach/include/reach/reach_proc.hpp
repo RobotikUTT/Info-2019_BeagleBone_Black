@@ -7,7 +7,7 @@
 
 #include "action_manager/ActionPerformer.hpp"
 
-#include "can_msgs/STMStatus.h"
+#include "interface_msgs/StmMode.h"
 
 /**
  * @brief class for the action of reaching a position
@@ -30,7 +30,7 @@ private:
   void start() override;
   void cancel() override;
 
-  void movementDone(const can_msgs::Finish::ConstPtr&);
+  void movementDone(const interface_msgs::StmDone::ConstPtr&);
   void timeoutCallback(const ros::TimerEvent&);
 
 };

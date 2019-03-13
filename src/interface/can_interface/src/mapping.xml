@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- Example for future automatic can to msg mapping -->
+<mapping>
+	<input frame="ORDER_MANAGEMENT" msg="StmDone" topic="/STM/Done"></input>
+
+	<input frame="ORDER_CURRENT_POS" msg="Point" topic="/STM/Position">
+		<param name="pos_x" word="0" />
+		<param name="pos_y" word="1" />
+		<param name="angle" word="2" />
+	</input>
+
+	<!-- TODO -->
+</mapping>

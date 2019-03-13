@@ -1,8 +1,0 @@
-#start
-MPoint[] points
----
-#result
-bool done
-int8 points_done
----
-#feedback

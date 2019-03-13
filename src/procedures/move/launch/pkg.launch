@@ -1,3 +1,0 @@
-<launch>
-	<node name="move_action" pkg="move" type="proc" output="screen"/>
-</launch>

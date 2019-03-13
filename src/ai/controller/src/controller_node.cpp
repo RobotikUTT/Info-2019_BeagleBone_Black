@@ -16,8 +16,8 @@ Controller::Controller() : Node("controller", "ai"), side(Side::LEFT) {
 
 	// Advertisers
 	proximity_stop_pub = nh.advertise<ProximityStop>("proximity", 1);
-	STM_SetPose_pub = nh.advertise<can_msgs::Point>("/STM/SetPose", 1);
-	STM_AsserManagement_pub = nh.advertise<can_msgs::STMStatus>("/STM/AsserManagement", 1);
+	STM_SetPose_pub = nh.advertise<interface_msgs::Point>("/STM/SetPose", 1);
+	STM_AsserManagement_pub = nh.advertise<interface_msgs::StmMode>("/STM/AsserManagement", 1);
 	robot_status_pub = nh.advertise<RobotStatus>("/ai/controller/robot_status", 1);
 
 	// Subscribers
@@ -64,15 +64,15 @@ void Controller::start() {
 	nh.getParam("controller/robot_pos/angle", angle);
 
 	// init STM position
-	can_msgs::Point msg;
+	interface_msgs::Point msg;
 	msg.pos_x = x;
 	msg.pos_y = y;
 	msg.angle = angle;
 	STM_SetPose_pub.publish(msg);
 
 	// make it running
-	can_msgs::STMStatus msg2;
-	msg2.value = can_msgs::STMStatus::START;
+	interface_msgs::StmMode msg2;
+	msg2.value = interface_msgs::StmMode::START;
 	STM_AsserManagement_pub.publish(msg2);
 
 	// start actions by calling scheduler service
@@ -95,11 +95,11 @@ void Controller::stop() {
 	schedulerController.call(setter);
 
 	// stop all movements and actions
-	can_msgs::STMStatus msg;
-	msg.value = can_msgs::STMStatus::STOP;
+	interface_msgs::StmMode msg;
+	msg.value = interface_msgs::StmMode::STOP;
 	STM_AsserManagement_pub.publish(msg);
 
-	msg.value = can_msgs::STMStatus::RESET_ORDERS;
+	msg.value = interface_msgs::StmMode::RESET_ORDERS;
 	STM_AsserManagement_pub.publish(msg);
 }
 
@@ -107,10 +107,8 @@ void Controller::stop() {
  * @brief retrieve robot speed from can
  * @param[in] msg message containing current speed
  */
-void Controller::setRobotSpeed(const can_msgs::CurrSpeed::ConstPtr &msg) {
+void Controller::setRobotSpeed(const interface_msgs::WheelsSpeed::ConstPtr &msg) {
 	int16_t linearSpeed = msg->linear_speed;
-	int16_t leftSpeed = msg->left_speed;
-	int16_t rightSpeed = msg->right_speed;
 
 	if (linearSpeed > 0) {
 		direction = Point::DIRECTION_FORWARD;
@@ -129,7 +127,7 @@ void Controller::setRobotSpeed(const can_msgs::CurrSpeed::ConstPtr &msg) {
  *
  * @param[in] msg message containing sonars data
  */
-void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr &msg) {
+void Controller::processSonars(const interface_msgs::SonarDistance::ConstPtr &msg) {
 	bool last_proximity_value = proximity_stop;
 	uint8_t front_left, front_right,
 		back_left, back_right;
@@ -166,11 +164,11 @@ void Controller::processSonars(const can_msgs::SonarDistance::ConstPtr &msg) {
 			ROS_WARN("UNSET EMG");
 		}
 
-		can_msgs::STMStatus can_msg;
+		interface_msgs::StmMode can_msg;
 		if (proximity_stop) {
-			can_msg.value = can_msgs::STMStatus::SETEMERGENCYSTOP;
+			can_msg.value = interface_msgs::StmMode::SETEMERGENCYSTOP;
 		} else {
-			can_msg.value = can_msgs::STMStatus::UNSETEMERGENCYSTOP;
+			can_msg.value = interface_msgs::StmMode::UNSETEMERGENCYSTOP;
 		}
 
 		STM_AsserManagement_pub.publish(can_msg);
