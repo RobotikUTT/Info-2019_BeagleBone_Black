@@ -16,7 +16,7 @@
   <depend>hector_gazebo_plugins</depend>
 
   <!-- Messages -->
-  <depend>can_msgs</depend>
+  <depend>std_msgs</depend>
   <depend>ai_msgs</depend>
 
   <export>
