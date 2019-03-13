@@ -34,7 +34,7 @@ include_directories(
 )
 
 # Declare a C++ executable
-add_executable(${PROJECT_NAME}_node src/robot_interface_node.cpp)
+add_executable(${PROJECT_NAME}_node src/generated/robot_interface_gen.cpp)
 
 # Rename C++ executable without prefix
 set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
@@ -47,14 +47,10 @@ target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(${PROJECT_NAME}
-  ${catkin_LIBRARIES}
-)
-
 # [IMPORTANT]
 # Code generation for src/robot_interface_node.cpp
 add_custom_target(
   ${PROJECT_NAME}_generation
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/src/generate_interface.py ${CMAKE_CURRENT_SOURCE_DIR}/generated/robot_interface.cpp
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/src/generate_interface.py ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/src/generated/robot_interface_gen.cpp
 )
-add_dependencies(myTarget myCustomTarget)
+add_dependencies(${PROJECT_NAME}_node ${PROJECT_NAME}_generation)

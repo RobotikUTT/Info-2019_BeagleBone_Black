@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<!--
+	== Automatic can to msg mapping ==
+	Two elements are available :
+	<input /> to provide a channel from can boards to ros
+	<output /> to provide a channel from ros to can boards
+
+	Each element can take <param>s, that MUST be defined in
+	provided "msg" tag's message.
+
+	Each param must specify a size (in byte) and a position.
+	The position is relative to other params so it does not
+	necessarily follow a standart for now.
+ -->
+<mapping>
+	<!-- Input -->
+	<input frame="ORDER_GET_CODER" msg="WheelsDistance" topic="/STM/GetCoder">
+		<param name="right_wheel_dist" pos="0" size="2" />
+		<param name="left_wheel_dist" pos="1" size="2" />
+	</input>
+
+	<input frame="ORDER_CURRENT_POS" msg="Point" topic="/STM/Position">
+		<param name="pos_x" size="2" pos="0" />
+		<param name="pos_y" size="2" pos="1" />
+		<param name="angle" size="2" pos="2" />
+	</input>
+	
+	<input frame="ORDER_CURRENT_PWM" msg="Pwms" topic="/STM/GetPWM">
+		<param name="left_pwm" size="2" pos="0" />
+		<param name="right_pwm" size="2" pos="1" />
+	</input>
+	
+	<input frame="ORDER_CURRENT_SPD" msg="WheelsSpeed" topic="/STM/GetSpeed">
+		<param name="linear_speed" size="2" pos="0" />
+		<param name="left_speed" size="2" pos="1" />
+		<param name="right_speed" size="2" pos="2" />
+	</input>
+	
+	<input frame="ORDER_SONAR_DISTANCE" msg="SonarDistance" topic="/ARDUINO/SonarDistance">
+		<param name="dist_front_left" size="1" pos="0" />
+		<param name="dist_front_right" size="1" pos="1" />
+		<param name="dist_back_left" size="1" pos="2" />
+		<param name="dist_back_right" size="1" pos="3" />
+	</input>
+
+	<input frame="ORDER_ORDER_COMPLETED" msg="StmDone" topic="/ALL/Finish" />
+
+	<input frame="ORDER_ROBOT_BLOCKED" msg="RobotBlocked" topic="/STM/RobotBlocked" />
+
+	<!-- /Inputs -->
+
+	<!-- Outputs -->
+	<output frame="ORDER_SET_MODE_ARDUINO" msg="StmMode" topic="/STM/SetMode">
+		<param name="value" pos="0" size="1" />
+	</output>
+
+	<output frame="ORDER_SPD" msg="Speed" topic="/STM/Speed">
+		<param name="linear_speed" size="2" pos="0" />
+		<param name="angular_speed" size="2" pos="1" />
+		<param name="duration" size="2" pos="2" />
+	</output>
+
+	<output frame="ORDER_MANAGEMENT" msg="StmMode" topic="/STM/AsserManagement">
+		<param name="value" pos="0" size="1" />
+	</output>
+
+
+	<output frame="ORDER_GOTOA" msg="Point" topic="/STM/GoToAngle">
+		<param name="pos_x" size="2" pos="0" />
+		<param name="pos_y" size="2" pos="1" />
+		<param name="angle" size="2" pos="2" />
+		<param name="direction" size="1" pos="3" />
+	</output>
+
+	<output frame="ORDER_GOTO" msg="Point" topic="/STM/GoTo">
+		<param name="pos_x" size="2" pos="0" />
+		<param name="pos_y" size="2" pos="1" />
+		<param name="direction" size="1" pos="3" />
+	</output>
+
+	<output frame="ORDER_ROT" msg="Point" topic="/STM/Rotation">
+		<param name="angle" size="1" pos="0" />
+	</output>
+
+	<output frame="ORDER_PIDLEFT" msg="Pid" topic="/STM/LeftPID">
+		<param name="P" size="2" pos="0" />
+		<param name="I" size="2" pos="1" />
+		<param name="D" size="2" pos="2" />
+	</output>
+
+	<output frame="ORDER_PIDRIGHT" msg="Pid" topic="/STM/RightPID">
+		<param name="P" size="2" pos="0" />
+		<param name="I" size="2" pos="1" />
+		<param name="D" size="2" pos="2" />
+	</output>
+
+	<output frame="ORDER_PIDALL" msg="Pid" topic="/STM/AllPID">
+		<param name="P" size="2" pos="0" />
+		<param name="I" size="2" pos="1" />
+		<param name="D" size="2" pos="2" />
+	</output>
+	
+	<output frame="ORDER_PWM" msg="Pwms" topic="/STM/PWM">
+		<param name="left_pwm" size="2" pos="0" />
+		<param name="right_pwm" size="2" pos="1" />
+	</output>
+
+	<output frame="ORDER_SET_POS" msg="Point" topic="/STM/SetPose">
+		<param name="pos_x" size="2" pos="0" />
+		<param name="pos_y" size="2" pos="1" />
+		<param name="angle" size="2" pos="2" />
+	</output>
+
+	<output frame="ORDER_SET_PARAM" msg="StmParams" topic="/STM/SetParam">
+		<param name="max_linear_speed" size="2" pos="0" />
+		<param name="max_angular_speed" size="2" pos="1" />
+		<param name="max_acc" size="2" pos="2" />
+	</output>
+
+	<!--<output frame="ORDER_HANDSHAKE" msg="std_msgs::Empty" topic="/ALL/Ping" />
+	<output frame="ORDER_SEND_POINT" msg="std_msgs::Int8" topic="/PANEL/AddPoint">
+		<param name="data" size="1" pos="0" />		
+	</output>-->
+</mapping>

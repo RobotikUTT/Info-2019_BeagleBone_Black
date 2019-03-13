@@ -1,28 +1,3 @@
-class InterfaceCode:
-	def __init__(self):
-		self.public_header = []
-		self.private_header = []
-		self.reception_switch_cases = []
-		self.constructor_content = []
-
-	def add_switch_case(self, frame_value, code):
-		self.reception_switch_cases.append(
-			"case Frame::{}:\n{}\nbreak;".format(frame_value, code)
-		)
-
-	def __str__(self):
-		for pub_header in self.public_header:
-			print(pub_header)
-
-		for pub_header in self.private_header:
-			print(pub_header)
-
-		for pub_header in self.reception_switch_cases:
-			print(pub_header)
-
-		for pub_header in self.constructor_content:
-			print(pub_header)
-
 class Param:
 	def __init__(self, name, pos, size=1):
 		self.name = name
@@ -53,7 +28,8 @@ class IOElement:
 			current_offset += param.size
 
 	def generate(self, code):
-		pass
+		# Add appropriate inclusions
+		code.includes.append("interface_msgs/{}.h".format(self.settings["msg"]))
 
 class InputElement(IOElement):
 	def __init__(self, settings, params):
@@ -82,6 +58,8 @@ class InputElement(IOElement):
 		return "msg_to_ai.{0} = {1};\n".format(param.name, value)
 
 	def generate(self, code):
+		IOElement.generate(self, code)
+
 		codelines = [
 			# Message generation
 			"interface_msgs::{0} msg_to_ai;\n".format(self.settings["msg"])
@@ -108,6 +86,7 @@ class InputElement(IOElement):
 				.format(self.publisher_name(), self.settings["msg"], self.settings["topic"])
 		)
 
+
 class OutputElement(IOElement):
 	def __init__(self, settings, params):
 		IOElement.__init__(self, settings, params)
@@ -116,7 +95,7 @@ class OutputElement(IOElement):
 		return "{}_sub".format(self.settings["topic"].replace("/", "_"))
 
 	def function_name(self):
-		return "{}_sub".format(self.settings["topic"].replace("/", ""))
+		return "{}".format(self.settings["topic"].replace("/", ""))
 	
 	# Generate code to set data in frame with binary
 	# operations
@@ -132,8 +111,10 @@ class OutputElement(IOElement):
 			return ""
 
 	def generate(self, code):
+		IOElement.generate(self, code)
+		
 		codelines = [
-			"void CanInterfaceNode::{}(const std_msgs::{}::ConstPtr& msg)"
+			"void {}(const interface_msgs::{}::ConstPtr& msg)"
 				.format(self.function_name(), self.settings["msg"]),
 			''' {				
 				can_msgs::Frame fr;
@@ -170,5 +151,5 @@ class OutputElement(IOElement):
 			"this->{} = nh.subscribe(\"{}\", 10, &CanInterfaceNode::{}, this);"
 				.format(self.subscriber_name(), self.settings["topic"], self.function_name())
 		)
-		pass
+		
 		
