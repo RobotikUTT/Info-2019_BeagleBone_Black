@@ -4,44 +4,22 @@
   <version>2018.1.0</version>
   <description>The can_interface package</description>
 
-  <!-- One maintainer tag required, multiple allowed, one person per tag -->
-  <!-- Example:  -->
-  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="alx.care@gmail.com">Alexis CARE</maintainer>
-
-
-  <!-- One license tag required, multiple allowed, one license per tag -->
-  <!-- Commonly used license strings: -->
-  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <maintainer email="cle.bourdonnaye@gmail.com">Clément de La Bourdonnaye</maintainer>
   <license>TODO</license>
-
-
-  <!-- Url tags are optional, but multiple are allowed, one per tag -->
-  <!-- Optional attribute type can be: website, bugtracker, or repository -->
-  <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/can_interface</url> -->
-
-
-  <!-- Author tags are optional, multiple are allowed, one per tag -->
-  <!-- Authors do not have to be maintainers, but could be -->
-  <!-- Example: -->
+  <author email="cle.bourdonnaye@gmail.com">Clément de La Bourdonnaye</author>
   <author email="alx.care@gmail.com">Alexis CARE</author>
 
-
+  <!-- Requirements for c++ program -->
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
-  <depend>rospy</depend>
+
+  <!-- Other packages-->
+  <depend>node_watcher</depend>
+
+  <!-- Message dependencies-->
   <depend>std_msgs</depend>
   <depend>can_msgs</depend>
-  <depend>robot_watcher</depend>
-  <exec_depend>message_runtime</exec_depend>
-  <depend>node_watcher</depend>
   <depend>interface_msgs</depend>
 
-
-  <!-- The export tag contains other, unspecified, tags -->
-  <export>
-    <!-- Other tools can request additional information be placed here -->
-
-  </export>
+  <export></export>
 </package>
