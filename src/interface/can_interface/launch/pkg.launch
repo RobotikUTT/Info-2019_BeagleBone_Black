@@ -1,3 +1,4 @@
+
 <launch>
-	<node name="robot_interface" pkg="robot_interface" type="node" output="screen"/>
+	<node name="can_interface" pkg="can_interface" type="can_interface_node.py" output="screen" />
 </launch>

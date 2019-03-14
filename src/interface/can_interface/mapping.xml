@@ -15,32 +15,32 @@
 <mapping>
 	<!-- Input -->
 	<input frame="ORDER_GET_CODER" msg="WheelsDistance" topic="/STM/GetCoder">
-		<param name="right_wheel_dist" pos="0" size="2" />
-		<param name="left_wheel_dist" pos="1" size="2" />
+		<word name="right_wheel_dist" />
+		<word name="left_wheel_dist" />
 	</input>
 
 	<input frame="ORDER_CURRENT_POS" msg="Point" topic="/STM/Position">
-		<param name="pos_x" size="2" pos="0" />
-		<param name="pos_y" size="2" pos="1" />
-		<param name="angle" size="2" pos="2" />
+		<word name="pos_x" />
+		<word name="pos_y" />
+		<word name="angle" />
 	</input>
 	
 	<input frame="ORDER_CURRENT_PWM" msg="Pwms" topic="/STM/GetPWM">
-		<param name="left_pwm" size="2" pos="0" />
-		<param name="right_pwm" size="2" pos="1" />
+		<word name="left_pwm" />
+		<word name="right_pwm" />
 	</input>
 	
 	<input frame="ORDER_CURRENT_SPD" msg="WheelsSpeed" topic="/STM/GetSpeed">
-		<param name="linear_speed" size="2" pos="0" />
-		<param name="left_speed" size="2" pos="1" />
-		<param name="right_speed" size="2" pos="2" />
+		<word name="linear_speed" />
+		<word name="left_speed" />
+		<word name="right_speed" />
 	</input>
 	
 	<input frame="ORDER_SONAR_DISTANCE" msg="SonarDistance" topic="/ARDUINO/SonarDistance">
-		<param name="dist_front_left" size="1" pos="0" />
-		<param name="dist_front_right" size="1" pos="1" />
-		<param name="dist_back_left" size="1" pos="2" />
-		<param name="dist_back_right" size="1" pos="3" />
+		<byte name="dist_front_left" />
+		<byte name="dist_front_right" />
+		<byte name="dist_back_left" />
+		<byte name="dist_back_right" />
 	</input>
 
 	<input frame="ORDER_ORDER_COMPLETED" msg="StmDone" topic="/ALL/Finish" />
@@ -51,74 +51,74 @@
 
 	<!-- Outputs -->
 	<output frame="ORDER_SET_MODE_ARDUINO" msg="StmMode" topic="/STM/SetMode">
-		<param name="value" pos="0" size="1" />
+		<byte name="value" />
 	</output>
 
 	<output frame="ORDER_SPD" msg="Speed" topic="/STM/Speed">
-		<param name="linear_speed" size="2" pos="0" />
-		<param name="angular_speed" size="2" pos="1" />
-		<param name="duration" size="2" pos="2" />
+		<word name="linear_speed" />
+		<word name="angular_speed" />
+		<word name="duration" />
 	</output>
 
 	<output frame="ORDER_MANAGEMENT" msg="StmMode" topic="/STM/AsserManagement">
-		<param name="value" pos="0" size="1" />
+		<byte name="value" />
 	</output>
 
 
 	<output frame="ORDER_GOTOA" msg="Point" topic="/STM/GoToAngle">
-		<param name="pos_x" size="2" pos="0" />
-		<param name="pos_y" size="2" pos="1" />
-		<param name="angle" size="2" pos="2" />
-		<param name="direction" size="1" pos="3" />
+		<word name="pos_x" />
+		<word name="pos_y" />
+		<word name="angle" />
+		<byte name="direction" />
 	</output>
 
 	<output frame="ORDER_GOTO" msg="Point" topic="/STM/GoTo">
-		<param name="pos_x" size="2" pos="0" />
-		<param name="pos_y" size="2" pos="1" />
-		<param name="direction" size="1" pos="3" />
+		<word name="pos_x" />
+		<word name="pos_y" />
+		<byte name="direction" />
 	</output>
 
 	<output frame="ORDER_ROT" msg="Point" topic="/STM/Rotation">
-		<param name="angle" size="1" pos="0" />
+		<byte name="angle" />
 	</output>
 
 	<output frame="ORDER_PIDLEFT" msg="Pid" topic="/STM/LeftPID">
-		<param name="P" size="2" pos="0" />
-		<param name="I" size="2" pos="1" />
-		<param name="D" size="2" pos="2" />
+		<word name="P" />
+		<word name="I" />
+		<word name="D" />
 	</output>
 
 	<output frame="ORDER_PIDRIGHT" msg="Pid" topic="/STM/RightPID">
-		<param name="P" size="2" pos="0" />
-		<param name="I" size="2" pos="1" />
-		<param name="D" size="2" pos="2" />
+		<word name="P" />
+		<word name="I" />
+		<word name="D" />
 	</output>
 
 	<output frame="ORDER_PIDALL" msg="Pid" topic="/STM/AllPID">
-		<param name="P" size="2" pos="0" />
-		<param name="I" size="2" pos="1" />
-		<param name="D" size="2" pos="2" />
+		<word name="P" />
+		<word name="I" />
+		<word name="D" />
 	</output>
 	
 	<output frame="ORDER_PWM" msg="Pwms" topic="/STM/PWM">
-		<param name="left_pwm" size="2" pos="0" />
-		<param name="right_pwm" size="2" pos="1" />
+		<word name="left_pwm" />
+		<word name="right_pwm" />
 	</output>
 
 	<output frame="ORDER_SET_POS" msg="Point" topic="/STM/SetPose">
-		<param name="pos_x" size="2" pos="0" />
-		<param name="pos_y" size="2" pos="1" />
-		<param name="angle" size="2" pos="2" />
+		<word name="pos_x" />
+		<word name="pos_y" />
+		<word name="angle" />
 	</output>
 
 	<output frame="ORDER_SET_PARAM" msg="StmParams" topic="/STM/SetParam">
-		<param name="max_linear_speed" size="2" pos="0" />
-		<param name="max_angular_speed" size="2" pos="1" />
-		<param name="max_acc" size="2" pos="2" />
+		<word name="max_linear_speed" />
+		<word name="max_angular_speed" />
+		<word name="max_acc" />
 	</output>
 
 	<!--<output frame="ORDER_HANDSHAKE" msg="std_msgs::Empty" topic="/ALL/Ping" />
 	<output frame="ORDER_SEND_POINT" msg="std_msgs::Int8" topic="/PANEL/AddPoint">
-		<param name="data" size="1" pos="0" />		
+		<byte name="data" />		
 	</output>-->
 </mapping>

@@ -11,7 +11,7 @@
 
   <!-- Requirements for c++ program -->
   <buildtool_depend>catkin</buildtool_depend>
-  <depend>roscpp</depend>
+  <depend>rospy</depend>
 
   <!-- Other packages-->
   <depend>node_watcher</depend>
