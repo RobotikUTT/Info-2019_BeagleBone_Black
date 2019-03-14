@@ -15,6 +15,7 @@
 
   <!-- Other packages-->
   <depend>node_watcher</depend>
+  <depend>interface_description</depend>
 
   <!-- Message dependencies-->
   <depend>std_msgs</depend>

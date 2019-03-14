@@ -5,113 +5,108 @@
 	<input /> to provide a channel from can boards to ros
 	<output /> to provide a channel from ros to can boards
 
-	Each element can take <param>s, that MUST be defined in
+	Each element can take params, that MUST be defined in
 	provided "msg" tag's message.
 
-	Each param must specify a size (in byte) and a position.
-	The position is relative to other params so it does not
-	necessarily follow a standart for now.
+	Each param is a <byte> or <word> (defining param size).
+	The position of each param in the frame is determined by the
+	order and the size of previous parameters.
  -->
 <mapping>
 	<!-- Input -->
-	<input frame="ORDER_GET_CODER" msg="WheelsDistance" topic="/STM/GetCoder">
+	<input frame="ORDER_GET_CODER" msg="WheelsDistance" topic="STM_CODER">
 		<word name="right_wheel_dist" />
 		<word name="left_wheel_dist" />
 	</input>
 
-	<input frame="ORDER_CURRENT_POS" msg="Point" topic="/STM/Position">
+	<input frame="ORDER_CURRENT_POS" msg="Point" topic="STM_POSITION">
 		<word name="pos_x" />
 		<word name="pos_y" />
 		<word name="angle" />
 	</input>
 	
-	<input frame="ORDER_CURRENT_PWM" msg="Pwms" topic="/STM/GetPWM">
+	<input frame="ORDER_CURRENT_PWM" msg="Pwms" topic="STM_PWM">
 		<word name="left_pwm" />
 		<word name="right_pwm" />
 	</input>
 	
-	<input frame="ORDER_CURRENT_SPD" msg="WheelsSpeed" topic="/STM/GetSpeed">
+	<input frame="ORDER_CURRENT_SPD" msg="WheelsSpeed" topic="STM_SPEED">
 		<word name="linear_speed" />
 		<word name="left_speed" />
 		<word name="right_speed" />
 	</input>
 	
-	<input frame="ORDER_SONAR_DISTANCE" msg="SonarDistance" topic="/ARDUINO/SonarDistance">
+	<input frame="ORDER_SONAR_DISTANCE" msg="SonarDistance" topic="ARDUINO_SONAR_DISTANCE">
 		<byte name="dist_front_left" />
 		<byte name="dist_front_right" />
 		<byte name="dist_back_left" />
 		<byte name="dist_back_right" />
 	</input>
 
-	<input frame="ORDER_ORDER_COMPLETED" msg="StmDone" topic="/ALL/Finish" />
+	<input frame="ORDER_ORDER_COMPLETED" msg="StmDone" topic="ALL_ORDER_DONE" />
 
-	<input frame="ORDER_ROBOT_BLOCKED" msg="RobotBlocked" topic="/STM/RobotBlocked" />
+	<input frame="ORDER_ROBOT_BLOCKED" msg="RobotBlocked" topic="STM_ROBOT_BLOCKED" />
 
 	<!-- /Inputs -->
 
 	<!-- Outputs -->
-	<output frame="ORDER_SET_MODE_ARDUINO" msg="StmMode" topic="/STM/SetMode">
+	<output frame="ORDER_MANAGEMENT" msg="StmMode" topic="STM_SET_MODE">
 		<byte name="value" />
 	</output>
 
-	<output frame="ORDER_SPD" msg="Speed" topic="/STM/Speed">
+	<output frame="ORDER_SPD" msg="Speed" topic="STM_SET_SPEED">
 		<word name="linear_speed" />
 		<word name="angular_speed" />
 		<word name="duration" />
 	</output>
 
-	<output frame="ORDER_MANAGEMENT" msg="StmMode" topic="/STM/AsserManagement">
-		<byte name="value" />
-	</output>
-
-
-	<output frame="ORDER_GOTOA" msg="Point" topic="/STM/GoToAngle">
+	<output frame="ORDER_GOTOA" msg="Point" topic="STM_GO_TO_ANGLE">
 		<word name="pos_x" />
 		<word name="pos_y" />
 		<word name="angle" />
 		<byte name="direction" />
 	</output>
 
-	<output frame="ORDER_GOTO" msg="Point" topic="/STM/GoTo">
+	<output frame="ORDER_GOTO" msg="Point" topic="STM_GO_TO">
 		<word name="pos_x" />
 		<word name="pos_y" />
 		<byte name="direction" />
 	</output>
 
-	<output frame="ORDER_ROT" msg="Point" topic="/STM/Rotation">
+	<output frame="ORDER_ROT" msg="Point" topic="STM_ROTATE">
 		<byte name="angle" />
 	</output>
 
-	<output frame="ORDER_PIDLEFT" msg="Pid" topic="/STM/LeftPID">
+	<output frame="ORDER_PIDLEFT" msg="Pid" topic="STM_SET_LEFT_PID">
 		<word name="P" />
 		<word name="I" />
 		<word name="D" />
 	</output>
 
-	<output frame="ORDER_PIDRIGHT" msg="Pid" topic="/STM/RightPID">
+	<output frame="ORDER_PIDRIGHT" msg="Pid" topic="STM_SET_RIGHT_PID">
 		<word name="P" />
 		<word name="I" />
 		<word name="D" />
 	</output>
 
-	<output frame="ORDER_PIDALL" msg="Pid" topic="/STM/AllPID">
+	<output frame="ORDER_PIDALL" msg="Pid" topic="STM_SET_ALL_PID">
 		<word name="P" />
 		<word name="I" />
 		<word name="D" />
 	</output>
 	
-	<output frame="ORDER_PWM" msg="Pwms" topic="/STM/PWM">
+	<output frame="ORDER_PWM" msg="Pwms" topic="STM_SET_PWM">
 		<word name="left_pwm" />
 		<word name="right_pwm" />
 	</output>
 
-	<output frame="ORDER_SET_POS" msg="Point" topic="/STM/SetPose">
+	<output frame="ORDER_SET_POS" msg="Point" topic="STM_SET_POSE">
 		<word name="pos_x" />
 		<word name="pos_y" />
 		<word name="angle" />
 	</output>
 
-	<output frame="ORDER_SET_PARAM" msg="StmParams" topic="/STM/SetParam">
+	<output frame="ORDER_SET_PARAM" msg="StmParams" topic="STM_SET_PARAMS">
 		<word name="max_linear_speed" />
 		<word name="max_angular_speed" />
 		<word name="max_acc" />

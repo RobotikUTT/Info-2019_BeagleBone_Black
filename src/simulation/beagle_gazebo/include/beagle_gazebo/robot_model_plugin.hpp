@@ -8,6 +8,8 @@
 #include "ros/subscribe_options.h"
 #include "std_msgs/Float32.h"
 
+#include "interface_msgs/Point.h"
+
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/common/common.hh>

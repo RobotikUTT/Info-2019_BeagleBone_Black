@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
 
   # Other packages
   node_watcher
+  interface_description
 )
 
 catkin_python_setup()

@@ -12,12 +12,6 @@
   <depend>gazebo_ros</depend>
 
   <export>
-    <!-- Settings for gazebo ros -->                                    
-    <!-- More :
-      gazebo_media_path="${prefix}:/another/path"
-      gazebo_plugin_path="${prefix}/lib"
-    -->  
-
     <gazebo_ros
       gazebo_model_path="${prefix}/models"           
       gazebo_resource_path="${prefix}/stl" />
