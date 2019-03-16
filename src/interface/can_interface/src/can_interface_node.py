@@ -3,39 +3,60 @@
 import rospkg
 import sys
 import rospy
+from rospy import Publisher, Subscriber
 
 from xml.etree import ElementTree
+from importlib import import_module
+from can_msgs.msg import Frame
 
 from can_interface.io_elements import InputElement, OutputElement
-from can_interface.interface import CanInterface
+
+from interface_msgs import msg as interface_msgs
 
 class CanInterfaceNode:
 	def __init__(self):
-		rospack = rospkg.RosPack()
-		source_folder = rospack.get_path("can_interface")
+		self.includes = {}
+		self.subscribers = {}
+
+		self.can_publisher = Publisher('sent_messages', Frame, queue_size=10)
+		self.can_subscriber = Subscriber('received_messages', Frame, self.on_can_message)
 
 		# Elements to be generated
 		self.elements = []
 
+		# Find mapping file directory
+		source_folder = rospkg.RosPack().get_path("interface_description")
+
 		# Parsing mapping file
-		root = ElementTree.parse(source_folder + "/mapping.xml").getroot()
+		root = ElementTree.parse(source_folder + "/can/mapping.xml").getroot()
 
 		if root.tag != "mapping":
 			print("invalid file, must contains a <mapping> root element")
 			exit(0)
 
-		self.interface = CanInterface()
-
 		for child in root:
 			if child.tag == "input":
-				self.elements.append(InputElement(child.attrib, child, self.interface))
+				self.elements.append(InputElement(child.attrib, child, self))
 			elif child.tag == "output":
-				self.elements.append(OutputElement(child.attrib, child, self.interface))
+				self.elements.append(OutputElement(child.attrib, child, self))
 			else:
 				print("unknow element :", child.tag)
 
 		for el in self.elements:
 			print(el)
+	
+	def include(self, message_name, package="interface_msgs"):
+		# TODO handle std_msgs
+		return getattr(interface_msgs, message_name)
+	
+	def subscribe(self, frame, subscriber):
+		self.subscribers[frame] = subscriber
+
+	def on_can_message(self, frame):
+		if frame.id == Frame.BBB_CAN_ADDR:
+			if frame.data[0] in self.subscribers:
+				self.subscribers[frame.data[0]]
+		# TODO handle WHOAMI frames
 
 
 if __name__ == '__main__':

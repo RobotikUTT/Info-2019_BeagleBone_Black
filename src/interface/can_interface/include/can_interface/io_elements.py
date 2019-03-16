@@ -1,7 +1,7 @@
 from rospy import Publisher, Subscriber, Time
 from can_msgs.msg import Frame
 
-from can_interface.interface import FrameSubscriber
+from interface_description.msg import Topics
 
 class Param:
 	def __init__(self, name):
@@ -16,6 +16,9 @@ class IOElement:
 	def __init__(self, settings, params, interface):
 		self.settings = settings
 		self.params = []
+
+		# Set settings topic to real topic
+		self.settings["topics"] = getattr(Topics, self.settings["topics"])
 
 		# Convert params XML list to param list
 		current_offset = 1
@@ -42,7 +45,7 @@ class IOElement:
 		self.message = interface.include(self.settings["msg"])
 
 
-class InputElement(IOElement, FrameSubscriber):
+class InputElement(IOElement):
 	def __init__(self, settings, params, interface):
 		IOElement.__init__(self, settings, params, interface)
 

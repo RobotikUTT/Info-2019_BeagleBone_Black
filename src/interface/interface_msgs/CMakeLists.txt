@@ -10,7 +10,6 @@ find_package(catkin REQUIRED COMPONENTS
 # Constants
 add_message_files(DIRECTORY const
   FILES
-  Topics.msg
 )
 
 # Generic messages (uses both in input and output)
