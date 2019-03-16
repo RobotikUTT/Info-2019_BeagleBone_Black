@@ -1,5 +1,4 @@
 OrientedPoint robot_pos
 Argument[] args
 ---
-OrientedPoint start_point
-OrientedPoint end_point
+ActionPoint action_point

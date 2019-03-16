@@ -58,6 +58,7 @@ int Point::manhattanDist(Point& P){
  * @return     The manathan distance
  */
 int Point::manhattanDist(){
+  // TODO isn't it abs(x) + abs(y) ?
   return std::abs(this->x + this->y);
 }
 

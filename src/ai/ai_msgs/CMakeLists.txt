@@ -22,13 +22,17 @@ add_message_files(DIRECTORY const
 # Regular messages files
 add_message_files(DIRECTORY msg
   FILES
-  PointsScored.msg
-  RobotStatus.msg
-  StartRobot.msg
-  ProximityStop.msg
+  # Type definition
+  ActionPoint.msg
   Point2D.msg
   OrientedPoint.msg
   Argument.msg
+
+  # Meaningfull message
+  PointsScored.msg # replace by std_msgs/Int16
+  RobotStatus.msg
+  StartRobot.msg
+  ProximityStop.msg
   NodeStatusUpdate.msg
   NodeRequirement.msg
   AwaitNodesResult.msg
