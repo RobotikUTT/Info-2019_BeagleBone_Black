@@ -99,7 +99,8 @@ class OutputElement(IOElement):
 		frame.is_extended = 0
 		frame.dlc = 1
 
-		frame.id = Frame.STM_CAN_ADDR
+		# TODO custom address depending on destination device
+		frame.id = self.interface.devices_handler.get_device_address(self.setting["to"])
 
 		data_array = [0] * 8
 

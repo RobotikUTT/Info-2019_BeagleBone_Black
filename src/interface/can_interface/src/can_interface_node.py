@@ -1,17 +1,18 @@
 #!/usr/bin/python3
 # Bridge interface_msgs to ROS frames as described in <mapping.xml>
+from xml.etree import ElementTree
+from importlib import import_module
+
 import rospkg
 import sys
 import rospy
 from rospy import Publisher, Subscriber
 
-from xml.etree import ElementTree
-from importlib import import_module
+from interface_msgs import msg as interface_msgs
 from can_msgs.msg import Frame
 
+from can_interface.devices_handler import DevicesHandler
 from can_interface.io_elements import InputElement, OutputElement
-
-from interface_msgs import msg as interface_msgs
 
 class CanInterfaceNode:
 	def __init__(self):
@@ -20,6 +21,8 @@ class CanInterfaceNode:
 
 		self.can_publisher = Publisher('sent_messages', Frame, queue_size=10)
 		self.can_subscriber = Subscriber('received_messages', Frame, self.on_can_message)
+
+		self.devices_handler = DevicesHandler(self)
 
 		# Elements to be generated
 		self.elements = []

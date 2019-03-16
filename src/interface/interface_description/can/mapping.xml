@@ -50,63 +50,63 @@
 	<!-- /Inputs -->
 
 	<!-- Outputs -->
-	<output frame="ORDER_MANAGEMENT" msg="StmMode" topic="STM_SET_MODE">
+	<output frame="ORDER_MANAGEMENT" msg="StmMode" topic="STM_SET_MODE" to="STM">
 		<byte name="value" />
 	</output>
 
-	<output frame="ORDER_SPD" msg="Speed" topic="STM_SET_SPEED">
+	<output frame="ORDER_SPD" msg="Speed" topic="STM_SET_SPEED" to="STM">
 		<word name="linear_speed" />
 		<word name="angular_speed" />
 		<word name="duration" />
 	</output>
 
-	<output frame="ORDER_GOTOA" msg="Point" topic="STM_GO_TO_ANGLE">
+	<output frame="ORDER_GOTOA" msg="Point" topic="STM_GO_TO_ANGLE" to="STM">
 		<word name="pos_x" />
 		<word name="pos_y" />
 		<word name="angle" />
 		<byte name="direction" />
 	</output>
 
-	<output frame="ORDER_GOTO" msg="Point" topic="STM_GO_TO">
+	<output frame="ORDER_GOTO" msg="Point" topic="STM_GO_TO" to="STM">
 		<word name="pos_x" />
 		<word name="pos_y" />
 		<byte name="direction" />
 	</output>
 
-	<output frame="ORDER_ROT" msg="Point" topic="STM_ROTATE">
+	<output frame="ORDER_ROT" msg="Point" topic="STM_ROTATE" to="STM">
 		<byte name="angle" />
 	</output>
 
-	<output frame="ORDER_PIDLEFT" msg="Pid" topic="STM_SET_LEFT_PID">
+	<output frame="ORDER_PIDLEFT" msg="Pid" topic="STM_SET_LEFT_PID" to="STM">
 		<word name="P" />
 		<word name="I" />
 		<word name="D" />
 	</output>
 
-	<output frame="ORDER_PIDRIGHT" msg="Pid" topic="STM_SET_RIGHT_PID">
+	<output frame="ORDER_PIDRIGHT" msg="Pid" topic="STM_SET_RIGHT_PID" to="STM">
 		<word name="P" />
 		<word name="I" />
 		<word name="D" />
 	</output>
 
-	<output frame="ORDER_PIDALL" msg="Pid" topic="STM_SET_ALL_PID">
+	<output frame="ORDER_PIDALL" msg="Pid" topic="STM_SET_ALL_PID" to="STM">
 		<word name="P" />
 		<word name="I" />
 		<word name="D" />
 	</output>
 	
-	<output frame="ORDER_PWM" msg="Pwms" topic="STM_SET_PWM">
+	<output frame="ORDER_PWM" msg="Pwms" topic="STM_SET_PWM" to="STM">
 		<word name="left_pwm" />
 		<word name="right_pwm" />
 	</output>
 
-	<output frame="ORDER_SET_POS" msg="Point" topic="STM_SET_POSE">
+	<output frame="ORDER_SET_POS" msg="Point" topic="STM_SET_POSE" to="STM">
 		<word name="pos_x" />
 		<word name="pos_y" />
 		<word name="angle" />
 	</output>
 
-	<output frame="ORDER_SET_PARAM" msg="StmParams" topic="STM_SET_PARAMS">
+	<output frame="ORDER_SET_PARAM" msg="StmParams" topic="STM_SET_PARAMS" to="STM">
 		<word name="max_linear_speed" />
 		<word name="max_angular_speed" />
 		<word name="max_acc" />

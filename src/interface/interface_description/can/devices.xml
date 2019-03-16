@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<devices>
+    <broadcast id="0">
+    <self id="1" name="BEAGLE" />
+    <device id="2" name="STM" />
+    <device id="3" name="ARDUINO" />
+    <device id="4" name="ZIGBEE" />
+    <device id="5" name="PANEL" />
+</devices>

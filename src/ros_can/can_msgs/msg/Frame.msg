@@ -8,6 +8,7 @@ uint8 dlc
 uint8[8] data
 
 # Constants for [id]
+# TODO remove
 uint32 ALL_CAN_ADDR = 0
 uint32 BBB_CAN_ADDR = 1
 uint32 STM_CAN_ADDR = 2
