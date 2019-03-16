@@ -18,9 +18,9 @@ public:
   std::list<ActionPtr> subactions() const;
   void addAction(ActionPtr action);
   
-  ActionPoint& actionPoint(Point& previousPoint) override;
+  ActionPoint& actionPoint(OrientedPoint& previousPoint) override;
 
-  double distanceToTravel(Point& robot_pos) override;
+  double distanceToTravel(OrientedPoint& robot_pos) override;
 
   // Inherited setter for action state
   void setState(int state) override;

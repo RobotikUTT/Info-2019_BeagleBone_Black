@@ -1,7 +1,8 @@
 #ifndef ACTION_H
 #define ACTION_H
 
-#include "action_manager/ActionPoint.h"
+#include "ai_msgs/ActionPoint.h"
+#include "ai_msgs/OrientedPoint.h"
 
 #include "ai_msgs/ActionStatus.h"
 
@@ -9,8 +10,11 @@
 #include <string>
 #include <sstream>
 #include <memory>
+#include <math.h>
 
 using ai_msgs::ActionStatus;
+using ai_msgs::OrientedPoint;
+using ai_msgs::ActionPoint;
 
 /**
  * class for a general action
@@ -25,14 +29,14 @@ public:
 
   // Getters
   bool isSync() const;
-  double priority(Point& robot_pos);
+  double priority(OrientedPoint& robot_pos);
   int state() const;
   std::string name() const;
   int getBasePoints() const;
 
-  virtual double distanceToTravel(Point& robot_pos);
+  virtual double distanceToTravel(OrientedPoint& robot_pos);
   virtual int points() const;
-  virtual ActionPoint& actionPoint(Point& previousPoint) = 0;
+  virtual ActionPoint& actionPoint(OrientedPoint& previousPoint) = 0;
   
   // Equality and display
   virtual bool equals(const Action& b) const;

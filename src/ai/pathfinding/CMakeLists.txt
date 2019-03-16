@@ -6,7 +6,6 @@ project(pathfinding)
 find_package(catkin REQUIRED COMPONENTS
   rospy
   ai_msgs
-  robot_watcher
 )
 
 catkin_python_setup()
@@ -14,7 +13,7 @@ catkin_python_setup()
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES pathfiding
-  CATKIN_DEPENDS rospy ai_msgs robot_watcher
+  CATKIN_DEPENDS rospy ai_msgs
 #  DEPENDS system_lib
 )
 

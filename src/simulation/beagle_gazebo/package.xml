@@ -18,6 +18,7 @@
   <!-- Messages -->
   <depend>std_msgs</depend>
   <depend>ai_msgs</depend>
+  <depend>interface_msgs</depend>
 
   <export>
     <gazebo_ros plugin_path="${prefix}/lib" gazebo_media_path="${prefix}" />

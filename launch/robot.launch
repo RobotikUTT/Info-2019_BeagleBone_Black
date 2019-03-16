@@ -6,7 +6,6 @@
 		<include file="./src/ai/controller/launch/pkg.launch"/>
 	</group>
 	<group ns="ros_can">
-		<include file="./src/ros_can/robot_interface/launch/pkg.launch"/>
 		<include file="./src/ros_can/socketcan_bridge/launch/pkg.launch"/>
 	</group>
 
@@ -15,6 +14,7 @@
 	</group>
 
 	<group ns="interface">
+		<include file="./src/interface/can_interface/launch/pkg.launch"/>
 		<include file="./src/interface/gpio_handler/launch/pkg.launch"/>
 	</group>
 </launch>

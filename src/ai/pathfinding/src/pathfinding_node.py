@@ -3,8 +3,6 @@ import rospy
 
 from ai_msgs.srv import Pathfinder, PathfinderResponse, ObjectManager, ObjectManagerResponse,
 
-from robot_watcher.Services import RobotServices
-
 from pathfinding.mesh_generator import MeshMap
 from pathfinding.State import ObjectManager
 import json

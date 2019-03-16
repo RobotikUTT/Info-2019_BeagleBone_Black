@@ -16,6 +16,6 @@ public:
 	double score;
 };
 
-ActionChoice getOptimalNextAtomic(ActionPtr action, Point& robotPos);
+ActionChoice getOptimalNextAtomic(ActionPtr action, OrientedPoint& robotPos);
 
 #endif

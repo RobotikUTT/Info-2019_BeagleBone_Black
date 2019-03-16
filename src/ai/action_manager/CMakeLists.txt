@@ -38,8 +38,6 @@ add_library(${PROJECT_NAME}
   src/Action.cpp
   src/AtomicAction.cpp
   src/ActionBlock.cpp
-  src/ActionPoint.cpp
-  src/Point.cpp
   src/ActionPerformer.cpp
   src/PerformClient.cpp
 )

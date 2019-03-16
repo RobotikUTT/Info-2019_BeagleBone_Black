@@ -1,121 +1,64 @@
-#ifndef NODE_HPP
-#define NODE_HPP
+import rospy
+import rospkg
 
-#include <ros/ros.h>
-#include <ros/package.h>
+from node_status_handler import NodeStatusHandler
 
-#include <iostream>
-#include <string>
-#include <fstream>
+from ai_msgs.msg import AwaitNodesResult, Topics, NodeStatus
+from std_msgs.msg import Int32
 
-#include "node_watcher/NodeStatusHandler.hpp"
+from abc import ABC, abstractmethod
 
-#include "ai_msgs/AwaitNodesResult.h"
-#include "ai_msgs/Topics.h"
+class Node (NodeStatusHandler, ABC):
+'''
+	Class describing a generic ROS node, registered to
+	the node_watcher_node.
+'''
 
-#include "std_msgs/Int32.h"
+	def __init__(nodename: str, package: str):
+		super().__init__()
 
-/**
- * Class describing a generic ROS node, registered to
- * the node_watcher_node.
- */
-class Node : private NodeStatusHandler {
-private:
-	string nodename # name
-	string nodepath # name with path
+		self.nodename = nodename
+		self.nodepath = self._make_node_path(nodename, package)
 
-	NodeStatus status
+		self._status = NodeStatus()
+		self.set_node_status(NodeStatus.NODE_INIT)
 
-	  onAwaitResponse( AwaitNodesResult& msg)
-public:
-	Node(string name, string package)
-	~Node()
+		self.set_wait_callback(self.on_waiting_result)
 
-protected:
-	# NodeHandle is protected in this context (inherited as private)
-	using NodeStatusHandler.nh
+	def _on_await_response(self, msg: AwaitNodesResult):
+		if msg.request_code == self._wait_request_code:
+			rospy.log("Node {} is done waiting for nodes".format(self.nodename))
+			self._wait_callback(msg.success)
 
-	  onWaitingResult(bool success: 
+	@abstractmethod
+	def on_waiting_result(success: bool):
+		pass 
 
 	# Status setter
-	 setNodeStatus(int state_code, int errorCode = 0)
+	def set_status(state_code: int, error_code: int = 0):
+		# Save status
+		self._status.state_code = state_code
+		self._status.error_code = error_code
 
-	# Status getter
-	using NodeStatusHandler.getNodeStatus # make getNodeStatus (inherited as private) protected
-	NodeStatus getNodeStatus(bool remote = false) # add self status getter
+		# Update remotely
+		super().set_node_status(
+			self.nodename, self.nodepath, state_code, error_code
+		)
 
-	# Function to await nodes
-	using NodeStatusHandler.waitForNodes
-	 waitForNodes(int timeout) override
-	 waitForNodes(int timeout, bool useFile)
+	# add self status getter
+	def get_status(self, remote: bool = False):
+		if remote:
+			return super().get_node_status(self.nodename, self.nodepath)
+		else:
+			return self._status
 
-	# Requirements
-	using NodeStatusHandler.require
-	using NodeStatusHandler.isRequired
-
-
-#endif
-Node.Node(string nodename, string package)
-	: NodeStatusHandler(), nodename(nodename:
-	
-	this->nodepath = NodeStatusHandler.makeNodePath(nodename, package)
-
-	# Wait for service to send init signal
-	setNodeStatus(NodeStatus.NODE_INIT)
-
-	# Set wait callback
-	this->setWaitCallback(boost.bind(&Node.onWaitingResult, this, ._1))
-
-
-Node.~Node(:
-	setNodeStatus(NodeStatus.NODE_DESTROYED)
-
-
-
- Node.onAwaitResponse( AwaitNodesResult& msg:
-	if (msg.request_code == this->waitRequestCode:
-		ROS_INFO_STREAM("Node " << nodename << " is done waiting for nodes")
+	def wait_for_nodes(self, timeout: int, use_pkg_file: bool = False):
+		# If we use the package "requirements.txt" file
+		if use_pkg_file:
+			# We add requirements to it
+			filename = rospkg.RosPack().get_path(self.nodename) + "/requirements.txt"
+			self.require_from_file(filename)
 		
-		this->onWaitingResult(msg.success)
-	
-
-
-/**
- * Set current node status 
- */
- Node.setNodeStatus(int state_code, int errorCode /*= 0*/:
-	# update self status
-	this->status.state_code = state_code
-	this->status.error_code = errorCode
-
-	# update remotely
-	NodeStatusHandler.setNodeStatus(nodepath, state_code, errorCode)
-
-
-/**
- * Retrieve current node status
- */
-NodeStatus Node.getNodeStatus(bool remote /*= false*/:
-	if (remote:
-		return NodeStatusHandler.getNodeStatus(this->nodepath)
-	 else {
-		return this->status
-	
-
-
-/**
- * Wait for nodes described in node's package requirements.txt file
- */
- Node.waitForNodes(int timeout:
-	string filename = ros.package.getPath(this->nodename) + "/requirements.txt"
-	this->requireFromFile(filename)
-	NodeStatusHandler.waitForNodes(timeout)
-
-
- Node.waitForNodes(int timeout, bool useFile:
-	if (useFile:
-		this->waitForNodes(timeout)
-	 else {
-		NodeStatusHandler.waitForNodes(timeout)
-	
+		# Otherwise just wait
+		super().wait_for_nodes(timeout)
 

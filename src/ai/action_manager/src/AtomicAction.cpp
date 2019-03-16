@@ -15,7 +15,7 @@ std::string AtomicAction::performer() const {
  *
  * 	Calls associated performer service to let it compute the point based on args 
  */
-ActionPoint& AtomicAction::actionPoint(Point& previousPoint) {
+ActionPoint& AtomicAction::actionPoint(OrientedPoint& previousPoint) {
 	if (_actionPoint == NULL) {
 		// create client
 		ros::NodeHandle nh;
@@ -24,20 +24,11 @@ ActionPoint& AtomicAction::actionPoint(Point& previousPoint) {
 		);
 
 		ai_msgs::ComputeActionPoint srv;
-		srv.request.robot_pos.x = previousPoint.x;
-		srv.request.robot_pos.y = previousPoint.y;
-		srv.request.robot_pos.rot = previousPoint.angle;
+		srv.request.robot_pos = previousPoint;
 		srv.request.args = getArgs();
 		
 		if (client.call(srv)) {
-			_actionPoint = std::make_shared<ActionPoint>(
-				srv.response.start_point.x,
-				srv.response.start_point.y,
-				srv.response.start_point.rot,
-				srv.response.end_point.x,
-				srv.response.end_point.y,
-				srv.response.end_point.rot
-			);
+			_actionPoint = std::make_shared<ActionPoint>(srv.response.action_point);
 		} else {
 			throw "failed to call service" + getActionPointService(performer());
 		}

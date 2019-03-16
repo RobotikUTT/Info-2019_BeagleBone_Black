@@ -1,9 +1,9 @@
 #ifndef ATOMIC_ACTION_H
 #define ATOMIC_ACTION_H
 
-#include "action_manager/ActionPoint.h"
 #include "action_manager/Action.hpp"
 
+#include "ai_msgs/ActionPoint.h"
 #include "ai_msgs/ComputeActionPoint.h"
 
 #include <ros/ros.h>
@@ -23,7 +23,7 @@ public:
   std::string performer() const;
 
   std::vector<ai_msgs::Argument> getArgs() const;
-  ActionPoint& actionPoint(Point& previousPoint) override;
+  ActionPoint& actionPoint(OrientedPoint& previousPoint) override;
 
   // Setters
   void addArg(ai_msgs::Argument arg);

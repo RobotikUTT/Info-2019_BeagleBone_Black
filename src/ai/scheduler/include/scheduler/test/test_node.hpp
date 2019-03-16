@@ -8,7 +8,8 @@
 
 #include "action_manager/ActionPerformer.hpp"
 
-#include "action_manager/Point.hpp"
+#include "ai_msgs/ActionPoint.h"
+#include "ai_msgs/OrientedPoint.h"
 
 #include <iostream>
 #include <string>
@@ -23,7 +24,7 @@ class TestActionPerformer : public ActionPerformer {
 public:
 	TestActionPerformer();
 
-	ActionPoint computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, Point robot_pos) override;
+	ActionPoint computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, OrientedPoint robot_pos) override;
 	void start() override;
 };
 

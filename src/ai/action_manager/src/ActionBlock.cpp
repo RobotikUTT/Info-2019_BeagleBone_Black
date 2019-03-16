@@ -31,16 +31,16 @@ void ActionBlock::addAction(ActionPtr action) {
 /**
  * Compute the estimated distance to travel before the robot reach the end of the action
  */
-double ActionBlock::distanceToTravel(Point& robot_pos) {
+double ActionBlock::distanceToTravel(OrientedPoint& robot_pos) {
 	int distance = 0;
-	Point currentPoint = robot_pos;
+	OrientedPoint currentPoint = robot_pos;
 	
 	for (auto& next : _actions) {
 		// Add distance between the end of the previous action and the begin of this one
 		distance += next->distanceToTravel(currentPoint);
 
 		// Then compute new action point
-		currentPoint = next->actionPoint(currentPoint).endPoint;
+		currentPoint = next->actionPoint(currentPoint).end;
 	}
 
 	return distance;
@@ -49,31 +49,31 @@ double ActionBlock::distanceToTravel(Point& robot_pos) {
 /**
  * Compute the initial and final point of the action
  */
-ActionPoint& ActionBlock::actionPoint(Point& previousPoint) {
+ActionPoint& ActionBlock::actionPoint(OrientedPoint& previousPoint) {
 	// Test whether the action point was already computed
 	if (_actionPoint != NULL) {
 		return *_actionPoint;
 	}
 
-	Point* start = NULL; // computed later
-	Point& current = previousPoint;
+	OrientedPoint* start = NULL; // computed later
+	OrientedPoint& current = previousPoint;
 	ActionPoint actionPoint;
 
 	// Compute all actionPoints
 	for (auto& next : _actions) {
 		actionPoint = next->actionPoint(current);
-		current = actionPoint.endPoint;
+		current = actionPoint.end;
 
 		if (start == NULL) {
-			start = &actionPoint.startPoint;
+			start = &actionPoint.start;
 		}
 	}
 
 	// take first and last position
-	_actionPoint = std::make_shared<ActionPoint>(
-		*start, // first startPoint
-		current // last endPoint
-	);
+	_actionPoint = std::make_shared<ActionPoint>();
+	_actionPoint->start = *start; // first startPoint
+	_actionPoint->end = current; // last endPoint
+	
 
 	return *_actionPoint;
 }

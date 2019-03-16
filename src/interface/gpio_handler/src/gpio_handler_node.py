@@ -3,6 +3,8 @@
 import time
 import rospy
 
+import Adafruit_BBIO.GPIO as GPIO
+
 from ai_msgs.msg import StartRobot, RobotStatus, Side
 
 # Input pins for start signal and side
@@ -51,7 +53,6 @@ class GPIOHandlerNode(object):
 		
 	# Loop until ros terminate to monitor GPIO
 	def loop(self):
-		GPIO = self.GPIO
 
 		# Monitor data
 		r = rospy.Rate(5)
@@ -77,38 +78,15 @@ class GPIOHandlerNode(object):
 		GPIO.output(PINK_LED, GPIO.LOW)
 		GPIO.output(GREEN_LED, GPIO.LOW)
 
-		# Leave GPIO guy if need
-		simulated = rospy.get_param("/simulation", False)
-		if simulated:
-			from gpio_handler.GPIOemulator.EmulatorGUI import app
-			app.callback()
 
-
-	# Initialize GPIOs ports depending on whether it is a simulation or not
+	# Initialize GPIOs ports
 	def init_gpio(self):
-		GPIO = None
-		simulated = rospy.get_param("/simulation", False)
-		
-		# import GPIO depending whether it is a simulation
-		if simulated:
-			from gpio_handler.GPIOemulator.EmulatorGUI import GPIO
-			GPIO.setmode(GPIO.BCM)
-			GPIO.setwarnings(False)
-		else:
-			import Adafruit_BBIO.GPIO as GPIO
-		
 		# set pins
 		for pin in GPIO_IN_PINS:
-			if simulated:
-				GPIO.setup(pin, GPIO.IN, initial = GPIO.LOW)
-			else:
-				GPIO.setup(pin, GPIO.IN)
+			GPIO.setup(pin, GPIO.IN)
 
 		for pin in GPIO_OUT_PINS:
-			if simulated:
-				GPIO.setup(pin, GPIO.OUT, initial = GPIO.LOW)
-			else:
-				GPIO.setup(pin, GPIO.OUT)
+			GPIO.setup(pin, GPIO.OUT)
 
 		return GPIO
 

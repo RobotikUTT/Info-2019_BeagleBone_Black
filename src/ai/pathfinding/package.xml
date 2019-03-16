@@ -13,7 +13,6 @@
 
   <depend>rospy</depend>
   <depend>ai_msgs</depend>
-  <depend>robot_watcher</depend>
 
   <export></export>
 </package>

@@ -17,7 +17,7 @@ ReachActionPerfomer::ReachActionPerfomer(std::string name) : ActionPerformer(nam
 	setNodeStatus(NodeStatus::NODE_READY);
 }
 
-ActionPoint ReachActionPerfomer::computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, Point robotPos) {
+ActionPoint ReachActionPerfomer::computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, OrientedPoint robotPos) {
 	// TODO
 	return ActionPoint();
 }

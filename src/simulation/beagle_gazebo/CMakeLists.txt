@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   # Messages
   ai_msgs
   std_msgs
+  interface_msgs
 )
 
 # Depend on system install of Gazebo
@@ -23,7 +24,7 @@ find_package(gazebo REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES input_simulation
-  CATKIN_DEPENDS ai_msgs std_msgs node_watcher roscpp gazebo_ros
+  CATKIN_DEPENDS ai_msgs std_msgs node_watcher roscpp gazebo_ros interface_msgs
 #  DEPENDS system_lib
 )
 

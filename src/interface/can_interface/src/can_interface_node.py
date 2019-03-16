@@ -43,7 +43,7 @@ class CanInterfaceNode:
 				print("unknow element :", child.tag)
 
 		for el in self.elements:
-			print(el)
+			rospy.logdebug(el)
 	
 	def include(self, message_name, package="interface_msgs"):
 		# TODO handle std_msgs

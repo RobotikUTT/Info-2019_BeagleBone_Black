@@ -108,7 +108,7 @@ void Scheduler::onPaused() {
 void Scheduler::setRobotPosition(const can_msgs::Point::ConstPtr& msg) {
 	this->robotPosition.x = msg->pos_x;
 	this->robotPosition.y = msg->pos_y;
-	this->robotPosition.angle = msg->angle;
+	this->robotPosition.rot = msg->angle;
 }
 
 int main(int argc, char *argv[]) {

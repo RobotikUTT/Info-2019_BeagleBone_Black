@@ -7,11 +7,6 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
-# Constants
-add_message_files(DIRECTORY const
-  FILES
-)
-
 # Generic messages (uses both in input and output)
 add_message_files(DIRECTORY msg
   FILES

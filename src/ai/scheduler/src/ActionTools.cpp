@@ -10,7 +10,7 @@ ActionChoice::ActionChoice(AtomicActionPtr action /*= nullptr*/, double score /*
  * This function respect the sync parameter and therefore return the
  * right action to do.
  */
-ActionChoice getOptimalNextAtomic(ActionPtr action, Point& robotPos) {
+ActionChoice getOptimalNextAtomic(ActionPtr action, OrientedPoint& robotPos) {
 	// Filter actions paused or finished
 	if (action->state() != ActionStatus::IDLE) {
 		return ActionChoice();

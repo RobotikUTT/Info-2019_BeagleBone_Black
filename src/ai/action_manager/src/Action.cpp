@@ -16,7 +16,7 @@ Action::Action(std::string name)
  *
  * @param robot_pos current robot position
  */
-double Action::priority(Point& robot_pos) {
+double Action::priority(OrientedPoint& robot_pos) {
 	int action_points = points();
 	int distance = distanceToTravel(robot_pos);
 	
@@ -69,9 +69,17 @@ void Action::setState(int state) {
 /**
  * Compute the distance to travel before the robot reach the end
  */
-double Action::distanceToTravel(Point& robot_pos) {
-	return actionPoint(robot_pos).startPoint.manhattanDist(robot_pos) +
-		actionPoint(robot_pos).distance();
+double Action::distanceToTravel(OrientedPoint& robot_pos) {
+	ActionPoint point = actionPoint(robot_pos);
+
+	// Compute euclidian distance
+	return sqrt(
+		pow(point.start.x - robot_pos.x, 2) +
+		pow(point.start.y - robot_pos.y, 2)
+	) + sqrt(
+		pow(point.start.x - point.end.x, 2) +
+		pow(point.start.y - point.end.y, 2)
+	);
 }
 
 // Virtual functions (have to be redefined into child's classes)

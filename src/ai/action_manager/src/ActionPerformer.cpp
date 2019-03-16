@@ -27,18 +27,10 @@ ActionPerformer::ActionPerformer(std::string name) : Node(name, "action"), name(
 
 bool ActionPerformer::_computeActionPoint(ai_msgs::ComputeActionPoint::Request& req, ai_msgs::ComputeActionPoint::Response& res) {
 	// Extract data from request and call performer function
-	ActionPoint result = computeActionPoint(
+	res.action_point = computeActionPoint(
 		&req.args,
-		Point(req.robot_pos.x, req.robot_pos.y, req.robot_pos.rot)
+		req.robot_pos
 	);
-
-	// Copy result to response
-	res.start_point.x = result.startPoint.x;
-	res.start_point.y = result.startPoint.y;
-	res.start_point.rot = result.startPoint.angle;
-	res.end_point.x = result.endPoint.x;
-	res.end_point.y = result.endPoint.y;
-	res.end_point.rot = result.endPoint.angle;
 	
 	return true;
 }

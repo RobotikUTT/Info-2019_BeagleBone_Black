@@ -12,7 +12,6 @@
 #include <ros/ros.h>
 
 #include "action_manager/PerformClient.hpp"
-#include "action_manager/Point.hpp"
 
 #include "ai_msgs/Side.h"
 #include "ai_msgs/SetSchedulerState.h"
@@ -42,7 +41,7 @@ private:
 	ActionPtr rootAction;
 	ActionPtr currentAction;
 
-	Point robotPosition;
+	OrientedPoint robotPosition;
 
 	bool side;
 	bool running;

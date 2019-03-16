@@ -10,10 +10,10 @@
 
 #include "node_watcher/Node.hpp"
 
-#include "action_manager/Point.hpp"
 #include "action_manager/AtomicAction.hpp"
 #include "action_manager/ActionBlock.hpp"
 
+#include "ai_msgs/OrientedPoint.h"
 #include "ai_msgs/NodeRequirement.h"
 
 typedef actionlib::SimpleActionClient<ai_msgs::PerformAction> PerformActionClt;
@@ -29,7 +29,7 @@ public:
 	virtual void onPaused() = 0;
 
 protected:
-	void performAction(AtomicActionPtr action, Point robot_pos);
+	void performAction(AtomicActionPtr action, OrientedPoint robot_pos);
 	void cancelAction();
 
 	void saveRequired(ActionPtr action);

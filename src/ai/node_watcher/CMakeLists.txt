@@ -9,15 +9,19 @@ find_package(catkin REQUIRED COMPONENTS
   # ROS c++ dependencies
   roscpp
   roslib
+  rospy
 
   # Required messages
   ai_msgs
 )
 
+# Enable python
+catkin_python_setup()
+
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp roslib ai_msgs
+  CATKIN_DEPENDS rospy roscpp roslib ai_msgs
 #  DEPENDS system_lib
 )
 

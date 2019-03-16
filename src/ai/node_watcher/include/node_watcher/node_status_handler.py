@@ -64,7 +64,7 @@ class NodeStatusHandler:
 		
 
 	# Node waiting
-	def waitForNodes(self, timeout: int):
+	def wait_for_nodes(self, timeout: int):
 		if len(self._requirements) == 0:
 			self._wait_callback(True)
 		
@@ -93,11 +93,11 @@ class NodeStatusHandler:
 			self._wait_callback(False)
 
 	# Callback setter
-	def setWaitCallback(self, cb: WaitCallback):
+	def set_wait_callback(self, cb: WaitCallback):
 		self._wait_callback = cb
 
 	# Add node requirement
-	def require_file(self, filename: str):
+	def require_from_file(self, filename: str):
 		try:
 			file = open(filename, "r")
 

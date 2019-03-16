@@ -76,7 +76,7 @@ TEST_F(PerformingFixture, actionPointComputation) {
 	
 	// Assert we receive the right computed value
 	ASSERT_EQ(
-		ActionPoint(robotPosition, Point(2*robotPosition.x, 2*robotPosition.y)),
+		ActionPoint(robotPosition, OrientedPoint(2*robotPosition.x, 2*robotPosition.y)),
 		messageAction.actionPoint(robotPosition)
 	) << "compute right action point";
 }

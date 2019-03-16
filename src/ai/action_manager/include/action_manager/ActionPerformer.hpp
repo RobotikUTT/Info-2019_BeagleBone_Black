@@ -13,8 +13,8 @@
 #include "ai_msgs/ComputeActionPoint.h"
 #include "ai_msgs/RobotStatus.h"
 #include "ai_msgs/ActionStatus.h"
+#include "ai_msgs/ActionPoint.h"
 
-#include "action_manager/ActionPoint.h"
 #include "action_manager/Action.hpp"
 
 #include "node_watcher/Node.hpp"
@@ -41,7 +41,7 @@ public:
 	
 protected:
 	// Function defined by inherited actions
-	virtual ActionPoint computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, Point robotPos) = 0;
+	virtual ActionPoint computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, OrientedPoint robotPos) = 0;
 	virtual void start() = 0;
 	virtual void cancel() {};
 
