@@ -6,14 +6,14 @@ Node::Node(string nodename, string package)
     this->nodepath = NodeStatusHandler::makeNodePath(nodename, package);
 
     // Wait for service to send init signal
-    setNodeStatus(NodeStatus::NODE_INIT);
+    setNodeStatus(NodeStatus::INIT);
 
     // Set wait callback
     this->setWaitCallback(boost::bind(&Node::onWaitingResult, this, ::_1));
 }
 
 Node::~Node() {
-    setNodeStatus(NodeStatus::NODE_DESTROYED);
+    setNodeStatus(NodeStatus::DESTROYED);
 }
 
 

@@ -19,7 +19,7 @@ NodeStatus NodeWatcher::getNodeStatus(std::string name) {
         return found->second;
     } else { // otherwise
         NodeStatus unknowStatus;
-        unknowStatus.state_code = NodeStatus::NODE_UNKNOW;
+        unknowStatus.state_code = NodeStatus::UNKNOW;
         
         return unknowStatus;
     }
@@ -70,7 +70,7 @@ bool NodeWatcher::nodeStatus(NodeReadiness::Request& req, NodeReadiness::Respons
     NodeStatus status = req.status;
     
     // If we are not asking for the status (eg: use function as setter)
-    if (status.state_code != NodeStatus::NODE_ASKING) {
+    if (status.state_code != NodeStatus::ASKING) {
         nodes[req.node_name] = status;
 
         // Return same data

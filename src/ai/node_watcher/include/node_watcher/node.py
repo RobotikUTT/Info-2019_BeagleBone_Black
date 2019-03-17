@@ -1,7 +1,7 @@
 import rospy
 import rospkg
 
-from node_status_handler import NodeStatusHandler
+from node_watcher.node_status_handler import NodeStatusHandler
 
 from ai_msgs.msg import AwaitNodesResult, Topics, NodeStatus
 from std_msgs.msg import Int32
@@ -9,19 +9,19 @@ from std_msgs.msg import Int32
 from abc import ABC, abstractmethod
 
 class Node (NodeStatusHandler, ABC):
-'''
-	Class describing a generic ROS node, registered to
-	the node_watcher_node.
-'''
+	'''
+		Class describing a generic ROS node, registered to
+		the node_watcher_node.
+	'''
 
-	def __init__(nodename: str, package: str):
+	def __init__(self, nodename: str, package: str):
 		super().__init__()
 
 		self.nodename = nodename
-		self.nodepath = self._make_node_path(nodename, package)
+		self.package = package
 
 		self._status = NodeStatus()
-		self.set_node_status(NodeStatus.NODE_INIT)
+		self.set_status(NodeStatus.INIT)
 
 		self.set_wait_callback(self.on_waiting_result)
 
@@ -30,25 +30,24 @@ class Node (NodeStatusHandler, ABC):
 			rospy.log("Node {} is done waiting for nodes".format(self.nodename))
 			self._wait_callback(msg.success)
 
-	@abstractmethod
-	def on_waiting_result(success: bool):
+	def on_waiting_result(self, success: bool):
 		pass 
 
 	# Status setter
-	def set_status(state_code: int, error_code: int = 0):
+	def set_status(self, state_code: int, error_code: int = 0):
 		# Save status
 		self._status.state_code = state_code
 		self._status.error_code = error_code
 
 		# Update remotely
 		super().set_node_status(
-			self.nodename, self.nodepath, state_code, error_code
+			self.nodename, self.package, state_code, error_code
 		)
 
 	# add self status getter
 	def get_status(self, remote: bool = False):
 		if remote:
-			return super().get_node_status(self.nodename, self.nodepath)
+			return super().get_node_status(self.nodename, self.package)
 		else:
 			return self._status
 

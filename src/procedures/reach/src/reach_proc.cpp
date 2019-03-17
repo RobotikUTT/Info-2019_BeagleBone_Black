@@ -14,7 +14,7 @@ ReachActionPerfomer::ReachActionPerfomer(std::string name) : ActionPerformer(nam
 	this->STMRotation_pub = nh.advertise<interface_msgs::Point>("/STM/Rotation", 1);
 	this->STM_AsserManagement_pub = nh.advertise<interface_msgs::StmMode>("/STM/AsserManagement", 1);
 
-	setNodeStatus(NodeStatus::NODE_READY);
+	setNodeStatus(NodeStatus::READY);
 }
 
 ActionPoint ReachActionPerfomer::computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, OrientedPoint robotPos) {

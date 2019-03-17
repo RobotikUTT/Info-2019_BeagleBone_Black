@@ -82,9 +82,10 @@ class InputElement(IOElement):
 
 
 class OutputElement(IOElement):
-	def __init__(self, settings, params, interface):
+	def __init__(self, settings, params, id, interface):
 		IOElement.__init__(self, settings, params, interface)
 
+		self.device_id = id
 		self.interface = interface
 		self.subscriber = Subscriber(self.settings["topic"], self.message, self.on_ros_message)
 	
@@ -99,8 +100,7 @@ class OutputElement(IOElement):
 		frame.is_extended = 0
 		frame.dlc = 1
 
-		# TODO custom address depending on destination device
-		frame.id = self.interface.devices_handler.addresses[self.setting["to"]]
+		frame.id = self.device_id
 
 		data_array = [0] * 8
 

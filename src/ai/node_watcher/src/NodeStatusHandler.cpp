@@ -59,7 +59,7 @@ NodeStatus NodeStatusHandler::getNodeStatus(string nodename, string package) {
  */
 NodeStatus NodeStatusHandler::getNodeStatus(string nodepath) {
     NodeReadiness msg;
-    msg.request.status.state_code = NodeStatus::NODE_ASKING; // ask for status
+    msg.request.status.state_code = NodeStatus::ASKING; // ask for status
     msg.request.node_name = nodepath;
 
     if (watcherClient.call(msg)) {

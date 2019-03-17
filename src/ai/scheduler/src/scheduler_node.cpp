@@ -13,7 +13,7 @@ Scheduler::Scheduler() : PerformClient("scheduler", "ai"), side(Side::LEFT), rob
 	this->side = Side::LEFT;
 	this->control_srv = nh.advertiseService("/scheduler/do", &Scheduler::setState, this);
 
-	this->robotPosition_sub = nh.subscribe<can_msgs::Point>("/STM/Position", 10, &Scheduler::setRobotPosition, this);
+	this->robotPosition_sub = nh.subscribe<Point>("/STM/Position", 10, &Scheduler::setRobotPosition, this);
 
 	// Parse actions file
 	try {
@@ -21,7 +21,7 @@ Scheduler::Scheduler() : PerformClient("scheduler", "ai"), side(Side::LEFT), rob
 		this->rootAction = parser.getAction();
 	} catch(const char* error) {
 		ROS_ERROR_STREAM("Unable to initialize scheduler due to parsing error: " << error);
-		setNodeStatus(NodeStatus::NODE_ERROR, 1);
+		setNodeStatus(NodeStatus::ERROR, 1);
 		return;
 	}
 
@@ -32,10 +32,10 @@ Scheduler::Scheduler() : PerformClient("scheduler", "ai"), side(Side::LEFT), rob
 
 void Scheduler::onWaitingResult(bool success) {
 	if (success) {
-		setNodeStatus(NodeStatus::NODE_READY);
+		setNodeStatus(NodeStatus::READY);
 	} else {
 		ROS_ERROR_STREAM("Some actions are missing, unable to start node");
-		setNodeStatus(NodeStatus::NODE_ERROR, 2);
+		setNodeStatus(NodeStatus::ERROR, 2);
 		return;
 	}
 }
@@ -105,7 +105,7 @@ void Scheduler::onPaused() {
 	nextAction();
 }
 
-void Scheduler::setRobotPosition(const can_msgs::Point::ConstPtr& msg) {
+void Scheduler::setRobotPosition(const Point::ConstPtr& msg) {
 	this->robotPosition.x = msg->pos_x;
 	this->robotPosition.y = msg->pos_y;
 	this->robotPosition.rot = msg->angle;

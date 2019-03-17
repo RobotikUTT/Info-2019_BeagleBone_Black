@@ -1,10 +1,16 @@
 import os
+import rospkg
 
 modules = []
+module_name = "input_simulation"
 
-for module in os.listdir(os.path.dirname(__file__)):
+# Import all modules in include directory
+for module in os.listdir(rospkg.RosPack().get_path(module_name) + "/include/" + module_name):
 	if module == '__init__.py' or module[-3:] != '.py':
 		continue
-	modules.append(__import__(module[:-3], locals(), globals()))
+
+	imported = __import__("input_simulation.{}".format(module[:-3]), locals(), globals(), ["register"])
+	modules.append(imported)
 
 del module
+del module_name

@@ -21,7 +21,6 @@
   <depend>std_msgs</depend>
   <depend>ai_msgs</depend>
   <depend>interface_msgs</depend>
-  <depend>procedures_msgs</depend>
 
   <export></export>
 </package>

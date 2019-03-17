@@ -34,13 +34,13 @@ Controller::Controller() : Node("controller", "ai"), side(Side::LEFT) {
 void Controller::onWaitingResult(bool success) {
 	if (success) {
 		// Set as ready
-		setNodeStatus(NodeStatus::NODE_READY);
+		setNodeStatus(NodeStatus::READY);
 
 		// If start signal was received during waiting
 		this->robotState = RobotStatus::ROBOT_READY;
 		start();
 	} else {
-		setNodeStatus(NodeStatus::NODE_ERROR);
+		setNodeStatus(NodeStatus::ERROR);
 	}
 }
 

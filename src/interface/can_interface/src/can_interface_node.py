@@ -12,7 +12,6 @@ from interface_msgs import msg as interface_msgs
 from can_msgs.msg import Frame
 
 from can_interface.devices_handler import DevicesHandler
-from can_interface.io_elements import InputElement, OutputElement
 
 class CanInterfaceNode:
 	def __init__(self):
@@ -24,30 +23,6 @@ class CanInterfaceNode:
 
 		self.devices_handler = DevicesHandler(self)
 
-		# Elements to be generated
-		self.elements = []
-
-		# Find mapping file directory
-		source_folder = rospkg.RosPack().get_path("interface_description")
-
-		# Parsing mapping file
-		root = ElementTree.parse(source_folder + "/can/mapping.xml").getroot()
-
-		if root.tag != "mapping":
-			print("invalid file, must contains a <mapping> root element")
-			exit(0)
-
-		for child in root:
-			if child.tag == "input":
-				self.elements.append(InputElement(child.attrib, child, self))
-			elif child.tag == "output":
-				self.elements.append(OutputElement(child.attrib, child, self))
-			else:
-				print("unknow element :", child.tag)
-
-		for el in self.elements:
-			rospy.logdebug(el)
-	
 	def include(self, message_name, package="interface_msgs"):
 		# TODO handle std_msgs
 		return getattr(interface_msgs, message_name)

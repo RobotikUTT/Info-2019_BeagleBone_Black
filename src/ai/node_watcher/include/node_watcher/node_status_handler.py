@@ -1,14 +1,15 @@
 import rospy
 import rospkg
 
-from ai_msgs.msg import AwaitNodesRequest, AwaitNodesResult, \
-	NodeReadiness, NodeStatus, NodeRequirement, Topics
+from ai_msgs.msg import AwaitNodesResult, \
+	NodeStatus, NodeRequirement, Topics
+from ai_msgs.srv import NodeReadiness, NodeReadinessRequest, AwaitNodesRequest
 
 from std_msgs.msg import Int32
 
 from typing import List, Callable
 
-WaitCallback = Callable[bool, None]
+WaitCallback = Callable[[bool], None]
 
 class NodeStatusHandler:
 	'''Class handling any "abstract nodes" (as they are not defined as a single class)'''
@@ -16,7 +17,7 @@ class NodeStatusHandler:
 	def __init__(self):
 		self._watcher_client = rospy.ServiceProxy(Topics.NODE_WATCHER_SERVICE, NodeReadiness)
 		self._waiter_client = rospy.ServiceProxy(Topics.NODES_AWAITER_INIT_SERVICE, AwaitNodesRequest)
-		self._start_wait_pub = rospy.Publisher(Topics.NODES_AWAITER_START_TOPIC, Int32)
+		self._start_wait_pub = rospy.Publisher(Topics.NODES_AWAITER_START_TOPIC, Int32, queue_size=10)
 		self._wait_answer_sub = rospy.Subscriber(Topics.NODES_AWAITER_RESULT_TOPIC, AwaitNodesResult, self._on_await_response)
 	
 		self._wait_callback: WaitCallback = None
@@ -36,9 +37,9 @@ class NodeStatusHandler:
 		if package == None:
 			nodename = self._make_node_path(nodename, package)
 
-		msg = NodeReadiness()
-		msg.request.status.state_code = NodeStatus.NODE_ASKING # ask for status
-		msg.request.node_name = nodename
+		msg = NodeReadinessRequest()
+		msg.status.state_code = NodeStatus.NODE_ASKING # ask for status
+		msg.node_name = nodename
 
 		try:
 			response = self._watcher_client(msg)
@@ -52,10 +53,10 @@ class NodeStatusHandler:
 		nodepath = self._make_node_path(nodename, package)
 
 		# update remote version
-		msg = NodeReadiness()
-		msg.request.status.state_code = state_code
-		msg.request.status.error_code = error_code
-		msg.request.node_name = nodepath
+		msg = NodeReadinessRequest()
+		msg.status.state_code = state_code
+		msg.status.error_code = error_code
+		msg.node_name = nodepath
 
 		try:
 			self._watcher_client(msg)
@@ -68,24 +69,19 @@ class NodeStatusHandler:
 		if len(self._requirements) == 0:
 			self._wait_callback(True)
 		
-		# Prepare request
-		request = AwaitNodesRequest()
-		request.request.nodes = self._requirements
-		request.request.timeout = timeout
-		
 		# Call service to retrieve code
 		try:
-			response = self._waiter_client(request)
+			response = self._waiter_client(self._requirements, timeout)
 			self._wait_request_code = response.request_code
 
 			# Wait for publisher to be ready to address not sent issue
 			# From [https:#answers.ros.org/question/11167/how-do-i-publish-exactly-one-message/]
 			poll_rate = rospy.Rate(100)
-			while self._start_wait_pub.get_num_subscribers() == 0:
+			while self._start_wait_pub.get_num_connections() == 0:
 				poll_rate.sleep()
 			
 			# Start waiting
-			msg = Int32
+			msg = Int32()
 			msg.data = self._wait_request_code
 			self._start_wait_pub.publish(msg)
 		except rospy.ServiceException:

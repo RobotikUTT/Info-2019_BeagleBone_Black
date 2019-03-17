@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(input_simulation)
 
+set(ENV{ROS_PYTHON_VERSION}, 3)
+
 find_package(catkin REQUIRED COMPONENTS
   # ROS defaults
   rospy

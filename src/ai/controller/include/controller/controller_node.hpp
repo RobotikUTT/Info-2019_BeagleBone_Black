@@ -24,8 +24,6 @@
 #include "interface_msgs/WheelsSpeed.h"
 #include "interface_msgs/RobotBlocked.h"
 
-#include "procedures_msgs/MoveAction.h"
-
 #include "std_msgs/Int8.h"
 
 /**

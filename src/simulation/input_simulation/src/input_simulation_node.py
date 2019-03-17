@@ -2,20 +2,20 @@
 import rospy
 
 from node_watcher.node_status_handler import NodeStatusHandler
-from ai_msgs import NodeStatus, Topics, StartRobot, Side
+from ai_msgs.msg import NodeStatus, Topics, StartRobot, Side
 
 from input_simulation import modules as simulation_parts
 
 class InputSimulationNode():
 	def __init__(self):
 		self.nodes = NodeStatusHandler()
-		self.start_signal_pub = rospy.Publisher(Topics.START_SIGNAL_TOPIC, StartRobot)
+		self.start_signal_pub = rospy.Publisher(Topics.START_SIGNAL_TOPIC, StartRobot, queue_size=10)
 		self.spin_callbacks = []
 
-		self.nodes.require("/ai/controller")
-		self.nodes.require("/ai/scheduler")
+		self.nodes.require("controller", "ai")
+		self.nodes.require("scheduler", "ai")
 
-		self.nodes.set_await_callback(self.nodes_ready)
+		self.nodes.set_wait_callback(self.nodes_ready)
 		self.nodes.wait_for_nodes(6)
 
 	def nodes_ready(self, success: bool):
@@ -44,7 +44,7 @@ if __name__ == '__main__':
 	try:
 		# Create node
 		node = InputSimulationNode()
-		print(simulation_parts)
+
 		for part in simulation_parts:
 			if hasattr(part, "register"):
 				part.register(node)

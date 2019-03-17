@@ -12,5 +12,8 @@
 
 	<group ns="simulation">
 		<include file="./src/simulation/input_simulation/launch/pkg.launch"/>
+		<include file="./src/simulation/beagle_gazebo/launch/pkg.launch">
+			<arg name="gui" value="false" />
+		</include>
 	</group>
 </launch>

@@ -43,7 +43,7 @@ void NodesAwaiter::updateStatus(std::string nodename, NodeStatus status) {
 		return;
 	}
 
-	bool nodealive = (status.state_code == NodeStatus::NODE_READY);
+	bool nodealive = (status.state_code == NodeStatus::READY);
 
 	// Search for element with given name
 	auto found = this->requirements.find(nodename);
