@@ -9,13 +9,13 @@
 
   <!-- Dependencies -->
   <buildtool_depend>catkin</buildtool_depend>
-  <depend>roscpp</depend>
+  <depend>rospy</depend>
 
   <!-- Packages -->
   <depend>node_watcher</depend>
 
   <!-- Messages -->
-  <depend>can_msgs</depend>
+  <depend>interface_msgs</depend>
   <depend>ai_msgs</depend>
 
   <export></export>

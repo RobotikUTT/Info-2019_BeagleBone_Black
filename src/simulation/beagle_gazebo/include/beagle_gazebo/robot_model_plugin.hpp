@@ -16,6 +16,7 @@
 
 #include <ignition/math/Vector3.hh>
 
+
 // From [http://gazebosim.org/tutorials?tut=plugins_model&cat=write_plugin] and
 // [http://gazebosim.org/tutorials?cat=guided_i&tut=guided_i6]
 namespace gazebo {

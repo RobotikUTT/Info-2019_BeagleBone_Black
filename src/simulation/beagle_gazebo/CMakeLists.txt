@@ -31,11 +31,11 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${GAZEBO_INCLUDE_DIRS}
+#  ${GAZEBO_INCLUDE_DIRS}
 )
 
 # Gazebo plugins
-link_directories(${GAZEBO_LIBRARY_DIRS})
+#link_directories(${GAZEBO_LIBRARY_DIRS})
 
-add_library(beagle_gazebo_model SHARED src/robot_model_plugin.cpp)
-target_link_libraries(beagle_gazebo_model ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+#add_library(beagle_gazebo_model SHARED src/robot_model_plugin.cpp)
+#target_link_libraries(beagle_gazebo_model ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})

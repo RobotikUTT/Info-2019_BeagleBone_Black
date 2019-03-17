@@ -19,7 +19,7 @@ void RobotModelPush::Load(physics::ModelPtr _parent, sdf::ElementPtr /*_sdf*/) {
 
     // Create a named topic, and subscribe to it.
     ros::SubscribeOptions subOptions = ros::SubscribeOptions::create<std_msgs::Float32>(
-        "/STM/GoTo",
+        Topics.STM_GO_TO,
         1,
         boost::bind(&RobotModelPush::OnRosMsg, this, _1),
         ros::VoidPtr(),
@@ -46,7 +46,7 @@ void RobotModelPush::OnUpdate() {
 /// \brief Handle an incoming message from ROS
 /// \param[in] _msg A float value that is used to set the velocity
 /// of the Velodyne.
-void RobotModelPush::OnRosMsg(const std_msgs::Float32ConstPtr &_msg) {
+void RobotModelPush::OnRosMsg(const interface_msgs::Point &_msg) {
   //this->model->SetVelocity(_msg->data);
 }
 

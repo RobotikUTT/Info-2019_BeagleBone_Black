@@ -1,3 +1,4 @@
+# TODO remove in favor of geometry_msgs/Pose2D
 # Point for the robot description
 int16 pos_x #mm
 int16 pos_y #mm

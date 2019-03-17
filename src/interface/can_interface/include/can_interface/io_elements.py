@@ -100,7 +100,7 @@ class OutputElement(IOElement):
 		frame.dlc = 1
 
 		# TODO custom address depending on destination device
-		frame.id = self.interface.devices_handler.get_device_address(self.setting["to"])
+		frame.id = self.interface.devices_handler.addresses[self.setting["to"]]
 
 		data_array = [0] * 8
 
