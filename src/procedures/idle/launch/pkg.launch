@@ -1,0 +1,3 @@
+<launch>
+	<node name="idle_action" pkg="idle" type="proc" output="screen"/>
+</launch>

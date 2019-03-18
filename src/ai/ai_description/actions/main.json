@@ -4,8 +4,15 @@
         "points": 30
     },
     {
+        "name": "Wait 1s",
+        "performer": "idle",
+        "args": {
+            "duration": "1s"
+        }
+    },
+    {
         "name": "Set angle",
-        "points": 0,
+        "points": 30,
         "sync": true,
         "performer": "reach",
         "args": {

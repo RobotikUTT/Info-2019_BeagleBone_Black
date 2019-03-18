@@ -1,4 +1,4 @@
 <launch>
-	<param name="actions_directory" value="$(find scheduler)/action_files" />
+	<param name="actions_directory" value="$(find ai_description)/actions" />
 	<node name="scheduler" pkg="scheduler" type="node" output="screen" />
 </launch>

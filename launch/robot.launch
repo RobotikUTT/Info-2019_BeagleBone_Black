@@ -11,6 +11,7 @@
 
 	<group ns="procedures">
 		<include file="./src/procedures/reach/launch/pkg.launch"/>
+		<include file="./src/procedures/idle/launch/pkg.launch"/>
 	</group>
 
 	<group ns="interface">

@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+	Objects declaration and action binding
+	An object is defined by it's name.
+
+	It should contains a <circle> or <rect> to
+	define it's shape, otherwise they won't be
+	displayed in rviz.
+
+	It may have additional <argument>s with a
+	given name. These args can haves <"value">s
+	that may map to action arguments
+
+	It can be bound to different actions files,
+	the ai should use the most efficient
+-->
+<objects>
+	<!-- Abstract puck (to define arguments) -->
+	<abstract-puck>
+		<argument name="color">
+			<red>
+				<balance_points>4</balance_points>
+				<zone_points>6</zone_points>
+				<zone>red</zone>
+			</red>
+			<green>
+				<balance_points>8</balance_points>
+				<zone>green</zone>
+				<zone_points>6</zone_points>
+			</green>
+			<blue>
+				<balance_points>12</balance_points>
+				<zone>blue</zone>
+				<zone_points>6</zone_points>
+			</blue>
+		</argument>	
+	</puck>
+
+	<!-- Puck on the ground -->
+	<puck extends="abstract-puck">
+		<circle radius="76" />
+		
+		<action file="move_puck_to_balance" />
+		<action file="move_puck_to_zone" />
+	</puck>
+
+	<!-- Puck in a distributor -->
+	<dist-puck extends="abstract-puck">
+		<rect width="25" height="76" />
+
+		<action file="move_distributed_puck_to_balance" />
+		<action file="move_distributed_puck_to_zone" />
+	</dist-puck>
+
+	<!-- Goldenium puck-->
+	<goldenium>
+		<rect width="50" height="76" />
+
+		<action file="free_goldenium">
+			<balance_points>24</balance_points>
+			<zone_points>6</zone_points>
+		</action>
+	</goldenium>
+</objects>

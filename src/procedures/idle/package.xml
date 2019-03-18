@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>idle</name>
+  <version>2018.1.0</version>
+  <description>Idle action package, based on previous move package</description>
+
+  <maintainer email="cle.bourdonnaye@gmail.com">Clément de La Bourdonnaye</maintainer>
+  <license>TODO</license>
+  <author email="cle.bourdonnaye@gmail.com">Clément de La Bourdonnaye</author>
+
+  <!-- Dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+
+  <!-- Message dependencies -->
+  <depend>interface_msgs</depend>
+
+  <!-- Packages -->
+  <depend>action_manager</depend>
+  <depend>robot_interface</depend>
+
+  <export></export>
+</package>
