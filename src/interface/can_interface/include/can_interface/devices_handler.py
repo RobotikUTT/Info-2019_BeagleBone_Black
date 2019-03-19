@@ -3,8 +3,8 @@ from node_watcher.node_status_handler import NodeStatusHandler
 
 from can_interface.io_elements import InputElement, OutputElement
 
-from can_msgs import Frame
-from ai_msgs import NodeStatus
+from can_msgs.msg import Frame
+from ai_msgs.msg import NodeStatus
 
 import rospkg
 
@@ -17,7 +17,7 @@ class DevicesHandler(NodeStatusHandler):
 		interface.subscribe(Frame.ORDER_WHOAMI, self)
 
 		# Devices and their address
-		self.devices = {}
+		self.names = {}
 		self.addresses = {}
 		
 		self.self = -1

@@ -4,9 +4,11 @@ import rospy
 from node_watcher.node_status_handler import NodeStatusHandler
 from ai_msgs.msg import NodeStatus, Topics, StartRobot, Side
 
-from input_simulation import modules as simulation_parts
+from input_simulation.modules import modules as simulation_parts
 
-class InputSimulationNode():
+from interface_msgs.msg import Point
+
+class RobotSimulationNode():
 	def __init__(self):
 		self.nodes = NodeStatusHandler()
 		self.start_signal_pub = rospy.Publisher(Topics.START_SIGNAL_TOPIC, StartRobot, queue_size=10)
@@ -43,7 +45,7 @@ if __name__ == '__main__':
 	# Go to class functions that do all the heavy lifting. Do error checking.
 	try:
 		# Create node
-		node = InputSimulationNode()
+		node = RobotSimulationNode()
 
 		for part in simulation_parts:
 			if hasattr(part, "register"):

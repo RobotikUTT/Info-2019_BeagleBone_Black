@@ -9,7 +9,7 @@ sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C
 sudo apt update
 
 echo "Installing ros, catkin-tools and gazebo..."
-sudo apt install -y ros-melodic-ros-base python-catkin-tools gazebo9 ros-melodic-gazebo-ros ros-melodic-hector-gazebo-plugins
+sudo apt install -y ros-melodic-ros-base python-catkin-tools ros-melodic-roslint
 
 echo "Installing python3-pip and python3-rospkg"
 sudo apt-get install -y python3-pip
