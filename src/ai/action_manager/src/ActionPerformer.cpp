@@ -94,37 +94,3 @@ void ActionPerformer::onRobotStatus(const RobotStatus::ConstPtr& msg) {
   }
 }
 
-/**
- *  Retrieve an argument from the argument list
- */
-double ActionPerformer::getArg(std::string name, double defaultValue /*= 0*/, std::vector<ai_msgs::Argument>* args /*= NULL*/) {
-	// No arg list provided -> use current action's one
-	if (args == NULL) {
-		args = &_args;
-	}
-
-	// Seek an argument with this name
-	for (const auto& next : *args) {
-		if (name.compare(next.name) == 0) {
-			return next.value;
-		}
-	}
-
-	return defaultValue;
-}
-
-bool ActionPerformer::hasArg(std::string name, std::vector<ai_msgs::Argument>* args /*= NULL*/) {
-	// No arg list provided -> use current action's one
-	if (args == NULL) {
-		args = &_args;
-	}
-
-	// Seek an argument with this name
-	for (const auto& next : *args) {
-		if (name.compare(next.name) == 0) {
-			return true;
-		}
-	}
-
-	return false;
-}

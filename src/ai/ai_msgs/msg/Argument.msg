@@ -1,2 +1,2 @@
 string name
-float64 value
+Value value

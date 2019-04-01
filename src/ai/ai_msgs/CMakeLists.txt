@@ -27,6 +27,7 @@ add_message_files(DIRECTORY msg
   Point2D.msg
   OrientedPoint.msg
   Argument.msg
+  Value.msg
 
   # Meaningfull message
   PointsScored.msg # replace by std_msgs/Int16

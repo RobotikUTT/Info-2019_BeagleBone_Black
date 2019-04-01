@@ -16,6 +16,7 @@
 #include "ai_msgs/ActionPoint.h"
 
 #include "action_manager/Action.hpp"
+#include "action_manager/Argumentable.hpp"
 
 #include "node_watcher/Node.hpp"
 
@@ -26,6 +27,9 @@ typedef actionlib::SimpleActionServer<ai_msgs::PerformAction> PerformActionSrv;
 
 using ai_msgs::RobotStatus;
 using ai_msgs::ActionStatus;
+using ai_msgs::Argument;
+
+using std::string;
 
 /**
  * Represent an performer for a specific action, it advertise a service for
@@ -34,7 +38,7 @@ using ai_msgs::ActionStatus;
  * It provide simple interface for creating robot action, and avoid tedious ROS objects
  * manipulation.
  */
-class ActionPerformer : public Node
+class ActionPerformer : public Node, public Argumentable
 {
 public:
 	ActionPerformer(std::string name);
@@ -45,7 +49,12 @@ protected:
 	virtual void start() = 0;
 	virtual void cancel() {};
 
-	double getArg(std::string name, double defaultValue = 0, std::vector<ai_msgs::Argument>* args = NULL);
+	Argument getArg(std::string name, double defaultValue = 0, std::vector<ai_msgs::Argument>* args = NULL);
+
+	long getLong(std::string name, long defaultValue = 0, std::vector<ai_msgs::Argument>* args = NULL);
+	double getDouble(std::string name, double defaultValue = 0, std::vector<ai_msgs::Argument>* args = NULL);
+	string getString(std::string name, string defaultValue = "", std::vector<ai_msgs::Argument>* args = NULL);
+
 	bool hasArg(std::string name, std::vector<ai_msgs::Argument>* args = NULL);
 
 	// Function managing the action

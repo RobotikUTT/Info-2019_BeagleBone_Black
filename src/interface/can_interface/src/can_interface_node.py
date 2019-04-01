@@ -18,8 +18,8 @@ class CanInterfaceNode:
 		self.includes = {}
 		self.subscribers = {}
 
-		self.can_publisher = Publisher('/ros_can/sent_messages', Frame, queue_size=10)
-		self.can_subscriber = Subscriber('/ros_can/received_messages', Frame, self.on_can_message)
+		self.can_publisher = Publisher('/lib/ros_can/sent_messages', Frame, queue_size=10)
+		self.can_subscriber = Subscriber('/lib/ros_can/received_messages', Frame, self.on_can_message)
 
 		self.devices_handler = DevicesHandler(self)
 
