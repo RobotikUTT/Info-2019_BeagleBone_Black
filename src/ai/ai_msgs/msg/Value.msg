@@ -1,10 +1,10 @@
-float64 floatValue
-int64 intValue
+float64 doubleValue
+int64 longValue
 string stringValue
 
 int8 type
 
 # Constants for [type]
-int8 INT_TYPE = 0
-int8 STRING_TYPE = 1
-int8 DOUBLE_TYPE = 2
+int8 LONG = 0
+int8 STRING = 1
+int8 DOUBLE = 2

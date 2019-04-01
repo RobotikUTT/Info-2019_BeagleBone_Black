@@ -26,7 +26,7 @@ private:
   ros::Publisher STM_AsserManagement_pub;
   ros::Timer timerTimeout;
   
-  ActionPoint computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, OrientedPoint robot_pos) override;
+  ActionPoint computeActionPoint(Argumentable* actionArgs, OrientedPoint robot_pos) override;
   void start() override;
   void cancel() override;
 

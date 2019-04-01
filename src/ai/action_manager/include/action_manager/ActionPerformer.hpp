@@ -45,17 +45,9 @@ public:
 	
 protected:
 	// Function defined by inherited actions
-	virtual ActionPoint computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, OrientedPoint robotPos) = 0;
+	virtual ActionPoint computeActionPoint(Argumentable* actionArgs, OrientedPoint robotPos) = 0;
 	virtual void start() = 0;
 	virtual void cancel() {};
-
-	Argument getArg(std::string name, double defaultValue = 0, std::vector<ai_msgs::Argument>* args = NULL);
-
-	long getLong(std::string name, long defaultValue = 0, std::vector<ai_msgs::Argument>* args = NULL);
-	double getDouble(std::string name, double defaultValue = 0, std::vector<ai_msgs::Argument>* args = NULL);
-	string getString(std::string name, string defaultValue = "", std::vector<ai_msgs::Argument>* args = NULL);
-
-	bool hasArg(std::string name, std::vector<ai_msgs::Argument>* args = NULL);
 
 	// Function managing the action
 	void actionPerformed();

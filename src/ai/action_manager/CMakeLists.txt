@@ -37,6 +37,7 @@ include_directories(
 add_library(${PROJECT_NAME}
   src/Action.cpp
   src/AtomicAction.cpp
+  src/Argumentable.cpp
   src/ActionBlock.cpp
   src/ActionPerformer.cpp
   src/PerformClient.cpp

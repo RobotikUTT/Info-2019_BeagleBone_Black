@@ -18,7 +18,7 @@ public:
 private:
   ros::Subscriber finish_sub;
 
-  ActionPoint computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, OrientedPoint robot_pos) override;
+  ActionPoint computeActionPoint(Argumentable* actionArgs, OrientedPoint robot_pos) override;
   void start() override;
   void cancel() override;
 

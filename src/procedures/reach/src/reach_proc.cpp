@@ -17,7 +17,7 @@ ReachActionPerfomer::ReachActionPerfomer(std::string name) : ActionPerformer(nam
 	setNodeStatus(NodeStatus::READY);
 }
 
-ActionPoint ReachActionPerfomer::computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, OrientedPoint robotPos) {
+ActionPoint ReachActionPerfomer::computeActionPoint(Argumentable* actionArgs, OrientedPoint robotPos) {
 	// TODO
 	return ActionPoint();
 }
@@ -43,15 +43,15 @@ void ReachActionPerfomer::movementDone(const interface_msgs::StmDone::ConstPtr& 
 void ReachActionPerfomer::start() {
 	interface_msgs::Point msg;
 
-	msg.pos_x = getArg("x", 0);
-	msg.pos_y = getArg("y", 0);
-	msg.angle = getArg("angle", 0);
-	msg.direction = getArg("direction", 0);
+	msg.pos_x = getLong("x", 0);
+	msg.pos_y = getLong("y", 0);
+	msg.angle = getLong("angle", 0);
+	msg.direction = getLong("direction", 0);
 
 	/**
 	 * Boolean equation determining which move the action should use
 	 */
-	int moveType = hasArg("x") * hasArg("y") * hasArg("direction") + 2 * hasArg("angle");
+	int moveType = hasLong("x") * hasLong("y") * hasLong("direction") + 2 * hasLong("angle");
 
 	switch (moveType)
 	{
@@ -72,7 +72,7 @@ void ReachActionPerfomer::start() {
 			break;
 	}
 
-	int timeout = getArg("timeout", 0);
+	int timeout = getLong("timeout", 0);
 	if (timeout > 0) {
 		timerTimeout = nh.createTimer(ros::Duration(timeout), &ReachActionPerfomer::timeoutCallback , this, true);
 	}

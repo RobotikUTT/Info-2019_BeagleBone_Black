@@ -39,7 +39,7 @@ public:
   virtual ActionPoint& actionPoint(OrientedPoint& previousPoint) = 0;
   
   // Equality and display
-  virtual bool equals(const Action& b) const;
+  //virtual bool equals(const Action& b) const;
   virtual void display(std::ostream& os) const;
   
 protected:

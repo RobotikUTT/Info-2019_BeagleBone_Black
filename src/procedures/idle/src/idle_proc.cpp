@@ -10,7 +10,7 @@ IdleActionPerfomer::IdleActionPerfomer(std::string name) : ActionPerformer(name)
 	setNodeStatus(NodeStatus::READY);
 }
 
-ActionPoint IdleActionPerfomer::computeActionPoint(std::vector<ai_msgs::Argument>* actionArgs, OrientedPoint robotPos) {
+ActionPoint IdleActionPerfomer::computeActionPoint(Argumentable* actionArgs, OrientedPoint robotPos) {
 	ActionPoint point;
 	point.start = robotPos;
 	point.end = robotPos;
@@ -21,7 +21,7 @@ ActionPoint IdleActionPerfomer::computeActionPoint(std::vector<ai_msgs::Argument
  * @brief run action toward a new goal and send the appropriate to the STM
  */
 void IdleActionPerfomer::start() {
-	ros::Duration(getArg("duration", 1)).sleep();
+	ros::Duration(getLong("duration", 1)).sleep();
 	this->actionPerformed();
 }
 

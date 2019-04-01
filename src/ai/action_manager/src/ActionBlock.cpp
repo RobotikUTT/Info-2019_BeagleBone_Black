@@ -124,7 +124,7 @@ void ActionBlock::setState(int state) {
 }
 
 // Helped with https://stackoverflow.com/questions/2825424/comparing-objects-and-inheritance
-bool ActionBlock::equals(const Action& action) const  {
+/*bool ActionBlock::equals(const Action& action) const  {
 	const ActionBlock* aBlock = dynamic_cast<const ActionBlock*>(&action);
 
 	// Try to cast for comparison and compare with action's default comparison
@@ -154,7 +154,7 @@ bool ActionBlock::equals(const Action& action) const  {
 	}
 
 	return false;
-}
+}*/
 
 void ActionBlock::display(std::ostream& os) const {
 	std::stringstream content;

@@ -26,9 +26,12 @@ ActionPerformer::ActionPerformer(std::string name) : Node(name, "action"), name(
 }
 
 bool ActionPerformer::_computeActionPoint(ai_msgs::ComputeActionPoint::Request& req, ai_msgs::ComputeActionPoint::Response& res) {
+	Argumentable args;
+	args.fromList(req.args);
+
 	// Extract data from request and call performer function
 	res.action_point = computeActionPoint(
-		&req.args,
+		&args,
 		req.robot_pos
 	);
 	

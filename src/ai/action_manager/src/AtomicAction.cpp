@@ -25,7 +25,7 @@ ActionPoint& AtomicAction::actionPoint(OrientedPoint& previousPoint) {
 
 		ai_msgs::ComputeActionPoint srv;
 		srv.request.robot_pos = previousPoint;
-		srv.request.args = getArgs();
+		srv.request.args = this->toList();
 		
 		if (client.call(srv)) {
 			_actionPoint = std::make_shared<ActionPoint>(srv.response.action_point);
@@ -37,17 +37,8 @@ ActionPoint& AtomicAction::actionPoint(OrientedPoint& previousPoint) {
 	return *_actionPoint;
 }
 
-std::vector<ai_msgs::Argument> AtomicAction::getArgs() const {
-	return _args;
-}
-
-// Setters
-void AtomicAction::addArg(ai_msgs::Argument arg) {
-	_args.push_back(arg);
-}
-
 // Equality
-bool AtomicAction::equals(const Action& action) const {
+/*bool AtomicAction::equals(const Action& action) const {
 	const AtomicAction* atomic = dynamic_cast<const AtomicAction*>(&action);
 
 	// Cast succeed and basic properties also
@@ -61,8 +52,18 @@ bool AtomicAction::equals(const Action& action) const {
 
 		for(const auto& lnext : args) {
 			for(const auto& rnext : compArgs) {
-				if (lnext.name == rnext.name && lnext.value != rnext.value) {
-					return false;
+				if (lnext.name == rnext.name) {
+					if (lnext.value.type != rnext.value.type) {
+						return false;
+					}
+
+					// If given value does not match
+					if ((lnext.value.type == Value::FLOAT && lnext.value.floatValue != rnext.value.floatValue) ||
+						(lnext.value.type == Value::DOUBLE && lnext.value.doubleValue != rnext.value.doubleValue) ||
+						(lnext.value.type == Value::STRING && lnext.value.stringValue != rnext.value.stringValue)) {
+						return false;
+					}
+					
 				}
 			}
 		}
@@ -71,7 +72,7 @@ bool AtomicAction::equals(const Action& action) const {
 	}
 
 	return false;
-}
+}*/
 
 void AtomicAction::display(std::ostream& os) const {
 	Action::display(os);
@@ -80,7 +81,7 @@ void AtomicAction::display(std::ostream& os) const {
 	os << ", performer=" << performer();
 
 	// Create content to be indented
-	for (const auto& next : getArgs()) {
+	for (const auto& next : this->toList()) {
 		os <<  std::endl << "\t- " << next.name << "=" << next.value;
 	}
 }

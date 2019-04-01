@@ -26,7 +26,7 @@ public:
   void setState(int state) override;
 
   // Equality
-  virtual bool equals(const Action& action) const override;
+  //virtual bool equals(const Action& action) const override;
   virtual void display(std::ostream& os) const override;
 private:
   std::list<ActionPtr> _actions;

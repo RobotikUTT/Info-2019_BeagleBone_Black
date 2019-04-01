@@ -4,30 +4,35 @@
 #include "ai_msgs/Argument.h"
 #include "ai_msgs/Value.h"
 
+#include <map>
 #include <vector>
 #include <string>
 
 using ai_msgs::Value;
 using ai_msgs::Argument;
 
+using std::string;
+using std::vector;
+using std::map;
+
 class Argumentable {
 public:
-	Value get(string name);
-
-	long getLong(string name, long defaultValue = 0, vector<Argument>* args = NULL);
-	double getDouble(string name, double defaultValue = 0, vector<Argument>* args = NULL);
-	string getString(string name, string defaultValue = "", vector<Argument>* args = NULL);
+	Value get(string name) const;
+	long getLong(string name, long defaultValue = 0) const;
+	double getDouble(string name, double defaultValue = 0) const;
+	string getString(string name, string defaultValue = "") const;
 	
 	void setLong(string name, long value);
 	void setDouble(string name, double value);
 	void setString(string name, string value);
 
-	bool has(string name);
-	bool hasLong(string name);
-	bool hasFloat(string name);
-	bool hasString(string name);
+	bool has(string name) const;
+	bool hasLong(string name) const;
+	bool hasDouble(string name) const;
+	bool hasString(string name) const;
 
-	void fromList(vector<Argument>);
+	void fromList(vector<Argument> args, bool reset = false);
+	vector<Argument> toList() const;
 private:
 	map<string, Value> values;
 };

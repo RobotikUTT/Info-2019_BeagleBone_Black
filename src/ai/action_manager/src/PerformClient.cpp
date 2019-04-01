@@ -11,7 +11,7 @@ void PerformClient::performAction(AtomicActionPtr action, OrientedPoint robot_po
 
 	// send a goal to the action
 	ai_msgs::PerformGoal goal;
-	goal.arguments = action->getArgs();
+	goal.arguments = action->toList();
 	goal.robot_pos = robot_pos;
 
 	client->sendGoal(

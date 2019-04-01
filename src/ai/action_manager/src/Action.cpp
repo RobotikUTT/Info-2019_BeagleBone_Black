@@ -87,12 +87,12 @@ int Action::points() const { return _points; }
 
 
 // Comparison operator
-bool Action::equals(const Action& b) const {
+/*bool Action::equals(const Action& b) const {
 	// First try basic tests
 	return getBasePoints() == b.getBasePoints() &&
 		isSync() == b.isSync() &&
 		name() == b.name();
-}
+}*/
 
 void Action::display(std::ostream& os) const {
 	os << "[" << name()

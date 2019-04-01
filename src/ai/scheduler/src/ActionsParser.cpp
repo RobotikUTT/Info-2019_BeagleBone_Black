@@ -25,7 +25,7 @@ ActionsParser::ActionsParser(ActionFilePath filepath, ActionBlockPtr container /
         Document d;
         d.ParseStream(wrapper);
 
-        const Value& object = d;
+        const rapidjson::Value& object = d;
 
         // begin to parse
         parseAction(object, actionRoot);
@@ -49,7 +49,7 @@ bool ActionsParser::wasExplored(ActionFilePath path) {
     return false;
 }
 
-void ActionsParser::parseAction(const Value& object, ActionBlockPtr container) {
+void ActionsParser::parseAction(const rapidjson::Value& object, ActionBlockPtr container) {
     // objects define atomic action
     if (object.IsObject()) {
         // If the action has to be loaded from a different file
@@ -75,9 +75,9 @@ void ActionsParser::parseAction(const Value& object, ActionBlockPtr container) {
     }
 }
 
-void ActionsParser::parseActionBlock(const Value& object, ActionBlockPtr container) {
-    Value::ConstValueIterator itr = object.Begin();
-    const Value& descriptor = *itr;
+void ActionsParser::parseActionBlock(const rapidjson::Value& object, ActionBlockPtr container) {
+    rapidjson::Value::ConstValueIterator itr = object.Begin();
+    const rapidjson::Value& descriptor = *itr;
 
     // first object must define the block
     if (!descriptor.IsObject()) {
@@ -108,7 +108,7 @@ void ActionsParser::parseActionBlock(const Value& object, ActionBlockPtr contain
     container->addAction(action);
 }
 
-void ActionsParser::parseAtomicAction(const Value& object, ActionBlockPtr container) {
+void ActionsParser::parseAtomicAction(const rapidjson::Value& object, ActionBlockPtr container) {
     // an action must be named
     if (!object.HasMember("name") || !object["name"].IsString()) {
         throw "missing or invalid name";
@@ -140,21 +140,20 @@ void ActionsParser::parseAtomicAction(const Value& object, ActionBlockPtr contai
     container->addAction(std::make_shared<AtomicAction>(action));
 }
 
-void ActionsParser::parseArgs(const Value& object, AtomicAction& targetAction) {
-    ai_msgs::Argument* arg;
+void ActionsParser::parseArgs(const rapidjson::Value& object, AtomicAction& targetAction) {
+    std::string name;
 
-    for (Value::ConstMemberIterator itr = object.MemberBegin(); itr != object.MemberEnd(); ++itr) {
-        arg = new ai_msgs::Argument();
-        arg->name = itr->name.GetString();
+    for (rapidjson::Value::ConstMemberIterator itr = object.MemberBegin(); itr != object.MemberEnd(); ++itr) {
+        name = itr->name.GetString();
 
         if (itr->value.IsDouble()) {
-            arg->value = itr->value.GetDouble();
-            targetAction.addArg(*arg);
+            targetAction.setDouble(name, itr->value.GetDouble());
         } else if (itr->value.IsInt()) {
-            arg->value = itr->value.GetInt();
-            targetAction.addArg(*arg);
+            targetAction.setLong(name, itr->value.GetInt());
+        } else if (itr->value.IsString()) {
+            targetAction.setString(name, itr->value.GetString());
         } else {
-            ROS_WARN_STREAM("arg " << arg->name << " does not have a double value (ignored)");
+            ROS_WARN_STREAM("arg " << name << " does not have a valid value type (ignored)");
         }
     }
 }
