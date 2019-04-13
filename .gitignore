@@ -14,3 +14,6 @@ logs/
 .vscode
 *.sublime-project
 *.sublime-workspace
+
+# Python type checker
+.mypy_cache

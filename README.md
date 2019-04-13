@@ -12,7 +12,7 @@ cd Info-2019_BeagleBone_Black
 
 Un script contenant le nécessaire pour lancer le projet dans un environnement ubuntu 18 se trouve dans le dossier script. Sous windows, l'utilisation d'un sous-système linux (WSL) avec ubuntu 18 convient également.
 ~~~~
-./scripts/setup.sh # ou zsh
+./scripts/setup.sh
 ~~~~
 
 A noter que le script installe catkin-tools, un utilitaire de compilation optionnel.

@@ -34,7 +34,7 @@
 				<zone_points>6</zone_points>
 			</blue>
 		</argument>	
-	</puck>
+	</abstract-puck>
 
 	<!-- Puck on the ground -->
 	<puck extends="abstract-puck">
