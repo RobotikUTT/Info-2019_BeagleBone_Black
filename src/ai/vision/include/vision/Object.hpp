@@ -1,38 +1,31 @@
 #ifndef OBJECT_HPP
 #define OBJECT_HPP
 
+#include "action_manager/Argumentable.hpp"
+#include "shape.hpp"
+
 #include <string>
 #include <vector>
 
 using std::string;
 using std::vector;
 
-const int INT_TYPE = 0;
-const int DOUBLE_TYPE = 0;
-const int STRING_TYPE = 0;
+class ObjectAction {
 
-class Argument {
-	int intValue;
-	double doubleValue;
-	string stringValue;
-	
-	int type;
 };
 
-
-
-class Object {
+class Object : public Argumentable {
 public:
 	string name;
 	Shape shape;
-	vector<Argument> args;
 	vector<ObjectAction> actions;
+	map<string, Argumentable> argsSets;
 
 	Object();
-	Object(Object parent);
+	Object(const Object& parent);
 };
 
-class Zone {
+class Zone : public Argumentable {
 public:
 	Shape shape;
 	string name;

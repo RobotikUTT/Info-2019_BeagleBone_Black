@@ -1,7 +1,10 @@
 #ifndef OBJECT_PARSER_HPP
 #define OBJECT_PARSER_HPP
 
-#include "vision/object.hpp"
+#include "pugixml/pugixml.hpp"
+
+#include "vision/Object.hpp"
+#include "vision/shape.hpp"
 
 #include <string>
 #include <map>
@@ -11,13 +14,14 @@ using std::map;
 
 class ObjectParser {
 public:
-	ObjectParser(string filename);
+	void parseObjects(string filename);
 
 	Object get(string objectName);
 private:
 	map<string, Object> objects;
 
-	Object parseObject();
+	Object parseObject(pugi::xml_node&);
+	Shape parseShape();
 	
 };
 

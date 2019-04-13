@@ -17,6 +17,8 @@ find_package(catkin REQUIRED COMPONENTS
   # Other packages
   node_watcher
   ai_description
+  pugixml
+  action_manager
 )
 
 catkin_package(
@@ -36,7 +38,7 @@ include_directories(
 
 
 # Declare a C++ executable
-add_executable(${PROJECT_NAME}_node src/vision_node.cpp)
+add_executable(${PROJECT_NAME}_node src/vision_node.cpp src/Object.cpp src/ObjectParser.cpp)
 
 # Rename C++ executable without prefix
 set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
