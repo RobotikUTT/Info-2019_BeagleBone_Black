@@ -13,6 +13,12 @@ from typing import List, Dict
 
 from abc import ABC, abstractmethod
 
+def get_action_point_service(name: str) -> str:
+	return "/action/{}/actionpoint".format(name)
+
+def get_action_server(name: str) -> str:
+	return "/action/{}".format(name)
+
 '''
   Represent an performer for a specific action, it advertise a service for
   predicting position and an action server to run the action.
@@ -27,13 +33,13 @@ class ActionPerformer(Node, ABC):
 
 		# Service for action point computation
 		self._action_point_server = Service(
-			getActionPointService(name),
+			get_action_point_service(name),
 			self._compute_action_point
 		)
 
 		# Action server for this action
 		self._action_server = SimpleActionServer(
-			getActionServer(name),
+			get_action_server(name),
 			PerformAction
 		)
 

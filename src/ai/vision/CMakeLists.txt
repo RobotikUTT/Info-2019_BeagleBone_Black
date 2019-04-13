@@ -8,7 +8,7 @@ add_compile_options(-std=c++11)
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS
   # ROS c++ dependencies
-  roscpp
+  rospy
 
   # Required messages
   ai_msgs
@@ -17,37 +17,14 @@ find_package(catkin REQUIRED COMPONENTS
   # Other packages
   node_watcher
   ai_description
-  pugixml
   action_manager
 )
+
+catkin_python_setup()
 
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp interface_msgs ai_msgs ai_description node_watcher
+  CATKIN_DEPENDS rospy action_manager interface_msgs ai_msgs ai_description node_watcher
 #  DEPENDS system_lib
 )
-
-###########
-## Build ##
-###########
-include_directories(
- include
-  ${catkin_INCLUDE_DIRS}
-)
-
-
-# Declare a C++ executable
-add_executable(${PROJECT_NAME}_node src/vision_node.cpp src/Object.cpp src/ObjectParser.cpp)
-
-# Rename C++ executable without prefix
-set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
-
-# Add cmake target dependencies of the executable
-add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-## Specify libraries to link the executable target against
-target_link_libraries(${PROJECT_NAME}_node
-  ${catkin_LIBRARIES}
-)
-

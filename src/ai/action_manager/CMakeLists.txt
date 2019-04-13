@@ -8,6 +8,7 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   # ROS c++ dependencies
   roscpp
+  rospy
 
   # Messages packages
   ai_msgs
@@ -18,10 +19,12 @@ find_package(catkin REQUIRED COMPONENTS
   node_watcher
 )
 
+catkin_python_setup()
+
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp ai_msgs interface_msgs actionlib node_watcher
+  CATKIN_DEPENDS roscpp rospy ai_msgs interface_msgs actionlib node_watcher
 #  DEPENDS system_lib
 )
 

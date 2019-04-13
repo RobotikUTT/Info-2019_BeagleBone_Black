@@ -5,8 +5,8 @@
 		<include file="./src/ai/scheduler/launch/pkg.launch"/>
 		<include file="./src/ai/controller/launch/pkg.launch"/>
 	</group>
-	<group ns="ros_can">
-		<include file="./src/ros_can/socketcan_bridge/launch/pkg.launch"/>
+	<group ns="lib">
+		<include file="./src/lib/ros_can/socketcan_bridge/launch/pkg.launch"/>
 	</group>
 
 	<group ns="procedures">

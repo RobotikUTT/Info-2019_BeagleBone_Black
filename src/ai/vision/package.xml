@@ -9,12 +9,11 @@
 
   <!-- Dependencies -->
   <buildtool_depend>catkin</buildtool_depend>
-  <depend>roscpp</depend>
+  <depend>rospy</depend>
 
   <!-- Packages -->
   <depend>node_watcher</depend>
   <depend>ai_description</depend>
-  <depend>pugixml</depend>
   <depend>action_manager</depend>
 
   <!-- Messages -->

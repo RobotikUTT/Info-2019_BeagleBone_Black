@@ -11,7 +11,7 @@ from rospy import Publisher, Subscriber
 from interface_msgs import msg as interface_msgs
 from can_msgs.msg import Frame
 
-from can_interface.devices_handler import DevicesHandler
+from can_interface import DevicesHandler
 
 class CanInterfaceNode:
 	def __init__(self):
