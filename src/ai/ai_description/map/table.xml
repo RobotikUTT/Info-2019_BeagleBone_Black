@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!-- Contains 2D map content, see reference.png for more details -->
-<rect x="0" y="0" height="3000" width="2000">
-	<!-- Will create a symmetry from the down part to the upper part-->
-	<symmetry y="1500" source="down" target="up" />
+<rect x="0" y="0" height="3000" width="2000" wall="true">
+	<!-- Will create a symmetry of axis y = 1500 -->
+	<symmetry y="1500" source="up" target="down" />
 
 	<!-- Walls -->
-	<rect x="1400" y="1500" width="200" height="40" symmetry="false" />
-	<rect x="1543" y="450" width="57" height="778" />
+	<rect x="1400" y="1500" width="200" height="40" symmetry="false" wall="true" />
+	<rect x="1543" y="450" width="57" height="778" wall="true" />
 
 	<!-- Movable objects bound to actions defined in "objects" folder -->
 	<puck x="1800" y="834" color="green" />
