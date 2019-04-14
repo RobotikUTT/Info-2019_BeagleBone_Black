@@ -1,2 +1,2 @@
 string name
-Value value
+string value

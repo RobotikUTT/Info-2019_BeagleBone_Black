@@ -2,13 +2,11 @@
 #define ARGUMENTABLE_HPP
 
 #include "ai_msgs/Argument.h"
-#include "ai_msgs/Value.h"
 
 #include <map>
 #include <vector>
 #include <string>
 
-using ai_msgs::Value;
 using ai_msgs::Argument;
 
 using std::string;
@@ -17,7 +15,7 @@ using std::map;
 
 class Argumentable {
 public:
-	Value get(string name) const;
+	string get(string name) const;
 	long getLong(string name, long defaultValue = 0) const;
 	double getDouble(string name, double defaultValue = 0) const;
 	string getString(string name, string defaultValue = "") const;
@@ -34,7 +32,7 @@ public:
 	void fromList(vector<Argument> args, bool reset = false);
 	vector<Argument> toList() const;
 private:
-	map<string, Value> values;
+	map<string, string> values;
 };
 
 #endif

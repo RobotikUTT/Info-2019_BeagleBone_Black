@@ -1,6 +1,6 @@
 #include "action_manager/Argumentable.hpp"
 
-Value Argumentable::get(string name) const {
+string Argumentable::get(string name) const {
 	auto pos = this->values.find(name);
 
 	if (pos == this->values.end()) {
@@ -15,13 +15,7 @@ long Argumentable::getLong(string name, long defaultValue /*= 0*/) const {
 		return defaultValue;
 	}
 
-	Value arg = this->get(name);
-
-	if (arg.type != Value::LONG) {
-		throw "invalid argument type";
-	}
-
-	return arg.longValue;
+	return stol(this->get(name));
 }
 
 double Argumentable::getDouble(string name, double defaultValue /*= 0*/) const {
@@ -29,14 +23,7 @@ double Argumentable::getDouble(string name, double defaultValue /*= 0*/) const {
 		return defaultValue;
 	}
 	
-	Value arg = this->get(name);
-
-	if (arg.type != Value::DOUBLE) {
-		throw "invalid argument type";
-	}
-
-	return arg.doubleValue;
-
+	return stod(this->get(name));
 }
 
 string Argumentable::getString(string name, string defaultValue /*= ""*/) const {
@@ -44,34 +31,19 @@ string Argumentable::getString(string name, string defaultValue /*= ""*/) const 
 		return defaultValue;
 	}
 
-	Value arg = this->get(name);
-
-	if (arg.type != Value::STRING) {
-		throw "invalid argument type";
-	}
-
-	return arg.stringValue;
+	return this->get(name);
 }
 
 void Argumentable::setLong(string name, long value) {
-	Value val;
-	val.longValue = value;
-	val.type = Value::LONG;
-	this->values[name] = val;
+	this->values[name] = std::to_string(value);
 }
 
 void Argumentable::setDouble(string name, double value) {
-	Value val;
-	val.doubleValue = value;
-	val.type = Value::DOUBLE;
-	this->values[name] = val;
+	this->values[name] = std::to_string(value);
 }
 
 void Argumentable::setString(string name, string value) {
-	Value val;
-	val.stringValue = value;
-	val.type = Value::STRING;
-	this->values[name] = val;
+	this->values[name] = value;
 }
 
 bool Argumentable::has(string name) const {
@@ -81,15 +53,33 @@ bool Argumentable::has(string name) const {
 }
 
 bool Argumentable::hasLong(string name) const {
-	return has(name) && get(name).type == Value::LONG;
+	if (has(name)) {
+		try {
+			stol(get(name));
+		} catch (const std::invalid_argument& ia) {
+			return false;	
+		}
+
+		return true;
+	}
+	return false;
 }
 
 bool Argumentable::hasDouble(string name) const {
-	return has(name) && get(name).type == Value::DOUBLE;
+	if (has(name)) {
+		try {
+			stod(get(name));
+		} catch (const std::invalid_argument& ia) {
+			return false;	
+		}
+		
+		return true;
+	}
+	return false;
 }
 
 bool Argumentable::hasString(string name) const {
-	return has(name) && get(name).type == Value::STRING;
+	return has(name);
 }
 
 void Argumentable::fromList(vector<Argument> args, bool reset /*= false*/) {

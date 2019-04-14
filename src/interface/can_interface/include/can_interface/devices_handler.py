@@ -1,7 +1,7 @@
 # File adding an handler for WHOAMI frames and devices
 from node_watcher.node_status_handler import NodeStatusHandler
 
-from . import InputElement, OutputElement
+from .io_elements import InputElement, OutputElement
 
 from can_msgs.msg import Frame
 from ai_msgs.msg import NodeStatus
