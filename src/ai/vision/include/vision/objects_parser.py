@@ -1,9 +1,11 @@
 #!/usr/bin/python3
-from . import MapObject, Shape, RectShape, CircleShape
+from . import MapObject, Shape, RectShape, CircleShape, MapObjectAction, MapObjectArgument
 from xml.etree import ElementTree
 import rospkg
 
 from typing import Dict, List
+
+from action_manager import Argumentable
 
 class ObjectsParser():
 	def __init__(self):
@@ -66,50 +68,53 @@ class ObjectsParser():
 			elif child.tag == "argument":
 				self.parse_argument(child, obj)
 			else:
-				self.parse_shape(child, obj)
+				# Parse shape
+				obj.shape = Shape.parse(child, obj.shape)
 
 		# Append object to list
 		self.objects[obj.name] = obj
 		return True
 
 	def parse_action(self, element: ElementTree.Element, obj: MapObject):
-		pass
-
-	def parse_shape(self, element: ElementTree.Element, obj: MapObject):
 		"""
-			Parse the shape of an object.
-
-			Currently 2 shapes are supported : rects and circles. The
-			function keep the curent shape (if defined, propbable shape
-			from the parent obejct), and add properties given in XML
+			Parse an action associated with an object.
 		"""
-		# Make sure the right shape class is used
-		if obj.shape == None:
-			obj.shape = Shape()
 
-		if element.tag == "rect" and type(obj.shape) is not RectShape:
-			# Keep x, y
-			obj.shape = RectShape(obj.shape.x, obj.shape.y)
-		elif element.tag == "circle" and type(obj.shape) is not CircleShape:
-			# Keep x, y
-			obj.shape = CircleShape(obj.shape.x, obj.shape.y)
+		if "file" in element.attrib:
+			action = MapObjectAction(element.attrib["file"])
 
-		elif element.tag != "circle" and element.tag != "rect":
-			# No shape nor anything else
-			raise Exception(
-				"{} does not name an object parameter type"
-					.format(element.tag)
-			)
+			# Then args bound to this value
+			for bound_arg in element:
+				action.set(bound_arg.tag, bound_arg.text)
 
-		# Then parse shape attributes
-		for attr in element.attrib:
-			if hasattr(obj.shape, attr):
-				# Copy value as int (raise error if wrong)
-				setattr(obj.shape, attr, int(element.attrib[attr]))
-			else:
-				raise Exception(
-					"{} attribute not defined for a {} shape".format(attr, element.tag)
-				)
+			obj.actions.append(action)
+		else:
+			raise Exception("no file attribute given to an {}'s action".format(obj.name))
 
 	def parse_argument(self, element: ElementTree.Element, obj: MapObject):
-		pass
+		"""
+			Parse an argument that have to be passed when creating the object.
+
+			It might contains somes values for this argument, with attributes
+			that will be passed upon calling an action.
+		"""
+
+		# Check that argument is valid
+		if "name" not in element.attrib or "type" not in element.attrib:
+			raise Exception("an object argument must have a given name and a type")
+		elif element.attrib["type"] not in ["string", "int", "float"]:
+			raise Exception("invalid argument type : {}".format(element.attrib["type"]))
+		
+		argument = MapObjectArgument(element.attrib["name"], element.attrib["type"])
+
+		# Parse given arguments
+		for argument_value in element:
+			bound_arguments = argument.add_value(argument_value.tag)
+
+			# Then args bound to this value
+			for bound_arg in argument_value:
+				bound_arguments.set(bound_arg.tag, bound_arg.text)
+		
+		obj.args[element.attrib["name"]] = argument
+		
+

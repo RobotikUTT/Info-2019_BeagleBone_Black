@@ -17,7 +17,7 @@
 <objects>
 	<!-- Abstract puck (to define arguments) -->
 	<abstract-puck>
-		<argument name="color">
+		<argument name="color" type="string">
 			<red>
 				<balance_points>4</balance_points>
 				<zone_points>6</zone_points>

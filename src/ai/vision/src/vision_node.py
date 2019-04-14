@@ -1,14 +1,18 @@
 #!/usr/bin/python3
 import rospy
 
-from vision import ObjectsParser
+from vision import ObjectsParser, MapParser
 
 from node_watcher import Node
 
 class VisionNode(Node):
 	def __init__(self):
-		parser = ObjectsParser()
-		print(parser.objects)
+		obj_parser = ObjectsParser()
+		map_parser = MapParser(obj_parser.objects)
+		for obj in obj_parser.objects:
+			print(obj_parser.objects[obj])
+			print()
+		print(map_parser.root)
 
 
 if __name__ == '__main__':
@@ -22,6 +26,7 @@ if __name__ == '__main__':
 
 		# Spin
 		while not rospy.is_shutdown():
-			rospy.spin()
+			#rospy.spin()
+			break
 	except rospy.ROSInterruptException:
 		pass
