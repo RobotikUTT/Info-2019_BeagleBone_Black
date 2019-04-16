@@ -1,34 +1,61 @@
 from xml.etree import ElementTree
+from .parser import ParsingException
 
+from typing import Dict
 
 class Shape:
+	"""
+		Definition of a generic shape
+	"""
+
+	# Fifty shades of shapes
+	types: Dict[str, type] = {}
+
 	def __init__(self, x: int = -1, y: int = -1):
 		self.x: int = x
 		self.y: int = y
+
+	def __str__(self):
+		return "Shape ({}, {})".format(self.x, self.y)
+	
+	def __eq__(self, other):
+		if isinstance(other, self.__class__):
+			return self.__dict__ == other.__dict__
+
+		return NotImplemented
+
+	def __ne__(self, other):
+		e = self.__eq__(other)
+		if e is NotImplemented:
+			return e
+		return not e
+
+	@staticmethod
+	def declare(name: str, associated_class: type):
+		Shape.types[name] = associated_class
 
 	@staticmethod
 	def parse(element: ElementTree.Element, current_shape: 'Shape' = None, allow_any: bool = False) -> 'Shape':
 		"""
 			Parse the shape of an object from it's XML element
 
-			Currently 2 shapes are supported : rects and circles. The
-			function keep the curent shape (if defined, propbable shape
-			from the parent obejct), and add properties given in XML
+			The function keep the curent shape (if defined, probably shape
+			from the parent object), and add properties given in XML.
+
+			If the shape type differ from current, change type but keep x and
+			y properties (unless new x/y given)
 		"""
 		# Make sure the right shape class is used
 		if current_shape == None:
 			current_shape = Shape()
 
-		if element.tag == "rect" and type(current_shape) is not RectShape:
-			# Keep x, y
-			current_shape = RectShape(current_shape.x, current_shape.y)
-		elif element.tag == "circle" and type(current_shape) is not CircleShape:
-			# Keep x, y
-			current_shape = CircleShape(current_shape.x, current_shape.y)
+		if element.tag in Shape.types and type(current_shape) is not Shape.types[element.tag]:
+			# Keep x, y from previous shape
+			current_shape = Shape.types[element.tag](current_shape.x, current_shape.y)
 
-		elif element.tag != "circle" and element.tag != "rect":
+		elif element.tag not in Shape.types:
 			# No shape nor anything else
-			raise Exception(
+			raise ParsingException(
 				"{} does not name an object parameter type"
 					.format(element.tag)
 			)
@@ -45,24 +72,31 @@ class Shape:
 		
 		return current_shape
 
-	def __str__(self):
-		return "Shape ({}, {})".format(self.x, self.y)
 
+"""
+	Some simple shapes classes
+"""
 class CircleShape(Shape):
-	def __init__(self, x: int = -1, y: int = -1):
+	def __init__(self, x: int = -1, y: int = -1, radius: int = -1):
 		super().__init__(x, y)
 
-		self.radius: int = -1
+		self.radius: int = radius
 
 	def __str__(self):
 		return "Circle ({}, {}, r={})".format(self.x, self.y, self.radius)
 
+# Add shape to list
+Shape.declare("circle", CircleShape)
+
 class RectShape(Shape):
-	def __init__(self, x: int = -1, y: int = -1):
+	def __init__(self, x: int = -1, y: int = -1, height: int = -1, width: int = -1):
 		super().__init__(x, y)
 
-		self.width: int = -1
-		self.height: int = -1
+		self.width: int = height
+		self.height: int = width
 
 	def __str__(self):
 		return "Rect ({}, {}, w={}, h={})".format(self.x, self.y, self.width, self.height)
+
+# Add shape to list
+Shape.declare("rect", RectShape)

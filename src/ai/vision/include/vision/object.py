@@ -22,6 +22,17 @@ class MapObjectAction(Argumentable):
 	def __str__(self):
 		return "Action ({}) {}".format(self.file, super().__str__())
 
+	def __eq__(self, other):
+		if isinstance(other, self.__class__):
+			return self.__dict__ == other.__dict__
+
+		return NotImplemented
+
+	def __ne__(self, other):
+		e = self.__eq__(other)
+		if e is NotImplemented:
+			return e
+		return not e
 
 class MapObjectArgument:
 	"""
@@ -57,6 +68,17 @@ class MapObjectArgument:
 			 	#", ".join(["{} ({})".format(a, self.bound[a].__str__()) for a in self.bound])
 			)
 
+	def __eq__(self, other):
+		if isinstance(other, self.__class__):
+			return self.__dict__ == other.__dict__
+
+		return NotImplemented
+
+	def __ne__(self, other):
+		e = self.__eq__(other)
+		if e is NotImplemented:
+			return e
+		return not e
 
 class MapObject(Argumentable):
 	"""
@@ -85,5 +107,16 @@ class MapObject(Argumentable):
 			[a.__str__() for a in self.actions] +
 			[self.args[a].__str__() for a in self.args]
 		)
+		
+	def __eq__(self, other):
+		if isinstance(other, self.__class__):
+			return self.__dict__ == other.__dict__
 
+		return NotImplemented
+
+	def __ne__(self, other):
+		e = self.__eq__(other)
+		if e is NotImplemented:
+			return e
+		return not e
 

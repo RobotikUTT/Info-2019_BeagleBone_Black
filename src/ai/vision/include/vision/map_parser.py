@@ -1,5 +1,6 @@
 from . import MapObject, Shape, RectShape, CircleShape, MapObjectAction, MapObjectArgument
 from .map import Zone, Symmetry, Offset
+from .parser import Parser, ParsingException
 from xml.etree import ElementTree
 import rospkg
 
@@ -7,19 +8,14 @@ from typing import Dict, List
 
 from action_manager import Argumentable
 
-class MapParser():
+class MapParser(Parser):
 	"""
 		XML parser utility for a map
 	"""
 	def __init__(self, objects: Dict[str, MapObject]):
 		self.objects: Dict[str, MapObject] = objects
 
-		# Find mapping file directory
-		source_folder = rospkg.RosPack().get_path("ai_description")
-
-		# Parsing mapping file
-		root = ElementTree.parse(source_folder + "/map/table.xml").getroot()
-
+	def parse(self, root: ElementTree.Element):
 		# Init new map
 		self.root = Zone(Shape.parse(root, None, True), "__root")
 		self.root.wall = bool(root.attrib["wall"]) if "wall" in root.attrib else False
@@ -65,7 +61,7 @@ class MapParser():
 		elif "y" in el.attrib:
 			sym.axis = "y"
 		else:
-			raise Exception("symmetry with no x or y axis provided")
+			raise ParsingException("symmetry with no x or y axis provided")
 		
 		sym.source = el.attrib["source"]
 		sym.target = el.attrib["target"]

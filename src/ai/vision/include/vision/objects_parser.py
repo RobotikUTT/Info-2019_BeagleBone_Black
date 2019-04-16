@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from . import MapObject, Shape, RectShape, CircleShape, MapObjectAction, MapObjectArgument
+from .parser import Parser, ParsingException
 from xml.etree import ElementTree
 import rospkg
 
@@ -7,16 +8,11 @@ from typing import Dict, List
 
 from action_manager import Argumentable
 
-class ObjectsParser():
+class ObjectsParser(Parser):
 	def __init__(self):
 		self.objects: Dict[str, MapObject] = {}
 
-		# Find mapping file directory
-		source_folder = rospkg.RosPack().get_path("ai_description")
-
-		# Parsing mapping file
-		root = ElementTree.parse(source_folder + "/objects/objects.xml").getroot()
-
+	def parse(self, root: ElementTree.Element):
 		if root.tag != "objects":
 			print("invalid file, must contains a <objects> root element")
 			exit(0)
@@ -89,7 +85,7 @@ class ObjectsParser():
 
 			obj.actions.append(action)
 		else:
-			raise Exception("no file attribute given to an {}'s action".format(obj.name))
+			raise ParsingException("no file attribute given to an {}'s action".format(obj.name))
 
 	def parse_argument(self, element: ElementTree.Element, obj: MapObject):
 		"""
@@ -101,9 +97,9 @@ class ObjectsParser():
 
 		# Check that argument is valid
 		if "name" not in element.attrib or "type" not in element.attrib:
-			raise Exception("an object argument must have a given name and a type")
+			raise ParsingException("an object argument must have a given name and a type")
 		elif element.attrib["type"] not in ["string", "int", "float"]:
-			raise Exception("invalid argument type : {}".format(element.attrib["type"]))
+			raise ParsingException("invalid argument type : {}".format(element.attrib["type"]))
 		
 		argument = MapObjectArgument(element.attrib["name"], element.attrib["type"])
 
