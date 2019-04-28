@@ -2,6 +2,7 @@
 #   Script for installing ros and building code
 #   [sh version]
 #cd ..
+echo "This script might be deprecated, use setup_debian.sh instead :)"
 echo "Setting up ros sources..."
 
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'

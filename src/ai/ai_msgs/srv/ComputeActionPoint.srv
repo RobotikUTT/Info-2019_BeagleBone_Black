@@ -1,4 +1,4 @@
-OrientedPoint robot_pos
+geometry_msgs/Pose2D robot_pos
 Argument[] args
 ---
 ActionPoint action_point

@@ -16,7 +16,7 @@ Action::Action(std::string name)
  *
  * @param robot_pos current robot position
  */
-double Action::priority(OrientedPoint& robot_pos) {
+double Action::priority(Pose2D& robot_pos) {
 	int action_points = points();
 	int distance = distanceToTravel(robot_pos);
 	
@@ -69,7 +69,7 @@ void Action::setState(int state) {
 /**
  * Compute the distance to travel before the robot reach the end
  */
-double Action::distanceToTravel(OrientedPoint& robot_pos) {
+double Action::distanceToTravel(Pose2D& robot_pos) {
 	ActionPoint point = actionPoint(robot_pos);
 
 	// Compute euclidian distance

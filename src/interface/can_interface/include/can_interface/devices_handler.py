@@ -1,7 +1,7 @@
 # File adding an handler for WHOAMI frames and devices
 from node_watcher.node_status_handler import NodeStatusHandler
 
-from .io_elements import InputElement, OutputElement
+from .io_elements import InputElement, OutputElement, IOElement
 
 from can_msgs.msg import Frame
 from ai_msgs.msg import NodeStatus
@@ -10,6 +10,8 @@ import rospkg
 
 from xml.etree import ElementTree
 
+from typing import Dict, List
+
 class DevicesHandler(NodeStatusHandler):
 	def __init__(self, interface):
 		super().__init__()
@@ -17,18 +19,18 @@ class DevicesHandler(NodeStatusHandler):
 		interface.subscribe(Frame.ORDER_WHOAMI, self)
 
 		# Devices and their address
-		self.names = {}
-		self.addresses = {}
+		self.names: Dict[int, str] = {}
+		self.addresses: Dict[str, int] = {}
 		
-		self.self = -1
-		self.broadcast = 0
-		self.elements = []
+		self.self: int = -1
+		self.broadcast: int = 0
+		self.elements: List[IOElement] = []
 
 		# Find mapping file directory
 		source_folder = rospkg.RosPack().get_path("interface_description")
 
 		# Parsing mapping file
-		root = ElementTree.parse(source_folder + "/can/devices.xml").getroot()
+		root: ElementTree.Element = ElementTree.parse(source_folder + "/can/devices.xml").getroot()
 
 		if root.tag != "devices":
 			print("invalid file, must contains a <devices> root element")

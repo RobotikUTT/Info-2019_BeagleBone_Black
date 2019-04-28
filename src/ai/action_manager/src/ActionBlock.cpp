@@ -31,9 +31,9 @@ void ActionBlock::addAction(ActionPtr action) {
 /**
  * Compute the estimated distance to travel before the robot reach the end of the action
  */
-double ActionBlock::distanceToTravel(OrientedPoint& robot_pos) {
+double ActionBlock::distanceToTravel(Pose2D& robot_pos) {
 	int distance = 0;
-	OrientedPoint currentPoint = robot_pos;
+	Pose2D currentPoint = robot_pos;
 	
 	for (auto& next : _actions) {
 		// Add distance between the end of the previous action and the begin of this one
@@ -49,14 +49,14 @@ double ActionBlock::distanceToTravel(OrientedPoint& robot_pos) {
 /**
  * Compute the initial and final point of the action
  */
-ActionPoint& ActionBlock::actionPoint(OrientedPoint& previousPoint) {
+ActionPoint& ActionBlock::actionPoint(Pose2D& previousPoint) {
 	// Test whether the action point was already computed
 	if (_actionPoint != NULL) {
 		return *_actionPoint;
 	}
 
-	OrientedPoint* start = NULL; // computed later
-	OrientedPoint& current = previousPoint;
+	Pose2D* start = NULL; // computed later
+	Pose2D& current = previousPoint;
 	ActionPoint actionPoint;
 
 	// Compute all actionPoints

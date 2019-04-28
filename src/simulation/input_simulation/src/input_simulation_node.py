@@ -6,8 +6,6 @@ from ai_msgs.msg import NodeStatus, Topics, StartRobot, Side
 
 from input_simulation.modules import modules as simulation_parts
 
-from interface_msgs.msg import Point
-
 class RobotSimulationNode():
 	def __init__(self):
 		self.nodes = NodeStatusHandler()
@@ -24,10 +22,16 @@ class RobotSimulationNode():
 		if not success:
 			rospy.logerr("Controller or scheduler did not woke up...")
 			return
-		
+
+		# Wait for a connection
+		poll_rate = rospy.Rate(100)
+		while self.start_signal_pub.get_num_connections() == 0:
+			poll_rate.sleep()
+
 		msg = StartRobot()
 		msg.side = Side.LEFT
 		self.start_signal_pub.publish(msg)
+		print("signal sent")
 
 	def spin(self):
 		while not rospy.is_shutdown():
@@ -41,7 +45,7 @@ class RobotSimulationNode():
 if __name__ == '__main__':
 	# Initialize the node and name it.
 	rospy.init_node('input_simulation_node')
-
+	
 	# Go to class functions that do all the heavy lifting. Do error checking.
 	try:
 		# Create node

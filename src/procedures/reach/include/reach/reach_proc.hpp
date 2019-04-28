@@ -8,6 +8,7 @@
 #include "action_manager/ActionPerformer.hpp"
 
 #include "interface_msgs/StmMode.h"
+#include "interface_msgs/DirectedPose.h"
 
 /**
  * @brief class for the action of reaching a position
@@ -26,7 +27,7 @@ private:
   ros::Publisher STM_AsserManagement_pub;
   ros::Timer timerTimeout;
   
-  ActionPoint computeActionPoint(Argumentable* actionArgs, OrientedPoint robot_pos) override;
+  ActionPoint computeActionPoint(Argumentable* actionArgs, Pose2D robot_pos) override;
   void start() override;
   void cancel() override;
 

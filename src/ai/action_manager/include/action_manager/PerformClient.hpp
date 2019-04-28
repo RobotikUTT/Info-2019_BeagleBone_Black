@@ -13,7 +13,7 @@
 #include "action_manager/AtomicAction.hpp"
 #include "action_manager/ActionBlock.hpp"
 
-#include "ai_msgs/OrientedPoint.h"
+#include "geometry_msgs/Pose2D.h"
 #include "ai_msgs/NodeRequirement.h"
 
 typedef actionlib::SimpleActionClient<ai_msgs::PerformAction> PerformActionClt;
@@ -29,7 +29,7 @@ public:
 	virtual void onPaused() = 0;
 
 protected:
-	void performAction(AtomicActionPtr action, OrientedPoint robot_pos);
+	void performAction(AtomicActionPtr action, Pose2D robot_pos);
 	void cancelAction();
 
 	void saveRequired(ActionPtr action);

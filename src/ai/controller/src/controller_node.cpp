@@ -8,7 +8,7 @@
  */
 Controller::Controller() : Node("controller", "ai"), side(Side::LEFT) {
 	// attributes
-	direction = Point::DIRECTION_NONE;
+	direction = DirectedPose::DIRECTION_NONE;
 	proximity_stop = false;
 	panelUp = 0;
 	startSignalReceived = false;
@@ -16,7 +16,7 @@ Controller::Controller() : Node("controller", "ai"), side(Side::LEFT) {
 
 	// Advertisers
 	proximity_stop_pub = nh.advertise<ProximityStop>("proximity", 1);
-	STM_SetPose_pub = nh.advertise<interface_msgs::Point>("/STM/SetPose", 1);
+	STM_SetPose_pub = nh.advertise<geometry_msgs::Pose2D>("/STM/SetPose", 1);
 	STM_AsserManagement_pub = nh.advertise<interface_msgs::StmMode>("/STM/AsserManagement", 1);
 	robot_status_pub = nh.advertise<RobotStatus>("/ai/controller/robot_status", 1);
 
@@ -31,13 +31,15 @@ Controller::Controller() : Node("controller", "ai"), side(Side::LEFT) {
 	// Wait for required nodes
 	waitForNodes(3);
 }
+
 void Controller::onWaitingResult(bool success) {
 	if (success) {
+		// If start signal was received during waiting
+		this->robotState = RobotStatus::ROBOT_READY;
+
 		// Set as ready
 		setNodeStatus(NodeStatus::READY);
 
-		// If start signal was received during waiting
-		this->robotState = RobotStatus::ROBOT_READY;
 		start();
 	} else {
 		setNodeStatus(NodeStatus::ERROR);
@@ -64,10 +66,10 @@ void Controller::start() {
 	nh.getParam("controller/robot_pos/angle", angle);
 
 	// init STM position
-	interface_msgs::Point msg;
-	msg.pos_x = x;
-	msg.pos_y = y;
-	msg.angle = angle;
+	geometry_msgs::Pose2D msg;
+	msg.x = x;
+	msg.y = y;
+	msg.theta = angle;
 	STM_SetPose_pub.publish(msg);
 
 	// make it running
@@ -111,13 +113,13 @@ void Controller::setRobotSpeed(const interface_msgs::WheelsSpeed::ConstPtr &msg)
 	int16_t linearSpeed = msg->linear_speed;
 
 	if (linearSpeed > 0) {
-		direction = Point::DIRECTION_FORWARD;
+		direction = DirectedPose::DIRECTION_FORWARD;
 	}
 	else if (linearSpeed < 0) {
-		direction = Point::DIRECTION_BACKWARD;
+		direction = DirectedPose::DIRECTION_BACKWARD;
 	}
 	else {
-		direction = Point::DIRECTION_NONE;
+		direction = DirectedPose::DIRECTION_NONE;
 	}
 }
 
@@ -142,12 +144,12 @@ void Controller::processSonars(const interface_msgs::SonarDistance::ConstPtr &ms
 	 * the current direction.
 	 */
 	proximity_stop = (
-		direction == Point::DIRECTION_FORWARD && (
+		direction == DirectedPose::DIRECTION_FORWARD && (
 			front_left <= SONAR_MIN_DIST_FORWARD + 6 ||
 			front_right <= SONAR_MIN_DIST_FORWARD + 16
 		)
 	) || (
-		direction == Point::DIRECTION_BACKWARD && (
+		direction == DirectedPose::DIRECTION_BACKWARD && (
 			back_left <= SONAR_MIN_DIST_BACKWARD ||
 			back_right <= SONAR_MIN_DIST_BACKWARD
 		)

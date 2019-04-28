@@ -1,3 +1,0 @@
-- Declare as git submodule from https://github.com/ros-industrial/ros_canopen
-- Move can_msgs constants to interface_msgs
-- Remove unused folder automatically (or ignore with cmake?)

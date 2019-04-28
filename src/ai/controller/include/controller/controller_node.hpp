@@ -18,7 +18,8 @@
 #include "ai_msgs/PointsScored.h"
 #include "ai_msgs/SetSchedulerState.h"
 
-#include "interface_msgs/Point.h"
+#include "geometry_msgs/Pose2D.h"
+#include "interface_msgs/DirectedPose.h"
 #include "interface_msgs/StmMode.h"
 #include "interface_msgs/SonarDistance.h"
 #include "interface_msgs/WheelsSpeed.h"
@@ -41,7 +42,7 @@ using ros::ServiceClient;
 // Use ai_msgs namespace to simplify usage
 using namespace ai_msgs;
 
-using interface_msgs::Point;
+using interface_msgs::DirectedPose;
 
 /**
  * @brief process inputs and change robot behavior according to that
@@ -64,7 +65,6 @@ private:
 	Publisher proximity_stop_pub;
 	Publisher STM_SetPose_pub;
 	Publisher STM_AsserManagement_pub;
-	Publisher PANEL_Point_pub;
 
 	ServiceClient schedulerController;
 
@@ -79,7 +79,7 @@ private:
 	bool panelUp;
 
 	//void setRobotStatus(const RobotStatus::ConstPtr& msg);
-	void setRobotPosition(const interface_msgs::Point::ConstPtr& msg);
+	void setRobotPosition(const geometry_msgs::Pose2D::ConstPtr& msg);
 	void setRobotSpeed(const interface_msgs::WheelsSpeed::ConstPtr& msg);
 
 	void processSonars(const interface_msgs::SonarDistance::ConstPtr& msg);

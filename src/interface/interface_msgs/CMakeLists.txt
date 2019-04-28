@@ -5,12 +5,13 @@ find_package(catkin REQUIRED COMPONENTS
   # Messages and services base dependencies
   message_generation
   std_msgs
+  geometry_msgs
 )
 
 # Generic messages (uses both in input and output)
 add_message_files(DIRECTORY msg
   FILES
-  Point.msg
+  DirectedPose.msg
   Speed.msg
   WheelsDistance.msg
   WheelsSpeed.msg
@@ -36,7 +37,7 @@ add_message_files(DIRECTORY output
 )
 
 # Generate added messages and services with any dependencies listed here
-generate_messages(DEPENDENCIES std_msgs)
+generate_messages(DEPENDENCIES std_msgs geometry_msgs)
 
 # Declare dependencies for external packages
 catkin_package(CATKIN_DEPENDS message_runtime std_msgs)

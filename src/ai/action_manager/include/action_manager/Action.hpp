@@ -2,7 +2,7 @@
 #define ACTION_H
 
 #include "ai_msgs/ActionPoint.h"
-#include "ai_msgs/OrientedPoint.h"
+#include "geometry_msgs/Pose2D.h"
 
 #include "ai_msgs/ActionStatus.h"
 
@@ -13,7 +13,7 @@
 #include <math.h>
 
 using ai_msgs::ActionStatus;
-using ai_msgs::OrientedPoint;
+using geometry_msgs::Pose2D;
 using ai_msgs::ActionPoint;
 
 /**
@@ -29,14 +29,14 @@ public:
 
   // Getters
   bool isSync() const;
-  double priority(OrientedPoint& robot_pos);
+  double priority(Pose2D& robot_pos);
   int state() const;
   std::string name() const;
   int getBasePoints() const;
 
-  virtual double distanceToTravel(OrientedPoint& robot_pos);
+  virtual double distanceToTravel(Pose2D& robot_pos);
   virtual int points() const;
-  virtual ActionPoint& actionPoint(OrientedPoint& previousPoint) = 0;
+  virtual ActionPoint& actionPoint(Pose2D& previousPoint) = 0;
   
   // Equality and display
   //virtual bool equals(const Action& b) const;

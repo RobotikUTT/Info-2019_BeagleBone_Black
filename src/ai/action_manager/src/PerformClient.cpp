@@ -2,7 +2,7 @@
 
 PerformClient::PerformClient(std::string name, std::string package) : Node(name, package) { }
 
-void PerformClient::performAction(AtomicActionPtr action, OrientedPoint robot_pos) {
+void PerformClient::performAction(AtomicActionPtr action, Pose2D robot_pos) {
 	// TODO check for previously launched clients
 	client = new PerformActionClt(getActionServer(action->performer()), true);
 

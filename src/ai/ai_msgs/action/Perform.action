@@ -1,6 +1,6 @@
 #start
 Argument[] arguments
-OrientedPoint robot_pos
+geometry_msgs/Pose2D robot_pos
 ---
 #result
 ActionStatus status

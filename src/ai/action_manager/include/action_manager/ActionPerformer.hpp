@@ -21,7 +21,7 @@
 #include "node_watcher/Node.hpp"
 
 #include "interface_msgs/StmDone.h"
-#include "interface_msgs/Point.h"
+#include "geometry_msgs/Pose2D.h"
 
 typedef actionlib::SimpleActionServer<ai_msgs::PerformAction> PerformActionSrv;
 
@@ -45,7 +45,7 @@ public:
 	
 protected:
 	// Function defined by inherited actions
-	virtual ActionPoint computeActionPoint(Argumentable* actionArgs, OrientedPoint robotPos) = 0;
+	virtual ActionPoint computeActionPoint(Argumentable* actionArgs, Pose2D robotPos) = 0;
 	virtual void start() = 0;
 	virtual void cancel() {};
 

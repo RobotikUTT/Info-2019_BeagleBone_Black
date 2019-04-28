@@ -15,9 +15,7 @@
 
 #include "ai_msgs/Side.h"
 #include "ai_msgs/SetSchedulerState.h"
-#include "ai_msgs/OrientedPoint.h"
-
-#include "interface_msgs/Point.h"
+#include "geometry_msgs/Pose2D.h"
 
 #include "scheduler/ActionsParser.hpp"
 #include "scheduler/ActionTools.hpp"
@@ -26,9 +24,8 @@
 using ai_msgs::Side;
 using ai_msgs::SetSchedulerState;
 using ai_msgs::NodeStatus;
-using ai_msgs::OrientedPoint;
 
-using interface_msgs::Point;
+using geometry_msgs::Pose2D;
 
 /**
  * @brief scheduler node class, managing actions and their execution
@@ -45,13 +42,13 @@ private:
 	ActionPtr rootAction;
 	ActionPtr currentAction;
 
-	OrientedPoint robotPosition;
+	Pose2D robotPosition;
 
 	bool side;
 	bool running;
 
 	bool setState(SetSchedulerState::Request &req, SetSchedulerState::Response &res);
-	void setRobotPosition(const Point::ConstPtr& msg);
+	void setRobotPosition(const Pose2D::ConstPtr& msg);
 
 	void nextAction();
 

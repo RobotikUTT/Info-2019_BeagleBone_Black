@@ -15,7 +15,7 @@ std::string AtomicAction::performer() const {
  *
  * 	Calls associated performer service to let it compute the point based on args 
  */
-ActionPoint& AtomicAction::actionPoint(OrientedPoint& previousPoint) {
+ActionPoint& AtomicAction::actionPoint(Pose2D& previousPoint) {
 	if (_actionPoint == NULL) {
 		// create client
 		ros::NodeHandle nh;
