@@ -1,7 +1,41 @@
 from xml.etree import ElementTree
 from .parser import ParsingException
 
-from typing import Dict
+from typing import Dict, Union
+
+class Point:
+	def __init__(self, x: int, y: int):
+		self.x = x
+		self.y = y
+
+	def add(self, p: 'Point'):
+		self.x += p.x
+		self.y += p.y
+	
+	def mult(self, sc: Union[int, 'Point']) -> Union[None, int]:
+		"""
+			Either return the scalar product of two points,
+			or multiply all coordinates by given scalar factor
+		"""
+		if type(sc) == 'Point':
+			return sc.x * self.x + sc.y * self.y
+		else:
+			self.x *= sc
+			self.y *= sc
+	
+	def sym(self, axis: 'Axis'):
+		"""Set itself to the opposite side of the given axis"""
+		self.add(axis.relative_position(self).mult(2))
+
+class Axis:
+	def __init__(self, pos: Point, dir: Point):
+		self.pos = pos
+		self.dir = dir
+	
+	def relative_position(self, pos: Point) -> Point:
+		# TODO
+		return pos
+
 
 class Shape:
 	"""
@@ -11,9 +45,32 @@ class Shape:
 	# Fifty shades of shapes
 	types: Dict[str, type] = {}
 
-	def __init__(self, x: int = -1, y: int = -1):
-		self.x: int = x
-		self.y: int = y
+	def __init__(self, pos: Point = None):
+		self.pos = Point(0, 0) if pos == None else pos
+
+	@property
+	def x(self) -> int:
+		return self.pos.x
+
+	@x.setter
+	def x(self, x: int):
+		self.pos.x = x
+
+	@property
+	def y(self):
+		return self.pos.y
+
+	@y.setter
+	def y(self, y: int):
+		self.pos.y = y
+
+	def symmetry(self, axis: Axis) -> None:
+		"""
+			Move object symmetrically from given axis
+		"""
+
+		# Add two time the distance from a point to another
+		self.pos.sym(axis)
 
 	def __str__(self):
 		return "Shape ({}, {})".format(self.x, self.y)
@@ -77,8 +134,8 @@ class Shape:
 	Some simple shapes classes
 """
 class CircleShape(Shape):
-	def __init__(self, x: int = -1, y: int = -1, radius: int = -1):
-		super().__init__(x, y)
+	def __init__(self, pos: Point = None, radius: int = -1):
+		super().__init__(pos)
 
 		self.radius: int = radius
 
@@ -89,11 +146,18 @@ class CircleShape(Shape):
 Shape.declare("circle", CircleShape)
 
 class RectShape(Shape):
-	def __init__(self, x: int = -1, y: int = -1, height: int = -1, width: int = -1):
-		super().__init__(x, y)
+	"""
+		Rectangle shape defined from it's upper left corner (pos)
+	"""
+	def __init__(self, pos: Point = None, height: int = -1, width: int = -1, angle: float = 0):
+		super().__init__(pos)
 
 		self.width: int = height
 		self.height: int = width
+		self.angle: float = angle
+
+	def symmetry(self, axis: Axis):
+		super().symmetry(axis)
 
 	def __str__(self):
 		return "Rect ({}, {}, w={}, h={})".format(self.x, self.y, self.width, self.height)

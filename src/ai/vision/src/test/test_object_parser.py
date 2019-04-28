@@ -3,6 +3,7 @@ import unittest
 
 from vision import ObjectsParser, MapParser, MapObject,\
 	Shape, RectShape, CircleShape, MapObjectAction, MapObjectArgument
+from vision.shape import Point
 from xml.etree import ElementTree as ET
 
 class TestShapeParser(unittest.TestCase):
@@ -32,7 +33,7 @@ class TestObjectParser(unittest.TestCase):
 		# Init thing object
 		self.thing = MapObject()
 		self.thing.name = "thing"
-		self.thing.shape = RectShape(35, -1, 30, 20)
+		self.thing.shape = RectShape(Point(35, -1), 30, 20)
 		self.thing.actions.append(
 			MapObjectAction("yes")
 		)
@@ -41,7 +42,7 @@ class TestObjectParser(unittest.TestCase):
 		# Amazing-thing object
 		self.amazing_thing = MapObject()
 		self.amazing_thing.name = "amazing-thing"
-		self.amazing_thing.shape = CircleShape(35, -1, 50)
+		self.amazing_thing.shape = CircleShape(Point(35, -1), 50)
 		self.amazing_thing.args["size"] = MapObjectArgument("size", "int")
 
 	def test_object_parsing(self):

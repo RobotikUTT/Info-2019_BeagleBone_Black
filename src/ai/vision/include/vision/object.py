@@ -14,7 +14,7 @@ class MapObjectAction(Argumentable):
 		Some action bound to the same object can be incompatible
 		(example: move an object to 2 different places)
 	"""
-	def __init__(self, file: str):
+	def __init__(self, file: str = ""):
 		super().__init__()
 
 		self.file = file
@@ -42,8 +42,9 @@ class MapObjectArgument:
 		have different parameters depending on it's color, so an argument
 		color is created.
 	"""
-	def __init__(self, name: str, type: str):
+	def __init__(self, name: str = "", type: str = ""):
 		self.name = name
+		self.default = ""
 		self.type = type
 		self.bound: Dict[str, Argumentable] = {}
 	

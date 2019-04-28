@@ -16,13 +16,13 @@
 -->
 <objects>
 	<!-- Abstract puck (to define arguments) -->
-	<abstract-puck>
+	<obj name="abstract-puck">
 		<argument name="color" type="string">
-			<red>
+			<v c="red">
 				<balance_points>4</balance_points>
 				<zone_points>6</zone_points>
 				<zone>red</zone>
-			</red>
+			</v>
 			<green>
 				<balance_points>8</balance_points>
 				<zone>green</zone>
@@ -34,31 +34,31 @@
 				<zone_points>6</zone_points>
 			</blue>
 		</argument>	
-	</abstract-puck>
+	</obj>
 
 	<!-- Puck on the ground -->
-	<puck extends="abstract-puck">
+	<obj name="puck" extends="abstract-puck">
 		<circle radius="76" />
 		
 		<action file="move_puck_to_balance" />
 		<action file="move_puck_to_zone" />
-	</puck>
+	</obj>
 
 	<!-- Puck in a distributor -->
-	<dist-puck extends="abstract-puck">
+	<obj name="dist-puck" extends="abstract-puck">
 		<rect width="25" height="76" />
 
 		<action file="move_distributed_puck_to_balance" />
 		<action file="move_distributed_puck_to_zone" />
-	</dist-puck>
+	</obj>
 
 	<!-- Goldenium puck-->
-	<goldenium>
+	<o n="goldenium">
 		<rect width="50" height="76" />
 
 		<action file="free_goldenium">
 			<balance_points>24</balance_points>
 			<zone_points>6</zone_points>
 		</action>
-	</goldenium>
+	</o>
 </objects>
