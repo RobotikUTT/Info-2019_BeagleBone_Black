@@ -7,7 +7,7 @@
 
 #include "node_watcher/Node.hpp"
 
-#include "interface_msgs/Point.h"
+#include "geometry_msgs/Pose2D.h"
 #include "interface_msgs/StmDone.h"
 #include "interface_msgs/StmMode.h"
 

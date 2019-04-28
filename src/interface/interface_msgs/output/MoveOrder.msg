@@ -1,4 +1,4 @@
-Point target
+geometry_msgs/Pose2D target
 int8 orderMask
 
 # Values for [orderMask]

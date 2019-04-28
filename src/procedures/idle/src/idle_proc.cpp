@@ -10,7 +10,7 @@ IdleActionPerfomer::IdleActionPerfomer(std::string name) : ActionPerformer(name)
 	setNodeStatus(NodeStatus::READY);
 }
 
-ActionPoint IdleActionPerfomer::computeActionPoint(Argumentable* actionArgs, OrientedPoint robotPos) {
+ActionPoint IdleActionPerfomer::computeActionPoint(Argumentable* actionArgs, Pose2D robotPos) {
 	ActionPoint point;
 	point.start = robotPos;
 	point.end = robotPos;

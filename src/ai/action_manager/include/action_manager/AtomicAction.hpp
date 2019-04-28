@@ -23,7 +23,7 @@ public:
 
   std::string performer() const;
 
-  ActionPoint& actionPoint(OrientedPoint& previousPoint) override;
+  ActionPoint& actionPoint(Pose2D& previousPoint) override;
 
   // Equality
   //virtual bool equals(const Action& action) const override;

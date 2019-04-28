@@ -1,8 +1,7 @@
-# TODO remove in favor of geometry_msgs/Pose2D
 # Point for the robot description
-int16 pos_x #mm
-int16 pos_y #mm
-int16 angle #mRad
+float64 x
+float64 y
+float64 theta
 int8 direction
 
 # Message constants for direction

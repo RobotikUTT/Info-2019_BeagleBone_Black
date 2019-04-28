@@ -3,8 +3,8 @@
 SimpleNode::SimpleNode(std::string name) : Node("simple_test", "none"), wentHere(true) {
     finish_sub = nh.subscribe("/ALL/Finish", 1, &SimpleNode::moveDone, this);
 
-    this->STMGoTo_pub = nh.advertise<interface_msgs::Point>("/STM/GoTo", 1);
-	this->STM_SetPose_pub = nh.advertise<interface_msgs::Point>("/STM/SetPose", 1);
+    this->STMGoTo_pub = nh.advertise<geometry_msgs::Pose2D>("/STM/GoTo", 1);
+	this->STM_SetPose_pub = nh.advertise<geometry_msgs::Pose2D>("/STM/SetPose", 1);
 	this->STM_AsserManagement_pub = nh.advertise<interface_msgs::StmMode>("/STM/AsserManagement", 1);
 
     this->waitForNodes(5);
@@ -13,10 +13,10 @@ SimpleNode::SimpleNode(std::string name) : Node("simple_test", "none"), wentHere
 void SimpleNode::onWaitingResult(bool success) {
 	if (success) {
 		// init STM position
-        interface_msgs::Point msg;
-        msg.pos_x = 0;
-        msg.pos_y = 0;
-        msg.angle = 0;
+        geometry_msgs::Pose2D msg;
+        msg.x = 0;
+        msg.y = 0;
+        msg.theta = 0;
         STM_SetPose_pub.publish(msg);
 
         // make it running
@@ -45,10 +45,9 @@ void SimpleNode::moveSomewhereElse() {
     wentHere = !wentHere;
 
     // Ask gently to move
-    interface_msgs::Point msg;
-    msg.pos_x = wentHere ? 400 : 0;
-    msg.pos_y = wentHere ? 10 : 580;
-    msg.direction = 0;
+    geometry_msgs::Pose2D msg;
+    msg.x = wentHere ? 400 : 0;
+    msg.y = wentHere ? 10 : 580;
     STMGoTo_pub.publish(msg);
 }
 

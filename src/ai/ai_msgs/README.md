@@ -10,7 +10,7 @@ Les différents messages défini dans ce package sont :
 
  - [ProximityStop](#ProximityStop): message contrôlant l'arret d'urgence
  - [NodeStatus](#NodeStatus): message publiant le status de chaque node
- - [Point2D](#Point2D): message passant un point 2D
+ - [Pose2D](#Pose2D): message passant un point 2D
  - [RobotStatus](#RobotStatus): message publiant le statut du robot
  - [SetSide](#SetSide): message publiant le camp du robot
 
@@ -33,7 +33,7 @@ used between :
 | String[] | nodes_init | X | name of node in init |
 | String[] | nodes_ready | X | name of node ready to work|
 | String[] | nodes_error | X | name of node failed to init|
-#### *Point2D*
+#### *Pose2D*
 used between :
 
  - node ==> node
@@ -94,8 +94,8 @@ NONE
 |--|:--:|:--:|--|
 | int8 | action_val | X | DEF STATE |
 | [procedures_msgs/MPoint]() | point | X | TO DO |
-| [OrientedPoint]() | action_pos | X | TO DO |
-| [OrientedPoint]()| depot_pos | X | TO DO |
+| [Pose2D]() | action_pos | X | TO DO |
+| [Pose2D]()| depot_pos | X | TO DO |
 | int16[] | param | X | Array to pass different parameters |
 #### *NodeReadiness*
 ##### request
@@ -111,7 +111,7 @@ NONE
 | Type | Var name | Units | comments |
 |--|:--:|:--:|--|
 | string | object_name |  |  |
-| [Point2D](#Point2D) | points |  |  |
+| [Pose2D](#Pose2D) | points |  |  |
 | int8 | action |  |  |
 
 ##### response
@@ -120,9 +120,9 @@ NONE
 ##### request
 | Type | Var name | Units | comments |
 |--|:--:|:--:|--|
-| [Point2D](#Point2D) | from | X |  |
-| [Point2D](#Point2D) | to | X |  |
-| [Point2D](#Point2D) | robot_pose | X |  |
+| [Pose2D](#Pose2D) | from | X |  |
+| [Pose2D](#Pose2D) | to | X |  |
+| [Pose2D](#Pose2D) | robot_pose | X |  |
 
 ##### response
 ToDo

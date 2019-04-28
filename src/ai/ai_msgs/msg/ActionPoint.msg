@@ -1,2 +1,2 @@
-OrientedPoint start
-OrientedPoint end
+geometry_msgs/Pose2D start
+geometry_msgs/Pose2D end

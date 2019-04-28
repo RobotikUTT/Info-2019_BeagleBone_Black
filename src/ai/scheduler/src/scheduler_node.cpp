@@ -13,7 +13,7 @@ Scheduler::Scheduler() : PerformClient("scheduler", "ai"), side(Side::LEFT), rob
 	this->side = Side::LEFT;
 	this->control_srv = nh.advertiseService("/scheduler/do", &Scheduler::setState, this);
 
-	this->robotPosition_sub = nh.subscribe<Point>("/STM/Position", 10, &Scheduler::setRobotPosition, this);
+	this->robotPosition_sub = nh.subscribe<Pose2D>("/STM/Position", 10, &Scheduler::setRobotPosition, this);
 
 	// Parse actions file
 	try {
@@ -105,10 +105,10 @@ void Scheduler::onPaused() {
 	nextAction();
 }
 
-void Scheduler::setRobotPosition(const Point::ConstPtr& msg) {
-	this->robotPosition.x = msg->pos_x;
-	this->robotPosition.y = msg->pos_y;
-	this->robotPosition.rot = msg->angle;
+void Scheduler::setRobotPosition(const Pose2D::ConstPtr& msg) {
+	this->robotPosition.x = msg->x;
+	this->robotPosition.y = msg->y;
+	this->robotPosition.theta = msg->theta;
 }
 
 int main(int argc, char *argv[]) {

@@ -2,22 +2,17 @@ from rospy import Subscriber, Service
 import rospy
 from actionlib import SimpleActionServer
 
+# Messages
 from ai_msgs.msg import ActionPoint, Argument, ActionStatus, \
 	PerformResult, PerformGoal, PerformAction
-
 from ai_msgs.srv import ComputeActionPointRequest, ComputeActionPointResponse
-from interface_msgs.msg import StmDone, Point
+from geometry_msgs.msg import Pose2D
 
 from node_watcher import Node
+from .util import get_action_point_service, get_action_server
+
 from typing import List, Dict
-
 from abc import ABC, abstractmethod
-
-def get_action_point_service(name: str) -> str:
-	return "/action/{}/actionpoint".format(name)
-
-def get_action_server(name: str) -> str:
-	return "/action/{}".format(name)
 
 '''
   Represent an performer for a specific action, it advertise a service for
@@ -66,8 +61,8 @@ class ActionPerformer(Node, ABC):
 		# Send back to client
 		self._action_server.set_succeeded(result)
 		
-	def _args_to_dict(self, args: List[Argument]) -> Dict[str, float]:
-		result: Dict[str, float] = {}
+	def _args_to_dict(self, args: List[Argument]) -> Dict[str, str]:
+		result: Dict[str, str] = {}
 
 		for arg in args:
 			result[arg.name] = arg.value
@@ -99,7 +94,7 @@ class ActionPerformer(Node, ABC):
 
 	# Function to be defined by inherited actions
 	@abstractmethod
-	def compute_action_point(self, args: Dict[str, float], robot_pos: Point) -> ActionPoint:
+	def compute_action_point(self, args: Dict[str, float], robot_pos: Pose2D) -> ActionPoint:
 		pass
 	
 	@abstractmethod

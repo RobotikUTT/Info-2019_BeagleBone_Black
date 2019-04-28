@@ -35,9 +35,9 @@
 			<word name="left_wheel_dist" />
 		</input>
 
-		<input frame="ORDER_CURRENT_POS" msg="Point" topic="STM_POSITION">
-			<word name="pos_x" />
-			<word name="pos_y" />
+		<input frame="ORDER_CURRENT_POS" msg="DirectedPose" topic="STM_POSITION">
+			<word name="x" />
+			<word name="y" />
 			<word name="angle" />
 		</input>
 		
@@ -66,20 +66,20 @@
 			<word name="duration" />
 		</output>
 
-		<output frame="ORDER_GOTOA" msg="Point" topic="STM_GO_TO_ANGLE">
-			<word name="pos_x" />
-			<word name="pos_y" />
+		<output frame="ORDER_GOTOA" msg="DirectedPose" topic="STM_GO_TO_ANGLE">
+			<word name="x" />
+			<word name="y" />
 			<word name="angle" />
 			<byte name="direction" />
 		</output>
 
-		<output frame="ORDER_GOTO" msg="Point" topic="STM_GO_TO">
-			<word name="pos_x" />
-			<word name="pos_y" />
+		<output frame="ORDER_GOTO" msg="DirectedPose" topic="STM_GO_TO">
+			<word name="x" />
+			<word name="y" />
 			<byte name="direction" />
 		</output>
 
-		<output frame="ORDER_ROT" msg="Point" topic="STM_ROTATE">
+		<output frame="ORDER_ROT" msg="DirectedPose" topic="STM_ROTATE">
 			<byte name="angle" />
 		</output>
 
@@ -106,9 +106,9 @@
 			<word name="right_pwm" />
 		</output>
 
-		<output frame="ORDER_SET_POS" msg="Point" topic="STM_SET_POSE">
-			<word name="pos_x" />
-			<word name="pos_y" />
+		<output frame="ORDER_SET_POS" msg="DirectedPose" topic="STM_SET_POSE">
+			<word name="x" />
+			<word name="y" />
 			<word name="angle" />
 		</output>
 
@@ -132,7 +132,7 @@
 	<device id="4" name="ZIGBEE" />
 	<device id="5" name="PANEL">
 		<!--
-		<output frame="ORDER_SEND_POINT" msg="std_msgs::Int8" topic="/PANEL/AddPoint">
+		<output frame="ORDER_SEND_POINT" msg="std_msgs::Int8" topic="/PANEL/AddDirectedPose">
 			<byte name="data" />		
 		</output>
 		-->

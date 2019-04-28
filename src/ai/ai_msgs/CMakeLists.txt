@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   # Messages and services base dependencies
   message_generation
   std_msgs
+  geometry_msgs
 )
 
 # Message containing only constants shared by multiple messages
@@ -24,8 +25,6 @@ add_message_files(DIRECTORY msg
   FILES
   # Type definition
   ActionPoint.msg
-  Point2D.msg
-  OrientedPoint.msg
   Argument.msg
 
   # Meaningfull message
@@ -55,7 +54,7 @@ add_action_files(
 )
 
 # Generate added messages and services with any dependencies listed here
-generate_messages(DEPENDENCIES std_msgs actionlib_msgs)
+generate_messages(DEPENDENCIES std_msgs actionlib_msgs geometry_msgs)
 
 # Declare dependencies for external packages
 catkin_package(CATKIN_DEPENDS message_runtime std_msgs)

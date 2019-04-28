@@ -48,3 +48,13 @@ add_library(${PROJECT_NAME}
 
 # Add cmake target dependencies of the library
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+# Testing
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+  
+  foreach(T
+      test/test_action.py)
+     add_rostest(${T})
+  endforeach()
+endif()
