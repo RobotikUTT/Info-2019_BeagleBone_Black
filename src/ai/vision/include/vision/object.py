@@ -5,6 +5,8 @@ from typing import List, Dict
 from action_manager import Argumentable
 from copy import copy, deepcopy
 
+from xml_class_parser import Parsable, Bind, BindList, BindDict, Enum
+
 class MapObjectAction(Argumentable):
 	"""
 		Action bound to an object on the field.
@@ -34,6 +36,16 @@ class MapObjectAction(Argumentable):
 			return e
 		return not e
 
+@Parsable(
+	name = Bind(to = "name"),
+	attribute = {
+		"type": Enum(values=["float", "int", "str"]),
+		"default": str
+	},
+	children = [
+		BindDict(key="name", type=Argumentable, to="bound")
+	]
+)
 class MapObjectArgument:
 	"""
 		Argument that can be given to an generic object.
@@ -81,6 +93,17 @@ class MapObjectArgument:
 			return e
 		return not e
 
+@Parsable(
+	name=Bind(to="name"),
+	attributes = {
+		"extends": str
+	},
+	children = [
+		Bind(to="shape", type=Shape),
+		BindList(to="actions", type=MapObjectAction),
+		BindDict(to="args", key="name", type=MapObjectArgument)
+	]
+)
 class MapObject(Argumentable):
 	"""
 		Define an object on the field, with associated action
@@ -94,7 +117,10 @@ class MapObject(Argumentable):
 		self.actions: List[MapObjectAction] = []
 		self.args: Dict[str, MapObjectArgument] = {}
 	
-	def extends(self, obj: 'MapObject'):
+	@property
+	def extends(self, obj: str):
+		# TODO find object of given name
+		raise Exception("not implemented")
 		# Make a copy of the shape and args
 		self.shape = copy(obj.shape)
 		self.args = deepcopy(obj.args)

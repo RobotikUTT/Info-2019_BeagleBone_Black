@@ -3,11 +3,24 @@ from . import Shape, MapObject
 from typing import Union, List, Dict
 from copy import copy, deepcopy
 
+from xml_class_parser import Parsable, Bind, BindList
+
 class Offset:
 	def __init__(self, x = 0, y = 0):
 		self.x: int = x
 		self.y: int = y
 
+@Parsable(
+	name="zone",
+	attributes={
+		"name": Bind(type=str, mandatory=True)
+	},
+	extends = Shape,
+	children = [
+		Bind(to="shape", Shape),
+		BindList(to="zones", Offset)
+	]
+)
 class Zone:
 	"""
 		Define a zone in which some actions might take place.

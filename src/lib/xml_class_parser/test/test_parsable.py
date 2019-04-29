@@ -16,6 +16,23 @@ class SomeClass:
 		self.array_attr = []
 		self.dict_attr = {}
 
+class YetAnotherClass:
+	def __init__(self):
+		super().__init__()
+		self.oui = False
+
+		self.get_called = False
+		self.set_called = False
+
+	@property
+	def x(self):
+		self.get_called = True
+		return 5
+	
+	@x.setter
+	def x(self, x):
+		self.set_called = True
+
 class SomeOtherClass:
 	def __init__(self):
 		self.name = ""
@@ -33,6 +50,18 @@ class TestElementParser(unittest.TestCase):
 
 		with self.assertRaises(ParsingException):
 			SomeClass.parse_string("<no />")
+
+	def test_property_call(self):
+		"""Test that a class property is not override by parsed values"""
+		global YetAnotherClass
+		YetAnotherClass = Parsable(name=Bind(to="x", type=Enum(binding = {"zero": 0})))(YetAnotherClass)
+
+		parsed = YetAnotherClass.parse_string('<zero />')
+
+		self.assertIsInstance(parsed, YetAnotherClass)
+		self.assertEqual(parsed.set_called, True, "setter called on parsing")
+		self.assertEqual(parsed.x, 5, "property response unchanged")
+		self.assertEqual(parsed.get_called, True, "getter called")
 
 	def test_attribute_parsing(self):
 		global SomeClass
@@ -175,6 +204,32 @@ class TestElementParser(unittest.TestCase):
 			elif key == "maybe":
 				self.assertEqual(parsed.dict_attr[key], 37)
 	
+	def test_extends(self):
+		global YetAnotherClass
+		global SomeClass
+
+		SomeClass = Parsable(name="a", attributes={"str_attr": str})(SomeClass)
+		YetAnotherClass = Parsable(name="b", attributes={"oui": bool}, extends=SomeClass)(YetAnotherClass)
+
+		parsed = YetAnotherClass.parse_string("<b oui='true' str_attr='omg' />")
+
+		self.assertIsInstance(parsed, YetAnotherClass)
+		self.assertEqual(parsed.oui, True, "regular element parsed")
+		self.assertEqual(parsed.str_attr, "omg", "parent element parsed")
+
+	def test_mandatory(self):
+		global SomeClass
+
+		SomeClass = Parsable(name="lowl", attributes={"name": Bind(mandatory=True, to="str_attr")})(SomeClass)
+		
+		parsed = SomeClass.parse_string("<lowl name='bob' />")
+
+		self.assertIsInstance(parsed, SomeClass)
+		self.assertEqual(parsed.str_attr, "bob")
+
+		with self.assertRaises(ParsingException):
+			SomeClass.parse_string("<lowl />")
+
 	def test_loop_parsing(self):
 		global SomeClass
 		global SomeOtherClass

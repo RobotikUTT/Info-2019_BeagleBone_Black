@@ -3,6 +3,8 @@ from .parser import ParsingException
 
 from typing import Dict, Union
 
+from xml_class_parser import Parsable, Bind
+
 class Point:
 	def __init__(self, x: int, y: int):
 		self.x = x
@@ -36,7 +38,14 @@ class Axis:
 		# TODO
 		return pos
 
-
+@Parsable(
+	name = Bind(to=type),
+	attributes = {
+		"x": int,
+		"y": int,
+		"blocking": bool
+	}
+)
 class Shape:
 	"""
 		Definition of a generic shape
@@ -47,6 +56,7 @@ class Shape:
 
 	def __init__(self, pos: Point = None):
 		self.pos = Point(0, 0) if pos == None else pos
+		self.blocking = False
 
 	@property
 	def x(self) -> int:
@@ -133,6 +143,13 @@ class Shape:
 """
 	Some simple shapes classes
 """
+@Parsable(
+	name="circle",
+	extends=Shape,
+	attributes={
+		"radius": int
+	}
+)
 class CircleShape(Shape):
 	def __init__(self, pos: Point = None, radius: int = -1):
 		super().__init__(pos)
@@ -145,16 +162,23 @@ class CircleShape(Shape):
 # Add shape to list
 Shape.declare("circle", CircleShape)
 
+@Parsable(
+	name="rect",
+	extends=Shape,
+	attributes = {
+		"width": int,
+		"height": int
+	}
+)
 class RectShape(Shape):
 	"""
 		Rectangle shape defined from it's upper left corner (pos)
 	"""
-	def __init__(self, pos: Point = None, height: int = -1, width: int = -1, angle: float = 0):
+	def __init__(self, pos: Point = None, height: int = -1, width: int = -1):
 		super().__init__(pos)
 
 		self.width: int = height
 		self.height: int = width
-		self.angle: float = angle
 
 	def symmetry(self, axis: Axis):
 		super().symmetry(axis)

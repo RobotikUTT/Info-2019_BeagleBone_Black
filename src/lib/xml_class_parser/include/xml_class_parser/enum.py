@@ -41,3 +41,12 @@ def Slice(key: str):
 		return getattr(value, key)
 	
 	return slicer
+
+def BlackList(*values, cast: type = str):
+	def filter(value):
+		if value in values:
+			raise ParsingException("forbidden value {}".format(value))
+
+		return cast(value)
+	
+	return filter
