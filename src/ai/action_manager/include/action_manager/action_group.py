@@ -1,11 +1,22 @@
 from .action import Action
+from .action_repeat import ActionRepeater
+from .object_requirement import ObjectRequirement
 
 from ai_msgs.msg import ActionPoint, ActionStatus
 from geometry_msgs.msg import Pose2D
 
 from typing import List, Union
 
+from xml_class_parser import Parsable, Bind, BindDict, Enum
 
+@Parsable(
+	name = "group",
+	arguments = {
+		"type": Enum(0, 1, 2, binding = {"ordered": 0, "unordered": 1, "best": 2}),
+		"repeat": ActionRepeater
+	},
+	children = [ Action, ObjectRequirement, Parsable.SELF ]
+)
 class ActionGroup(Action):
 	ORDERED = 0 # actions done in order
 	UNORDERED = 1 # actions done in any order

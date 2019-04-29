@@ -1,6 +1,7 @@
 from .argumentable import Argumentable
 from .object_requirement import ObjectRequirement
 from .util import get_action_point_service
+from .action_repeat import ActionRepeater
 
 from typing import Union, List
 import math
@@ -11,12 +12,25 @@ from geometry_msgs.msg import Pose2D
 from ai_msgs.msg import ActionPoint, ActionStatus
 from ai_msgs.srv import ComputeActionPoint
 
-class ActionRepeater:
+from xml_class_parser import Parsable, Bind, BindDict
+
+class Argument:
 	pass
 
+@Parsable(
+	name = "do",
+	arguments = {
+		"name": Bind(mandatory=True),
+		"native": bool,
+		"points": int,
+		"repeat": ActionRepeater
+	},
+	generic_children = Argument
+)
 class Action:
 	def __init__(self):
 		self.name: str = ""
+		self.native = False
 		self.points = 0
 		self.repeat: Union[ActionRepeater, None] = None
 

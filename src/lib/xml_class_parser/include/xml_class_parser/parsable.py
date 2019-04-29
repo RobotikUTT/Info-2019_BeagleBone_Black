@@ -3,7 +3,6 @@ from typing import List, Union
 import rospkg
 
 from .bind import Bind, BindDict, BindList
-from .values import Values
 from . import ParsingException
 
 from typing import Union, Dict
@@ -11,18 +10,18 @@ from typing import Union, Dict
 AnyBinding = Union[Bind, BindDict, BindList]
 
 class Parsable:
+	SELF = "SELF"
+
 	def __init__(self,
 			name: Union[str, Bind],
 			attributes: Dict[str, Union[type, Bind]] = {},
 			children: Dict[str, Union[AnyBinding, type]] = {},
-			generic_children: Union[AnyBinding, None] = None,
 			content: Union[str, Bind, None] = None ):
 		'''Initialize parsable and fill missing informations'''
 		
 		self.name: Union[str, Bind] = name
 		self.attributes: Dict[str, Bind] = {}
-		self.children: Dict[str, Bindings] = {}
-		self.generic_children = generic_children
+		self.children: List[AnyBinding] = []
 		self.content: Union[Bind, None] = Bind(to=content) if type(content) == str else content
 	
 		# Get attributes
@@ -35,30 +34,25 @@ class Parsable:
 			self.attributes[key] = value
 		
 		# Then children
-		for key, value in children.items():
+		for value in children:
 			# In case only type given
 			if isinstance(value, type):
 				if not hasattr(value, "parse"):
 					raise ParsingException("a children type must be parsable")
 
 				# Consider it to be a list
-				value = BindList(to=key, type=value)
+				value = BindList(type=value)
 			
-			# Fill missing to
+			# Fill missing [to]
 			if value.to == None:
-				value.to = key
+				value.to = value.xml_name
 
-			# Handle automatic parsable key value
-			if key == "@":
-				key = value.type.xml_name
-
-			self.attributes[key] = value
+			self.children.append(value)
 
 	def __call__(self, class_type):
 		'''
 			Create class with parsing functions
 		'''
-		self.generated = class_type
 
 		class WrappedClass(class_type):
 			xml_name = self.name
@@ -75,6 +69,13 @@ class Parsable:
 			def parse(root: ElementTree.Element) -> class_type:
 				return self.parse(root)
 		
+		self.generated = WrappedClass
+
+		# Apply SELF type on children
+		for child in self.children:
+			if child.type == Parsable.SELF:
+				child.type = WrappedClass
+
 		return WrappedClass
 
 
@@ -100,6 +101,14 @@ class Parsable:
 		"""
 		obj = self.generated()
 
+		self.parse_name(root, obj)
+		self.parse_attributes(root, obj)
+		self.parse_children(root, obj)
+		self.parse_content(root, obj)
+
+		return obj
+
+	def parse_name(self, root: ElementTree.Element, obj):
 		# Handle element tag
 		if type(self.name) == str:
 			# Check for invalid name
@@ -109,6 +118,7 @@ class Parsable:
 			# Apply name property
 			self.name.apply(obj, root.tag)
 
+	def parse_attributes(self, root: ElementTree.Element, obj):
 		# Handle attributes
 		for attr in self.attributes:
 			# If attribute is registered
@@ -118,17 +128,40 @@ class Parsable:
 				# Otherwise throw if mandatory
 				raise ParsingException("missing attribute {} in {}".format(attr, root.tag))
 
+	def parse_children(self, root: ElementTree.Element, obj):
 		# Handle children
 		for child in root:
-			if child.tag in self.children:
-				self.children[child.tag].apply(obj, child)
-			elif self.generic_children != None:
-				self.generic_children.apply(obj, child)
-			else:
-				raise ParsingException("unable to handle {} element in {}".format(child.tag, root.tag))
+			generic: Union[AnyBinding, None] = None
+			handled = False
 
+			for available in self.children:
+				# If it is a generic binding
+				if isinstance(available.xml_name, Bind):
+					# Only one allowed
+					if generic != None:
+						raise ParsingException(
+							"cannot have 2 children with generic names : {} and {}"
+								.format(generic, available)
+						)
+					generic = available
+
+				# Otherwise check that it match
+				elif available.xml_name == child.tag:
+					if handled:
+						raise ParsingException("{} have two bound values".format(child.tag))
+
+					available.apply(obj, child)
+					handled = True
+
+			# Apply generic element if any and not handled yet
+			if not handled:
+				if generic != None:
+					generic.apply(obj, child)
+				else:
+					raise ParsingException("unable to handle {} element in {}".format(child.tag, root.tag))
+
+	def parse_content(self, root: ElementTree.Element, obj):
 		# Handle content
 		if self.content != None:
 			self.content.apply(obj, root.text)
 
-		return obj
