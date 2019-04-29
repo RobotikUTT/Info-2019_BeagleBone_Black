@@ -35,3 +35,9 @@ def Enum(values: List[Any] = None, cast=str, binding: Union[Dict, None] = None):
 		return value
 	
 	return cast_value
+
+def Slice(key: str):
+	def slicer(value: object):
+		return getattr(value, key)
+	
+	return slicer

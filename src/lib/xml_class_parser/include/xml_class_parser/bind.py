@@ -52,11 +52,17 @@ class BindList(Bind):
 class BindDict(Bind):
 	'''
 		Define a binding between XML element and dict property
+
+		Contains a key attribute that should be obtained in values provided,
+		and become the key of the object
+
+		Add a *post-cast* attribute that cast the object after it's key has been extracted
 	'''
-	def __init__(self, key: str, to: Union[None, str] = None, type: type = str, mandatory = False, xml_name = None):
+	def __init__(self, key: str, to: Union[None, str] = None, type: type = str, mandatory = False, xml_name = None, post_cast = None):
 		super().__init__(to=to, type=type, mandatory=mandatory, xml_name=xml_name)
 
-		self.key = key
+		self.key: str = key
+		self.post_cast: type = post_cast
 
 	def apply_casted(self, obj: object, value: Any):
 		'''Apply value to object as defined in the binding'''
@@ -70,4 +76,7 @@ class BindDict(Bind):
 			raise ParsingException("{} does not have a parameter named {}".format(value, self.key))
 
 		# Register to dict
-		getattr(obj, self.to)[getattr(value, self.key)] = value
+		if self.post_cast != None:
+			getattr(obj, self.to)[getattr(value, self.key)] = self.post_cast(value)
+		else:
+			getattr(obj, self.to)[getattr(value, self.key)] = value

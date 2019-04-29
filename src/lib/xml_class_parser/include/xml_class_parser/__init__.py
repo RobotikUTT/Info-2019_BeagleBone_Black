@@ -3,4 +3,4 @@ class ParsingException(Exception):
 
 from .parsable import Parsable
 from .bind import Bind, BindDict, BindList
-from .enum import Enum
+from .enum import Enum, Slice

@@ -53,30 +53,20 @@ class Parsable:
 		'''
 			Create class with parsing functions
 		'''
-
-		class WrappedClass(class_type):
-			xml_name = self.name
-
-			@staticmethod
-			def parse_string(content: str) -> class_type:
-				return self.parse_string(content)
-			
-			@staticmethod
-			def parse_file(filename: str) -> class_type:
-				return self.parse_file(filename)
-			
-			@staticmethod
-			def parse(root: ElementTree.Element) -> class_type:
-				return self.parse(root)
+		self.generated = class_type
 		
-		self.generated = WrappedClass
+		class_type.parse_string = self.parse_string
+		class_type.parse = self.parse
+		class_type.parse_file = self.parse_file
+
+		class_type.xml_name = self.name
 
 		# Apply SELF type on children
 		for child in self.children:
 			if child.type == Parsable.SELF:
-				child.type = WrappedClass
+				child.type = class_type
 
-		return WrappedClass
+		return class_type
 
 
 	def parse_string(self, data: str):
