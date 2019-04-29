@@ -27,10 +27,6 @@ class CanInterfaceNode:
 
 		self.devices_handler = DevicesHandler(self)
 		self.can_input_thread = threading.Thread(name="can_input", target=self.wait_for_can_message)
-
-	def include(self, message_name, package="interface_msgs"):
-		# TODO handle std_msgs
-		return getattr(interface_msgs, message_name)
 	
 	def subscribe(self, frame, subscriber):
 		self.subscribers[frame] = subscriber

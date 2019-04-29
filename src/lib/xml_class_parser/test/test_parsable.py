@@ -63,16 +63,8 @@ class TestElementParser(unittest.TestCase):
 		self.assertEqual(parsed.x, 5, "property response unchanged")
 		self.assertEqual(parsed.get_called, True, "getter called")
 
-	def test_attribute_parsing(self):
-		global SomeClass
-		SomeClass = Parsable(
-			name="one", attributes={ "name": Bind(to="str_attr", type=str) }
-		)(SomeClass)
-
-		parsed = SomeClass.parse_string("<one name='bob' />")
-
-		self.assertIsInstance(parsed, SomeClass)
-		self.assertEqual(parsed.str_attr, "bob")
+	def test_parsed_callback(self):
+		self.assertTrue(False, "call __parsed__ after parsing")
 
 	def test_content_parsing(self):
 		global SomeClass

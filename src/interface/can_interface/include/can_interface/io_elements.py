@@ -1,63 +1,72 @@
 from rospy import Publisher, Subscriber, Time
 from can_msgs.msg import Frame
+from interface_msgs import msg as interface_msgs
 
 from interface_description.msg import InterfaceTopics as Topics
+
+from .devices_handler import Device
 
 # Can library
 import can
 
 import time
 
-from typing import Dict, List
+from typing import Dict, List, Union, Callable
+from xml_class_parser import Parsable, Bind, BindDict, BindList, Enum
 
+@Parsable(
+	name = Bind(to="size", type=Enum(binding={ "word": 2, "byte": 1 })),
+	attributes = {
+		"name": Bind(mandatory=True)
+	}
+)
 class Param:
-	def __init__(self, name):
-		self.name: str = name
+	def __init__(self):
+		self.name: str = ""
 		self.size: int = -1
 		self.byte_start: int = 0
-	
+
 	def __str__(self):
 		return "{}[{}-{}]".format(self.name, self.byte_start, self.byte_start + self.size - 1)
 
+@Parsable(
+	attributes = {
+		"frame": Bind(mandatory=True),
+		"message": Bind(mandatory=True, type=lambda n: getattr(interface_msgs, n)),
+		"topic": Bind(mandatory=True, type=Enum(binding=Topics))
+	},
+	children = [
+		BindList(to="params", type=Param)
+	]
+)
 class IOElement:
-	def __init__(self, settings, params, interface):
-		self.settings: dict = settings
+	def __init__(self):
 		self.params: List[Param] = []
-
-		# Set settings topic to real topic
-		self.settings["topic"] = getattr(Topics, self.settings["topic"])
-
-		# Convert params XML list to param list
+		self.frame: str = ""
+		self.message: Callable = None
+		self.topic: str = ""
+		
+	def __parsed__(self):
 		current_offset: int = 1
 
-		for param in params:
-			current = Param(
-				param.attrib["name"]
-			)
-
-			if param.tag == "byte":
-				current.size = 1
-			elif param.tag == "word":
-				current.size = 2
-			else:
-				print("unknown tag '{}', please use <word> or <byte>".format(param.tag))
-			
-			# Compute byte_start for each value (offset 0 saved for frame)
-			current.byte_start = current_offset
-			current_offset += current.size
-
-			self.params.append(current)
+		# Compute param start
+		for param in self.params:
+			param.byte_start = current_offset
+			current_offset += param.size
 		
-		# Include required message
-		self.message = interface.include(self.settings["msg"])
 
-
+@Parsable(
+	name = "input",
+	extends = IOElement
+)
 class InputElement(IOElement):
-	def __init__(self, settings, params, interface):
-		IOElement.__init__(self, settings, params, interface)
+	def __init__(self, interface):
+		super().__init__()
+		self.interface = interface
 
-		self.publisher: Publisher = Publisher(self.settings["topic"], self.message, queue_size=10)
-		interface.subscribe(self.settings["frame"], self)
+	def __parsed__(self, interface):
+		self.publisher: Publisher = Publisher(self.topic, self.message, queue_size=10)
+		self.interface.subscribe(self.frame, self)
 	
 	def on_can_message(self, frame):
 		# Create message
@@ -83,20 +92,20 @@ class InputElement(IOElement):
 	
 	def __str__(self):
 		return "Input[{}, {}, {}] : {}".format(
-			self.settings["frame"], self.settings["topic"], self.settings["msg"],
+			self.frame, self.topic, self.message,
 			", ".join(map(lambda x: x.__str__(), self.params))
 		)
 
-
+@Parsable(
+	name = "output",
+	extends = IOElement
+)
 class OutputElement(IOElement):
-	def __init__(self, settings, params, id, interface):
-		IOElement.__init__(self, settings, params, interface)
+	def __parsed__(self, device: Device, interface):
+		self.device: Device = device
+		self.subscriber = Subscriber(self.topic, self.message, self.on_ros_message)
 
-		self.device_id = id
-		self.subscriber = Subscriber(self.settings["topic"], self.message, self.on_ros_message)
-
-		self.command_type: int = getattr(Frame, self.settings["frame"])
-
+		self.command_type: int = getattr(Frame, self.frame)
 		self.bus = can.interface.Bus("can1")
 
 	def on_ros_message(self, message):
@@ -109,7 +118,7 @@ class OutputElement(IOElement):
 		frame.extended_id = 0 #
 		frame.dlc = 1 #
 
-		frame.arbitration_id = self.device_id
+		frame.arbitration_id = self.device.id
 
 		data_array: List[int] = [0] * 8
 
@@ -136,7 +145,7 @@ class OutputElement(IOElement):
 	
 	def __str__(self):
 		return "Output[{}, {}, {}] : {}".format(
-			self.settings["frame"], self.settings["topic"], self.settings["msg"],
+			self.frame, self.topic, self.message,
 			", ".join(map(lambda x: x.__str__(), self.params))
 		)
 
