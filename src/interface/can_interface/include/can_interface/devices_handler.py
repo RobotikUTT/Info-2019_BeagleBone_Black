@@ -34,7 +34,7 @@ class Device:
 	]
 )
 class DevicesHandler(NodeStatusHandler):
-	def __init__(self, context: Context):
+	def __init__(self):
 		super().__init__()
 
 		# Devices and their address

@@ -1,0 +1,4 @@
+<launch>
+  <node name="node_watcher" pkg="node_watcher" type="node" output="screen" required="True" />
+  <test test-name="test_parsing" pkg="can_interface" type="test_parsing.py" />
+</launch>

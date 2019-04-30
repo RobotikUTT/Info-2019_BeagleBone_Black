@@ -32,3 +32,11 @@ include_directories(
 
 catkin_install_python(PROGRAMS src/can_interface_node.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest)
+  foreach(T
+      test/test-parsing.launch)
+     add_rostest(${T})
+  endforeach()
+endif()

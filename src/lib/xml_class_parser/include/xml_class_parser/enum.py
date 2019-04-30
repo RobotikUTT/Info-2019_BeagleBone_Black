@@ -15,10 +15,16 @@ def Enum(values: List[Any] = None, cast=str, binding: Union[Dict, None] = None):
 		In the end, if the value have a binding and that binding (or initial value)
 		is in authorized values, it returns it.
 	'''
+
+	if not isinstance(binding, Dict):
+		binding = vars(binding)
+
 	def cast_value(value: str):
 		value = cast(value)
 
 		if binding is not None:
+			
+
 			if value in binding:
 				value = binding[value]
 			else:

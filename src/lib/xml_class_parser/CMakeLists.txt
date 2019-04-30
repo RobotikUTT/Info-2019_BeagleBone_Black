@@ -21,7 +21,7 @@ if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
   
   foreach(T
-      test/test_parsable.py)
+      test/test-parsable.launch)
      add_rostest(${T})
   endforeach()
 endif()
