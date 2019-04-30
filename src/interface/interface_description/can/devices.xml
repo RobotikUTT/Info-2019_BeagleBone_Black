@@ -1,140 +1,14 @@
 <?xml version="1.0"?>
-<!--
-	== Automatic can to msg mapping ==
-	In first place define devices and their addresses
-	- <broadcast> : an address for broadcasting, similar as <device>
-	- <device> : a foreign device, with a given address,
-	contained output are addressed to it. input may also be defined inside for more clarity
-	- <self> : empty element to define address of ourself
-	Two elements are available :
-	<input /> to provide a channel from can boards to ros
-	<output /> to provide a channel from ros to can boards
-
-	Each element can take params, that MUST be defined in
-	provided "msg" tag's message.
-
-	Each param is a <byte> or <word> (defining param size).
-	The position of each param in the frame is determined by the
-	order and the size of previous parameters.
- -->
 <devices>
-	<broadcast id="0">
-		<!--
-		<output frame="ORDER_HANDSHAKE" msg="std_msgs::Empty" topic="/ALL/Ping" />
-		-->
-		<input frame="ORDER_ORDER_COMPLETED" msg="StmDone" topic="ALL_ORDER_DONE" />
-	</broadcast>
+	<broadcast id="0" name="all" />
 
-	<self id="1" name="beagle" />
+	<!-- Beagle bone black -->
+	<device id="1" name="bbb" />
 
-	<!-- STM -->
-	<device id="2" name="stm">
-		<!-- Input -->
-		<input frame="ORDER_GET_CODER" msg="WheelsDistance" topic="STM_CODER">
-			<word name="right_wheel_dist" />
-			<word name="left_wheel_dist" />
-		</input>
+	<!-- STM : manage wheels and stuff -->
+	<device id="2" name="stm" />
 
-		<input frame="ORDER_CURRENT_POS" msg="DirectedPose" topic="STM_POSITION">
-			<word name="x" />
-			<word name="y" />
-			<word name="angle" />
-		</input>
-		
-		<input frame="ORDER_CURRENT_PWM" msg="Pwms" topic="STM_PWM">
-			<word name="left_pwm" />
-			<word name="right_pwm" />
-		</input>
-		
-		<input frame="ORDER_CURRENT_SPD" msg="WheelsSpeed" topic="STM_SPEED">
-			<word name="linear_speed" />
-			<word name="left_speed" />
-			<word name="right_speed" />
-		</input>
-
-		<input frame="ORDER_ROBOT_BLOCKED" msg="RobotBlocked" topic="STM_ROBOT_BLOCKED" />
-		<!-- /Inputs -->
-
-		<!-- Outputs -->
-		<output frame="ORDER_MANAGEMENT" msg="StmMode" topic="STM_SET_MODE">
-			<byte name="value" />
-		</output>
-
-		<output frame="ORDER_SPD" msg="Speed" topic="STM_SET_SPEED">
-			<word name="linear_speed" />
-			<word name="angular_speed" />
-			<word name="duration" />
-		</output>
-
-		<output frame="ORDER_GOTOA" msg="DirectedPose" topic="STM_GO_TO_ANGLE">
-			<word name="x" />
-			<word name="y" />
-			<word name="angle" />
-			<byte name="direction" />
-		</output>
-
-		<output frame="ORDER_GOTO" msg="DirectedPose" topic="STM_GO_TO">
-			<word name="x" />
-			<word name="y" />
-			<byte name="direction" />
-		</output>
-
-		<output frame="ORDER_ROT" msg="DirectedPose" topic="STM_ROTATE">
-			<byte name="angle" />
-		</output>
-
-		<output frame="ORDER_PIDLEFT" msg="Pid" topic="STM_SET_LEFT_PID">
-			<word name="P" />
-			<word name="I" />
-			<word name="D" />
-		</output>
-
-		<output frame="ORDER_PIDRIGHT" msg="Pid" topic="STM_SET_RIGHT_PID">
-			<word name="P" />
-			<word name="I" />
-			<word name="D" />
-		</output>
-
-		<output frame="ORDER_PIDALL" msg="Pid" topic="STM_SET_ALL_PID">
-			<word name="P" />
-			<word name="I" />
-			<word name="D" />
-		</output>
-		
-		<output frame="ORDER_PWM" msg="Pwms" topic="STM_SET_PWM">
-			<word name="left_pwm" />
-			<word name="right_pwm" />
-		</output>
-
-		<output frame="ORDER_SET_POS" msg="DirectedPose" topic="STM_SET_POSE">
-			<word name="x" />
-			<word name="y" />
-			<word name="angle" />
-		</output>
-
-		<output frame="ORDER_SET_PARAM" msg="StmParams" topic="STM_SET_PARAMS">
-			<word name="max_linear_speed" />
-			<word name="max_angular_speed" />
-			<word name="max_acc" />
-		</output>
-	</device>
-
-	<!-- Arduino device -->
-	<device id="3" name="arduino">
-		<input frame="ORDER_SONAR_DISTANCE" msg="SonarDistance" topic="ARDUINO_SONAR_DISTANCE">
-			<byte name="dist_front_left" />
-			<byte name="dist_front_right" />
-			<byte name="dist_back_left" />
-			<byte name="dist_back_right" />
-		</input>
-	</device>
-
-	<device id="4" name="ZIGBEE" />
-	<device id="5" name="PANEL">
-		<!--
-		<output frame="ORDER_SEND_POINT" msg="std_msgs::Int8" topic="/PANEL/AddDirectedPose">
-			<byte name="data" />		
-		</output>
-		-->
-	</device>
-</devices>
+	<!-- Arduino-->
+	<device id="3" name="arduino" />
+<devices>
+	

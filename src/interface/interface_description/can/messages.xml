@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<messages>
+	<bind frame="order_completed" msg="StmDone" topic="ALL__DONE" />
+	<bind frame="stm_coder_data" msg="WheelsDistance" topic="STM_CODER" />
+	<bind frame="current_pos" msg="DirectedPose" topic="STM_POSITION" />
+	<bind frame="current_pwm" msg="Pwms" topic="STM_PWM" />
+	<bind frame="current_speed" msg="WheelsSpeed" topic="STM_SPEED" />
+	<bind frame="robot_blocked" msg="RobotBlocked" topic="STM_ROBOT_BLOCKED" />
+	<bind frame="set_stm_mode" msg="StmMode" topic="STM_SET_MODE" />
+	<bind frame="set_speed" msg="Speed" topic="STM_SET_SPEED" />
+	<bind frame="go_to_angle" msg="DirectedPose" topic="STM_GO_TO_ANGLE" />
+	<bind frame="go_to" msg="DirectedPose" topic="STM_GO_TO" />
+	<bind frame="rotate" msg="DirectedPose" topic="STM_ROTATE" />
+	<bind frame="set_left_pid" msg="Pid" topic="STM_SET_LEFT_PID" />
+	<bind frame="set_right_pid" msg="Pid" topic="STM_SET_RIGHT_PID" />
+	<bind frame="set_both_pid" msg="Pid" topic="STM_SET_ALL_PID" />
+	<bind frame="set_pwm" msg="Pwms" topic="STM_SET_PWM" />
+	<bind frame="set_position" msg="DirectedPose" topic="STM_SET_POSE" />
+	<bind frame="set_stm_param" msg="StmParams" topic="STM_SET_PARAMS" />
+	<bind frame="sonar_distance" msg="SonarDistance" topic="ARDUINO_SONAR_DISTANCE" />
+</messages>
+		
