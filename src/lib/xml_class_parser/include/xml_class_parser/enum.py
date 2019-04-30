@@ -1,6 +1,6 @@
 from . import ParsingException
 
-from typing import List, Any, Dict, Union
+from typing import List, Any, Dict, Union, Optional
 
 def Enum(values: List[Any] = None, cast=str, binding: Union[Dict, None] = None):
 	'''
@@ -18,7 +18,7 @@ def Enum(values: List[Any] = None, cast=str, binding: Union[Dict, None] = None):
 	def cast_value(value: str):
 		value = cast(value)
 
-		if binding != None:
+		if binding is not None:
 			if value in binding:
 				value = binding[value]
 			else:
@@ -26,7 +26,7 @@ def Enum(values: List[Any] = None, cast=str, binding: Union[Dict, None] = None):
 					"unexpected value {}, expected value in [{}]"
 					.format(value, ", ".join(map(str, binding.keys()))))
 		
-		if values != None:
+		if values is not None:
 			if not (value in values):
 				raise ParsingException(
 					"unexpected bound value {}, expected value in [{}]"

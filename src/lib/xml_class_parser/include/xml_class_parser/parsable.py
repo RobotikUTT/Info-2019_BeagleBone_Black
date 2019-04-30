@@ -1,11 +1,13 @@
 from xml.etree import ElementTree
 from typing import List, Union
 import rospkg
+import inspect
 
 from .bind import Bind, BindDict, BindList
+from .context import Context
 from . import ParsingException
 
-from typing import Union, Dict
+from typing import Union, Dict, Type, List
 
 AnyBinding = Union[Bind, BindDict, BindList]
 
@@ -14,19 +16,21 @@ class Parsable:
 
 	def __init__(self,
 			name: Union[str, Bind],
-			attributes: Dict[str, Union[type, Bind]] = {},
-			children: Dict[str, Union[AnyBinding, type]] = {},
+			extends: Union[None, Type] = None,
+			attributes: Dict[str, Union[Type, Bind]] = {},
+			children: List[Union[AnyBinding, Type]] = [],
 			content: Union[str, Bind, None] = None ):
 		'''Initialize parsable and fill missing informations'''
 		
 		self.name: Union[str, Bind] = name
 		self.attributes: Dict[str, Bind] = {}
 		self.children: List[AnyBinding] = []
-		self.content: Union[Bind, None] = Bind(to=content) if type(content) == str else content
-	
+		self.content: Union[Bind, None] = Bind(to=content) if isinstance(content, str) else content
+		self.extends = extends
+
 		# Get attributes
 		for key, value in attributes.items():
-			if isinstance(value, type):
+			if not isinstance(value, Bind):
 				value = Bind(to=key, type=value)
 			elif value.to == None:
 				value.to = key # fill optional {to} with key value
@@ -34,27 +38,28 @@ class Parsable:
 			self.attributes[key] = value
 		
 		# Then children
-		for value in children:
+		for child in children:
 			# In case only type given
-			if isinstance(value, type):
-				if not hasattr(value, "parse"):
+			if not isinstance(child, Bind):
+				if not hasattr(child, "parse"):
 					raise ParsingException("a children type must be parsable")
 
 				# Consider it to be a list
-				value = BindList(type=value)
-			
-			# Fill missing [to]
-			if value.to == None:
-				value.to = value.xml_name
+				child = BindList(type=child)
 
-			self.children.append(value)
+			# Fill missing [to]
+			if child.to is None:
+				child.to = child.xml_name
+
+			self.children.append(child)
 
 	def __call__(self, class_type):
 		'''
 			Create class with parsing functions
 		'''
 		self.generated = class_type
-		
+
+		# Add parsing function
 		class_type.parse_string = self.parse_string
 		class_type.parse = self.parse
 		class_type.parse_file = self.parse_file
@@ -69,13 +74,13 @@ class Parsable:
 		return class_type
 
 
-	def parse_string(self, data: str):
+	def parse_string(self, data: str, obj = None, context = {}):
 		root = ElementTree.fromstring(data)
-		return self.parse(root)
+		return self.parse(root, obj, context)
 
-	def parse_file(self, path: str):
+	def parse_file(self, path: str, package="ai_description", obj = None, context = {}):
 		# Find mapping file directory
-		source_folder = rospkg.RosPack().get_path("ai_description")
+		source_folder = rospkg.RosPack().get_path(package)
 
 		if path[0] != "/":
 			path = "/" + path
@@ -83,24 +88,44 @@ class Parsable:
 		# Parsing mapping file
 		root = ElementTree.parse(source_folder + path).getroot()
 
-		return self.parse(root)
+		return self.parse(root, obj, context)
 
-	def parse(self, root: ElementTree.Element):
+	def parse(self, root: ElementTree.Element, obj: Union[type, None] = None, context: Union[dict, Context] = {}, inherited=False):
 		"""
 			Parse a XML element to create an object of decorated type
 		"""
-		obj = self.generated()
+		if isinstance(context, dict):
+			context = Context(**context)
 
-		self.parse_name(root, obj)
-		self.parse_attributes(root, obj)
-		self.parse_children(root, obj)
-		self.parse_content(root, obj)
+		if obj == None:
+			obj = self.generated()
+
+		# Manage inheritance
+		if self.extends is not None:
+			if hasattr(self.extends, "parse"):
+				obj = getattr(self.extends, "parse")(root, obj, context, True)
+			else:
+				raise ParsingException("extends is not a parsable object")
+
+		self.__parse_attributes(root, obj)
+		self.__parse_content(root, obj)
+
+		if not inherited:
+			# Parse name only in bare class
+			self.__parse_name(root, obj)
+
+			# Call parsed callback
+			if hasattr(obj, "__parsed__"):
+				getattr(obj, "__parsed__")(context)
+
+		# Then parse children
+		self.__parse_children(root, obj, context)
 
 		return obj
 
-	def parse_name(self, root: ElementTree.Element, obj):
+	def __parse_name(self, root: ElementTree.Element, obj):
 		# Handle element tag
-		if type(self.name) == str:
+		if isinstance(self.name, str):
 			# Check for invalid name
 			if root.tag != self.name:
 				raise ParsingException("invalid element {}, expected {}".format(root.tag, self.name))
@@ -108,7 +133,7 @@ class Parsable:
 			# Apply name property
 			self.name.apply(obj, root.tag)
 
-	def parse_attributes(self, root: ElementTree.Element, obj):
+	def __parse_attributes(self, root: ElementTree.Element, obj):
 		# Handle attributes
 		for attr in self.attributes:
 			# If attribute is registered
@@ -118,7 +143,11 @@ class Parsable:
 				# Otherwise throw if mandatory
 				raise ParsingException("missing attribute {} in {}".format(attr, root.tag))
 
-	def parse_children(self, root: ElementTree.Element, obj):
+	def __parse_children(self, root: ElementTree.Element, obj, context: Context):
+		# Copy context with new parent
+		context = Context(**context.params)
+		context.parent = obj
+
 		# Handle children
 		for child in root:
 			generic: Union[AnyBinding, None] = None
@@ -140,18 +169,18 @@ class Parsable:
 					if handled:
 						raise ParsingException("{} have two bound values".format(child.tag))
 
-					available.apply(obj, child)
+					available.apply(obj, child, context)
 					handled = True
 
 			# Apply generic element if any and not handled yet
 			if not handled:
-				if generic != None:
-					generic.apply(obj, child)
+				if generic is not None:
+					generic.apply(obj, child, context)
 				else:
 					raise ParsingException("unable to handle {} element in {}".format(child.tag, root.tag))
 
-	def parse_content(self, root: ElementTree.Element, obj):
+	def __parse_content(self, root: ElementTree.Element, obj):
 		# Handle content
-		if self.content != None:
-			self.content.apply(obj, root.text)
+		if self.content is not None:
+			self.content.apply(obj, root.text if root.text is not None else "")
 

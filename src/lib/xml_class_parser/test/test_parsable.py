@@ -5,9 +5,13 @@ import unittest
 import rospy
 import rostest
 
-from xml_class_parser import Parsable, Bind, BindList, BindDict, Enum, ParsingException, Slice
+from xml_class_parser import Parsable, Bind, BindList, BindDict, Enum, ParsingException, Slice, Context
 
 from typing import Dict, List
+
+############################################################################
+############################ TESTED CLASSES ################################
+############################################################################
 
 class SomeClass:
 	def __init__(self):
@@ -16,13 +20,26 @@ class SomeClass:
 		self.array_attr = []
 		self.dict_attr = {}
 
-class YetAnotherClass:
-	def __init__(self):
-		super().__init__()
-		self.oui = False
+	def __parsed__(self, context: Context):
+		if "name" in context.params:
+			self.str_attr = context.get("name")
 
+		context.set("bob", 76)
+
+class YetAnotherClass(SomeClass):
+	def __init__(self, oui=False, wow=0):
+		super().__init__()
+		self.oui = oui
+		self.wow = wow
+		
 		self.get_called = False
 		self.set_called = False
+
+	def __parsed__(self, context: Context):
+		self.oui = True
+
+		if "bob" in context.params:
+			self.wow = context.get("bob")
 
 	@property
 	def x(self):
@@ -39,6 +56,10 @@ class SomeOtherClass:
 		self.value = 0
 		self.contained: SomeClass = None
 		self.children: List[SomeClass] = []
+
+############################################################################
+############################## TEST SUITE ##################################
+############################################################################
 
 class TestElementParser(unittest.TestCase):
 
@@ -63,8 +84,37 @@ class TestElementParser(unittest.TestCase):
 		self.assertEqual(parsed.x, 5, "property response unchanged")
 		self.assertEqual(parsed.get_called, True, "getter called")
 
+	def test_takes_external_object(self):
+		global YetAnotherClass
+		YetAnotherClass = Parsable(name="minus_one")(YetAnotherClass)
+
+		# Try to set wow to 4 and oui (first arg) to True
+		parsed = YetAnotherClass.parse_string("<minus_one />", YetAnotherClass(True, wow=4))
+
+		self.assertEqual(parsed.oui, True)
+		self.assertEqual(parsed.wow, 4)
+
 	def test_parsed_callback(self):
-		self.assertTrue(False, "call __parsed__ after parsing")
+		global YetAnotherClass
+		YetAnotherClass = Parsable(name="minus_two")(YetAnotherClass)
+
+		# Try to set wow to 4 and oui (first arg) to True
+		parsed = YetAnotherClass.parse_string("<minus_two />", YetAnotherClass(oui=False))
+
+		self.assertEqual(parsed.oui, True, "call __parsed__ after parsing")
+
+	def test_context_passing(self):
+		global SomeClass
+		global YetAnotherClass
+
+		YetAnotherClass = Parsable(name="array_attr")(YetAnotherClass)
+		SomeClass = Parsable(name="o", children = [ BindList(type=YetAnotherClass, to="array_attr") ])(SomeClass)
+
+		parsed = SomeClass.parse_string("<o><array_attr /></o>", context=Context(name="hello"))
+
+		self.assertEqual(parsed.str_attr, "hello", "original context is passed")
+		self.assertEqual(len(parsed.array_attr), 1)
+		self.assertEqual(parsed.array_attr[0].wow, 76, "context is passed with additional args")
 
 	def test_content_parsing(self):
 		global SomeClass

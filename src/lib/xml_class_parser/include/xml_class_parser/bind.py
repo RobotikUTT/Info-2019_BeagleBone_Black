@@ -1,23 +1,32 @@
-from . import ParsingException
-from typing import Union, Any
+from .parsing_exception import ParsingException
+from .context import Context
+
+from typing import Union, Any, Type, Optional
+from xml.etree import ElementTree
 
 class Bind:
 	'''
 		Define a binding between XML element and properties
 	'''
-	def __init__(self, to: str = Union[None, str], type: type = str, mandatory=False, xml_name: str = None):
+	def __init__(self, to: Optional[str] = None, type: Type = str, mandatory=False, xml_name: str = None):
 		self.to = to
-		self.type = type
+		self.type: Type = type
 		self.mandatory = mandatory
 		self.xml_name = xml_name
 
-	def apply(self, obj: object, value: str):
+	def apply(self, obj: object, value: Union[str, ElementTree.Element], context: Union[Context, None] = None):
 		'''Apply value to object as defined in the binding'''
-		if self.to == None:
+		if self.to is None:
 			raise ParsingException("destination is not defined inside the binding")
 
+		# If given type provide a parsing option
 		if hasattr(self.type, "parse"):
-			self.apply_casted(obj, self.type.parse(value))
+			if context == None:
+				raise ParsingException("missing context for {}", self.type)
+
+			self.apply_casted(obj, getattr(self.type, "parse")(value, None, context))
+		
+		# Otherwise call it
 		else:
 			self.apply_casted(obj, self.type(value))
 		
@@ -58,11 +67,11 @@ class BindDict(Bind):
 
 		Add a *post-cast* attribute that cast the object after it's key has been extracted
 	'''
-	def __init__(self, key: str, to: Union[None, str] = None, type: type = str, mandatory = False, xml_name = None, post_cast = None):
+	def __init__(self, key: str, to: Optional[str] = None, type: Type = str, mandatory = False, xml_name = None, post_cast = None):
 		super().__init__(to=to, type=type, mandatory=mandatory, xml_name=xml_name)
 
 		self.key: str = key
-		self.post_cast: type = post_cast
+		self.post_cast: Type = post_cast
 
 	def apply_casted(self, obj: object, value: Any):
 		'''Apply value to object as defined in the binding'''
