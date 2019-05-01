@@ -1,7 +1,10 @@
+from xml_class_parser import Parsable
+
 from .argumentable import Argumentable
 
 from typing import Union
 
+@Parsable(name="need")
 class ObjectRequirement(Argumentable):
 	"""
 		Define a need of objects by an action

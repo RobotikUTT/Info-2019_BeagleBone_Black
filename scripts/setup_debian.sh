@@ -6,5 +6,5 @@ sudo rosdep init
 rosdep update
 
 # Install python dependencies 
-pip3 install rospkg python-can
-pip install Adafruit_BBIO
+sudo pip3 install rospkg python-can
+sudo pip install Adafruit_BBIO

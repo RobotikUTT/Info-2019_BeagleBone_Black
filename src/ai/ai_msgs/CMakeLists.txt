@@ -57,4 +57,4 @@ add_action_files(
 generate_messages(DEPENDENCIES std_msgs actionlib_msgs geometry_msgs)
 
 # Declare dependencies for external packages
-catkin_package(CATKIN_DEPENDS message_runtime std_msgs)
+catkin_package(CATKIN_DEPENDS message_runtime std_msgs actionlib_msgs)

@@ -19,6 +19,7 @@ class Parsable:
 			extends: Union[None, Type] = None,
 			attributes: Dict[str, Union[Type, Bind]] = {},
 			children: List[Union[AnyBinding, Type]] = [],
+			ignored_children: List[str] = [],
 			content: Union[str, Bind, None] = None ):
 		'''Initialize parsable and fill missing informations'''
 		
@@ -27,6 +28,7 @@ class Parsable:
 		self.children: List[AnyBinding] = []
 		self.content: Union[Bind, None] = Bind(to=content) if isinstance(content, str) else content
 		self.extends = extends
+		self.ignored_children = ignored_children
 
 		# Get attributes
 		for key, value in attributes.items():
@@ -41,7 +43,7 @@ class Parsable:
 		for child in children:
 			# In case only type given
 			if not isinstance(child, Bind):
-				if not hasattr(child, "parse"):
+				if not hasattr(child, "parse") and child is not Parsable.SELF:
 					raise ParsingException("a children type must be parsable")
 
 				# Consider it to be a list
@@ -90,7 +92,7 @@ class Parsable:
 
 		return self.parse(root, obj, context)
 
-	def parse(self, root: ElementTree.Element, obj: Union[type, None] = None, context: Union[dict, Context] = {}, inherited=False):
+	def parse(self, root: ElementTree.Element, obj: Union[type, None] = None, context: Union[dict, Context] = {}, inherited=False, xml_name=None):
 		"""
 			Parse a XML element to create an object of decorated type
 		"""
@@ -112,7 +114,7 @@ class Parsable:
 
 		if not inherited:
 			# Parse name only in bare class
-			self.__parse_name(root, obj)
+			self.__parse_name(root, obj, xml_name)
 
 			# Call parsed callback
 			if hasattr(obj, "__parsed__"):
@@ -121,13 +123,17 @@ class Parsable:
 		# Then parse children
 		self.__parse_children(root, obj, context)
 
+		# Call parsed callback
+		if hasattr(obj, "__parsed_children__"):
+			getattr(obj, "__parsed_children__")(context)
+
 		return obj
 
-	def __parse_name(self, root: ElementTree.Element, obj):
+	def __parse_name(self, root: ElementTree.Element, obj, possible_xml_name: str = None):
 		# Handle element tag
 		if isinstance(self.name, str):
 			# Check for invalid name
-			if root.tag != self.name:
+			if root.tag != self.name and root.tag != possible_xml_name:
 				raise ParsingException("invalid element {}, expected {}".format(root.tag, self.name))
 		else:
 			# Apply name property
@@ -152,6 +158,10 @@ class Parsable:
 		for child in root:
 			generic: Union[AnyBinding, None] = None
 			handled = False
+
+			# Ignore children that are supposed to be ignored
+			if child.tag in self.ignored_children:
+				continue 
 
 			for available in self.children:
 				# If it is a generic binding

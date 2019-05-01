@@ -24,8 +24,8 @@ class Bind:
 			if context == None:
 				raise ParsingException("missing context for {}", self.type)
 
-			self.apply_casted(obj, getattr(self.type, "parse")(value, None, context))
-		
+			self.apply_casted(obj, getattr(self.type, "parse")(value, None, context, xml_name=self.xml_name))
+
 		# Otherwise call it
 		else:
 			self.apply_casted(obj, self.type(value))
@@ -38,7 +38,7 @@ class Bind:
 		elif hasattr(self.type, "xml_name"):
 			return self.type.xml_name
 		else:
-			raise ParsingException("{} does not have an XML name".format(self.type))
+			return None
 
 	@xml_name.setter
 	def xml_name(self, xml_name):

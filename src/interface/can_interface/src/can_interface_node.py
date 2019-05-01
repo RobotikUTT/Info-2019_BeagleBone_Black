@@ -1,56 +1,140 @@
 #!/usr/bin/python3
-# Bridge interface_msgs to ROS frames as described in <mapping.xml>
-
-from xml.etree import ElementTree
-from importlib import import_module
-
-import threading, sys
-import rospkg
+# Bridge interface_msgs to ROS frames as described in interface_description
 import rospy
+
+from xml_class_parser import Parsable, Bind, Context
+from xml_class_parser.helper import ParsableDict
+
+from action_manager import Argumentable
+from node_watcher import NodeStatusHandler
+
 from rospy import Publisher, Subscriber
 
-# Messages
-from interface_msgs import msg as interface_msgs
-from can_msgs.msg import Frame
+from ai_msgs.msg import NodeStatus
+from interface_msgs.msg import CanData
 
-# Devices handler
-from can_interface import DevicesHandler
+from can_interface import Frame, FrameList, DevicesList, Param
+
+from typing import Type, Dict, List
+
+import time
+import threading
+import traceback
 
 # python-can library
 import can
 can.rc['interface'] = 'socketcan_ctypes'
 
-class CanInterfaceNode:
+class CanInterfaceNode(NodeStatusHandler):
 	def __init__(self):
-		self.includes = {}
-		self.subscribers = {}
+		super().__init__()
 
-		self.devices_handler = DevicesHandler(self)
+		# Parse devices
+		self.devices: DevicesList = DevicesList.parse_file(
+			"can/devices.xml",
+			package="interface_description"
+		)
+
+		# Then frames
+		self.frames: Dict[str, Frame] = FrameList.parse_file(
+			"can/frames.xml",
+			package="interface_description",
+			context=Context(devices=self.devices)
+		)
+
+		# Create can bus
+		self.bus = can.interface.Bus("vcan0")
 		self.can_input_thread = threading.Thread(name="can_input", target=self.wait_for_can_message)
-	
-	def subscribe(self, frame, subscriber):
-		self.subscribers[frame] = subscriber
+
+		self.subscriber: Subscriber = Subscriber("/can_interface/out", CanData, self.on_ros_message)
+		self.publisher: Publisher = Publisher("/can_interface/in", CanData, queue_size=10)
+
+		# Start thread
+		self.can_input_thread.start()
 
 	def wait_for_can_message(self):
 		'''
 			Loop in CAN bus to read data
 		'''
 		try:
-			bus = can.interface.Bus(can_interface)
-			for message in bus:
-				self.on_can_message(message)
+			for message in self.bus:
+				try:
+					self.on_can_message(message)
+				except:
+					traceback.print_exc()
+					print("received invalid can frame")
+					print(message)
 
 				if rospy.is_shutdown():
+					self.bus.shutdown()
 					return
 		except:
+			self.bus.shutdown()
 			print("Can reception interrupted")
-			bus.shutdown()
-
-
+			
+	
 	def on_can_message(self, frame: can.Message):
-		if frame.arbitration_id == Frame.BBB_CAN_ADDR or frame.arbitration_id == Frame.ALL_CAN_ADDR:
-			if frame.data[0] in self.subscribers:
-				self.subscribers[frame.data[0]]
+		"""
+			Callback from messages from can
+		"""
+
+		frame_type = self.frames.by_id[frame.data[0]]
+		print("received frame {}".format(frame_type.name))
+		# Handle pong data
+		if frame_type.name == "pong":
+			address: int = int(frame.data[1])
+			status: int = frame.data[2]
+
+			# Set status if in devices
+			if address in self.devices.by_id:
+				self.set_node_status(self.devices.by_id[address], "board", NodeStatus.READY)
+		else:
+			# TODO check if broadcast or to bbb
+			values = Argumentable()
+
+			# Add all parameters
+			for param in frame_type.params:
+				param.can_to_ros(frame, values)
+			
+			# Create message
+			message = CanData()
+			message.params = values.to_list()
+			message.type = frame_type.name
+
+			# Publish
+			self.publisher.publish(message)
+				
+	def on_ros_message(self, message):
+		"""
+			Handle message from ROS and build a frame from it
+		"""
+		
+		print("got order {}".format(message))
+
+		# Get message params as argumentable
+		values = Argumentable().from_list(message.params)
+		frame_type = self.frames.by_name[message.type]
+
+		# Prepare data array and set frame type
+		data_array: List[int] = [0] * 8
+		data_array[0] = frame_type.id
+
+		# Add parameters provided in message
+		for param in frame_type.params:
+			param.ros_to_can(data_array, values)
+		
+		# Setup output frame
+		frame: can.Message = can.Message()
+		frame.timestamp = time.time()
+		frame.is_remote_frame = 0
+		frame.is_error_frame = 0
+		frame.is_extended_id = 0
+		frame.dlc = 1
+		frame.arbitration_id = self.devices.by_name[frame_type.dest]
+		frame.data = bytes(data_array) # Apply data to frame
+
+		# Send frame to ros
+		self.bus.send(frame)
 
 
 if __name__ == '__main__':
@@ -61,9 +145,11 @@ if __name__ == '__main__':
 	try:
 		# Create node
 		node = CanInterfaceNode()
-
+		print("ready")
 		# Spin
 		while not rospy.is_shutdown():
 			rospy.spin()
+		
+		node.bus.shutdown()
 	except rospy.ROSInterruptException:
 		pass

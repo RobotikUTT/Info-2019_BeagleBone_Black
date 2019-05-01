@@ -7,15 +7,19 @@ from geometry_msgs.msg import Pose2D
 
 from typing import List, Union
 
-from xml_class_parser import Parsable, Bind, BindDict, Enum
+from xml_class_parser import Parsable, Bind, BindDict, Enum, BindList
 
 @Parsable(
 	name = "group",
-	arguments = {
-		"type": Enum(0, 1, 2, binding = {"ordered": 0, "unordered": 1, "best": 2}),
+	attributes = {
+		"type": Enum(binding = {"ordered": 0, "unordered": 1, "best": 2}),
 		"repeat": ActionRepeater
 	},
-	children = [ Action, ObjectRequirement, Parsable.SELF ]
+	children = [
+		BindList(to="children", type=Action),
+		BindList(to="none", type=ObjectRequirement),
+		BindList(to="children", type=Parsable.SELF)
+	]
 )
 class ActionGroup(Action):
 	ORDERED = 0 # actions done in order

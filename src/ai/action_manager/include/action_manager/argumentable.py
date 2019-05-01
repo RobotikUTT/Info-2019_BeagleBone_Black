@@ -8,6 +8,7 @@ from xml_class_parser import Parsable, Bind, Slice, BindDict
 Argument = Parsable(name=Bind(to="name"), content=Bind(to="value"))(Argument)
 
 @Parsable(
+	name = Bind(to="name"),
 	children=[ # Parse arguments 
 		BindDict(to="values", type=Argument, key="name", post_cast=Slice("value"))
 	]
@@ -42,12 +43,14 @@ class Argumentable:
 		return False
 
 
-	def from_list(self, args: List[Argument], reset: bool = False) -> None:
+	def from_list(self, args: List[Argument], reset: bool = False) -> 'Argumentable':
 		if reset:
 			self.values = {}
 
 		for arg in args:
 			self.values[arg.name] = arg.value
+		
+		return self
 	
 	def to_list(self) -> List[Argument]:
 		result = []

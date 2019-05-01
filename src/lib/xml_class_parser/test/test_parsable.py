@@ -72,6 +72,9 @@ class TestElementParser(unittest.TestCase):
 		with self.assertRaises(ParsingException):
 			SomeClass.parse_string("<no />")
 
+	def test_ignoring_children(self):
+		self.assertEqual(1, 0, "ignore provided children")
+
 	def test_property_call(self):
 		"""Test that a class property is not override by parsed values"""
 		global YetAnotherClass
@@ -302,6 +305,11 @@ class TestElementParser(unittest.TestCase):
 
 		self.assertEqual(len(parsed.array_attr[0].children[0].array_attr[0].children), 0)
 
+	def test_alias_parsing(self):
+		self.assertTrue(False, "alias are parsed successfully")
+
+	def test_call_parsed_children_callback(self):
+		self.assertTrue(False, "call __parsed_children__ after parsing children")
 
 if __name__ == '__main__':
 	rostest.rosrun('xml_class_parser', 'test_parser', TestElementParser, sys.argv)

@@ -2,16 +2,12 @@
 <!-- Frame file description -->
 <frames>
 	<!-- Basic communication -->
-	<frame name="ping" id="0">
+	<frame name="ping" id="0" source="bbb" dest="all">
 		<description>Ping all devices</description>
-		<source>bbb</source>
-		<dest>all</dest>
 	</frame>
 
-	<frame name="pong" id="1">
+	<frame name="pong" id="1" source="all" dest="stm">
 		<description>Pong !</description>
-		<source>all</source>
-		<dest>stm</dest>
 
 		<byte name="device" />
 		<byte name="status">
@@ -21,62 +17,47 @@
 	</frame>
 
 	<!-- STM orders -->
-	<frame name="order_complete" id="26">
+	<frame name="order_complete" id="26" source="stm" dest="bbb">
 		<description>STM move order complete</description>
-		<source>stm</source>
-		<dest>bbb</dest>
-
 	</frame>
 
-	<frame name="stm_coder_data" id="5">
+	<frame name="stm_coder_data" id="5" source="stm" dest="all">
 		<description>Data of coding wheel</description>
-		<source>stm</source>
-		<dest>all</dest>
 
 		<word name="right_wheel_dist" />
 		<word name="left_wheel_dist" />
 	</frame>
 
-	<frame name="current_pos" id="18">
+	<frame name="current_pos" id="18" source="stm" dest="bbb">
 		<description>Data of current robot position</description>
-		<source>stm</source>
-		<dest>bbb</dest>
 
 		<word name="x" />
 		<word name="y" />
 		<word name="angle" />
 	</frame>
 
-	<frame name="current_pwm" id="19">
+	<frame name="current_pwm" id="19" source="stm" dest="bbb">
 		<description>Current wheels motors PWM</description>
-		<source>stm</source>
-		<dest>bbb</dest>
 
 		<word name="left_pwm" />
 		<word name="right_pwm" />
 	</frame>
 
-	<frame name="current_speed" id="20">
+	<frame name="current_speed" id="20" source="stm" dest="bbb">
 		<description>Current speed of the robot</description>
-		<source>stm</source>
-		<dest>bbb</dest>
 
 		<word name="linear_speed" />
 		<word name="left_speed" />
 		<word name="right_speed" />
 	</frame>
 
-	<frame name="robot_blocked" id="28">
+	<frame name="robot_blocked" id="28" source="stm" dest="bbb">
 		<description>Robot blocked signal</description>
-		<source>stm</source>
-		<dest>bbb</dest>
 
 	</frame>
 
-	<frame name="set_stm_mode" id="7">
+	<frame name="set_stm_mode" id="7" source="bbb" dest="stm">
 		<description>Set STM mode</description>
-		<source>bbb</source>
-		<dest>stm</dest>
 
 		<byte name="value">
 			<stop v="0" />
@@ -91,20 +72,16 @@
 		</byte>
 	</frame>
 
-	<frame name="set_speed" id="4">
+	<frame name="set_speed" id="4" source="bbb" dest="stm">
 		<description>Set the speed of the STM</description>
-		<source>bbb</source>
-		<dest>stm</dest>
 
 		<word name="linear_speed" />
 		<word name="angular_speed" />
 		<word name="duration" />
 	</frame>
 
-	<frame name="go_to_angle" id="8">
+	<frame name="go_to_angle" id="8" source="bbb" dest="stm">
 		<description>Send order to STM to rotate to a given absolute angle</description>
-		<source>bbb</source>
-		<dest>stm</dest>
 
 		<word name="x" />
 		<word name="y" />
@@ -112,87 +89,69 @@
 		<byte name="direction" />
 	</frame>
 
-	<frame name="go_to" id="9">
+	<frame name="go_to" id="9" source="bbb" dest="stm">
 		<description>Send order to STM to move toward a given point</description>
-		<source>bbb</source>
-		<dest>stm</dest>
 
 		<word name="x" />
 		<word name="y" />
 		<byte name="direction" />
 	</frame>
 
-	<frame name="rotate" id="10">
+	<frame name="rotate" id="10" source="bbb" dest="stm">
 		<description>Send order to STM to rotate of a given angle</description>
-		<source>bbb</source>
-		<dest>stm</dest>
 
 		<byte name="angle" />
 	</frame>
 
-	<frame name="set_left_pid" id="12">
+	<frame name="set_left_pid" id="12" source="bbb" dest="stm">
 		<description>Set left STM's PID</description>
-		<source>bbb</source>
-		<dest>stm</dest>
 
 		<word name="P" />
 		<word name="I" />
 		<word name="D" />
 	</frame>
 
-	<frame name="set_right_pid" id="13">
+	<frame name="set_right_pid" id="13" source="bbb" dest="stm">
 		<description>Set right STM's PID</description>
-		<source>bbb</source>
-		<dest>stm</dest>
 
 		<word name="P" />
 		<word name="I" />
 		<word name="D" />
 	</frame>
 
-	<frame name="set_both_pid" id="14">
+	<frame name="set_both_pid" id="14" source="bbb" dest="stm">
 		<description>Set stm's PID on left and right side</description>
-		<source>bbb</source>
-		<dest>stm</dest>
 
 		<word name="P" />
 		<word name="I" />
 		<word name="D" />
 	</frame>
 	
-	<frame name="set_pwm" id="15">
+	<frame name="set_pwm" id="15" source="bbb" dest="stm">
 		<description>Set wheels PWM</description>
-		<source>bbb</source>
-		<dest>stm</dest>
 
 		<word name="left_pwm" />
 		<word name="right_pwm" />
 	</frame>
 
-	<frame name="set_position" id="16">
+	<frame name="set_position" id="16" source="bbb" dest="stm">
 		<description>Set robot absolute position in STM</description>
-		<source>bbb</source>
-		<dest>stm</dest>
 
 		<word name="x" />
 		<word name="y" />
 		<word name="angle" />
 	</frame>
 
-	<frame name="set_stm_param" id="17">
+	<frame name="set_stm_param" id="17" source="bbb" dest="stm">
 		<description>Set speed and acceleration parameter in STM</description>
-		<source>bbb</source>
-		<dest>stm</dest>
 
 		<word name="max_linear_speed" />
 		<word name="max_angular_speed" />
 		<word name="max_acc" />
 	</frame>
 
-	<frame name="sonar_distance" id="23">
+	<frame name="sonar_distance" id="23" source="arduino" dest="bbb">
 		<description>Data on sonar distance</description>
-		<source>arduino</source>
-		<dest>bbb</dest>
 
 		<byte name="dist_front_left" />
 		<byte name="dist_front_right" />

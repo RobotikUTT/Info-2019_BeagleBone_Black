@@ -16,7 +16,7 @@ from xml_class_parser import Parsable, Bind, BindDict, BlackList
 
 @Parsable(
 	name = Bind(to="name", type=BlackList("group")),
-	arguments = {
+	attributes = {
 		"native": bool,
 		"points": int,
 		"repeat": ActionRepeater

@@ -16,7 +16,7 @@ def Enum(values: List[Any] = None, cast=str, binding: Union[Dict, None] = None):
 		is in authorized values, it returns it.
 	'''
 
-	if not isinstance(binding, Dict):
+	if not isinstance(binding, Dict) and binding is not None:
 		binding = vars(binding)
 
 	def cast_value(value: str):
