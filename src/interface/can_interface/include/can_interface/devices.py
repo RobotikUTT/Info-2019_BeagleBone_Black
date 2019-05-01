@@ -31,7 +31,7 @@ class DevicesList(NodeStatusHandler):
 
 		self.broadcast: Device = None
 
-	def __parsed_children__(self, context: Context):
+	def __parsed__(self, context: Context):
 		if self.broadcast is None:
 			raise ParsingException("no broadcast provided in device list")
 

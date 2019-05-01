@@ -24,6 +24,7 @@ class SomeClass:
 		if "name" in context.params:
 			self.str_attr = context.get("name")
 
+	def __before_children__(self, context: Context):
 		context.set("bob", 76)
 
 class YetAnotherClass(SomeClass):
@@ -97,14 +98,14 @@ class TestElementParser(unittest.TestCase):
 		self.assertEqual(parsed.oui, True)
 		self.assertEqual(parsed.wow, 4)
 
-	def test_parsed_callback(self):
+	def test_before_children_callback(self):
 		global YetAnotherClass
 		YetAnotherClass = Parsable(name="minus_two")(YetAnotherClass)
 
 		# Try to set wow to 4 and oui (first arg) to True
 		parsed = YetAnotherClass.parse_string("<minus_two />", YetAnotherClass(oui=False))
 
-		self.assertEqual(parsed.oui, True, "call __parsed__ after parsing")
+		self.assertEqual(parsed.oui, True, "call __before_children__ after parsing properties and before children")
 
 	def test_context_passing(self):
 		global SomeClass
@@ -308,8 +309,8 @@ class TestElementParser(unittest.TestCase):
 	def test_alias_parsing(self):
 		self.assertTrue(False, "alias are parsed successfully")
 
-	def test_call_parsed_children_callback(self):
-		self.assertTrue(False, "call __parsed_children__ after parsing children")
+	def test_call_parsed_callback(self):
+		self.assertTrue(False, "call __parsed__ after parsing children")
 
 if __name__ == '__main__':
 	rostest.rosrun('xml_class_parser', 'test_parser', TestElementParser, sys.argv)

@@ -117,15 +117,15 @@ class Parsable:
 			self.__parse_name(root, obj, xml_name)
 
 			# Call parsed callback
-			if hasattr(obj, "__parsed__"):
-				getattr(obj, "__parsed__")(context)
+			if hasattr(obj, "__before_children__"):
+				getattr(obj, "__before_children__")(context)
 
 		# Then parse children
 		self.__parse_children(root, obj, context)
 
 		# Call parsed callback
-		if hasattr(obj, "__parsed_children__"):
-			getattr(obj, "__parsed_children__")(context)
+		if hasattr(obj, "__parsed__"):
+			getattr(obj, "__parsed__")(context)
 
 		return obj
 
