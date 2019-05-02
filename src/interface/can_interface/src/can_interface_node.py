@@ -91,15 +91,9 @@ class CanInterfaceNode(NodeStatusHandler):
 				self.set_node_status(self.devices.by_id[address], "board", NodeStatus.READY)
 		else:
 			# TODO check if broadcast or to bbb
-			values = Argumentable()
-
-			# Add all parameters
-			for param in frame_type.params:
-				param.can_to_ros(frame, values)
-
 			# Create message
 			message = CanData()
-			message.params = values.to_list()
+			message.params = frame_type.extract_frame_data(frame).to_list()
 			message.type = frame_type.name
 
 			# Publish
@@ -117,30 +111,21 @@ class CanInterfaceNode(NodeStatusHandler):
 		frame_type = self.frames.by_name[message.type]
 
 		# Prepare data array and set frame type
-		data_array: List[int] = [0] * 8
-		data_array[0] = frame_type.id
-
-		# Add parameters provided in message
-		try:
-			for param in frame_type.params:
-				param.ros_to_can(data_array, values)
-		except MissingParameterException as e:
-			rospy.logerr("unable to find parameter {} for frame {}, not sending"
-				.format(e, frame_type.name))
-			return
+		data = frame_type.get_frame_data(values)
 		
-		# Setup output frame
-		frame: can.Message = can.Message()
-		frame.timestamp = time.time()
-		frame.is_remote_frame = 0
-		frame.is_error_frame = 0
-		frame.is_extended_id = 0
-		frame.dlc = 1
-		frame.arbitration_id = self.devices.by_name[frame_type.dest]
-		frame.data = bytes(data_array) # Apply data to frame
+		if data is not None:
+			# Setup output frame
+			frame: can.Message = can.Message()
+			frame.timestamp = time.time()
+			frame.is_remote_frame = 0
+			frame.is_error_frame = 0
+			frame.is_extended_id = 0
+			frame.dlc = 1
+			frame.arbitration_id = self.devices.by_name[frame_type.dest]
+			frame.data = data # Apply data to frame
 
-		# Send frame to ros
-		self.bus.send(frame)
+			# Send frame to ros
+			self.bus.send(frame)
 
 
 if __name__ == '__main__':

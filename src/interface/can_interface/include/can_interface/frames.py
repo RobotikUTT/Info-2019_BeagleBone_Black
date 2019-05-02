@@ -1,6 +1,8 @@
 from xml_class_parser import Parsable, Enum, ParsingException, Context, Slice
 from xml_class_parser.bind import Bind, BindDict, BindList
 
+from action_manager import Argumentable
+
 from .param import Param
 
 from typing import Dict
@@ -49,6 +51,37 @@ class Frame:
 		for param in self.params:
 			param.byte_start = current_offset
 			current_offset += param.size
+	
+	def extract_frame_data(self, frame: 'can.Message') -> Argumentable:
+		"""
+			Extract data from frame data, and return an argumentable
+			having all the properties
+		"""
+		data = Argumentable()
+
+		for param in self.params:
+			param.can_to_ros(frame, data)
+		
+		return data
+	
+	def get_frame_data(self, values: Argumentable) -> bytes:
+		"""
+			Insert parameters into frame, returns a byte array if
+			all parameters are here, otherwise returns None
+		"""
+		data_array: List[int] = [0] * 8
+		data_array[0] = self.id
+		
+		try:
+			for param in self.params:
+				param.ros_to_can(data_array, values)
+		except MissingParameterException as e:
+			rospy.logerr("unable to find parameter {} for frame {}, not sending"
+				.format(e, frame_type.name))
+
+			return None
+		
+		return bytes(data_array)
 
 @Parsable(
 	name="frames",

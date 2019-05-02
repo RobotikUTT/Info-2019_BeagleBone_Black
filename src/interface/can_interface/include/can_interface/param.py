@@ -49,9 +49,10 @@ class Param:
 		else:
 			raise Exception("size not handled yet, go back to coding")
 	
-	def can_to_ros(self, frame: Message, values: Argumentable) -> int:
+	def can_to_ros(self, frame: Message, values: Argumentable):
 		"""
 			Retrieve param data from frame data with binary operations
+			and put in in the given argumentable
 		"""
 
 		value = frame.data[self.byte_start + self.size - 1]
