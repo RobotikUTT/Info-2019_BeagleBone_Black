@@ -31,7 +31,7 @@ class Frame:
 
 		self.params = []
 	
-	def __parsed_children__(self, context: Context):
+	def __parsed__(self, context: Context):
 		devices = context.get("devices")
 		
 		self.source = self.source if self.source is not None else devices.broadcast.name
@@ -62,7 +62,7 @@ class FrameList:
 		self.by_id: Dict[int, str] = {}
 		self.by_name: Dict[str, int] = {}
 
-	def __parsed_children__(self, context: Context):
+	def __parsed__(self, context: Context):
 		# Save devices by id
 		for dev_name in self.by_name:
 			self.by_id[self.by_name[dev_name].id] = self.by_name[dev_name]

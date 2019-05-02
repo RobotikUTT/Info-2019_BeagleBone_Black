@@ -1,3 +1,3 @@
-from .devices import DevicesList
+from .devices import DeviceList
 from .frames import Frame, FrameList
 from .param import Param

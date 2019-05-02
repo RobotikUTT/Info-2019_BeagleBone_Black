@@ -12,8 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
 
   # Messages
   ai_msgs
-  can_msgs
-  interface_msgs
+    interface_msgs
 )
 
 catkin_python_setup()

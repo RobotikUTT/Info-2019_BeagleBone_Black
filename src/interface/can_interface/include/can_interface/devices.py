@@ -21,7 +21,7 @@ Device = AttrAttrTuple("device", "name", "id", int)
 		Bind(to="broadcast", xml_name="broadcast", type=Device),
 	]
 )
-class DevicesList(NodeStatusHandler):
+class DeviceList(NodeStatusHandler):
 	def __init__(self):
 		super().__init__()
 

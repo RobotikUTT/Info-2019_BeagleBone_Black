@@ -33,7 +33,7 @@ class Argumentable:
 		"""
 		self.values[name] = value.__str__()
 
-	def has(self, name: str, type: type):
+	def has(self, name: str, type: type = str):
 		if name in self.values:
 			try:
 				type(self.values[name])

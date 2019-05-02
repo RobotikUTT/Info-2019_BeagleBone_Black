@@ -63,7 +63,9 @@ class SomeOtherClass:
 ############################################################################
 
 class TestElementParser(unittest.TestCase):
-
+	def setUp(self):
+		rospy.init_node('test_parsable', anonymous=True)
+		
 	def test_invalid_name_exception(self):
 		global SomeClass
 		SomeClass = Parsable(
@@ -313,4 +315,4 @@ class TestElementParser(unittest.TestCase):
 		self.assertTrue(False, "call __parsed__ after parsing children")
 
 if __name__ == '__main__':
-	rostest.rosrun('xml_class_parser', 'test_parser', TestElementParser, sys.argv)
+	rostest.rosrun('xml_class_parser', 'test_parsable', TestElementParser, sys.argv)

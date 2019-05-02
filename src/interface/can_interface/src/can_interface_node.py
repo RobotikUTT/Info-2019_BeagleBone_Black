@@ -13,7 +13,8 @@ from rospy import Publisher, Subscriber
 from ai_msgs.msg import NodeStatus
 from interface_msgs.msg import CanData
 
-from can_interface import Frame, FrameList, DevicesList, Param
+from can_interface import Frame, FrameList, DeviceList, Param
+from can_interface.param import MissingParameterException
 
 from typing import Type, Dict, List
 
@@ -30,7 +31,7 @@ class CanInterfaceNode(NodeStatusHandler):
 		super().__init__()
 
 		# Parse devices
-		self.devices: DevicesList = DevicesList.parse_file(
+		self.devices: DeviceList = DeviceList.parse_file(
 			"can/devices.xml",
 			package="interface_description"
 		)
@@ -95,7 +96,7 @@ class CanInterfaceNode(NodeStatusHandler):
 			# Add all parameters
 			for param in frame_type.params:
 				param.can_to_ros(frame, values)
-			
+
 			# Create message
 			message = CanData()
 			message.params = values.to_list()
@@ -109,7 +110,7 @@ class CanInterfaceNode(NodeStatusHandler):
 			Handle message from ROS and build a frame from it
 		"""
 		
-		print("got order {}".format(message))
+		rospy.logdebug("received frame to send of type {}".format(message.type))
 
 		# Get message params as argumentable
 		values = Argumentable().from_list(message.params)
@@ -120,8 +121,13 @@ class CanInterfaceNode(NodeStatusHandler):
 		data_array[0] = frame_type.id
 
 		# Add parameters provided in message
-		for param in frame_type.params:
-			param.ros_to_can(data_array, values)
+		try:
+			for param in frame_type.params:
+				param.ros_to_can(data_array, values)
+		except MissingParameterException as e:
+			rospy.logerr("unable to find parameter {} for frame {}, not sending"
+				.format(e, frame_type.name))
+			return
 		
 		# Setup output frame
 		frame: can.Message = can.Message()

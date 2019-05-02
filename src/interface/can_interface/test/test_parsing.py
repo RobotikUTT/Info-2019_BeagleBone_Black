@@ -32,7 +32,7 @@ class TestParsing(unittest.TestCase):
 			3: "yes"
 		}, "dict by id parsed")
 
-		self.assertEqual(device_list.by_id, {
+		self.assertEqual(device_list.by_name, {
 			"everyone": 2,
 			"yes": 3
 		}, "dict by name parsed")
@@ -52,17 +52,22 @@ class TestParsing(unittest.TestCase):
 
 	def test_frame_parsing(self):
 		frame = Frame.parse_string("""
-			<frame id="7" name="paola">
+			<frame id="7" name="paola" source="me">
 				<word name="wow" />
 				<byte name="incredible" />
 				<word name="hihi" />
 			</frame>
-		""")
+		""", context=Context(devices=self.device_list))
+
+		# Parse properties
+		self.assertEqual(frame.source, "me")
+		self.assertEqual(frame.dest, "mlk") # broadcast by default
 
 		self.assertEqual(frame.name, "paola")
 		self.assertEqual(frame.id, 7)
 		self.assertEqual(len(frame.params), 3)
-		print(frame.params[0])
+
+		# Parse childrens
 		self.assertEqual(frame.params[0].name, "wow")
 		self.assertEqual(frame.params[0].byte_start, 1)
 		

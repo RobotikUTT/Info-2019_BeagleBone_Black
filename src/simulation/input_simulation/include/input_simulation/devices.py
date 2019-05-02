@@ -1,7 +1,6 @@
 # File adding an handler for WHOAMI frames and devices
 import rospkg
 
-from can_msgs.msg import Frame
 from ai_msgs.msg import NodeStatus
 
 from xml.etree import ElementTree

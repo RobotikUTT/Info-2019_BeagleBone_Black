@@ -8,6 +8,9 @@ from typing import List
 
 from can import Message
 
+class MissingParameterException(Exception):
+	pass
+
 @Parsable(
 	name = Bind(to="size", type=Enum(binding={ "word": 2, "byte": 1 })),
 	attributes = {
@@ -36,7 +39,7 @@ class Param:
 		"""
 
 		if not values.has(self.name):
-			raise Exception("unable to find parameter {} in given values".format(self.name))
+			raise MissingParameterException(self.name)
 
 		if self.size == 1:
 			data_array[self.byte_start] = values.get(self.name, int)
@@ -44,7 +47,7 @@ class Param:
 			data_array[self.byte_start] = values.get(self.name, int) >> 8
 			data_array[self.byte_start + 1] = values.get(self.name, int) & 0x00FF
 		else:
-			print("size not handled yet, go back to coding")
+			raise Exception("size not handled yet, go back to coding")
 	
 	def can_to_ros(self, frame: Message, values: Argumentable) -> int:
 		"""

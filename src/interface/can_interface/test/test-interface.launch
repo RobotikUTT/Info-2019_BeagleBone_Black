@@ -1,0 +1,6 @@
+<launch>
+  <node name="node_watcher" pkg="node_watcher" type="node" output="screen" required="True" />
+  <node name="can_interface" pkg="can_interface" type="can_interface_node.py" output="screen" />
+  
+  <test test-name="test_interface" pkg="can_interface" type="test_interface.py" />
+</launch>
