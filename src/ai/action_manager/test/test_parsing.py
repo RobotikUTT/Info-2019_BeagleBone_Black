@@ -4,6 +4,7 @@ import unittest
 
 import rospy
 import rostest
+import tempfile
 
 from action_manager import Action, ActionGroup
 
@@ -51,6 +52,17 @@ class TestParsing(unittest.TestCase):
 		self.assertEqual(parsed.children[2].name, "yay", "saved in order")
 
 	def test_action_inclusion(self):
+		file_content = """
+			<move />
+			<group>
+				<move />
+			</group>
+		"""
+
+		fp = tempfile.TemporaryFile()
+		fp.write(file_content)
+		fp.close()
+
 		self.fail("not implemented")
 
 if __name__ == '__main__':

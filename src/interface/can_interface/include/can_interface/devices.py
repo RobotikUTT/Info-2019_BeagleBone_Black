@@ -1,6 +1,5 @@
 from xml_class_parser import Parsable, Bind, BindDict, Context, Slice, ParsingException
 from xml_class_parser.helper import AttrAttrTuple
-from node_watcher import NodeStatusHandler
 
 from ai_msgs.msg import NodeStatus
 
@@ -21,7 +20,7 @@ Device = AttrAttrTuple("device", "name", "id", int)
 		Bind(to="broadcast", xml_name="broadcast", type=Device),
 	]
 )
-class DeviceList(NodeStatusHandler):
+class DeviceList:
 	def __init__(self):
 		super().__init__()
 
