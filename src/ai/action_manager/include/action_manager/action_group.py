@@ -37,6 +37,11 @@ class ActionGroup(Action):
 
 		self.__state = ActionStatus.IDLE
 	
+	def __parsed__(self, context):
+		folder = context.get("folder")
+
+		# TODO load files for non-native children, detect recursive inclusion
+
 	@property
 	def state(self) -> int:
 		return self.__state

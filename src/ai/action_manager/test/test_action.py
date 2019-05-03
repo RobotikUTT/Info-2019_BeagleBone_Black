@@ -12,6 +12,8 @@ from geometry_msgs.msg import Pose2D
 
 class TestAction(unittest.TestCase):
 	def setUp(self):
+		rospy.init_node('test_action', anonymous=True)
+
 		self.robot_position = Pose2D()
 		self.robot_position.x = 0
 		self.robot_position.y = 0

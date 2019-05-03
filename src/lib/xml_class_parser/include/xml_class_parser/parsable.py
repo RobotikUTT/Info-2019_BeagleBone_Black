@@ -8,6 +8,7 @@ from .context import Context
 from . import ParsingException
 
 from typing import Union, Dict, Type, List
+from copy import copy
 
 AnyBinding = Union[Bind, BindDict, BindList]
 
@@ -16,7 +17,6 @@ class Parsable:
 
 	def __init__(self,
 			name: Union[str, Bind],
-			extends: Union[None, Type] = None,
 			attributes: Dict[str, Union[Type, Bind]] = {},
 			children: List[Union[AnyBinding, Type]] = [],
 			ignored_children: List[str] = [],
@@ -27,7 +27,6 @@ class Parsable:
 		self.attributes: Dict[str, Bind] = {}
 		self.children: List[AnyBinding] = []
 		self.content: Union[Bind, None] = Bind(to=content) if isinstance(content, str) else content
-		self.extends = extends
 		self.ignored_children = ignored_children
 
 		# Get attributes
@@ -102,23 +101,15 @@ class Parsable:
 		if obj == None:
 			obj = self.generated()
 
-		# Manage inheritance
-		if self.extends is not None:
-			if hasattr(self.extends, "parse"):
-				obj = getattr(self.extends, "parse")(root, obj, context, True)
-			else:
-				raise ParsingException("extends is not a parsable object")
-
 		self.__parse_attributes(root, obj)
 		self.__parse_content(root, obj)
 
-		if not inherited:
-			# Parse name only in bare class
-			self.__parse_name(root, obj, xml_name)
+		# Parse name only in bare class
+		self.__parse_name(root, obj, xml_name)
 
-			# Call parsed callback
-			if hasattr(obj, "__before_children__"):
-				getattr(obj, "__before_children__")(context)
+		# Call parsed callback
+		if hasattr(obj, "__before_children__"):
+			getattr(obj, "__before_children__")(context)
 
 		# Then parse children
 		self.__parse_children(root, obj, context)
@@ -151,7 +142,7 @@ class Parsable:
 
 	def __parse_children(self, root: ElementTree.Element, obj, context: Context):
 		# Copy context with new parent
-		context = Context(**context.params)
+		context = Context(**copy(context.params))
 		context.parent = obj
 
 		# Handle children

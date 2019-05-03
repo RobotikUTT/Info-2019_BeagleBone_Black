@@ -1,0 +1,3 @@
+<launch>
+  <test test-name="test_parsing" pkg="action_manager" type="test_parsing.py" />
+</launch>

@@ -5,7 +5,7 @@ import unittest
 import rospy
 import rostest
 
-from can_interface.devices import Device, DevicesList
+from can_interface.devices import Device, DeviceList
 from can_interface.frames import FrameList, Frame
 from can_interface.param import Param
 
@@ -15,12 +15,12 @@ class TestParsing(unittest.TestCase):
 	def setUp(self):
 		rospy.init_node('test_parsing', anonymous=True)
 
-		self.device_list = DevicesList.parse_string("""
+		self.device_list = DeviceList.parse_string("""
 			<devices><device name='me' id='1' /><device name='you' id='2' /><broadcast id='3' name='mlk' /></devices>
 		""")
 
 	def test_devices_parsing(self):
-		device_list = DevicesList.parse_string("""
+		device_list = DeviceList.parse_string("""
 			<devices>
 				<broadcast id='2' name='everyone' />
 				<device id='3' name='yes' />

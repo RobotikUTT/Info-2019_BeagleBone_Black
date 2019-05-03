@@ -38,9 +38,12 @@ class YetAnotherClass(SomeClass):
 
 	def __parsed__(self, context: Context):
 		self.oui = True
-
+		
 		if "bob" in context.params:
 			self.wow = context.get("bob")
+
+	def __before_children__(self, ctx):
+		pass
 
 	@property
 	def x(self):
@@ -75,8 +78,17 @@ class TestElementParser(unittest.TestCase):
 		with self.assertRaises(ParsingException):
 			SomeClass.parse_string("<no />")
 
+	def test_simple_binding(self):
+		global SomeClass
+		SomeClass = Parsable(name="i", attributes={"int_attr": int})(SomeClass)
+
+		self.assertEqual(SomeClass.parse_string("<i int_attr='4' />").int_attr, 4)
+
 	def test_ignoring_children(self):
-		self.assertEqual(1, 0, "ignore provided children")
+		global YetAnotherClass
+		YetAnotherClass = Parsable(name="o", ignored_children=["a"])(YetAnotherClass)
+
+		YetAnotherClass.parse_string("<o><a></a><a></a></o>")
 
 	def test_property_call(self):
 		"""Test that a class property is not override by parsed values"""
@@ -95,7 +107,7 @@ class TestElementParser(unittest.TestCase):
 		YetAnotherClass = Parsable(name="minus_one")(YetAnotherClass)
 
 		# Try to set wow to 4 and oui (first arg) to True
-		parsed = YetAnotherClass.parse_string("<minus_one />", YetAnotherClass(True, wow=4))
+		parsed = YetAnotherClass.parse_string("<minus_one />", obj=YetAnotherClass(True, wow=4))
 
 		self.assertEqual(parsed.oui, True)
 		self.assertEqual(parsed.wow, 4)
@@ -251,19 +263,6 @@ class TestElementParser(unittest.TestCase):
 				self.assertEqual(parsed.dict_attr[key], 21)
 			elif key == "maybe":
 				self.assertEqual(parsed.dict_attr[key], 37)
-	
-	def test_extends(self):
-		global YetAnotherClass
-		global SomeClass
-
-		SomeClass = Parsable(name="a", attributes={"str_attr": str})(SomeClass)
-		YetAnotherClass = Parsable(name="b", attributes={"oui": bool}, extends=SomeClass)(YetAnotherClass)
-
-		parsed = YetAnotherClass.parse_string("<b oui='true' str_attr='omg' />")
-
-		self.assertIsInstance(parsed, YetAnotherClass)
-		self.assertEqual(parsed.oui, True, "regular element parsed")
-		self.assertEqual(parsed.str_attr, "omg", "parent element parsed")
 
 	def test_mandatory(self):
 		global SomeClass
@@ -312,7 +311,11 @@ class TestElementParser(unittest.TestCase):
 		self.assertTrue(False, "alias are parsed successfully")
 
 	def test_call_parsed_callback(self):
-		self.assertTrue(False, "call __parsed__ after parsing children")
+		global YetAnotherClass
+
+		YetAnotherClass = Parsable(name="a")(YetAnotherClass)
+
+		self.assertTrue(YetAnotherClass.parse_string("<a />").oui)
 
 if __name__ == '__main__':
 	rostest.rosrun('xml_class_parser', 'test_parsable', TestElementParser, sys.argv)

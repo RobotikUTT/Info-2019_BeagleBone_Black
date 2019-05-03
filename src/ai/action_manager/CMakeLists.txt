@@ -54,7 +54,8 @@ if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
   
   foreach(T
-      test/test_action.py)
+      test/test-actions.launch
+      test/test-parsing.launch)
      add_rostest(${T})
   endforeach()
 endif()

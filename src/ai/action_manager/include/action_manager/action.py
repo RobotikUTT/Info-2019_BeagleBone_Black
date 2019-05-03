@@ -9,11 +9,14 @@ import math
 import rospy
 
 from geometry_msgs.msg import Pose2D
-from ai_msgs.msg import ActionPoint, ActionStatus
+from ai_msgs.msg import ActionPoint, ActionStatus, Argument
 from ai_msgs.srv import ComputeActionPoint
 
-from xml_class_parser import Parsable, Bind, BindDict, BlackList
+from xml_class_parser import Parsable, Bind, BindDict, BlackList, BindList
 
+Argument = Parsable(name=Bind(to="name"), content=Bind(to="value"))(Argument)
+
+# TODO parse args
 @Parsable(
 	name = Bind(to="name", type=BlackList("group")),
 	attributes = {
@@ -21,9 +24,11 @@ from xml_class_parser import Parsable, Bind, BindDict, BlackList
 		"points": int,
 		"repeat": ActionRepeater
 	},
-	extends=Argumentable
+	children = [
+		BindList(to="arguments", type=Argument)
+	]
 )
-class Action(Argumentable):
+class Action:
 	def __init__(self):
 		super().__init__()
 
@@ -32,6 +37,7 @@ class Action(Argumentable):
 		self.points = 0
 		self.repeat: Union[ActionRepeater, None] = None
 
+		self.arguments: Argumentable = []
 		self.requirements: List[ObjectRequirement] = []
 		self.parent: Union['ActionGroup', None] = None
 	
@@ -40,6 +46,9 @@ class Action(Argumentable):
 
 		self.__state = ActionStatus.IDLE
 	
+	def __parsed__(self, context):
+		self.arguments = Argumentable().from_list(self.arguments)
+
 	@property
 	def state(self) -> int:
 		return self.__state

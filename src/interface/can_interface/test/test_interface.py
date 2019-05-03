@@ -22,6 +22,7 @@ class TestInterface(unittest.TestCase):
 
 		# Message received
 		self.messages = []
+		self.interface_up = False
 
 		# Create a bus can
 		can.rc['interface'] = 'socketcan_ctypes'
@@ -80,9 +81,26 @@ class TestInterface(unittest.TestCase):
 				time.time() - start, 1, "/board/{} did not get ready after pong"
 					.format(self.devices.by_id[device_id]))
 
+	def can_interface_up(self, ok):
+		self.interface_up = ok
+
 	def test_frame_output(self):
 		val = 27
+		poll_rate = rospy.Rate(100)
 
+		# Wait for can_interface to be ready
+		nh_handler = NodeStatusHandler()
+		nh_handler.require("can_interface", "interface")
+		nh_handler.set_wait_callback(self.can_interface_up)
+		nh_handler.wait_for_nodes(3)
+
+		start = time.time()
+		while not self.interface_up and time.time() - start < 2:
+			poll_rate.sleep()
+
+		self.assertTrue(self.interface_up, "can interface is up")
+
+		# Test all frames
 		for frame_name in self.frames.by_name:
 			if frame_name == "pong":
 				continue
@@ -103,13 +121,12 @@ class TestInterface(unittest.TestCase):
 
 			# Wait for answer
 			start = time.time()
-			poll_rate = rospy.Rate(100)
 			while time.time() - start < 1.1 and not rospy.is_shutdown()\
 				and len(self.messages) == 0:
 
 				poll_rate.sleep()
 			
-			self.assertLess(time.time() - start, 1, "transmitted in less than a second")
+			self.assertLess(time.time() - start, 1, "{} transmitted in less than a second".format(frame_name))
 
 			message = self.messages.pop()
 
@@ -158,9 +175,6 @@ class TestInterface(unittest.TestCase):
 			# Assert equal to initial
 			for param in frame.params:
 				self.assertEqual(initial.get(param), received.get(param), "received data intact")
-
-	def test_invalid_frame_ignore(self):
-		self.assertEqual(True, False)
 
 if __name__ == '__main__':
 	rostest.rosrun('can_interface', 'test_interface', TestInterface, sys.argv)

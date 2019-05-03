@@ -1,0 +1,4 @@
+<launch>
+  <test test-name="test_action" pkg="action_manager" type="test_action.py" />
+  <test test-name="test_action_group" pkg="action_manager" type="test_action_group.py" />
+</launch>
