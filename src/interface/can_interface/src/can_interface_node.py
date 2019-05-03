@@ -29,6 +29,7 @@ can.rc['interface'] = 'socketcan_ctypes'
 class CanInterfaceNode(NodeStatusHandler):
 	def __init__(self):
 		super().__init__()
+		self.set_node_status("can_interface", "interface", NodeStatus.INIT)
 
 		# Parse devices
 		self.devices: DeviceList = DeviceList.parse_file(
@@ -52,6 +53,9 @@ class CanInterfaceNode(NodeStatusHandler):
 
 		# Start thread
 		self.can_input_thread.start()
+
+		# Declare can_interface ready
+		self.set_node_status("can_interface", "interface", NodeStatus.READY)
 
 	def wait_for_can_message(self):
 		'''
@@ -78,22 +82,42 @@ class CanInterfaceNode(NodeStatusHandler):
 		"""
 			Callback from messages from can
 		"""
+		if len(frame.data) == 0:
+			rospy.logerr("received empty frame, ignoring")
+			return
 
+		elif frame.data[0] not in self.frames.by_id:
+			rospy.logerr("received unhandled frame of id {}".format(frame.data[0]))
+			return
+		
+		# Get frame type
 		frame_type = self.frames.by_id[frame.data[0]]
-		print("received frame {}".format(frame_type.name))
+		
+		rospy.logdebug("received frame from can of type {}".format(frame_type.name))
+
 		# Handle pong data
 		if frame_type.name == "pong":
+			if len(frame.data) < 3:
+				rospy.logerr("received incomplete pong frame, ignoring".format(frame_type.name))
+
 			address: int = int(frame.data[1])
 			status: int = frame.data[2]
 
 			# Set status if in devices
 			if address in self.devices.by_id:
 				self.set_node_status(self.devices.by_id[address], "board", NodeStatus.READY)
+			else:
+				rospy.logerr("received pong frame for an unknown device of id {}".format(address))
 		else:
 			# TODO check if broadcast or to bbb
 			# Create message
 			message = CanData()
-			message.params = frame_type.extract_frame_data(frame).to_list()
+			try:
+				message.params = frame_type.extract_frame_data(frame).to_list()
+			except IndexError:
+				rospy.logerr("received incomplete frame of type {}, ignoring".format(frame_type.name))
+				return
+
 			message.type = frame_type.name
 
 			# Publish
@@ -115,14 +139,15 @@ class CanInterfaceNode(NodeStatusHandler):
 		
 		if data is not None:
 			# Setup output frame
-			frame: can.Message = can.Message()
-			frame.timestamp = time.time()
-			frame.is_remote_frame = 0
-			frame.is_error_frame = 0
-			frame.is_extended_id = 0
-			frame.dlc = 1
-			frame.arbitration_id = self.devices.by_name[frame_type.dest]
-			frame.data = data # Apply data to frame
+			frame: can.Message = can.Message(
+				timestamp=time.time(),
+				is_remote_frame=False,
+				is_error_frame=False,
+				is_extended_id=False,
+				dlc=frame_type.size(),
+				arbitration_id=self.devices.by_name[frame_type.dest],
+				data=data
+			)
 
 			# Send frame to ros
 			self.bus.send(frame)
@@ -136,7 +161,7 @@ if __name__ == '__main__':
 	try:
 		# Create node
 		node = CanInterfaceNode()
-		print("ready")
+
 		# Spin
 		while not rospy.is_shutdown():
 			rospy.spin()

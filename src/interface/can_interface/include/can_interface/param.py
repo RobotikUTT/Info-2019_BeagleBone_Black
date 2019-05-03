@@ -54,7 +54,6 @@ class Param:
 			Retrieve param data from frame data with binary operations
 			and put in in the given argumentable
 		"""
-
 		value = frame.data[self.byte_start + self.size - 1]
 
 		for index in range(self.size - 1):

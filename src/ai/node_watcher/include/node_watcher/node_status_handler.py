@@ -34,11 +34,11 @@ class NodeStatusHandler:
 
 	# Status getter
 	def get_node_status(self, nodename: str, package: str = None) -> NodeStatus:
-		if package == None:
+		if package is not None:
 			nodename = self._make_node_path(nodename, package)
 
 		msg = NodeReadinessRequest()
-		msg.status.state_code = NodeStatus.NODE_ASKING # ask for status
+		msg.status.state_code = NodeStatus.ASKING # ask for status
 		msg.node_name = nodename
 
 		try:

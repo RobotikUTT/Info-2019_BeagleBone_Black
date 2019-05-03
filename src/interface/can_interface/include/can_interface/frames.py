@@ -64,7 +64,14 @@ class Frame:
 		
 		return data
 	
-	def get_frame_data(self, values: Argumentable) -> bytes:
+	def size(self):
+		"""Returns frame data size"""
+		if len(self.params) == 0:
+			return 1
+		
+		return self.params[-1].byte_start + self.params[-1].size
+
+	def get_frame_data(self, values: Argumentable) -> bytearray:
 		"""
 			Insert parameters into frame, returns a byte array if
 			all parameters are here, otherwise returns None
@@ -80,8 +87,8 @@ class Frame:
 				.format(e, frame_type.name))
 
 			return None
-		
-		return bytes(data_array)
+
+		return bytearray(data_array)
 
 @Parsable(
 	name="frames",
