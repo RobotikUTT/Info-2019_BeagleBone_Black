@@ -38,17 +38,34 @@ class TestAction(unittest.TestCase):
 			self.assertEqual(state, action.state, "state is set to {}".format(state))
 	
 	def test_action_point(self):
-		action = Action()
+		# Create move action
+		action = Action.parse_string("""
+			<move native='true'>
+				<x>30</x>
+				<y>10</y>
+				<theta>30</theta>
+			</move>
+		""")
+		action.name = "move"
+		action.native = True
+		action.arguments.set("x", 90)
+		action.arguments.set("y", 60)
+		action.arguments.set("theta", 0)
 
 		# Test computation
-		self.assertTrue(False, "compute with remote service")
-		# TODO
+		self.assertEqual(
+			self.action_point, action.action_point(self.first_position),
+			"compute with remote service")
 
-		# Test usage of cache
-		action.__action_point = self.action_point
-		action.__action_point_origin = self.robot_position
+		# Change settings to test cache (not supposed to be re-set)
+		action.arguments.set("x", 25)
+		action.arguments.set("y", 10)
+		action.arguments.set("theta", 40)
 
-		self.assertEqual(self.action_point, action.action_point(), "does not recompute with cache")
+		# Test usage of cache (almost same condition)
+		self.assertEqual(
+			self.action_point, action.action_point(self.first_position),
+			"does not recompute with cache")
 	
 	def test_travel_distance(self):
 		action = Action()

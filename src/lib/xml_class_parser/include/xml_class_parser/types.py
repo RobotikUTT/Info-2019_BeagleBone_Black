@@ -56,3 +56,12 @@ def BlackList(*values, cast: type = str):
 		return cast(value)
 	
 	return filter
+
+def Bool(value: str) -> bool:
+	if value.lower() == "true":
+		return True
+	elif value.lower() == "false":
+		return False
+	
+	raise ParsingException(
+		"{} is not a valid boolean value (true|false)".format(value))

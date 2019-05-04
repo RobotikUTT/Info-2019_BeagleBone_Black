@@ -36,15 +36,19 @@ class TestOrderedActionGroup(unittest.TestCase):
 		self.action_point.end = self.second_position
 
 	def test_set_state(self):
+		self.fail("not implemented")
 		self.assertTrue(False, "set state")
 	
 	def test_action_point(self):
+		self.fail("not implemented")
 		self.assertTrue(False, "get action point")
 	
 	def test_travel_distance(self):
+		self.fail("not implemented")
 		self.assertTrue(False, "get travel distance")
 	
 	def test_priority(self):
+		self.fail("not implemented")
 		self.assertTrue(False, "get priority")
 
 	

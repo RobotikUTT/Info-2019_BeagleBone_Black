@@ -308,7 +308,7 @@ class TestElementParser(unittest.TestCase):
 		self.assertEqual(len(parsed.array_attr[0].children[0].array_attr[0].children), 0)
 
 	def test_alias_parsing(self):
-		self.assertTrue(False, "alias are parsed successfully")
+		self.fail("not implemented")
 
 	def test_call_parsed_callback(self):
 		global YetAnotherClass

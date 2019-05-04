@@ -38,9 +38,16 @@ class ActionGroup(Action):
 		self.__state = ActionStatus.IDLE
 	
 	def __parsed__(self, context):
-		folder = context.get("folder")
+		for i in range(len(self.children)):
+			child = self.children[i]
 
-		# TODO load files for non-native children, detect recursive inclusion
+			# Non native action children
+			if type(child) == Action and not child.native:
+				self.children[i] = ActionGroup.parse_file(
+					context.get("folder") + child.name + ".xml",
+					context = context
+				)
+
 
 	@property
 	def state(self) -> int:

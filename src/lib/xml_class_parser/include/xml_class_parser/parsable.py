@@ -79,15 +79,20 @@ class Parsable:
 		root = ElementTree.fromstring(data)
 		return self.parse(root, obj, context)
 
-	def parse_file(self, path: str, package="ai_description", obj = None, context = {}):
+	def parse_file(self, path: str, package=None, obj = None, context = {}):
+		"""
+			Parse given file. If package is provided, append package's path before
+			file path.
+		"""
 		# Find mapping file directory
-		source_folder = rospkg.RosPack().get_path(package)
-
-		if path[0] != "/":
-			path = "/" + path
+		if package is not None:
+			if path[0] != "/":
+				path = rospkg.RosPack().get_path(package) + "/" + path
+			else:
+				path = rospkg.RosPack().get_path(package) + path
 
 		# Parsing mapping file
-		root = ElementTree.parse(source_folder + path).getroot()
+		root = ElementTree.parse(path).getroot()
 
 		return self.parse(root, obj, context)
 

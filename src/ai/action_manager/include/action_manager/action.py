@@ -12,7 +12,8 @@ from geometry_msgs.msg import Pose2D
 from ai_msgs.msg import ActionPoint, ActionStatus, Argument
 from ai_msgs.srv import ComputeActionPoint
 
-from xml_class_parser import Parsable, Bind, BindDict, BlackList, BindList
+from xml_class_parser import Parsable, Bind, BindDict, BindList
+from xml_class_parser.types import Bool, BlackList
 
 Argument = Parsable(name=Bind(to="name"), content=Bind(to="value"))(Argument)
 
@@ -20,7 +21,7 @@ Argument = Parsable(name=Bind(to="name"), content=Bind(to="value"))(Argument)
 @Parsable(
 	name = Bind(to="name", type=BlackList("group")),
 	attributes = {
-		"native": bool,
+		"native": Bool,
 		"points": int,
 		"repeat": ActionRepeater
 	},
@@ -71,6 +72,7 @@ class Action:
 			Compute the initial and final point of the action.
 			Calls associated performer service to let it compute the point based on args 
 		'''
+		print(self.__action_point, self.__action_point_origin, origin)
 		# Check if previously saved for this origin
 		if self.__action_point == None or self.__action_point_origin != origin:
 			point_service = rospy.ServiceProxy(
@@ -78,10 +80,14 @@ class Action:
 				ComputeActionPoint
 			)
 			
+			# Wait 2s max for service
+			point_service.wait_for_service(2)
+
 			try:
-				self.__action_point = point_service(origin, self.arguments.to_list())
+				self.__action_point = point_service(origin, self.arguments.to_list()).action_point
+				self.__action_point_origin = origin
 			except rospy.ServiceException:
-				print("unable to process action point for {}".format(self.name))
+				rospy.logerr("unable to process action point for {}".format(self.name))
 
 		return self.__action_point
 

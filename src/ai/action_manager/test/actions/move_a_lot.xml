@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<group>
+	<move native="true" />
+	<group>
+		<move native="true">
+			<toward>me</toward>
+		</move>
+		<move native="true" points="30" />
+	</group>
+</group>

@@ -5,6 +5,7 @@ import unittest
 import rospy
 import rostest
 import tempfile
+import rospkg
 
 from action_manager import Action, ActionGroup
 
@@ -32,10 +33,10 @@ class TestParsing(unittest.TestCase):
 		parsed = ActionGroup.parse_string("""
 			<group>
 				<group>
-					<o_o />
+					<o_o native='true' />
 				</group>
-				<run />
-				<yay />
+				<run native='true' />
+				<yay native='true' />
 			</group>
 		""", context={"folder": "./"})
 
@@ -52,17 +53,40 @@ class TestParsing(unittest.TestCase):
 		self.assertEqual(parsed.children[2].name, "yay", "saved in order")
 
 	def test_action_inclusion(self):
-		file_content = """
-			<move />
-			<group>
-				<move />
+		source_folder = rospkg.RosPack().get_path("action_manager") + "/test/actions/"
+		parsed = ActionGroup.parse_string("""
+			<group><move_a_lot native='false' /></group>
+		""", context={"folder": source_folder})
+
+		self.assertIsInstance(parsed.children[0], ActionGroup)
+		self.assertEqual(len(parsed.children[0].children), 2)
+		self.assertEqual(len(parsed.children[0].children[1].children), 2)
+	
+	def test_argument_passing(self):
+		"""
+			test
+			<group native="false">
+				<arg1>value</arg1> -> passed to context for children actions
 			</group>
 		"""
+		self.fail("not implemented")
 
-		fp = tempfile.TemporaryFile()
-		fp.write(file_content)
-		fp.close()
-
+	def test_include_argument_passing(self):
+		"""
+			test
+			<action native="false">
+				<arg1>value</arg1> -> passed to context
+			</action>
+		"""
+		self.fail("not implemented")
+		
+	def test_alias_usage(self):
+		"""
+			test
+			<action native="false">
+				<arg1>{destination}</arg1> -> map destination to arg1
+			</action>
+		"""
 		self.fail("not implemented")
 
 if __name__ == '__main__':

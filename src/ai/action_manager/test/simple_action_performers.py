@@ -1,8 +1,10 @@
-from action_manager import ActionPerformer
+#!/usr/bin/python3
+
+from action_manager import ActionPerformer, Argumentable
 
 from typing import Dict
 from geometry_msgs.msg import Pose2D
-from ai_msgs.msg import ActionPoint
+from ai_msgs.msg import ActionPoint, NodeStatus
 
 import rospy
 import time
@@ -10,15 +12,16 @@ import time
 class SleepActionPerformer(ActionPerformer):
 	def __init__(self):
 		super().__init__("sleep")
+		self.set_status(NodeStatus.READY)
 	
-	def compute_action_point(self, args: Dict[str, float], robot_pos: Pose2D) -> ActionPoint:
+	def compute_action_point(self, args: Argumentable, robot_pos: Pose2D) -> ActionPoint:
 		res = ActionPoint()
 		res.start = robot_pos
 		res.end = robot_pos
 		return res
 	
-	def start(self, args: Dict[str, str]):
-		time.sleep(self.get_int("duration"))
+	def start(self, args: Argumentable):
+		time.sleep(args.get("duration", int))
 
 		# Mark action as done after waiting
 		self.action_performed()
@@ -26,28 +29,30 @@ class SleepActionPerformer(ActionPerformer):
 class FailActionPerformer(ActionPerformer):
 	def __init__(self):
 		super().__init__("fail")
+		self.set_status(NodeStatus.READY)
 	
-	def compute_action_point(self, args: Dict[str, float], robot_pos: Pose2D) -> ActionPoint:
+	def compute_action_point(self, args: Argumentable, robot_pos: Pose2D) -> ActionPoint:
 		res = ActionPoint()
 		res.start = robot_pos
 		res.end = robot_pos
 		return res
 	
-	def start(self, args: Dict[str, float]):
+	def start(self, args: Argumentable):
 		# Mark action as paused
 		self.action_paused()
 
 class MoveActionPerformer(ActionPerformer):
 	def __init__(self):
 		super().__init__("move")
+		self.set_status(NodeStatus.READY)
 	
-	def compute_action_point(self, args: Dict[str, float], robot_pos: Pose2D) -> ActionPoint:
+	def compute_action_point(self, args: Argumentable, robot_pos: Pose2D) -> ActionPoint:
 		res = ActionPoint()
 		res.start = robot_pos
 		res.end = Pose2D()
-		res.end.x = self.get_float("x", 0)
-		res.end.y = self.get_float("y", 0)
-		res.end.theta = self.get_float("angle", 0)
+		res.end.x = args.get("x", float, 0)
+		res.end.y = args.get("y", float, 0)
+		res.end.theta = args.get("angle", float, 0)
 
 		return res
 	
