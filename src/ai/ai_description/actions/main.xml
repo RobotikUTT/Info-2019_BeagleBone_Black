@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!-- Example action tree-->
+<group points="30" type="unordered">
+    <idle native="true">
+        <duration>1</duration>
+    </idle>
+    <group type="ordered">
+        <reach native="true" points="30">
+            <description>Set angle</description>
+            <angle>0</angle>
+        </reach>
+        <reach native="true">
+            <description>Point 1</description>
+            <x>200</x>
+            <y>0</y>
+            <angle>0</angle>
+        </reach>
+        <reach native="true">
+            <description>Point 2</description>
+            <x>200</x>
+            <y>200</y>
+            <angle>90</angle>
+        </reach>
+        <reach native="true">
+            <description>Point 3</description>
+            <x>0</x>
+            <y>200</y>
+            <angle>180</angle>
+        </reach>
+        <reach native="true">
+            <description>Return to start</description>
+            <x>0</x>
+            <y>0</y>
+            <angle>240</angle>
+        </reach>
+    </group>
+</group>

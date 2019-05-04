@@ -127,7 +127,7 @@ class ActionGroup(Action):
 					distance = child_dist
 			else:
 				distance += child_dist
-				current_point = child.action_point().end
+				current_point = child.action_point(current_point).end
 		
 		return distance
 	

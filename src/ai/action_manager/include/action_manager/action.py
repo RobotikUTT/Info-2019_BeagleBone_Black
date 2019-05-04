@@ -72,7 +72,7 @@ class Action:
 			Compute the initial and final point of the action.
 			Calls associated performer service to let it compute the point based on args 
 		'''
-		print(self.__action_point, self.__action_point_origin, origin)
+
 		# Check if previously saved for this origin
 		if self.__action_point == None or self.__action_point_origin != origin:
 			point_service = rospy.ServiceProxy(

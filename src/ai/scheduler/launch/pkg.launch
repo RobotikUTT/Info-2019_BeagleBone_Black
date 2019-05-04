@@ -1,4 +1,3 @@
 <launch>
-	<param name="actions_directory" value="$(find ai_description)/actions" />
-	<node name="scheduler" pkg="scheduler" type="node" output="screen" />
+	<node name="scheduler" pkg="scheduler" type="scheduler_node.py" output="screen" required="True" />
 </launch>

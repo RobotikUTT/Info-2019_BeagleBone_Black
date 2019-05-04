@@ -27,7 +27,7 @@ class Node (NodeStatusHandler, ABC):
 
 	def _on_await_response(self, msg: AwaitNodesResult):
 		if msg.request_code == self._wait_request_code:
-			rospy.log("Node {} is done waiting for nodes".format(self.nodename))
+			rospy.loginfo("Node {} is done waiting for nodes".format(self.nodename))
 			self._wait_callback(msg.success)
 
 	def on_waiting_result(self, success: bool):
