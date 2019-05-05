@@ -1,21 +1,24 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>interface_msgs</name>
-  <version>2018.1.0</version>
-  <description>The interface_msgs package</description>
+  <name>args_lib</name>
+  <version>0.0.0</version>
+  <description>Package providing utility functions for whole project</description>
 
   <maintainer email="cle.bourdonnaye@gmail.com">Clément de La Bourdonnaye</maintainer>
   <license>TODO</license>
 
-  <!-- Default requirements for *_msgs packages -->
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>message_generation</build_depend>
   <build_export_depend>message_runtime</build_export_depend>
   <exec_depend>message_runtime</exec_depend>
 
-  <!-- Other msgs dependencies-->
+  <depend>roscpp</depend>
+  <depend>rospy</depend>
+
   <depend>std_msgs</depend>
-  <depend>ai_msgs</depend>
-  
-  <export></export>
+
+  <test_depend>rostest</test_depend>
+
+  <export>
+  </export>
 </package>

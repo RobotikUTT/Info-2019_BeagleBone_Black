@@ -1,7 +1,7 @@
 from .parser import ElementParser, AttrParser, Parser
 
 from action_manager import Action, ActionGroup
-from ai_msgs.msg import Argument
+from args_lib.msg import Argument
 
 
 

@@ -1,4 +1,4 @@
 geometry_msgs/Pose2D robot_pos
-Argument[] args
+args_lib/Argument[] args
 ---
 ActionPoint action_point

@@ -1,4 +1,4 @@
-from .argumentable import Argumentable
+from args_lib.argumentable import Argumentable
 from .object_requirement import ObjectRequirement
 from .util import get_action_point_service
 from .action_repeat import ActionRepeater
@@ -9,7 +9,8 @@ import math
 import rospy
 
 from geometry_msgs.msg import Pose2D
-from ai_msgs.msg import ActionPoint, ActionStatus, Argument
+from ai_msgs.msg import ActionPoint, ActionStatus
+from args_lib.msg import Argument
 from ai_msgs.srv import ComputeActionPoint
 
 from xml_class_parser import Parsable, Bind, BindDict, BindList

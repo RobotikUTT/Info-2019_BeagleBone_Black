@@ -9,10 +9,6 @@ ActionPerformer::ActionPerformer(std::string name) : Node(name, "action"), name(
 		this
 	);
 
-	// Suscribe to robot status
-	// TODO remove to handle only cancelling via scheduler
-	robotWatcherSub = nh.subscribe("/ai/controller/robot_status", 1, &ActionPerformer::onRobotStatus, this);
-
 	// Action server for this action
 	actionServer = new PerformActionSrv(
 		nh,
@@ -87,13 +83,3 @@ void ActionPerformer::actionPaused() {
 	// Send back to client
 	actionServer->setSucceeded(result);
 }
-
-/**
- *  Monitor robot status to catch HALT signal
- */
-void ActionPerformer::onRobotStatus(const RobotStatus::ConstPtr& msg) {
-  if (msg->robot_status == RobotStatus::ROBOT_HALT){
-	actionServer->shutdown();
-  }
-}
-

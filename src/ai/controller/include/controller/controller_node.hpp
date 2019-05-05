@@ -9,6 +9,8 @@
 
 #include "node_watcher/Node.hpp"
 
+#include "args_lib/Argumentable.hpp"
+
 #include "ai_msgs/NodeStatus.h"
 #include "ai_msgs/Side.h"
 
@@ -19,11 +21,10 @@
 #include "ai_msgs/SetSchedulerState.h"
 
 #include "geometry_msgs/Pose2D.h"
-#include "interface_msgs/DirectedPose.h"
+
+#include "interface_msgs/CanData.h"
+#include "interface_msgs/Directions.h"
 #include "interface_msgs/StmMode.h"
-#include "interface_msgs/SonarDistance.h"
-#include "interface_msgs/WheelsSpeed.h"
-#include "interface_msgs/RobotBlocked.h"
 
 #include "std_msgs/Int8.h"
 
@@ -42,7 +43,7 @@ using ros::ServiceClient;
 // Use ai_msgs namespace to simplify usage
 using namespace ai_msgs;
 
-using interface_msgs::DirectedPose;
+using interface_msgs::Directions;
 
 /**
  * @brief process inputs and change robot behavior according to that
@@ -55,16 +56,12 @@ public:
 private:
 	Subscriber status_sub;
 	Subscriber nodes_status_sub;
-	Subscriber sonar_distance_sub;
-	Subscriber robot_blocked_sub;
-	Subscriber robot_speed_sub;
-	Subscriber side_sub;
+	Subscriber can_data_sub;
 	Subscriber start_sub;
 
 	Publisher robot_status_pub;
 	Publisher proximity_stop_pub;
-	Publisher STM_SetPose_pub;
-	Publisher STM_AsserManagement_pub;
+	Publisher can_data_pub;
 
 	ServiceClient schedulerController;
 
@@ -80,9 +77,10 @@ private:
 
 	//void setRobotStatus(const RobotStatus::ConstPtr& msg);
 	void setRobotPosition(const geometry_msgs::Pose2D::ConstPtr& msg);
-	void setRobotSpeed(const interface_msgs::WheelsSpeed::ConstPtr& msg);
+	void onCanData(const interface_msgs::CanData::ConstPtr& msg);
 
-	void processSonars(const interface_msgs::SonarDistance::ConstPtr& msg);
+ 	void processSonars(const Argumentable& data);
+
 	void onStartSignal(const ai_msgs::StartRobot& msg);
 
 	void start();

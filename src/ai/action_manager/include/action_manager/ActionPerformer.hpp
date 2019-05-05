@@ -9,25 +9,24 @@
 #include <actionlib/server/simple_action_server.h>
 
 #include "ai_msgs/PerformAction.h"
-#include "ai_msgs/Argument.h"
+#include "args_lib/Argument.h"
 #include "ai_msgs/ComputeActionPoint.h"
 #include "ai_msgs/RobotStatus.h"
 #include "ai_msgs/ActionStatus.h"
 #include "ai_msgs/ActionPoint.h"
 
 #include "action_manager/Action.hpp"
-#include "action_manager/Argumentable.hpp"
+#include "args_lib/Argumentable.hpp"
 
 #include "node_watcher/Node.hpp"
 
-#include "interface_msgs/StmDone.h"
 #include "geometry_msgs/Pose2D.h"
 
 typedef actionlib::SimpleActionServer<ai_msgs::PerformAction> PerformActionSrv;
 
 using ai_msgs::RobotStatus;
 using ai_msgs::ActionStatus;
-using ai_msgs::Argument;
+using args_lib::Argument;
 
 using std::string;
 
@@ -53,7 +52,7 @@ protected:
 	void actionPerformed();
 	void actionPaused();
 private:
-	std::vector<ai_msgs::Argument> _args;
+	std::vector<args_lib::Argument> _args;
 
 	// Name of the perfomer
 	std::string name;
@@ -61,7 +60,6 @@ private:
 	// Ros objects
 	PerformActionSrv* actionServer;
 	ros::ServiceServer actionPointSrv;
-	ros::Subscriber robotWatcherSub;
 
 	bool _computeActionPoint(
 		ai_msgs::ComputeActionPoint::Request& req,

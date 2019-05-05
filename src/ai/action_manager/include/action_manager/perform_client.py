@@ -6,7 +6,7 @@ from .util import get_action_server, get_action_node_path
 
 import rospy
 import actionlib
-from ai_msgs.msg import PerformAction, PerformGoal
+from ai_msgs.msg import PerformAction, PerformGoal, ActionStatus
 from geometry_msgs.msg import Pose2D
 
 from typing import Union
@@ -31,8 +31,13 @@ class PerformClient(Node):
 		goal.arguments = action.arguments.to_list()
 		goal.robot_pos = position
 
-		client.send_goal(goal)
+		client.send_goal(goal, done_cb=self.done_callback)
 
+	def done_callback(self, state, result):
+		if result.status == ActionStatus.DONE:
+			self.on_finished()
+		else:
+			self.on_paused()
 	
 	def cancel_action(self):
 		if self.client != None:

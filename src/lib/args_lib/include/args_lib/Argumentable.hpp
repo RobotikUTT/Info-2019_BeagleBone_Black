@@ -1,13 +1,13 @@
 #ifndef ARGUMENTABLE_HPP
 #define ARGUMENTABLE_HPP
 
-#include "ai_msgs/Argument.h"
+#include "args_lib/Argument.h"
 
 #include <map>
 #include <vector>
 #include <string>
 
-using ai_msgs::Argument;
+using args_lib::Argument;
 
 using std::string;
 using std::vector;
@@ -28,6 +28,8 @@ public:
 	bool hasLong(string name) const;
 	bool hasDouble(string name) const;
 	bool hasString(string name) const;
+
+	void reset();
 
 	void fromList(vector<Argument> args, bool reset = false);
 	vector<Argument> toList() const;

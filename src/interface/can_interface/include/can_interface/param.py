@@ -2,7 +2,7 @@ from xml_class_parser import Parsable, Enum, ParsingException, Context, Slice
 from xml_class_parser.bind import Bind, BindDict, BindList
 from xml_class_parser.helper import TagAttrTuple
 
-from action_manager import Argumentable
+from args_lib.argumentable import Argumentable
 
 from typing import List
 

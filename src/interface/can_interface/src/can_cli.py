@@ -6,7 +6,7 @@ import rospy
 import can
 
 from can_interface import FrameList, DeviceList
-from action_manager import Argumentable
+from args_lib.argumentable import Argumentable
 
 def main():
 	devices = DeviceList.parse_file("can/devices.xml", "interface_description")

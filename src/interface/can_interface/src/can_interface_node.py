@@ -5,7 +5,7 @@ import rospy
 from xml_class_parser import Parsable, Bind, Context
 from xml_class_parser.helper import ParsableDict
 
-from action_manager import Argumentable
+from args_lib.argumentable import Argumentable
 from node_watcher import NodeStatusHandler
 
 from rospy import Publisher, Subscriber
@@ -48,6 +48,7 @@ class CanInterfaceNode(NodeStatusHandler):
 		self.bus = can.interface.Bus("vcan0")
 		self.can_input_thread = threading.Thread(name="can_input", target=self.wait_for_can_message)
 
+		# TODO /can_interface/out as a service
 		self.subscriber: Subscriber = Subscriber("/can_interface/out", CanData, self.on_ros_message)
 		self.publisher: Publisher = Publisher("/can_interface/in", CanData, queue_size=10)
 

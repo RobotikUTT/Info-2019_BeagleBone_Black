@@ -2,13 +2,13 @@
 #define ATOMIC_ACTION_H
 
 #include "action_manager/Action.hpp"
-#include "action_manager/Argumentable.hpp"
+#include "args_lib/Argumentable.hpp"
 
 #include "ai_msgs/ActionPoint.h"
 #include "ai_msgs/ComputeActionPoint.h"
 
 #include <ros/ros.h>
-#include "ai_msgs/Argument.h"
+#include "args_lib/Argument.h"
 
 #include <string>
 #include <vector>

@@ -1,3 +1,0 @@
-<launch>
-	<node name="simple_test" pkg="simple_test" type="node" output="screen" />
-</launch>

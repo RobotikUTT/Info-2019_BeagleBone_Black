@@ -10,7 +10,7 @@ from interface_msgs.msg import CanData
 from ai_msgs.msg import NodeStatus
 
 from can_interface import FrameList, DeviceList
-from action_manager import Argumentable
+from args_lib.argumentable import Argumentable
 from node_watcher import NodeStatusHandler
 
 import can
@@ -175,6 +175,9 @@ class TestInterface(unittest.TestCase):
 			# Assert equal to initial
 			for param in frame.params:
 				self.assertEqual(initial.get(param), received.get(param), "received data intact")
+
+	def test_ignoring_frame(self):
+		self.fail("not implemented")
 
 if __name__ == '__main__':
 	rostest.rosrun('can_interface', 'test_interface', TestInterface, sys.argv)

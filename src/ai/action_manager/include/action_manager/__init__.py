@@ -1,4 +1,3 @@
-from .argumentable import Argumentable
 from .action import Action
 from .action_group import ActionGroup
 

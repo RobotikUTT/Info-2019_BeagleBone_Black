@@ -8,7 +8,8 @@
 #include "action_manager/ActionPerformer.hpp"
 
 #include "interface_msgs/StmMode.h"
-#include "interface_msgs/DirectedPose.h"
+#include "interface_msgs/Directions.h"
+#include "interface_msgs/CanData.h"
 
 /**
  * @brief class for the action of reaching a position
@@ -19,19 +20,16 @@ public:
   ReachActionPerfomer(std::string name);
 
 private:
-  ros::Subscriber finish_sub;
+  ros::Subscriber can_data_sub;
 
-  ros::Publisher STMGoToAngle_pub;
-  ros::Publisher STMGoTo_pub;
-  ros::Publisher STMRotation_pub;
-  ros::Publisher STM_AsserManagement_pub;
+  ros::Publisher can_data_pub;
   ros::Timer timerTimeout;
   
   ActionPoint computeActionPoint(Argumentable* actionArgs, Pose2D robot_pos) override;
   void start() override;
   void cancel() override;
 
-  void movementDone(const interface_msgs::StmDone::ConstPtr&);
+  void onCanData(const interface_msgs::CanData::ConstPtr&);
   void timeoutCallback(const ros::TimerEvent&);
 
 };

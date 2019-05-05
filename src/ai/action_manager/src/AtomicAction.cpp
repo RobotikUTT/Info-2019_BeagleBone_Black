@@ -44,8 +44,8 @@ ActionPoint& AtomicAction::actionPoint(Pose2D& previousPoint) {
 	// Cast succeed and basic properties also
 	if (atomic != NULL && Action::equals(action) && performer() == atomic->performer()) {
 		// Then test for arguments
-		std::vector<ai_msgs::Argument> args = getArgs();
-		std::vector<ai_msgs::Argument> compArgs = atomic->getArgs();
+		std::vector<args_lib::Argument> args = getArgs();
+		std::vector<args_lib::Argument> compArgs = atomic->getArgs();
 
 		// as many args
 		if (args.size() != compArgs.size()) return false;

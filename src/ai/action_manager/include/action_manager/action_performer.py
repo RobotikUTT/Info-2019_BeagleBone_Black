@@ -3,14 +3,15 @@ import rospy
 from actionlib import SimpleActionServer
 
 # Messages
-from ai_msgs.msg import ActionPoint, Argument, ActionStatus, \
+from ai_msgs.msg import ActionPoint, ActionStatus, \
 	PerformResult, PerformGoal, PerformAction
 from ai_msgs.srv import ComputeActionPoint, ComputeActionPointRequest, ComputeActionPointResponse
 from geometry_msgs.msg import Pose2D
+from args_lib.msg import Argument
 
 from node_watcher import Node
 from .util import get_action_point_service, get_action_server
-from .argumentable import Argumentable
+from args_lib.argumentable import Argumentable
 
 from typing import List, Dict
 from abc import ABC, abstractmethod

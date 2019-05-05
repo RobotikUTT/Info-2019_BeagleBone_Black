@@ -8,7 +8,7 @@
  */
 Controller::Controller() : Node("controller", "ai"), side(Side::LEFT) {
 	// attributes
-	direction = DirectedPose::DIRECTION_NONE;
+	direction = Directions::NONE;
 	proximity_stop = false;
 	panelUp = 0;
 	startSignalReceived = false;
@@ -16,13 +16,11 @@ Controller::Controller() : Node("controller", "ai"), side(Side::LEFT) {
 
 	// Advertisers
 	proximity_stop_pub = nh.advertise<ProximityStop>("proximity", 1);
-	STM_SetPose_pub = nh.advertise<geometry_msgs::Pose2D>("/STM/SetPose", 1);
-	STM_AsserManagement_pub = nh.advertise<interface_msgs::StmMode>("/STM/AsserManagement", 1);
+	can_data_pub = nh.advertise<interface_msgs::CanData>("/can_interface/out", 1);
 	robot_status_pub = nh.advertise<RobotStatus>("/ai/controller/robot_status", 1);
 
 	// Subscribers
-	robot_speed_sub = nh.subscribe("/STM/GetSpeed", 1, &Controller::setRobotSpeed, this);
-	sonar_distance_sub = nh.subscribe("/ARDUINO/SonarDistance", 1, &Controller::processSonars, this);
+	can_data_sub = nh.subscribe("/can_interface/in", 1, &Controller::onCanData, this);
 	
 	start_sub = nh.subscribe("/signal/start", 1, &Controller::onStartSignal, this);
 	
@@ -59,23 +57,24 @@ void Controller::start() {
 		return;
 	}
 
-	// Compute initial position
-	int x, y, angle;
-	nh.getParam("controller/robot_pos/x", x);
-	nh.getParam("controller/robot_pos/y", y);
-	nh.getParam("controller/robot_pos/angle", angle);
-
 	// init STM position
-	geometry_msgs::Pose2D msg;
-	msg.x = x;
-	msg.y = y;
-	msg.theta = angle;
-	STM_SetPose_pub.publish(msg);
+	Argumentable params;
+	params.setLong("x", 0);
+	params.setLong("y", 0);
+	params.setLong("angle", 0);
+
+	interface_msgs::CanData msg;
+	msg.type = "set_position";
+	msg.params = params.toList();
+	this->can_data_pub.publish(msg);
 
 	// make it running
-	interface_msgs::StmMode msg2;
-	msg2.value = interface_msgs::StmMode::START;
-	STM_AsserManagement_pub.publish(msg2);
+	params.reset();
+	params.setLong("mode", interface_msgs::StmMode::START);
+
+	msg.type = "set_stm_mode";
+	msg.params = params.toList();
+	this->can_data_pub.publish(msg);
 
 	// start actions by calling scheduler service
 	SetSchedulerState setter;
@@ -97,59 +96,68 @@ void Controller::stop() {
 	schedulerController.call(setter);
 
 	// stop all movements and actions
-	interface_msgs::StmMode msg;
-	msg.value = interface_msgs::StmMode::STOP;
-	STM_AsserManagement_pub.publish(msg);
+	Argumentable params;
+	interface_msgs::CanData msg;
+	msg.type = "set_stm_mode";
 
-	msg.value = interface_msgs::StmMode::RESET_ORDERS;
-	STM_AsserManagement_pub.publish(msg);
+	params.setLong("mode", interface_msgs::StmMode::STOP);
+	msg.params = params.toList();
+	this->can_data_pub.publish(msg);
+
+	params.setLong("mode", interface_msgs::StmMode::RESET_ORDERS);
+	msg.params = params.toList();
+	this->can_data_pub.publish(msg);
+}
+
+void Controller::onCanData(const interface_msgs::CanData::ConstPtr& msg) {
+	Argumentable input;
+	input.fromList(msg->params);
+
+	// TODO can interface to check for channels
+	if (msg->type == "current_speed") {
+		// Set robot direction according to speed
+		int16_t linearSpeed = input.getLong("linear_speed");
+
+		if (linearSpeed > 0) {
+			direction = Directions::FORWARD;
+		} else if (linearSpeed < 0) {
+			direction = Directions::BACKWARD;
+		} else {
+			direction = Directions::NONE;
+		}
+	}
+
+	else if (msg->type == "sonar_distance") {
+		this->processSonars(input);
+	}
 }
 
 /**
- * @brief retrieve robot speed from can
- * @param[in] msg message containing current speed
- */
-void Controller::setRobotSpeed(const interface_msgs::WheelsSpeed::ConstPtr &msg) {
-	int16_t linearSpeed = msg->linear_speed;
-
-	if (linearSpeed > 0) {
-		direction = DirectedPose::DIRECTION_FORWARD;
-	}
-	else if (linearSpeed < 0) {
-		direction = DirectedPose::DIRECTION_BACKWARD;
-	}
-	else {
-		direction = DirectedPose::DIRECTION_NONE;
-	}
-}
-
-/**
- * @brief process sonars data to detect if an proximity stop is
+ * process sonars data to detect if an proximity stop is
  * mandatory
- *
- * @param[in] msg message containing sonars data
  */
-void Controller::processSonars(const interface_msgs::SonarDistance::ConstPtr &msg) {
+void Controller::processSonars(const Argumentable& data) {
 	bool last_proximity_value = proximity_stop;
 	uint8_t front_left, front_right,
 		back_left, back_right;
 
-	front_left = msg->dist_front_left;
-	front_right = msg->dist_front_right;
-	back_left = msg->dist_back_left;
-	back_right = msg->dist_back_right;
+	front_left = data.getLong("dist_front_left");
+	front_right = data.getLong("dist_front_right");
+	back_left = data.getLong("dist_back_left");
+	back_right = data.getLong("dist_back_right");
+
 	/*
 	 * Proximity stop is enabled in case the distance
 	 * become less or equals than limit distances in
 	 * the current direction.
 	 */
 	proximity_stop = (
-		direction == DirectedPose::DIRECTION_FORWARD && (
+		direction == Directions::FORWARD && (
 			front_left <= SONAR_MIN_DIST_FORWARD + 6 ||
 			front_right <= SONAR_MIN_DIST_FORWARD + 16
 		)
 	) || (
-		direction == DirectedPose::DIRECTION_BACKWARD && (
+		direction == Directions::BACKWARD && (
 			back_left <= SONAR_MIN_DIST_BACKWARD ||
 			back_right <= SONAR_MIN_DIST_BACKWARD
 		)
@@ -166,14 +174,15 @@ void Controller::processSonars(const interface_msgs::SonarDistance::ConstPtr &ms
 			ROS_WARN("UNSET EMG");
 		}
 
-		interface_msgs::StmMode can_msg;
-		if (proximity_stop) {
-			can_msg.value = interface_msgs::StmMode::SETEMERGENCYSTOP;
-		} else {
-			can_msg.value = interface_msgs::StmMode::UNSETEMERGENCYSTOP;
-		}
+		interface_msgs::CanData msg;
+		msg.type = "set_stm_mode";
 
-		STM_AsserManagement_pub.publish(can_msg);
+		Argumentable params;
+		params.setLong("mode",
+			proximity_stop ? interface_msgs::StmMode::SETEMERGENCYSTOP : interface_msgs::StmMode::UNSETEMERGENCYSTOP);
+
+		msg.params = params.toList();
+		this->can_data_pub.publish(msg);
 	}
 }
 

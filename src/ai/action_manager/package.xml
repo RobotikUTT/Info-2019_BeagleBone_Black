@@ -16,7 +16,8 @@
   <!-- Packages -->
   <depend>actionlib</depend>
   <depend>node_watcher</depend>
-
+  <depend>args_lib</depend>
+  
   <!-- Messages -->
   <depend>ai_msgs</depend>
   <depend>interface_msgs</depend>

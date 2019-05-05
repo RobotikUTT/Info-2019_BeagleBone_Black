@@ -1,11 +1,13 @@
 from xml_class_parser import Parsable, Enum, ParsingException, Context, Slice
 from xml_class_parser.bind import Bind, BindDict, BindList
 
-from action_manager import Argumentable
+from args_lib.argumentable import Argumentable
 
-from .param import Param
+from .param import Param, MissingParameterException
 
 from typing import Dict
+
+import rospy
 
 @Parsable(
 	name = "frame",
@@ -84,7 +86,7 @@ class Frame:
 				param.ros_to_can(data_array, values)
 		except MissingParameterException as e:
 			rospy.logerr("unable to find parameter {} for frame {}, not sending"
-				.format(e, frame_type.name))
+				.format(e, self.name))
 
 			return None
 

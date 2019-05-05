@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   # Other packages
   node_watcher
   interface_description
+  args_lib
 )
 
 catkin_python_setup()
@@ -20,7 +21,7 @@ catkin_python_setup()
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS rospy std_msgs node_watcher interface_msgs
+  CATKIN_DEPENDS rospy std_msgs node_watcher interface_msgs args_lib
 #  DEPENDS system_lib
 )
 

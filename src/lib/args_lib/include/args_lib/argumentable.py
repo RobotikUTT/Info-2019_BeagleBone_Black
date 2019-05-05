@@ -1,18 +1,7 @@
-from ai_msgs.msg import Argument
+from args_lib.msg import Argument
 
 from typing import List, Dict, Union
 
-from xml_class_parser import Parsable, Bind, Slice, BindDict
-
-# Make argument msg parsable
-Argument = Parsable(name=Bind(to="name"), content=Bind(to="value"))(Argument)
-
-@Parsable(
-	name = Bind(to="name"),
-	children=[ # Parse arguments 
-		BindDict(to="values", type=Argument, key="name", post_cast=Slice("value"))
-	]
-)
 class Argumentable:
 	"""
 		This object make it easier to manipulate variant type argument.

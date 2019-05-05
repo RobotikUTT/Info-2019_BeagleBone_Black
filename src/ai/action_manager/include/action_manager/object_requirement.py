@@ -1,6 +1,6 @@
 from xml_class_parser import Parsable
 
-from .argumentable import Argumentable
+from args_lib.argumentable import Argumentable
 
 from typing import Union
 

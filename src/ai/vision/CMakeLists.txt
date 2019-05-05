@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   interface_msgs
 
   # Other packages
+  args_lib
   node_watcher
   ai_description
   action_manager

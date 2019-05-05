@@ -1,4 +1,4 @@
-#include "action_manager/Argumentable.hpp"
+#include "args_lib/Argumentable.hpp"
 
 string Argumentable::get(string name) const {
 	auto pos = this->values.find(name);
@@ -80,6 +80,10 @@ bool Argumentable::hasDouble(string name) const {
 
 bool Argumentable::hasString(string name) const {
 	return has(name);
+}
+
+void Argumentable::reset() {
+	this->values.clear();
 }
 
 void Argumentable::fromList(vector<Argument> args, bool reset /*= false*/) {

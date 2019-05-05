@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   std_msgs
   geometry_msgs
+  args_lib
 )
 
 # Message containing only constants shared by multiple messages
@@ -25,7 +26,6 @@ add_message_files(DIRECTORY msg
   FILES
   # Type definition
   ActionPoint.msg
-  Argument.msg
 
   # Meaningfull message
   PointsScored.msg # replace by std_msgs/Int16
@@ -54,7 +54,7 @@ add_action_files(
 )
 
 # Generate added messages and services with any dependencies listed here
-generate_messages(DEPENDENCIES std_msgs actionlib_msgs geometry_msgs)
+generate_messages(DEPENDENCIES std_msgs actionlib_msgs geometry_msgs args_lib)
 
 # Declare dependencies for external packages
-catkin_package(CATKIN_DEPENDS message_runtime std_msgs actionlib_msgs)
+catkin_package(CATKIN_DEPENDS message_runtime args_lib std_msgs actionlib_msgs geometry_msgs)

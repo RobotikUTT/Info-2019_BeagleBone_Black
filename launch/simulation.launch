@@ -11,6 +11,11 @@
 		<include file="./src/procedures/reach/launch/pkg.launch"/>
 	</group>
 
+	<group ns="interface">
+		<!-- Interface to a fake can bus redirecting to simulation node -->
+		<include file="./src/interface/can_interface/launch/pkg.launch"/>
+	</group>
+
 	<group ns="simulation">
 		<include file="./src/simulation/input_simulation/launch/pkg.launch"/>
 	</group>

@@ -2,7 +2,7 @@ from . import Shape
 
 from typing import List, Dict
 
-from action_manager import Argumentable
+from args_lib.argumentable import Argumentable
 from copy import copy, deepcopy
 
 from xml_class_parser import Parsable, Bind, BindList, BindDict, Enum

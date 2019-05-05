@@ -7,12 +7,8 @@
  * @param[in] name name of the action server
  */
 ReachActionPerfomer::ReachActionPerfomer(std::string name) : ActionPerformer(name) {
-	finish_sub = nh.subscribe("/ALL/Finish", 1, &ReachActionPerfomer::movementDone, this);
-	
-	this->STMGoToAngle_pub = nh.advertise<geometry_msgs::Pose2D>("/STM/GoToAngle", 1);
-	this->STMGoTo_pub = nh.advertise<geometry_msgs::Pose2D>("/STM/GoTo", 1);
-	this->STMRotation_pub = nh.advertise<geometry_msgs::Pose2D>("/STM/Rotation", 1);
-	this->STM_AsserManagement_pub = nh.advertise<interface_msgs::StmMode>("/STM/AsserManagement", 1);
+	this->can_data_sub = nh.subscribe("/can_interface/in", 1, &ReachActionPerfomer::onCanData, this);
+	this->can_data_pub = nh.advertise<interface_msgs::CanData>("/can_interface/out", 1);
 
 	setNodeStatus(NodeStatus::READY);
 }
@@ -26,45 +22,42 @@ ActionPoint ReachActionPerfomer::computeActionPoint(Argumentable* actionArgs, Po
  * @brief Callback called when the STM finished all move order
  * @param[in]  msg   The finish message
  */
-void ReachActionPerfomer::movementDone(const interface_msgs::StmDone::ConstPtr& msg){
-	// ROS_WARN_STREAM("Move; FINISH : state "<< act.isActive());
-
-	if (/*!actionServer->isActive() ||*/ msg->val != 0)
-		return;
-
-	timerTimeout.stop();
-
-	actionPerformed();
+void ReachActionPerfomer::onCanData(const interface_msgs::CanData::ConstPtr& msg){
+	if (msg->type == "order_complete") {
+		timerTimeout.stop();
+		actionPerformed();
+	}
 }
 
 /**
  * @brief run action toward a new goal and send the appropriate to the STM
  */
 void ReachActionPerfomer::start() {
-	interface_msgs::DirectedPose msg;
+	interface_msgs::CanData msg;
+	Argumentable params;
 
-	msg.x = getLong("x", 0);
-	msg.y = getLong("y", 0);
-	msg.theta = getLong("angle", 0);
-	msg.direction = getLong("direction", 0);
+	// Copy parameters
+	params.setLong("x", getLong("x", 0));
+	params.setLong("y", getLong("y", 0));
+	params.setLong("angle", getLong("angle", 0));
+	params.setLong("direction", getLong("direction", 0));
 
 	/**
 	 * Boolean equation determining which move the action should use
 	 */
 	int moveType = hasLong("x") * hasLong("y") * hasLong("direction") + 2 * hasLong("angle");
 
-	switch (moveType)
-	{
+	switch (moveType) {
 		case 1: // x, y and direction provided
-			STMGoTo_pub.publish(msg);
+			msg.type = "go_to";
 			break;
 
 		case 2: // angle only provided
-			STMRotation_pub.publish(msg);
+			msg.type = "rotate";
 			break;
 
 		case 3: // everything is provided
-			STMGoToAngle_pub.publish(msg);
+			msg.type = "go_to_angle";
 			break;
 
 		default:
@@ -72,6 +65,9 @@ void ReachActionPerfomer::start() {
 			throw "unable to determine message type to use";
 			break;
 	}
+
+	msg.params = params.toList();
+	this->can_data_pub.publish(msg);
 
 	int timeout = getLong("timeout", 0);
 	if (timeout > 0) {
@@ -81,10 +77,13 @@ void ReachActionPerfomer::start() {
 
 void ReachActionPerfomer::cancel() {
 	// reset all goal in the STM
-	interface_msgs::StmMode msg;
+	Argumentable params;
+	interface_msgs::CanData msg;
+	msg.type = "set_stm_mode";
 
-	msg.value = interface_msgs::StmMode::RESET_ORDERS;
-	STM_AsserManagement_pub.publish(msg);
+	params.setLong("mode", interface_msgs::StmMode::RESET_ORDERS);
+	msg.params = params.toList();
+	this->can_data_pub.publish(msg);
 }
 
 /**

@@ -59,7 +59,7 @@
 	<frame name="set_stm_mode" id="7" source="bbb" dest="stm">
 		<description>Set STM mode</description>
 
-		<byte name="value">
+		<byte name="mode">
 			<stop v="0" />
 			<start v="1" />
 			<pause v="2" />

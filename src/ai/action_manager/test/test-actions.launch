@@ -3,11 +3,11 @@
 	<node name="simple_action_performers"
     pkg="action_manager"
     type="simple_action_performers.py"
-    output="screen" required="true" />
+    required="true" />
 	<node name="node_watcher"
     pkg="node_watcher"
     type="node"
-    output="screen" required="True"/>
+    required="True"/>
 
   <test test-name="test_action" pkg="action_manager" type="test_action.py" />
   <test test-name="test_action_group" pkg="action_manager" type="test_action_group.py" />
