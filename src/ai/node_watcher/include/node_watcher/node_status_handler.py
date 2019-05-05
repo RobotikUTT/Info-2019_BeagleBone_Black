@@ -65,13 +65,16 @@ class NodeStatusHandler:
 		
 
 	# Node waiting
-	def wait_for_nodes(self, timeout: int):
+	def wait_for_nodes(self, timeout: float):
+		"""
+			Wait for nodes for the given timeout in seconds
+		"""
 		if len(self._requirements) == 0:
 			self._wait_callback(True)
 		
 		# Call service to retrieve code
 		try:
-			response = self._waiter_client(self._requirements, timeout)
+			response = self._waiter_client(self._requirements, int(timeout + 0.5))
 			self._wait_request_code = response.request_code
 
 			# Wait for publisher to be ready to address not sent issue
@@ -112,6 +115,9 @@ class NodeStatusHandler:
 		except:
 			rospy.logerr("unable to parse {}".format(filename))
 
+
+	def reset_requirements(self):
+		self._requirements = []
 		
 	def require(self, nodename: str, package: str, required: bool = True):
 		nodepath = self._make_node_path(nodename, package)

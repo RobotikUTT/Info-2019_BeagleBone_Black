@@ -1,0 +1,6 @@
+<launch>
+	<!-- Some performers for testing purpose -->
+	<node name="node_watcher" pkg="node_watcher" type="node" required="True"/>
+
+	<test test-name="test_ns_handler" pkg="node_watcher" type="test_ns_handler.py" />
+</launch>

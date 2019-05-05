@@ -59,3 +59,13 @@ target_link_libraries(${PROJECT_NAME}_node
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
+
+# Testing
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+  
+  foreach(T
+      test/test-ns-handler.launch)
+     add_rostest(${T})
+  endforeach()
+endif()
