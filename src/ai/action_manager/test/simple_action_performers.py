@@ -5,7 +5,7 @@ from args_lib.argumentable import Argumentable
 
 from typing import Dict
 from geometry_msgs.msg import Pose2D
-from ai_msgs.msg import ActionPoint, NodeStatus
+from ai_msgs.msg import ActionPoint, NodeStatus, ActionStatus
 
 import rospy
 import time
@@ -22,10 +22,10 @@ class SleepActionPerformer(ActionPerformer):
 		return res
 	
 	def start(self, args: Argumentable):
-		time.sleep(args.get("duration", int))
+		time.sleep(args.get("duration", float))
 
 		# Mark action as done after waiting
-		self.action_performed()
+		self.returns(ActionStatus.DONE)
 
 class FailActionPerformer(ActionPerformer):
 	def __init__(self):
@@ -40,7 +40,7 @@ class FailActionPerformer(ActionPerformer):
 	
 	def start(self, args: Argumentable):
 		# Mark action as paused
-		self.action_paused()
+		self.returns(ActionStatus.PAUSED)
 
 class MoveActionPerformer(ActionPerformer):
 	def __init__(self):
@@ -57,10 +57,9 @@ class MoveActionPerformer(ActionPerformer):
 
 		return res
 	
-	def start(self, args: Dict[str, str]):
+	def start(self, args: Argumentable):
 		# Mark action as paused
-		self.action_paused()
-
+		self.returns(ActionStatus.PAUSED)
 
 
 if __name__ == '__main__':

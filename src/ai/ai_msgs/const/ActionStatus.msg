@@ -1,5 +1,3 @@
-int8 state_code
-
 # Constants for [state_code]
 int8 IDLE = 0
 int8 RUNNING = 1

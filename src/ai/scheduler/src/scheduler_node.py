@@ -78,18 +78,11 @@ class SchedulerNode(PerformClient):
 			self.robot_pos.y = data.params.get("y", int)
 			self.robot_pos.theta = data.params.get("theta", int)
 
-	def on_finished(self):
+	def on_action_returns(self, state, result):
 		"""
 			Current action done
 		"""
-		self.current_action.state = ActionStatus.DONE
-		self.next_action()
-
-	def on_paused(self):
-		"""
-			Current action paused
-		"""
-		self.current_action.state = ActionStatus.DONE
+		self.current_action.state = result.state
 		self.next_action()
 
 	def next_action(self):

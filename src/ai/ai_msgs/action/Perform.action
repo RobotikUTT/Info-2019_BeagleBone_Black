@@ -3,7 +3,7 @@ args_lib/Argument[] arguments
 geometry_msgs/Pose2D robot_pos
 ---
 #result
-ActionStatus status
+int8 state
 ---
 #feedback
 

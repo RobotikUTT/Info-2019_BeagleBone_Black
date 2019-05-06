@@ -11,34 +11,33 @@ from geometry_msgs.msg import Pose2D
 
 from typing import Union
 
+class PerformException(Exception):
+	pass
+
 class PerformClient(Node):
 	def __init__(self, name: str, package: str):
 		super().__init__(name, package)
 
 		self.client: Union[actionlib.SimpleActionClient, None] = None
 
-	def on_finished(self):
-		pass
-	
-	def on_paused(self):
-		pass
 	
 	def perform_action(self, action: Action, position: Pose2D):
+		# Create client
 		client = actionlib.SimpleActionClient(get_action_server(action.name), PerformAction)
-		client.wait_for_server()
 
-		goal = PerformGoal()
-		goal.arguments = action.arguments.to_list()
-		goal.robot_pos = position
+		# Connect
+		if client.wait_for_server(rospy.Duration(0.8)):
+			goal = PerformGoal()
+			goal.arguments = action.arguments.to_list()
+			goal.robot_pos = position
 
-		client.send_goal(goal, done_cb=self.done_callback)
-
-	def done_callback(self, state, result):
-		if result.status == ActionStatus.DONE:
-			self.on_finished()
+			client.send_goal(goal, done_cb=self.on_action_returns)
 		else:
-			self.on_paused()
-	
+			raise PerformException("unable to reach server")
+
+	def on_action_returns(self, state, result):
+		pass
+		
 	def cancel_action(self):
 		if self.client != None:
 			self.client.cancel_goal()

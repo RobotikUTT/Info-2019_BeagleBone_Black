@@ -48,19 +48,14 @@ class ActionPerformer(Node, ABC):
 
 
 	# Function managing the action
-	def action_performed(self):
-		'''Function to call when the action is performed'''
+	def returns(self, state = ActionStatus.DONE):
+		'''
+			Function to call when the action is interrupted
+			with a given state
+		'''
 		# Create result message
 		result = PerformResult()
-		result.status.state_code = ActionStatus.DONE
-
-		# Send back to client
-		self._action_server.set_succeeded(result)
-
-	def action_paused(self):
-		'''Fonction to call when the action is paused'''
-		result = PerformResult()
-		result.status.state_code = ActionStatus.PAUSED
+		result.state = state
 
 		# Send back to client
 		self._action_server.set_succeeded(result)
@@ -83,7 +78,7 @@ class ActionPerformer(Node, ABC):
 			goal: PerformGoal = self._action_server.accept_new_goal()
 
 			# run action with given args
-			self.start(Argumentable().from_list(goal.args))
+			self.start(Argumentable().from_list(goal.arguments))
 
 	def _on_preempt(self):
 		self.cancel()

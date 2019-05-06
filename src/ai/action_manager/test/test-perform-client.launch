@@ -1,0 +1,9 @@
+<launch>
+  <!-- Some performers for testing purpose -->
+	<node name="simple_action_performers" pkg="action_manager"
+    type="simple_action_performers.py" required="true" />
+	<node name="node_watcher" pkg="node_watcher"
+    type="node" required="True"/>
+
+  <test test-name="test_perform_client" pkg="action_manager" type="test_perform_client.py" time-limit="5.0" />
+</launch>
