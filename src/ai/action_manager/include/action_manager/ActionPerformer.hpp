@@ -49,8 +49,7 @@ protected:
 	virtual void cancel() {};
 
 	// Function managing the action
-	void actionPerformed();
-	void actionPaused();
+	void returns(int status);
 private:
 	std::vector<args_lib::Argument> _args;
 

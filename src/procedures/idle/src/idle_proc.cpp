@@ -22,7 +22,7 @@ ActionPoint IdleActionPerfomer::computeActionPoint(Argumentable* actionArgs, Pos
  */
 void IdleActionPerfomer::start() {
 	ros::Duration(getLong("duration", 1)).sleep();
-	this->actionPerformed();
+	this->returns(ActionStatus::DONE);
 }
 
 void IdleActionPerfomer::cancel() {}

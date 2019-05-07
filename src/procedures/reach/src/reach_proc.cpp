@@ -14,8 +14,12 @@ ReachActionPerfomer::ReachActionPerfomer(std::string name) : ActionPerformer(nam
 }
 
 ActionPoint ReachActionPerfomer::computeActionPoint(Argumentable* actionArgs, Pose2D robotPos) {
-	// TODO
-	return ActionPoint();
+	ActionPoint result;
+	result.start = robotPos;
+	result.end.x = getLong("x", robotPos.x);
+	result.end.y = getLong("y", robotPos.y);
+	result.end.theta = getLong("angle", robotPos.theta);
+	return result;
 }
 
 /**
@@ -25,7 +29,7 @@ ActionPoint ReachActionPerfomer::computeActionPoint(Argumentable* actionArgs, Po
 void ReachActionPerfomer::onCanData(const interface_msgs::CanData::ConstPtr& msg){
 	if (msg->type == "order_complete") {
 		timerTimeout.stop();
-		actionPerformed();
+		returns(ActionStatus::DONE);
 	}
 }
 
@@ -40,12 +44,12 @@ void ReachActionPerfomer::start() {
 	params.setLong("x", getLong("x", 0));
 	params.setLong("y", getLong("y", 0));
 	params.setLong("angle", getLong("angle", 0));
-	params.setLong("direction", getLong("direction", 0));
+	params.setLong("direction", getLong("direction", interface_msgs::Directions::FORWARD));
 
 	/**
 	 * Boolean equation determining which move the action should use
 	 */
-	int moveType = hasLong("x") * hasLong("y") * hasLong("direction") + 2 * hasLong("angle");
+	int moveType = hasLong("x") * hasLong("y") + 2 * hasLong("angle");
 
 	switch (moveType) {
 		case 1: // x, y and direction provided
@@ -62,8 +66,8 @@ void ReachActionPerfomer::start() {
 
 		default:
 			ROS_ERROR_STREAM("unable to determine message type to use " << moveType << " like " << hasLong("x") << ":" << hasLong("y") << ":" << hasLong("direction") << ":" << hasLong("angle"));
-			throw "unable to determine message type to use";
-			break;
+			returns(ActionStatus::IMPOSSIBLE);
+			return;
 	}
 
 	msg.params = params.toList();
@@ -96,7 +100,7 @@ void ReachActionPerfomer::timeoutCallback(const ros::TimerEvent& timer){
 	cancel();
 
 	// Pause it
-	actionPaused();
+	returns(ActionStatus::PAUSED);
 }
 
 

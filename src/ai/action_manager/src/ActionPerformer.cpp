@@ -63,22 +63,10 @@ void ActionPerformer::onPreempt() {
 /**
  * Terminate the action
  */
-void ActionPerformer::actionPerformed() {
+void ActionPerformer::returns(int status) {
 	// Create result message
 	ai_msgs::PerformResult result;
-	result.state = ActionStatus::DONE;
-
-	// Send back to client
-	actionServer->setSucceeded(result);
-}
-
-/**
- * Pause the action
- */
-void ActionPerformer::actionPaused() {
-	// Create result message
-	ai_msgs::PerformResult result;
-	result.state = ActionStatus::PAUSED;
+	result.state = status;
 
 	// Send back to client
 	actionServer->setSucceeded(result);

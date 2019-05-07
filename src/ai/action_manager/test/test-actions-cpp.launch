@@ -1,0 +1,14 @@
+<launch>
+	<!-- Da great node_watcher -->
+	<node name="node_watcher" pkg="node_watcher" type="node" required="true"/>
+
+	<!-- Some action perfomers in cpp to test -->
+	<node name="test_fail_performer" pkg="action_manager" type="test_fail_performer" required="true" />
+	<node name="test_sleep_performer" pkg="action_manager" type="test_sleep_performer" required="true" />
+	<node name="test_move_performer" pkg="action_manager" type="test_move_performer" required="true" />
+
+	<!-- Tests to perform -->
+	<test test-name="test_perform_client" pkg="action_manager" type="test_perform_client.py" time-limit="5.0" />
+	<test test-name="test_action" pkg="action_manager" type="test_action.py" />
+	<test test-name="test_action_group" pkg="action_manager" type="test_action_group.py" />
+</launch>
