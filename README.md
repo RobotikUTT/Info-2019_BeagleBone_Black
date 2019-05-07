@@ -1,23 +1,30 @@
 # Beagle Bone Black : le code haut niveau
 
-Ce repo contient le code permettant au gros robot de fonctionner pour la coupe de france de robotique 2019.
+Ce repo contient le code permettant au gros robot de fonctionner pour la coupe de france de robotique 2019. Une documentation plus avancée est disponible sur [le wiki](https://github.com/RobotikUTT/Info-2019_BeagleBone_Black/wiki).
 
-## Installation du projet
+## Télécharger et utiliser le projet
 
-Il est d'abord nécessaire de cloner le projet.
-~~~~
+L'installation de ROS est nécessaire pour pouvoir compiler et éxécuter le projet, se référer [à la documentation officielle pour votre distribution](https://www.ros.org/install/). Une page du wiki est dédiée à la configuration d'une carte contenant le code.
+
+Ceci fait, il faut simplement cloner le projet avec git dans le dossier voulu.
+~~~~bash
 git clone https://github.com/RobotikUTT/Info-2019_BeagleBone_Black.git
 cd Info-2019_BeagleBone_Black
 ~~~~
 
-Un script contenant le nécessaire pour lancer le projet dans un environnement ubuntu 18 se trouve dans le dossier script. Sous windows, l'utilisation d'un sous-système linux (WSL) avec ubuntu 18 convient également.
-~~~~
+Différents scripts dans le dossier `scripts` sont disponibles pour installer différentes dépendances. Etant donné les changements opérés sur ROS et les différences entre distributions, n'hésitez pas à adapter le script à votre distribution.
+~~~~bash
 ./scripts/setup.sh
 ~~~~
 
 A noter que le script installe catkin-tools, un utilitaire de compilation optionnel.
 
-Pour d'autres distributions ou systèmes, se référer aux instructions d'installation de ros directement sur [le site](http://www.ros.org/install/).
+Si certains paquets sont manquants lors de la compilation (catkin build présente une erreur liée à un paquet ou une importation manquante) ou de l'éxécution (pour des erreurs python), il est possible que certaines dépendances soit manquantes du script d'installation, il convient alors de les installer.
+
+Une autre possibilité pour l'éxecution est que le fichier `devel/setup.sh` ne soit pas sourcé.
+~~~~bash
+source ./devel/setup.sh # dans la racine du repo
+~~~~
 
 ## Compilation du projet
 
@@ -26,35 +33,38 @@ Pour pouvoir compiler le projet, utilisez la commande fournies par catkin-tools.
 catkin build
 ~~~~
 
-Il est aussi possible d'utiliser `catkin_make`.
+Il est aussi possible d'utiliser `catkin_make` si catkin-tools n'est pas installé (même résultat mais avec moins de style).
 
 ### Lancer les tests
 
 Les tests unitaires peuvent être lancés à l'aide de la commande suivante :
-~~~~
+~~~~bash
 catkin run_tests
 ~~~~
-Les résultats sont disponibles dans le dossier `build` dans les dossiers `tests_results` de chaque package.
+
+Les résultats sont disponibles à l'aide de la commande `catkin_test_results`.
+
+Il est également possible de lancer un fichier de test pour un noeud spécifique (des logs plus poussés mais moins lisibles sont disponibles en ajoutant l'option `-t`).
+~~~~bash
+rosrun [package] [test_file].launch
+~~~~
 
 ## Lancer le robot
 
 ### En simulation
 
-Creer le can virtuel:
+Création du can virtual pour émuler le bus de communication
 ~~~~
-sudo modprobe vcan
-sudo ip link add dev vcan0 type vcan
-sudo ip link set up vcan0
+rosrun can_interface virtual_can.sh
 ~~~~
 
-Vérifier dans le fichier *server_param.yaml* que la simulation soit activée, et que le nom de l'interface can correspond. Taper ensuite, à la racine du projet :
+Lancement du robot configuré pour la simulation
 ~~~~
-roslaunch launch/robot.launch
+roslaunch launch/simulation.launch
 ~~~~
 
 ### En réel
 
-Vérifier dans le fichier *server_param.yaml* que la simulation soit désactivée, et que le nom de l'interface can correspond. Taper ensuite, à la racine du projet :
 ~~~~
 roslaunch launch/robot.launch
 ~~~~
@@ -68,77 +78,8 @@ doxygen Doxygen/Doxyfile
 
 Un lien symbolique, vers la page générée s’appelant *doc.html* vous ouvrira la documentation sur un navigateur.
 
-### Introduction :
-
-Le code haut niveau permet au robot d'ordonnancer les ses actions en ayant une certaine intelligence.
-Le code s'exécute sur un Ubuntu 18 sur une Beagle Bone Black (BBB).
-
-La BBB communique avec le reste du robot par un bus CAN.
-
-
-### Structure du Repo
-
-Dossiers présents dans le repo :
-- src : le code source
-- launch : les fichiers pour lancer le projet
-- param : les fichiers de paramètre du projet
-- Doxygen : les fichier configurant Doxygen
-
-Dossiers générés lors de compilations :
-- build & devel & install : dossier que ROS créé lors de la compilation du projet.
-- html : les fichiers générés par Doxygen
-
-### Structure de projet 
-
-Le projet source est découpé en "NameSpace" et en "Package".
-
-Les Packages sont des dossiers contenant des codes sources, des librairie, ou différent ficher permettant d’exécuter le package. Ils doivent respecter une certaine architecture pour que ROS puissent les compiler.
-
-Les NameSpaces permettent de regrouper différent Packages dans un même espace de travail. Le principe est similaire que les NameSpace en C++.
-
-Dans le cadre du projet, nous avons explicité les namespaces en regroupant les différents packages dans des dossiers. Ces dossiers sont invisibles d'un point vue de la compilation, mais aident la lecture et la compréhension du projet.
-
-Le projet ROS peut se découper de la sorte d'un point de vue logiciel.
-
-~~~~
-                           BUS CAN
-                              ^
-                              |
-                      +-------v-------+
-                      |               |
-                      |   Socketcan   |
-                      |               |
-                      +---+------^----+
-                          |      |
-                          |      |
-                      +---v------+----+
-                      |               <-------------------+
-                      |robot_interface|                   |
-          +-----------+               +-----------+       |
-          |           +---------------+           |       |
-          |                                       |       |
-          |                                       |       |
-+---------v---+       +---------------+       +---v-------+-+
-|             |       |               +------->             |
-| controller  |       |   scheduler   |       |   actions   |
-|             +------->               <-------+             |
-+------^------+       +--^----------^-+       +-------------+
-       |                            |
-       |                            |
-       |                         +--+-------------+
-       |                         |                |
-       +-------------------------+  gpio_handler  |
-                                 |                |
-                                 +------+--^------+
-                                        |  |
-                                        v  +
-                                  Leds and buttons
-~~~~
-
-
-
-Sources et documentation :
-[Packages](http://wiki.ros.org/Packages)
-[ROS Names](http://wiki.ros.org/Names)
-[Tuto](http://wiki.ros.org/catkin/Tutorials)
-[CMakeList.txt](http://wiki.ros.org/catkin/CMakeLists.txt)
+### Différentes sources et documentations
+- [Packages](http://wiki.ros.org/Packages)
+- [ROS Names](http://wiki.ros.org/Names)
+- [Tuto catkin](http://wiki.ros.org/catkin/Tutorials)
+- [CMakeList.txt](http://wiki.ros.org/catkin/CMakeLists.txt)
