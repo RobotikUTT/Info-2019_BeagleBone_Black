@@ -1,18 +1,20 @@
 <launch>
 	<rosparam command="load" file="param/server_param.yaml" />
 	<group ns="ai">
-		<include file="./src/ai/node_watcher/launch/pkg.launch"/>
-		<include file="./src/ai/scheduler/launch/pkg.launch"/>
-		<include file="./src/ai/controller/launch/pkg.launch"/>
+		<include file="$(find node_watcher)/launch/pkg.launch" />
+		<include file="$(find scheduler)/launch/pkg.launch" />
+		<include file="$(find controller)/launch/pkg.launch" />
 	</group>
 
 	<group ns="procedures">
-		<include file="./src/procedures/reach/launch/pkg.launch"/>
-		<include file="./src/procedures/idle/launch/pkg.launch"/>
+		<include file="$(find idle)/launch/pkg.launch" />
+		<include file="$(find reach)/launch/pkg.launch" />
 	</group>
 
 	<group ns="interface">
-		<include file="./src/interface/can_interface/launch/pkg.launch"/>
-		<include file="./src/interface/gpio_handler/launch/pkg.launch"/>
+		<param name="can_interface/device" value="can0" />
+
+		<include file="$(find gpio_handler)/launch/pkg.launch" />
+		<include file="$(find can_interface)/launch/pkg.launch" />
 	</group>
 </launch>

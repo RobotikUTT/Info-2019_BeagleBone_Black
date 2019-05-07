@@ -1,6 +1,9 @@
 <launch>
   <node name="node_watcher" pkg="node_watcher" type="node" />
-  <node name="can_interface" pkg="can_interface" type="can_interface_node.py" />
+
+  <node name="can_interface" pkg="can_interface" type="can_interface_node.py">
+    <param name="/interface/can/device" value="vcan0" />
+  </node>
   
   <test test-name="test_interface" pkg="can_interface" type="test_interface.py" />
 </launch>

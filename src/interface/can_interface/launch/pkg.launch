@@ -1,4 +1,5 @@
 
 <launch>
+	<!-- Require param /interface/can/device-->
 	<node name="can_interface" pkg="can_interface" type="can_interface_node.py" output="screen" />
 </launch>

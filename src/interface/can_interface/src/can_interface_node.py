@@ -44,8 +44,9 @@ class CanInterfaceNode(NodeStatusHandler):
 			context=Context(devices=self.devices)
 		)
 
-		# Create can bus
-		self.bus = can.interface.Bus("vcan0")
+		print(rospy.get_param_names())
+		# Create can bus with given interface
+		self.bus = can.interface.Bus(rospy.get_param("/interface/can_interface/device", default="can0"))
 		self.can_input_thread = threading.Thread(name="can_input", target=self.wait_for_can_message)
 
 		# TODO /can_interface/out as a service

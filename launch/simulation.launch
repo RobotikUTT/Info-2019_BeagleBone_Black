@@ -1,22 +1,22 @@
 <launch>
-	<rosparam command="load" file="param/server_param.yaml" />
 	<group ns="ai">
-		<include file="./src/ai/node_watcher/launch/pkg.launch"/>
-		<include file="./src/ai/scheduler/launch/pkg.launch"/>
-		<include file="./src/ai/controller/launch/pkg.launch"/>
+		<include file="$(find node_watcher)/launch/pkg.launch"/>
+		<include file="$(find scheduler)/launch/pkg.launch"/>
+		<include file="$(find controller)/launch/pkg.launch"/>
 	</group>
 
 	<group ns="procedures">
-		<include file="./src/procedures/idle/launch/pkg.launch"/>
-		<include file="./src/procedures/reach/launch/pkg.launch"/>
+		<include file="$(find idle)/launch/pkg.launch"/>
+		<include file="$(find reach)/launch/pkg.launch"/>
 	</group>
 
 	<group ns="interface">
+		<param name="can_interface/device" value="vcan0" />
 		<!-- Interface to a fake can bus redirecting to simulation node -->
-		<include file="./src/interface/can_interface/launch/pkg.launch"/>
+		<include file="$(find can_interface)/launch/pkg.launch" />
 	</group>
 
 	<group ns="simulation">
-		<include file="./src/simulation/input_simulation/launch/pkg.launch"/>
+		<include file="$(find input_simulation)/launch/pkg.launch"/>
 	</group>
 </launch>
