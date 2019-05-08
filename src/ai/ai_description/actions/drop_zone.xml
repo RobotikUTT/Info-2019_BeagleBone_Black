@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<group fail="restart" points="{zone_points}">
+	<!-- Go to zone side -->
+	<reach native="true">
+		<x>{zone.offset}</x>
+		<y>450</y>
+		<angle>-90</angle>
+	</reach>
+
+	<drop native="true" />
+</group>

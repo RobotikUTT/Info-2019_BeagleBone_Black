@@ -1,4 +1,4 @@
-from .action import Action
+from .action import Action, ActionChoice
 from .action_repeat import ActionRepeater
 from .object_requirement import ObjectRequirement
 
@@ -83,7 +83,6 @@ class ActionGroup(Action):
 					break
 
 			# Apply state
-			# TODO check
 			super().state.fset(self, ActionStatus.PAUSE if translate_to_pause else state)
 		
 		# Otherwise if we resume action
@@ -156,6 +155,36 @@ class ActionGroup(Action):
 		self.__action_point_origin = origin
 
 		return self.__action_point
-	
+
+	def get_optimal(self, robot_pos: Pose2D) -> ActionChoice:
+		"""
+			Returns the optimal choice of native action from this action.
+
+			It takes in account the subactions and adapt based on group
+			mode
+		"""
+		choice = ActionChoice()
+
+		# Try all subactions
+		for next in self.children:
+			next_choice = next.get_optimal(robot_pos)
+
+			# If the action has a better score
+			if next_choice.score > choice.score:
+				# We choose it !
+				choice = next_choice
+			
+
+			# If we hit a unfinished action in an ordered group, it must
+			# be performed in priority
+			if self.type == "ordered" and next.state != ActionStatus.DONE:
+				break
+		
+
+		# As this is a group, we use the group's priority instead of the
+		# atomic action's priority
+		choice.score = self.priority(robot_pos)
+		return choice
+
 	def __str__(self):
 		return "[{}] points={}".format(self.name, self.total_points())

@@ -1,0 +1,3 @@
+<launch>
+  <test test-name="test_parsing" pkg="vision" type="test_parsing.py" />
+</launch>

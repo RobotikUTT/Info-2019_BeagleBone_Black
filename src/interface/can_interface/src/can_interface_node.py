@@ -3,7 +3,6 @@
 import rospy
 
 from xml_class_parser import Parsable, Bind, Context
-from xml_class_parser.helper import ParsableDict
 
 from args_lib.argumentable import Argumentable
 from node_watcher import NodeStatusHandler

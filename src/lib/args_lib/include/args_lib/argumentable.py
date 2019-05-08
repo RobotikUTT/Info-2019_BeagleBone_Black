@@ -7,7 +7,6 @@ class Argumentable:
 		This object make it easier to manipulate variant type argument.
 	"""
 	def __init__(self):
-		self.name = ""
 		self.values: Dict[str, str] = {}
 		
 	def get(self, name: str, type: type = str, default = None) -> str:

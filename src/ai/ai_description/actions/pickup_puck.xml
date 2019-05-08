@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- Take a puck in a distibutor -->
+<group type="ordered" fail="restart">
+	<reach native="true">
+		<x>1500</x>
+		<y>300</y>
+		<angle>90</angle>
+	</reach>
+
+	<reach native="true">
+		<x>1500</x>
+		<y>{puck.y}</y>
+	</reach>
+
+	<fetch_puck native="true" />
+</group>

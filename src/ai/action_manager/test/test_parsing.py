@@ -4,7 +4,6 @@ import unittest
 
 import rospy
 import rostest
-import tempfile
 import rospkg
 
 from action_manager import Action, ActionGroup

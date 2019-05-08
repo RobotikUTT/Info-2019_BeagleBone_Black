@@ -11,6 +11,7 @@ class ObjectRequirement(Argumentable):
 	"""
 	def __init__(self):
 		self.object: str = ""
+		self.filter: str = ""
 		self.quantity = 1
 
 		self.__alias: Union[str, None] = None

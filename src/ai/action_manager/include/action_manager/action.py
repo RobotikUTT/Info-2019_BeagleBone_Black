@@ -16,6 +16,15 @@ from ai_msgs.srv import ComputeActionPoint
 from xml_class_parser import Parsable, Bind, BindDict, BindList
 from xml_class_parser.types import Bool, BlackList
 
+
+class ActionChoice:
+	"""
+		Choice of an action
+	"""
+	def __init__(self, action=None, score = 0):
+		self.action = action
+		self.score = score
+
 Argument = Parsable(name=Bind(to="name"), content=Bind(to="value"))(Argument)
 
 # TODO parse args
@@ -115,7 +124,17 @@ class Action:
 		else:
 			return points * points / distance
 			
-	
+	def get_optimal(self, robot_pos: Pose2D) -> ActionChoice:
+		"""
+			Returns the optimal choice of native action from this action
+		"""
+
+		# In a simple action, only two cases : action unavailable or not
+		if self.state != ActionStatus.IDLE:
+			return ActionChoice()
+		else:
+			return ActionChoice(self, self.priority(robot_pos))
+
 	def __str__(self):
 		return "[{}] points={}\n\t{}".format(
 			self.name, self.total_points(), self.arguments.__str__()

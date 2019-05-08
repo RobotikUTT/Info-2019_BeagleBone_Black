@@ -4,7 +4,7 @@
     <idle native="true">
         <duration>1</duration>
     </idle>
-    <group type="ordered">
+    <group type="ordered" fail="resume">
         <reach native="true" points="30">
             <description>Set angle</description>
             <angle>0</angle>

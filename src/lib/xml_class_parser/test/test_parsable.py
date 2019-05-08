@@ -90,6 +90,9 @@ class TestElementParser(unittest.TestCase):
 
 		YetAnotherClass.parse_string("<o><a></a><a></a></o>")
 
+	def test_context_parent(self):
+		raise NotImplementedError()
+
 	def test_property_call(self):
 		"""Test that a class property is not override by parsed values"""
 		global YetAnotherClass
@@ -308,7 +311,7 @@ class TestElementParser(unittest.TestCase):
 		self.assertEqual(len(parsed.array_attr[0].children[0].array_attr[0].children), 0)
 
 	def test_alias_parsing(self):
-		self.fail("not implemented")
+		raise NotImplementedError()
 
 	def test_call_parsed_callback(self):
 		global YetAnotherClass

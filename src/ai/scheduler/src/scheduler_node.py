@@ -4,7 +4,6 @@ import rospy
 from rospkg import RosPack
 
 from action_manager import PerformClient, ActionGroup, Action
-from scheduler.action_tools import get_optimal_next_atomic
 
 from interface_msgs.msg import CanData
 from ai_msgs.msg import Side, NodeStatus, ActionStatus
@@ -96,7 +95,7 @@ class SchedulerNode(PerformClient):
 		
 		# If there is alive actions again
 		if self.root_action.state == ActionStatus.IDLE:
-			choice: ActionChoice = get_optimal_next_atomic(self.root_action, self.robot_pos)
+			choice: ActionChoice = self.root_action.get_optimal(self.robot_pos)
 
 			rospy.loginfo("[Current action tree]\n{}".format(self.root_action))
 

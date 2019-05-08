@@ -1,107 +1,24 @@
-from . import Shape
+from .shape import Circle, Rect
 
 from typing import List, Dict
 
 from args_lib.argumentable import Argumentable
 from copy import copy, deepcopy
 
-from xml_class_parser import Parsable, Bind, BindList, BindDict, Enum
-
-class MapObjectAction(Argumentable):
-	"""
-		Action bound to an object on the field.
-		The robot might choose to proceed with this action if
-		it is a viable option.
-
-		Some action bound to the same object can be incompatible
-		(example: move an object to 2 different places)
-	"""
-	def __init__(self, file: str = ""):
-		super().__init__()
-
-		self.file = file
-
-	def __str__(self):
-		return "Action ({}) {}".format(self.file, super().__str__())
-
-	def __eq__(self, other):
-		if isinstance(other, self.__class__):
-			return self.__dict__ == other.__dict__
-
-		return NotImplemented
-
-	def __ne__(self, other):
-		e = self.__eq__(other)
-		if e is NotImplemented:
-			return e
-		return not e
-
-@Parsable(
-	name = Bind(to = "name"),
-	attribute = {
-		"type": Enum(values=["float", "int", "str"]),
-		"default": str
-	},
-	children = [
-		BindDict(key="name", type=Argumentable, to="bound")
-	]
-)
-class MapObjectArgument:
-	"""
-		Argument that can be given to an generic object.
-
-		Example : a ball object is defined in objects.xml, but it might
-		have different parameters depending on it's color, so an argument
-		color is created.
-	"""
-	def __init__(self, name: str = "", type: str = ""):
-		self.name = name
-		self.default = ""
-		self.type = type
-		self.bound: Dict[str, Argumentable] = {}
-	
-	def add_value(self, value: str) -> Argumentable:
-		# Try to cast to handle errors
-		if self.type == "int":
-			int(value)
-		elif self.type == "float":
-			float(value)
-		
-		self.bound[value] = Argumentable()
-
-		return self.bound[value]
-	
-	def get_value(self, name: str) -> Argumentable:
-		return self.bound[name]
-
-	def __str__(self):
-		return "<{}: {}> {}" \
-			.format(self.name, self.type,
-			 	", ".join(["{}".format(a) for a in self.bound])
-			 	#", ".join(["{} ({})".format(a, self.bound[a].__str__()) for a in self.bound])
-			)
-
-	def __eq__(self, other):
-		if isinstance(other, self.__class__):
-			return self.__dict__ == other.__dict__
-
-		return NotImplemented
-
-	def __ne__(self, other):
-		e = self.__eq__(other)
-		if e is NotImplemented:
-			return e
-		return not e
+from xml_class_parser import Parsable, Bind, BindDict, Context, Slice, ParsingException
+from xml_class_parser.helper import AttrAttrTuple
 
 @Parsable(
 	name=Bind(to="name"),
 	attributes = {
-		"extends": str
+		"extends": str,
+		"x": int,
+		"y": int
 	},
 	children = [
-		Bind(to="shape", type=Shape),
-		BindList(to="actions", type=MapObjectAction),
-		BindDict(to="args", key="name", type=MapObjectArgument)
+		Bind(to="shape", type=Circle),
+		Bind(to="shape", type=Rect),
+		BindDict(to="values", type=AttrAttrTuple("arg", "name", "type"), key="name", post_cast=Slice("value"))
 	]
 )
 class MapObject(Argumentable):
@@ -112,38 +29,42 @@ class MapObject(Argumentable):
 	def __init__(self):
 		super().__init__()
 
+		# Object's position
+		self.x = 0
+		self.y = 0
+
 		self.name = ""
-		self.shape: Shape = Shape()
-		self.actions: List[MapObjectAction] = []
-		self.args: Dict[str, MapObjectArgument] = {}
+		self.shape: Union[Circle, Rect] = None
+		self.extends = None
 	
-	@property
-	def extends(self, obj: str):
-		# TODO find object of given name
-		raise Exception("not implemented")
-		# Make a copy of the shape and args
-		self.shape = copy(obj.shape)
-		self.args = deepcopy(obj.args)
-	
+	def __before_children__(self, context: Context):
+		# If this object extends another
+		if self.extends is not None:
+			if self.extends not in context.parent.objects:
+				raise ParsingException(
+					"object {} is not parsed yet and cannot be used for {}".format(self.extends, self.extends))
+
+			obj = context.parent.objects[self.extends]
+
+			# Make a copy of the shape and args
+			self.x = obj.x
+			self.y = obj.y
+			self.shape = copy(obj.shape)
+			self.values = deepcopy(obj.values) # argumentable values
+
 	def clone(self):
 		return deepcopy(self)
 
 	def __str__(self):
-		return "\n\t".join(
-			["[{}] {} {}".format(self.name, self.shape, super().__str__())] +
-			[a.__str__() for a in self.actions] +
-			[self.args[a].__str__() for a in self.args]
-		)
+		return "[{}] x={} y={} shape={} {{{}}}\n".format(self.name, self.x, self.y, self.shape, super().__str__())
 		
-	def __eq__(self, other):
-		if isinstance(other, self.__class__):
-			return self.__dict__ == other.__dict__
 
-		return NotImplemented
-
-	def __ne__(self, other):
-		e = self.__eq__(other)
-		if e is NotImplemented:
-			return e
-		return not e
-
+@Parsable(
+	name="objects",
+	children = [
+		BindDict(key="name", type=MapObject, to="objects")
+	]
+)
+class MapObjectList:
+	def __init__(self):
+		self.objects = {}

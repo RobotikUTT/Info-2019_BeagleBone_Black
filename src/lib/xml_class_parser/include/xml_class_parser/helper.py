@@ -3,32 +3,6 @@ from .bind import Bind, BindList, BindDict
 
 from typing import Type, Union
 
-def ParsableList(name: str, type: Type) -> Type:
-	class List(list):
-		@property
-		def array(self):
-			return self
-		
-	return Parsable(
-		name = name,
-		children = [
-			BindList(type=type, to="array")
-		]
-	)(List)
-
-def ParsableDict(name: str, type: Type, key: str) -> Type:
-	class Dict(dict):
-		@property
-		def values_dict(self):
-			return self
-		
-	return Parsable(
-		name = name,
-		children = [
-			BindDict(type=type, to="values_dict", key = key)
-		]
-	)(Dict)
-
 def TagAttrTuple(attribute: str, value_type: Type = str) -> Type:
 	"""
 		Returns a class containing a name and attribute, and

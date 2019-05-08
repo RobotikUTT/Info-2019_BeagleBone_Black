@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<group fail="restart" points="{balance_points}">
+	<!-- Go to balance -->
+	<reach native="true">
+		<x>1500</x>
+		<y>1300</y>
+	</reach>
+
+	<drop native="true" />
+</group>

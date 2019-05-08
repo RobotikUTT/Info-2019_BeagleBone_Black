@@ -29,3 +29,14 @@ catkin_package(
   CATKIN_DEPENDS rospy action_manager interface_msgs ai_msgs ai_description node_watcher
 #  DEPENDS system_lib
 )
+
+# Testing
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+
+  # Tests to perform
+  foreach(T
+      test/test-parsing.launch)
+     add_rostest(${T})
+  endforeach()
+endif()

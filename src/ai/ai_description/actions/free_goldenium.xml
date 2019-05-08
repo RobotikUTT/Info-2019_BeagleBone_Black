@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<group fail="restart">
+	<!-- Take a puck -->
+	<pickup_puck>
+		<puck>[puck:color=blue]</puck>
+	</pickup_puck>
+
+	<!-- Go to launch site -->
+	<reach native="true">
+		<x>50</x>
+		<y>1800</y>
+		<angle>180</angle>
+	</reach>
+
+	<!-- Drop puck -->
+	<drop native="true" />
+</group>

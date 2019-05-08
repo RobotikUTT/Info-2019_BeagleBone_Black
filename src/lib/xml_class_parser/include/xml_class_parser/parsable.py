@@ -13,6 +13,9 @@ from copy import copy
 AnyBinding = Union[Bind, BindDict, BindList]
 
 class Parsable:
+	"""
+		Class decorator making it possible to parse attributes from XML
+	"""
 	SELF = "SELF"
 
 	def __init__(self,
