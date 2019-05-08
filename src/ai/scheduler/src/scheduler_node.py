@@ -93,11 +93,12 @@ class SchedulerNode(PerformClient):
 			# We cure it
 			self.root_action.state = ActionStatus.IDLE
 		
+		rospy.loginfo("[Current action tree]\n{}".format(self.root_action))
+
 		# If there is alive actions again
 		if self.root_action.state == ActionStatus.IDLE:
 			choice: ActionChoice = self.root_action.get_optimal(self.robot_pos)
 
-			rospy.loginfo("[Current action tree]\n{}".format(self.root_action))
 
 			if choice.action is not None:
 				# save current action
@@ -113,7 +114,7 @@ class SchedulerNode(PerformClient):
 			
 		else:
 			# Otherwise signal that everything is over :)
-			rospy.loginfo("Root action is in state {}".format(self.root_action.state))
+			rospy.loginfo("Root action is in state {}, nothing more to be done...".format(self.root_action.state))
 		
 if __name__ == "__main__":
 	rospy.init_node("scheduler_node", log_level=rospy.INFO)

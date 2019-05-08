@@ -12,8 +12,9 @@ from xml_class_parser import Parsable, Bind, BindDict, Enum, BindList
 @Parsable(
 	name = "group",
 	attributes = {
-		"type": Enum(binding = {"ordered": 0, "unordered": 1, "best": 2}),
-		"repeat": ActionRepeater
+		"type": Enum(values = ["ordered", "unordered", "best"]),
+		"repeat": ActionRepeater,
+		"points": str
 	},
 	children = [
 		BindList(to="children", type=Action),
@@ -22,12 +23,15 @@ from xml_class_parser import Parsable, Bind, BindDict, Enum, BindList
 	]
 )
 class ActionGroup(Action):
-	ORDERED = 0 # actions done in order
-	UNORDERED = 1 # actions done in any order
-	BEST = 2 # only the best action is made
+	ORDERED = "ordered" # actions done in order
+	UNORDERED = "unordered" # actions done in any order
+	BEST = "best" # only the best action is made
 
 	def __init__(self):
 		super().__init__()
+
+		# TODO remove
+		self.points = "0"
 
 		self.type: int = ActionGroup.ORDERED
 		self.children: List[Action] = []
@@ -38,6 +42,12 @@ class ActionGroup(Action):
 		self.__state = ActionStatus.IDLE
 	
 	def __parsed__(self, context):
+		# TODO handler assignment from context
+		if len(self.points) > 0 and self.points[0] == "@":
+			self.points = 0
+		else:
+			self.points = int(self.points)
+
 		for i in range(len(self.children)):
 			child = self.children[i]
 
@@ -47,6 +57,9 @@ class ActionGroup(Action):
 					context.get("folder") + child.name + ".xml",
 					context = context
 				)
+			
+			# Set children parent
+			self.children[i].parent = self
 
 
 	@property
@@ -83,7 +96,11 @@ class ActionGroup(Action):
 					break
 
 			# Apply state
-			super().state.fset(self, ActionStatus.PAUSE if translate_to_pause else state)
+			self.__state = ActionStatus.PAUSE if translate_to_pause else state
+
+			# If not resuming, we propagate to parent
+			if self.state != ActionStatus.IDLE and self.parent != None:
+				self.parent.state = self.state
 		
 		# Otherwise if we resume action
 		elif self.state == ActionStatus.PAUSED:
@@ -165,6 +182,9 @@ class ActionGroup(Action):
 		"""
 		choice = ActionChoice()
 
+		if self.state != ActionStatus.IDLE:
+			return choice
+
 		# Try all subactions
 		for next in self.children:
 			next_choice = next.get_optimal(robot_pos)
@@ -177,7 +197,7 @@ class ActionGroup(Action):
 
 			# If we hit a unfinished action in an ordered group, it must
 			# be performed in priority
-			if self.type == "ordered" and next.state != ActionStatus.DONE:
+			if self.type == ActionGroup.ORDERED and next.state != ActionStatus.DONE:
 				break
 		
 
@@ -187,4 +207,26 @@ class ActionGroup(Action):
 		return choice
 
 	def __str__(self):
-		return "[{}] points={}".format(self.name, self.total_points())
+		sublines = [(" ╟──" + str(child)) for child in self.children]
+
+		if len(sublines) > 0:
+			sublines[-1] = " ╙" + sublines[-1][2:]
+			part = sublines[-1].split("\n")
+
+			for i in range(len(part) - 1):
+				part[i + 1] = "   " + part[i + 1]
+
+			sublines[-1] = "\n".join(part)
+
+		for j in range(len(sublines) - 1):
+			part = sublines[j].split("\n")
+
+			for i in range(len(part) - 1):
+				part[i + 1] = " ║  " + part[i + 1]
+			
+			sublines[j] = "\n".join(part)
+
+
+		return "{} points={}\n".format(
+				self.color("[{}]".format(self.type)), self.total_points()
+			) + "\n".join(sublines)

@@ -14,7 +14,7 @@
 	</pickup_puck>
 
 	<!-- Choose best action between 3 dropping sites -->
-	<group mode="best" fail="loopin">
+	<group type="best" fail="loopin">
 		<drop_zone />
 		<drop_balance />
 		<drop_accelerator />

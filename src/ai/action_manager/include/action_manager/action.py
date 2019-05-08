@@ -135,7 +135,21 @@ class Action:
 		else:
 			return ActionChoice(self, self.priority(robot_pos))
 
+	def color(self, text):
+		if self.state == ActionStatus.PAUSED:
+			# Yellow
+			return '\033[33m' + text + '\033[0m'
+		elif self.state == ActionStatus.DONE:
+			# Green
+			return '\033[32m' + text + '\033[0m'
+		elif self.state == ActionStatus.IDLE:
+			# Grey
+			return '\033[90m' + text + '\033[0m'
+		else:
+			# Red
+			return '\033[31m' + text + '\033[0m'
+
 	def __str__(self):
-		return "[{}] points={}\n\t{}".format(
-			self.name, self.total_points(), self.arguments.__str__()
+		return "{} points={} {{{}}}".format(
+			self.color("[" + self.name + "]"), self.total_points(), self.arguments.__str__()
 		)
