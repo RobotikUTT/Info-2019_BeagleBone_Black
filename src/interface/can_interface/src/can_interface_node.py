@@ -43,7 +43,6 @@ class CanInterfaceNode(NodeStatusHandler):
 			context=Context(devices=self.devices)
 		)
 
-		print(rospy.get_param_names())
 		# Create can bus with given interface
 		self.bus = can.interface.Bus(rospy.get_param("/interface/can_interface/device", default="can0"))
 		self.can_input_thread = threading.Thread(name="can_input", target=self.wait_for_can_message)
@@ -68,15 +67,15 @@ class CanInterfaceNode(NodeStatusHandler):
 					self.on_can_message(message)
 				except:
 					traceback.print_exc()
-					print("received invalid can frame")
-					print(message)
+					rospy.logerr("received invalid can frame")
+					rospy.logerr(message)
 
 				if rospy.is_shutdown():
 					self.bus.shutdown()
 					return
 		except:
 			self.bus.shutdown()
-			print("Can reception interrupted")
+			rospy.logwarn("Can reception interrupted")
 			
 	
 	def on_can_message(self, frame: can.Message):

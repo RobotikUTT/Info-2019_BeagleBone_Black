@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>template</name>
+  <version>0.0.0</version>
+  <description>The template package</description>
+
+  <license>TODO</license>
+  <maintainer email="cle.bourdonnaye@gmail.com">Clément de La Bourdonnaye</maintainer>
+
+  <!-- Dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+
+  <!-- Packages -->
+  <depend>action_manager</depend>
+  <depend>args_lib</depend>
+  
+  <!-- Messages -->
+  <depend>ai_msgs</depend>
+
+  <!-- Tests -->
+  <test_depend>rostest</test_depend>
+  
+  <export></export>
+</package>

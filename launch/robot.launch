@@ -6,7 +6,7 @@
 		<include file="$(find controller)/launch/pkg.launch" />
 	</group>
 
-	<group ns="procedures">
+	<group ns="actions">
 		<include file="$(find idle)/launch/pkg.launch" />
 		<include file="$(find reach)/launch/pkg.launch" />
 	</group>

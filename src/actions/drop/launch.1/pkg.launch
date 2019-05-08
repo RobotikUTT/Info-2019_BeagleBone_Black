@@ -1,0 +1,3 @@
+<launch>
+	<node name="scheduler" pkg="scheduler" type="scheduler_node.py" output="screen" required="True" />
+</launch>

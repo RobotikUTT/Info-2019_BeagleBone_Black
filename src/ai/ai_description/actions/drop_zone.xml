@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<group fail="restart" points="{zone_points}">
+<group fail="restart" points="6">
 	<!-- Go to zone side -->
 	<reach native="true">
-		<x>{zone.offset}</x>
+		<x>@zone_x</x>
 		<y>450</y>
 		<angle>-90</angle>
 	</reach>

@@ -31,7 +31,7 @@ class RobotSimulationNode():
 		msg = StartRobot()
 		msg.side = Side.LEFT
 		self.start_signal_pub.publish(msg)
-		print("signal sent")
+		rospy.loginfo("Start signal sent")
 
 	def spin(self):
 		while not rospy.is_shutdown():

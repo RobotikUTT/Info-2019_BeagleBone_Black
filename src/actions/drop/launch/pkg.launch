@@ -1,0 +1,3 @@
+<launch>
+	<node name="drop" pkg="drop" type="drop_performer.py" output="screen" />
+</launch>

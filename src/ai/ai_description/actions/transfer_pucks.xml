@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<group>
+	<!-- Takes up to 3 pucks -->
+	<pickup_puck>
+		<puck_y>@puck_1_y</puck_y>
+	</pickup_puck>
+
+	<pickup_puck>
+		<puck_y>@puck_2_y</puck_y>
+	</pickup_puck>
+
+	<pickup_puck>
+		<puck_y>@puck_3_y</puck_y>
+	</pickup_puck>
+
+	<!-- Choose best action between 3 dropping sites -->
+	<group mode="best" fail="loopin">
+		<drop_zone />
+		<drop_balance />
+		<drop_accelerator />
+	</group>
+</group>

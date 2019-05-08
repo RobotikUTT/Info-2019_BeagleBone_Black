@@ -41,16 +41,11 @@ class TestAction(unittest.TestCase):
 		# Create move action
 		action = Action.parse_string("""
 			<move native='true'>
-				<x>30</x>
-				<y>10</y>
-				<theta>30</theta>
+				<x>90</x>
+				<y>60</y>
+				<theta>0</theta>
 			</move>
 		""")
-		action.name = "move"
-		action.native = True
-		action.arguments.set("x", 90)
-		action.arguments.set("y", 60)
-		action.arguments.set("theta", 0)
 
 		# Test computation
 		self.assertEqual(

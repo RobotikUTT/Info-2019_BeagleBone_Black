@@ -1,0 +1,10 @@
+<launch>
+	<!-- Da great node_watcher -->
+	<node name="node_watcher" pkg="node_watcher" type="node" required="true"/>
+
+	<!-- Da action performer -->
+  <node name="fetch_puck" pkg="fetch_puck" type="fetch_puck_performer.py" required="true" />
+
+	<!-- Test to perform -->
+	<test test-name="test_fetch_puck_performer" pkg="fetch_puck" type="test_fetch_puck_performer.py" />
+</launch>

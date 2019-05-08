@@ -1,16 +1,19 @@
 <?xml version="1.0"?>
 <!-- Take a puck in a distibutor -->
 <group type="ordered" fail="restart">
+	<!-- Take right alignment -->
 	<reach native="true">
 		<x>1500</x>
 		<y>300</y>
 		<angle>90</angle>
 	</reach>
 
+	<!-- Move toward puck -->
 	<reach native="true">
 		<x>1500</x>
-		<y>{puck.y}</y>
+		<y>@puck_y</y>
 	</reach>
 
+	<!-- Retrieve -->
 	<fetch_puck native="true" />
 </group>

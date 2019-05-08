@@ -1,0 +1,10 @@
+<launch>
+	<!-- Da great node_watcher -->
+	<node name="node_watcher" pkg="node_watcher" type="node" required="true"/>
+
+	<!-- Da action performer -->
+  <node name="template" pkg="template" type="template_performer.py" required="true" />
+
+	<!-- Test to perform -->
+	<test test-name="test_template_performer" pkg="template" type="test_template_performer.py" />
+</launch>

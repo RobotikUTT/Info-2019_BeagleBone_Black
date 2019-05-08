@@ -1,0 +1,3 @@
+<launch>
+	<node name="template" pkg="template" type="template_performer.py" output="screen" />
+</launch>

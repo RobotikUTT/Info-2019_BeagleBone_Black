@@ -7,16 +7,7 @@ from node_watcher import Node
 
 class VisionNode(Node):
 	def __init__(self):
-		obj_parser = ObjectsParser()
-		obj_parser.parse_description_file("/objects/objects.xml")
-
-		map_parser = MapParser(obj_parser.objects)
-		map_parser.parse_description_file("/map/table.xml")
-
-		for obj in obj_parser.objects:
-			print(obj_parser.objects[obj])
-			print()
-		print(map_parser.root)
+		pass
 
 
 if __name__ == '__main__':

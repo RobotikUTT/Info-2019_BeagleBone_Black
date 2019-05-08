@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<group fail="restart" points="{balance_points}">
+<group fail="restart" points="@balance_points">
 	<!-- Go to balance -->
 	<reach native="true">
 		<x>1500</x>

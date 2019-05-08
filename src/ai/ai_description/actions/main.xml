@@ -4,7 +4,35 @@
     <idle native="true">
         <duration>1</duration>
     </idle>
-    <group type="ordered" fail="resume">
+    <transfer_pucks>
+        <!-- Red pucks in distributor -->
+        <puck_1_y>50</puck_1_y>
+        <puck_2_y>250</puck_2_y>
+        <puck_3_y>450</puck_3_y>
+
+        <balance_points>4</balance_points>
+        <zone_x>300</zone_x>
+    </transfer_pucks>
+
+    <transfer_pucks>
+        <!-- Green pucks in distributor -->
+        <puck_1_y>150</puck_1_y>
+        <puck_2_y>550</puck_2_y>
+
+        <balance_points>8</balance_points>
+        <zone_x>600</zone_x>
+    </transfer_pucks>
+
+    <transfer_pucks>
+        <!-- Blue pucks in distributor -->
+        <puck_1_y>150</puck_1_y>
+
+        <balance_points>12</balance_points>
+        <zone_x>900</zone_x>
+    </transfer_pucks>
+
+
+    <!--<group type="ordered" fail="resume">
         <reach native="true" points="30">
             <description>Set angle</description>
             <angle>0</angle>
@@ -33,5 +61,5 @@
             <y>0</y>
             <angle>240</angle>
         </reach>
-    </group>
+    </group>-->
 </group>
