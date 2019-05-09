@@ -73,7 +73,14 @@ class ActionGroup(Action):
 			or finished, it first check all possible action inside the block is
 			paused or finished, and then pause parent, or do not pause
 		'''
-		# TODO handle BEST action course
+		# Best action action course
+		if state == ActionStatus.DONE and self.type == ActionGroup.BEST:
+			self.__state = state
+
+			# Propagate
+			if self.parent != None:
+				self.parent.state = self.state
+		
 		# If we set action as something else than waiting
 		# we do a ascending recursion
 		if state != ActionStatus.IDLE:

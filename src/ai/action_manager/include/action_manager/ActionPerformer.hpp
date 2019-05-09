@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <ros/ros.h>
-#include <ros/console.h>
 #include <actionlib/server/simple_action_server.h>
 
 #include "ai_msgs/PerformAction.h"
@@ -15,7 +14,6 @@
 #include "ai_msgs/ActionStatus.h"
 #include "ai_msgs/ActionPoint.h"
 
-#include "action_manager/Action.hpp"
 #include "args_lib/Argumentable.hpp"
 
 #include "node_watcher/Node.hpp"
@@ -27,6 +25,8 @@ typedef actionlib::SimpleActionServer<ai_msgs::PerformAction> PerformActionSrv;
 using ai_msgs::RobotStatus;
 using ai_msgs::ActionStatus;
 using args_lib::Argument;
+
+using geometry_msgs::Pose2D;
 
 using std::string;
 

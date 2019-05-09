@@ -6,7 +6,7 @@ import math
 import rospy
 import rostest
 
-from action_manager import Action
+from action_manager import Action, ActionGroup
 from ai_msgs.msg import ActionStatus, ActionPoint
 from geometry_msgs.msg import Pose2D
 
@@ -35,7 +35,12 @@ class TestOrderedActionGroup(unittest.TestCase):
 		self.action_point.start = self.first_position
 		self.action_point.end = self.second_position
 
-	def test_set_state(self):
+	def test_set_state_idle(self):
+		ActionGroup.parse_string("""
+			<group>
+
+			</group>
+		""")
 		raise NotImplementedError()
 	
 	def test_action_point(self):
