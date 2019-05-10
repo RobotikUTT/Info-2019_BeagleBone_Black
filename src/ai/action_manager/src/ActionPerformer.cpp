@@ -64,7 +64,7 @@ void ActionPerformer::onGoal() {
 		ai_msgs::PerformGoal::ConstPtr goal = actionServer->acceptNewGoal();
 
 		// save args
-		_args = goal->arguments;
+		this->fromList(goal->arguments, true);
 	
 		// run action
 		start();

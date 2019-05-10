@@ -51,8 +51,6 @@ protected:
 	// Function managing the action
 	void returns(int status);
 private:
-	std::vector<args_lib::Argument> _args;
-
 	// Name of the perfomer
 	std::string name;
 

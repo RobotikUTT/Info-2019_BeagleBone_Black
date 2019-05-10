@@ -3,6 +3,7 @@
 #include "ai_msgs/ActionStatus.h"
 
 class FailActionPerformer : public ActionPerformer {
+public:
 	FailActionPerformer() : ActionPerformer("fail") {
 		this->setNodeStatus(NodeStatus::READY);
 	}
@@ -22,7 +23,7 @@ class FailActionPerformer : public ActionPerformer {
 int main(int argc, char** argv) {
 	ros::init(argc, argv, "fail");
 
-	FailActionPerformer performer();
+	FailActionPerformer performer;
 	ros::spin();
 
 	return 0;

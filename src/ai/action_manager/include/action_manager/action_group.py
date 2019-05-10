@@ -103,7 +103,7 @@ class ActionGroup(Action):
 					break
 
 			# Apply state
-			self.__state = ActionStatus.PAUSE if translate_to_pause else state
+			self.__state = ActionStatus.PAUSED if translate_to_pause else state
 
 			# If not resuming, we propagate to parent
 			if self.state != ActionStatus.IDLE and self.parent != None:
