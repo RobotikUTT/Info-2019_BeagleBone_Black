@@ -39,11 +39,7 @@ include_directories(
 
 ## Declare a C++ library
 add_library(${PROJECT_NAME}
-  src/Action.cpp
-  src/AtomicAction.cpp
-  src/ActionBlock.cpp
   src/ActionPerformer.cpp
-  src/PerformClient.cpp
 )
 
 # Add cmake target dependencies of the library

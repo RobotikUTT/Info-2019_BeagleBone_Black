@@ -13,7 +13,7 @@ NodeStatusHandler::NodeStatusHandler()
     waitAnswerSub = nh.subscribe(Topics::NODES_AWAITER_RESULT_TOPIC, 10, &NodeStatusHandler::onAwaitResponse, this);
 
     // Wait for service to send init signal
-    ros::service::waitForService(Topics::NODE_WATCHER_SERVICE);
+    ros::service::waitForService(Topics::NODE_WATCHER_SERVICE, 5);
     
 }
 
@@ -69,6 +69,8 @@ NodeStatus NodeStatusHandler::getNodeStatus(string nodepath) {
     ROS_ERROR_STREAM(
         "Unable to call watcher as getter for " << nodepath
     );
+
+    return NodeStatus();
 }
 
 /**

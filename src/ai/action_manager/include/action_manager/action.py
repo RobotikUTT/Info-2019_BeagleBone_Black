@@ -16,7 +16,6 @@ from ai_msgs.srv import ComputeActionPoint
 from xml_class_parser import Parsable, Bind, BindDict, BindList
 from xml_class_parser.types import Bool, BlackList
 
-
 class ActionChoice:
 	"""
 		Choice of an action
@@ -27,7 +26,7 @@ class ActionChoice:
 
 Argument = Parsable(name=Bind(to="name"), content=Bind(to="value"))(Argument)
 
-# TODO parse args
+
 @Parsable(
 	name = Bind(to="name", type=BlackList("group")),
 	attributes = {

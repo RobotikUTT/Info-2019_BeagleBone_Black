@@ -1,5 +1,27 @@
 #include "action_manager/ActionPerformer.hpp"
 
+/*
+ *	Static names factory
+ */
+std::string getActionPointService(std::string performer) {
+	std::ostringstream output;
+	output << "/action/" << performer << "/actionpoint";
+	return output.str();
+}
+
+std::string getActionServer(std::string performer) {
+	std::ostringstream output;
+	output << "/action/" << performer;
+	return output.str();
+}
+
+std::string getActionNodePath(std::string performer) {
+	std::ostringstream output;
+	output << "/action/" << performer;
+	return output.str();
+}
+
+
 
 ActionPerformer::ActionPerformer(std::string name) : Node(name, "action"), name(name) {
 	// Service for action point computation
@@ -42,7 +64,7 @@ void ActionPerformer::onGoal() {
 		ai_msgs::PerformGoal::ConstPtr goal = actionServer->acceptNewGoal();
 
 		// save args
-		_args = goal->arguments;
+		this->fromList(goal->arguments, true);
 	
 		// run action
 		start();

@@ -3,6 +3,7 @@
 #include "ai_msgs/ActionStatus.h"
 
 class MoveActionPerformer : public ActionPerformer {
+public:
 	MoveActionPerformer() : ActionPerformer("move") {
 		this->setNodeStatus(NodeStatus::READY);
 	}
@@ -26,7 +27,7 @@ class MoveActionPerformer : public ActionPerformer {
 int main(int argc, char** argv) {
 	ros::init(argc, argv, "move");
 
-	MoveActionPerformer performer();
+	MoveActionPerformer performer;
 	ros::spin();
 
 	return 0;

@@ -3,6 +3,7 @@
 #include "ai_msgs/ActionStatus.h"
 
 class SleepActionPerformer : public ActionPerformer {
+public:
 	SleepActionPerformer() : ActionPerformer("sleep") {
 		this->setNodeStatus(NodeStatus::READY);
 	}
@@ -24,7 +25,7 @@ class SleepActionPerformer : public ActionPerformer {
 int main(int argc, char** argv) {
 	ros::init(argc, argv, "sleep");
 
-	SleepActionPerformer performer();
+	SleepActionPerformer performer;
 	ros::spin();
 
 	return 0;

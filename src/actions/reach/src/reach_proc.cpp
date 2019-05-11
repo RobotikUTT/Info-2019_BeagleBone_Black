@@ -66,7 +66,7 @@ void ReachActionPerfomer::start() {
 
 		default:
 			ROS_ERROR_STREAM("unable to determine message type to use " << moveType << " like " << hasLong("x") << ":" << hasLong("y") << ":" << hasLong("direction") << ":" << hasLong("angle"));
-			returns(ActionStatus::IMPOSSIBLE);
+			returns(ActionStatus::ERROR);
 			return;
 	}
 
