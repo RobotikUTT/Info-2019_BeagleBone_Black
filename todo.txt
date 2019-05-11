@@ -1,0 +1,5 @@
+- gérer les arrêts suite aux détecteurs (ajout d'un élément)
+- intégrer un pathfinding efficace en C++
+- gérer le coté (changement des angles et autre)
+- gérer l'échec de groupe d'action (modes retry, resume et postpone)
+- gérer les arguments contextuels des actions (@...)

@@ -1,44 +1,44 @@
 <?xml version="1.0"?>
 <!-- Contains 2D map content, see reference.png for more details -->
-<rect x="0" y="0" height="3000" width="2000" wall="true">
+<rect x="0" y="0" height="3000" width="2000" blocking="true">
 	<!-- Will create a symmetry of axis y = 1500 -->
 	<symmetry y="1500" source="up" target="down" />
 
 	<!-- Walls -->
-	<rect x="1400" y="1500" width="200" height="40" symmetry="false" wall="true" />
-	<rect x="1543" y="450" width="57" height="778" wall="true" />
+	<rect x="1400" y="1500" width="200" height="20" blocking="true" />
+	<rect x="1543" y="450" width="57" height="778" blocking="true" />
 
 	<!-- Movable objects bound to actions defined in "objects" folder -->
-	<puck x="1800" y="834" color="green" />
+	<!--<puck x="1800" y="834" color="green" />-->
 
 	<!-- Pucks around zones-->
-	<puck x="450" y="834" color="red" />
+	<!--<puck x="450" y="834" color="red" />
 	<puck x="750" y="834" color="red" />
-	<puck x="1050" y="834" color="green" />
+	<puck x="1050" y="834" color="green" />-->
 
 	<!-- Pucks in distributors-->
-	<offset x="1543" y="450">
+	<!--<offset x="1543" y="450">
 		<dist-puck x="0" y="50" color="red" />
 		<dist-puck x="0" y="150" color="green" />
 		<dist-puck x="0" y="250" color="red" />
 		<dist-puck x="0" y="350" color="blue" />
 		<dist-puck x="0" y="450" color="red" />
 		<dist-puck x="0" y="550" color="green" />
-	</offset>
+	</offset>-->
 
-	<offset x="2000" y="75">
+	<!--<offset x="2000" y="75">
 		<dist-puck x="0" y="50" color="blue" />
 		<dist-puck x="0" y="150" color="green" />
 		<dist-puck x="0" y="250" color="red" />
-	</offset>
+	</offset>-->
 
 	<!-- Zones to put objects-->
 	<rect name="balance" x="1590" y="1228" width="400" height="220" />
-	<circle name="chaos" x="1050" y="1000" radius="300">
-		<puck color="red" />
+	<circle name="chaos" x="1050" y="1000" radius="300" blocking="true">
+		<!--<puck color="red" />
 		<puck color="red" />
 		<puck color="green" />
-		<puck color="blue" />
+		<puck color="blue" />-->
 	</circle>
 
 	<rect name="red" x="300" y="0" width="300" height="450" />
