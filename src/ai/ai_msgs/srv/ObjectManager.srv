@@ -1,4 +1,0 @@
-string object_name
-geometry_msgs/Pose2D[] points
-int8 action
----

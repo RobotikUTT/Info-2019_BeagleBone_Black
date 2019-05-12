@@ -26,7 +26,8 @@ add_message_files(DIRECTORY msg
   FILES
   # Type definition
   ActionPoint.msg
-
+  Shape.msg
+  
   # Meaningfull message
   PointsScored.msg # replace by std_msgs/Int16
   RobotStatus.msg
@@ -41,7 +42,8 @@ add_message_files(DIRECTORY msg
 add_service_files(
   FILES
   NodeReadiness.srv
-  ObjectManager.srv
+  DeclareZone.srv
+  FindPath.srv
   ComputeActionPoint.srv
   SetSchedulerState.srv
   AwaitNodesRequest.srv

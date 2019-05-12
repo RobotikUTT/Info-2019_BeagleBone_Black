@@ -3,3 +3,4 @@
 - gérer le coté (changement des angles et autre)
 - gérer l'échec de groupe d'action (modes retry, resume et postpone)
 - gérer les arguments contextuels des actions (@...)
+- passer le XML à protocol buffer

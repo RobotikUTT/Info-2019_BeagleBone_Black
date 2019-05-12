@@ -6,6 +6,7 @@ import rospy
 import rostest
 
 from vision import MapObject, Rect, Circle, MapObjectList
+from vision.map import RectZone, CircleZone, Offset, Symmetry
 
 from xml_class_parser import ParsingException
 
@@ -84,6 +85,18 @@ class TestParsing(unittest.TestCase):
 	def test_object_inherited_parsing_reject(self):
 		with self.assertRaises(ParsingException):
 			MapObjectList.parse_string('<objects><lol extends="nothing" /></objects>')
+
+	def test_map_parsing(self):
+		result = RectZone.parse_string('''
+			<rect x="0" y="0" height="3000" width="2000" blocking="true">
+				<symmetry axis="y" offset="1500" source="up" target="down" />
+
+				<rect x="1400" y="1500" width="200" height="20" blocking="true" />
+				<rect x="1543" y="450" width="57" height="778" />
+			</rect>
+		''')
+
+		print(str(result))
 
 
 if __name__ == '__main__':
