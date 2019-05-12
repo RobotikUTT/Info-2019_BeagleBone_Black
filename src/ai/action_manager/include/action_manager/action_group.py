@@ -1,6 +1,4 @@
 from .action import Action, ActionChoice
-from .action_repeat import ActionRepeater
-from .object_requirement import ObjectRequirement
 
 from ai_msgs.msg import ActionPoint, ActionStatus
 from geometry_msgs.msg import Pose2D
@@ -13,12 +11,11 @@ from xml_class_parser import Parsable, Bind, BindDict, Enum, BindList
 	name = "group",
 	attributes = {
 		"type": Enum(values = ["ordered", "unordered", "best"]),
-		"repeat": ActionRepeater,
+		"fail": Enum(values = ["restart", "continue", "postpone"]),
 		"points": str
 	},
 	children = [
 		BindList(to="children", type=Action),
-		BindList(to="none", type=ObjectRequirement),
 		BindList(to="children", type=Parsable.SELF)
 	]
 )
@@ -27,13 +24,18 @@ class ActionGroup(Action):
 	UNORDERED = "unordered" # actions done in any order
 	BEST = "best" # only the best action is made
 
+	FAIL_RESTART = "restart" # retry all actions in group
+	FAIL_CONTINUE = "continue" # retry children action 
+	FAIL_POSTPONE = "postpone" # pause action
+
 	def __init__(self):
 		super().__init__()
 
 		# TODO remove
 		self.points = "0"
 
-		self.type: int = ActionGroup.ORDERED
+		self.fail = ActionGroup.FAIL_POSTPONE
+		self.type: str = ActionGroup.ORDERED
 		self.children: List[Action] = []
 	
 		self.__action_point: Union[ActionPoint, None] = None
@@ -73,6 +75,24 @@ class ActionGroup(Action):
 			or finished, it first check all possible action inside the block is
 			paused or finished, and then pause parent, or do not pause
 		'''
+
+		# handle failure states
+		if state != ActionStatus.DONE and state != ActionStatus.IDLE:
+			if self.fail == ActionGroup.FAIL_CONTINUE:
+				# Deny children pausing
+				state = ActionStatus.IDLE
+				self.__state = ActionStatus.PAUSED
+
+			elif self.fail == ActionGroup.FAIL_RESTART:
+				# Restart all children
+				stack = [] + self.children
+				while len(stack) > 0:
+					next = stack.pop()
+					stack.extend(next.children)
+
+					# force state to restart everything
+					next.__state = ActionStatus.IDLE
+
 		# Best action action course
 		if state != ActionStatus.IDLE and self.type == ActionGroup.BEST:
 			self.__state = state

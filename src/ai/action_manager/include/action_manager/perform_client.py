@@ -1,7 +1,7 @@
 
 from node_watcher import Node
 from .action import Action
-from.action_group import ActionGroup
+from .action_group import ActionGroup
 from .util import get_action_server, get_action_node_path
 
 import rospy

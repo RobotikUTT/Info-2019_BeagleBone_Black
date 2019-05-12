@@ -1,7 +1,5 @@
 from args_lib.argumentable import Argumentable
-from .object_requirement import ObjectRequirement
 from .util import get_action_point_service
-from .action_repeat import ActionRepeater
 
 from typing import Union, List
 import math
@@ -32,7 +30,6 @@ Argument = Parsable(name=Bind(to="name"), content=Bind(to="value"))(Argument)
 	attributes = {
 		"native": Bool,
 		"points": int,
-		"repeat": ActionRepeater
 	},
 	children = [
 		BindList(to="arguments", type=Argument)
