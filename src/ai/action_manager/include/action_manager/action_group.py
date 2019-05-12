@@ -74,7 +74,7 @@ class ActionGroup(Action):
 			paused or finished, and then pause parent, or do not pause
 		'''
 		# Best action action course
-		if state == ActionStatus.DONE and self.type == ActionGroup.BEST:
+		if state != ActionStatus.IDLE and self.type == ActionGroup.BEST:
 			self.__state = state
 
 			# Propagate
@@ -135,22 +135,42 @@ class ActionGroup(Action):
 		action.parent = self
 		self.children.append(action)
 	
+	def priority(self, origin: Pose2D):
+		if self.type == ActionGroup.BEST:
+			best_child = None
+			best_prio = 0
+			for child in self.children:
+				prio = child.priority(origin)
+				if prio > best_prio:
+					best_prio = prio
+					best_child = child
+			if best_child is None:
+				return math.inf
+			else:
+				return (self.points + best_child.total_points()) ** 2 / best_child.travel_distance(origin)
+		else:
+			return super().priority(origin)
 
 	def travel_distance(self, origin: Pose2D) -> float:
+		if self.type == ActionGroup.BEST:
+			best_child = None
+			best_prio = 0
+			for child in self.children:
+				prio = child.priority(origin)
+				if prio > best_prio:
+					best_prio = prio
+					best_child = child
+			
+			return best_child.travel_distance(origin)
+
 		distance = 0
 		current_point = origin
 
-		# TODO: compute for unordered group by sorting by max scoring
 		for child in self.children:
 			child_dist = child.travel_distance(current_point)
-
-			if self.type == ActionGroup.BEST:
-				# Best -> minimal distance
-				if child_dist < distance:
-					distance = child_dist
-			else:
-				distance += child_dist
-				current_point = child.action_point(current_point).end
+			
+			distance += child_dist
+			current_point = child.action_point(current_point).end
 		
 		return distance
 	

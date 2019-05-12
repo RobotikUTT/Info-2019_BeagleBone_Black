@@ -8,5 +8,4 @@
 	<!-- Tests to perform -->
 	<test test-name="test_perform_client_py" pkg="action_manager" type="test_perform_client.py" time-limit="5.0" />
 	<test test-name="test_action_py" pkg="action_manager" type="test_action.py" />
-	<test test-name="test_action_group_py" pkg="action_manager" type="test_action_group.py" />
 </launch>

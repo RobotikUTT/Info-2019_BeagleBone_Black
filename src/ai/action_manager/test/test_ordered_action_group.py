@@ -23,33 +23,29 @@ def action_point_fun(xf, yf):
 	return fun
 
 class TestOrderedActionGroup(unittest.TestCase):
-	def setUp(self):
-		rospy.init_node('test_action_group', anonymous=True)
+	def setUp(self, mode="ordered"):
+		rospy.init_node('test_{}_action_group'.format(mode), anonymous=True)
 
 		self.robot_position = Pose2D()
 		self.robot_position.x = 1
 		self.robot_position.y = 1
 
-		self.first_position = Pose2D()
-		self.first_position.x = 30
-		self.first_position.y = 10
+		self.__example = """
+			<group type="{0}">
+				<move native='true' point="0" />
+				<move native='true' points="1" />
+				<group type="{0}" points="2">
+					<move native='true' points="3" />
+				</group>
+			</group>
+		""".format(mode)
 
-		self.second_position  = Pose2D()
-		self.second_position.x = 90
-		self.second_position.y = 60
-
-		self.third_position  = Pose2D()
-		self.third_position.x = 90
-		self.third_position.y = 60
-
-		self.action_point = ActionPoint()
-		self.action_point.start = self.first_position
-		self.action_point.end = self.second_position
-
-		self.example = "<group><move native='true' /><move native='true' /><group><move native='true' /></group></group>"
+	def example(self):
+		"""Returns parsed example data"""
+		return ActionGroup.parse_string(self.__example)
 
 	def test_set_state_idle(self):
-		root = ActionGroup.parse_string(self.example)
+		root = self.example()
 		root.children[0].state = ActionStatus.DONE
 		root.children[1].state = ActionStatus.DONE
 		sub = root.children[2]
@@ -68,19 +64,19 @@ class TestOrderedActionGroup(unittest.TestCase):
 		self.assertEqual(sub.children[0].state, ActionStatus.IDLE)
 	
 	def test_set_state_paused(self):
-		root = ActionGroup.parse_string(self.example)
+		root = self.example()
 		root.children[0].state = ActionStatus.PAUSED
 
 		self.assertEqual(root.state, ActionStatus.PAUSED)
 
 	def test_set_state_error(self):
-		root = ActionGroup.parse_string(self.example)
+		root = self.example()
 		root.children[0].state = ActionStatus.ERROR
 
 		self.assertEqual(root.state, ActionStatus.ERROR)
 
 	def test_set_state_done(self):
-		root = ActionGroup.parse_string(self.example)
+		root = self.example()
 		root.children[0].state = ActionStatus.DONE
 		root.children[1].state = ActionStatus.DONE
 		sub = root.children[2]
@@ -92,7 +88,7 @@ class TestOrderedActionGroup(unittest.TestCase):
 
 
 	def test_action_point(self):
-		root = ActionGroup.parse_string(self.example)
+		root = self.example()
 		root.children[0].action_point = action_point_fun(2, 3)
 		root.children[1].action_point = action_point_fun(4, 5)
 		root.children[2].children[0].action_point = action_point_fun(6, 7)

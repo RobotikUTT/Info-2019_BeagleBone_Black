@@ -46,7 +46,7 @@ Les résultats sont disponibles à l'aide de la commande `catkin_test_results`.
 
 Il est également possible de lancer un fichier de test pour un noeud spécifique (des logs plus poussés mais moins lisibles sont disponibles en ajoutant l'option `-t`).
 ~~~~bash
-rosrun [package] [test_file].launch
+rostest [package] test-[test_file].launch
 ~~~~
 
 ## Lancer le robot
