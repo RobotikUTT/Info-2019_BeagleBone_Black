@@ -30,6 +30,8 @@ class Argumentable:
 			return True
 		return False
 
+	def keys(self):
+		return self.values.keys()
 
 	def from_list(self, args: List[Argument], reset: bool = False) -> 'Argumentable':
 		if reset:

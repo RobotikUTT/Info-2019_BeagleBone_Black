@@ -2,6 +2,7 @@ from .action import Action, ActionChoice
 
 from ai_msgs.msg import ActionPoint, ActionStatus
 from geometry_msgs.msg import Pose2D
+from args_lib.msg import Argument
 
 from typing import List, Union
 
@@ -16,7 +17,8 @@ from xml_class_parser import Parsable, Bind, BindDict, Enum, BindList
 	},
 	children = [
 		BindList(to="children", type=Action),
-		BindList(to="children", type=Parsable.SELF)
+		BindList(to="children", type=Parsable.SELF),
+		BindList(to="arguments", type=Argument) # groups takes arguments for children
 	]
 )
 class ActionGroup(Action):
@@ -31,9 +33,6 @@ class ActionGroup(Action):
 	def __init__(self):
 		super().__init__()
 
-		# TODO remove
-		self.points = "0"
-
 		self.fail = ActionGroup.FAIL_POSTPONE
 		self.type: str = ActionGroup.ORDERED
 		self.children: List[Action] = []
@@ -44,25 +43,27 @@ class ActionGroup(Action):
 		self.__state = ActionStatus.IDLE
 	
 	def __parsed__(self, context):
-		# TODO handler assignment from context
-		if len(self.points) > 0 and self.points[0] == "@":
-			self.points = 0
-		else:
-			self.points = int(self.points)
+		super().__parsed__(context)
 
 		for i in range(len(self.children)):
 			child = self.children[i]
 
 			# Non native action children
 			if type(child) == Action and not child.native:
-				self.children[i] = ActionGroup.parse_file(
+				self.children[i] = ActionGroup()
+
+				# Pass arguments
+				self.children[i].arguments.extend(child.arguments.to_list())
+
+				ActionGroup.parse_file(
 					context.get("folder") + child.name + ".xml",
-					context = context
+					context = context,
+					obj = self.children[i]
 				)
+
 			
 			# Set children parent
 			self.children[i].parent = self
-
 
 	@property
 	def state(self) -> int:

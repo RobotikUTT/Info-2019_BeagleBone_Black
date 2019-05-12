@@ -1,7 +1,7 @@
 from args_lib.argumentable import Argumentable
 from .util import get_action_point_service
 
-from typing import Union, List
+from typing import Union, List, Type
 import math
 
 import rospy
@@ -22,7 +22,7 @@ class ActionChoice:
 		self.action = action
 		self.score = score
 
-Argument = Parsable(name=Bind(to="name"), content=Bind(to="value"))(Argument)
+Argument = Parsable(name="arg", attributes={"name": str}, content=Bind(to="value"))(Argument)
 
 
 @Parsable(
@@ -42,7 +42,6 @@ class Action:
 		self.name: str = ""
 		self.native = False
 		self.points = 0
-		self.repeat: Union[ActionRepeater, None] = None
 
 		self.arguments: Argumentable = []
 		self.requirements: List[ObjectRequirement] = []
@@ -52,9 +51,30 @@ class Action:
 		self.__action_point_origin: Union[ActionPoint, None] = None
 
 		self.__state = ActionStatus.IDLE
-	
+
+	def __before_children__(self, context):
+		# Get parent arguments
+		if context.parent is not None:
+			self.arguments.extend(context.parent.arguments)
+
 	def __parsed__(self, context):
 		self.arguments = Argumentable().from_list(self.arguments)
+
+		# Apply context to values
+		self.points = self.__contextualized_value(str(self.points), int)
+
+		for key in self.arguments.keys():
+			self.arguments.set(key, self.__contextualized_value(self.arguments.get(key)))
+
+	def __contextualized_value(self, value: str, cast: Type = str):
+		# TODO check
+		if len(value) > 0 and value[0] == "@":
+			if self.arguments.has(value[1:]):
+				return cast(self.arguments.get(value[1:]))
+			else:
+				return cast()
+		else:
+			return cast(value) if len(value) > 0 else cast()
 
 	@property
 	def state(self) -> int:

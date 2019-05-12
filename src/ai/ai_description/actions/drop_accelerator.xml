@@ -2,9 +2,9 @@
 <group fail="restart" points="10">
 	<!-- Go to launch site -->
 	<reach native="true">
-		<x>50</x>
-		<y>1800</y>
-		<angle>180</angle>
+		<arg name="x">50</arg>
+		<arg name="y">1800</arg>
+		<arg name="angle">180</arg>
 	</reach>
 
 	<!-- Drop puck -->
