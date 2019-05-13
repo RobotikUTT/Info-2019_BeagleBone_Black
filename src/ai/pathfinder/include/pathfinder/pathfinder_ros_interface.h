@@ -4,7 +4,6 @@
 #include <ros/console.h>
 
 #include "pathfinder/pathfinder.h"
-#include "pathfinder/dynamic_barriers_manager.h"
 #include "pathfinder/pos_convertor.h"
 
 #include "geometry_msgs/Pose2D.h"
@@ -27,23 +26,12 @@ public:
      */
     bool findPathCallback(pathfinder::FindPath::Request &req, pathfinder::FindPath::Response &rep);
     
-    /**
-     * Adds a subscriber to the manager.
-     * 
-     * @param subscriber A unique_ptr&& containing the initialized subscriber.
-     */
-    void addBarrierSubscriber(DynamicBarriersManager::BarriersSubscriber && subscriber);
     
 private:
     /**
      * Pointer to the main algorithm
      */
     std::unique_ptr<Pathfinder> pathfinderPtr_;
-    
-    /**
-     * The barrier subscribers manager
-     */
-    std::shared_ptr<DynamicBarriersManager> dynBarriersMng_;
     
     /** Convertor object between inside and outside referentials **/
     std::shared_ptr<PosConvertor> convertor_;

@@ -7,7 +7,6 @@
 
 #include "pathfinder/map_storage.h"
 #include "pathfinder/pos_convertor.h"
-#include "pathfinder/dynamic_barriers_manager.h"
 
 #include "pathfinder/FindPath.h"
 
@@ -29,16 +28,11 @@ public:
     using Path = std::vector<Pose2D>;
     
     /**
-     * Defines return statuses for the find path algorithm.
-     */
-    enum class FindPathStatus {NO_ERROR, NO_PATH_FOUND, MAP_NOT_LOADED, START_END_POS_NOT_VALID};
-
-    /**
      * Initialize the pathfinder by loading given image file containing static barriers positions, and the size of a rectangle containing all input positions (here the table).
      * @param mapFileName The name of the image file to load.
      * @param dynBarriersMng The dynamic barriers manager already initialized.
      */
-    Pathfinder(std::shared_ptr<DynamicBarriersManager> dynBarriersMng);
+    Pathfinder();
     
     /**
      * Try to find a path between the two given positions. The coordinates are directly used in inside referential. It returns false if no paths where found.
@@ -62,11 +56,6 @@ private:
     /** Manager for loading and saving image files **/
     MapStorage _mapStorage;
     
-    /** Contains the positions of static barriers. **/
-    Vect2DBool _allowedPositions;
-    /** Contains the positions of dynamic barriers. **/
-    std::shared_ptr<DynamicBarriersManager> _dynBarriersMng;
-
     /**
      * Add two Pose2D positions into a single new one
      */

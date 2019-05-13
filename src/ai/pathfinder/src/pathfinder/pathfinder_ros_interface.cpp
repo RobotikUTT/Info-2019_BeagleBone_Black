@@ -4,8 +4,6 @@ using namespace std;
 
 PathfinderROSInterface::PathfinderROSInterface(std::shared_ptr<PosConvertor> convertor)
 {
-    dynBarriersMng_ = make_shared<DynamicBarriersManager>();
-    pathfinderPtr_ = make_unique<Pathfinder>(dynBarriersMng_);
     convertor_ = convertor;
     
     auto mapSize = pathfinderPtr_->getMapSize();
@@ -18,8 +16,6 @@ PathfinderROSInterface::PathfinderROSInterface(std::shared_ptr<PosConvertor> con
         }
 
         convertor_->setMapSize(mapSize);
-        dynBarriersMng_->setConvertor(convertor_);
-        dynBarriersMng_->fetchOccupancyDatas(mapSize.x, mapSize.y);
     }
 }
 
@@ -47,12 +43,6 @@ bool PathfinderROSInterface::findPathCallback(pathfinder::FindPath::Request& req
     
     return true;
 }
-
-void PathfinderROSInterface::addBarrierSubscriber(DynamicBarriersManager::BarriersSubscriber && subscriber)
-{
-    dynBarriersMng_->addBarrierSubscriber(std::move(subscriber));
-}
-
 
 string PathfinderROSInterface::pathRosToStr_(const vector<geometry_msgs::Pose2D>& path)
 {

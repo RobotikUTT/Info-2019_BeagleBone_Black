@@ -7,9 +7,8 @@
 
 using namespace std;
 
-Pathfinder::Pathfinder(shared_ptr<DynamicBarriersManager> dynBarriersMng) {
-    _dynBarriersMng = dynBarriersMng;
-    _allowedPositions = _mapStorage.buildAllowedPositions(800, 600);
+Pathfinder::Pathfinder() {
+    _mapStorage.buildAllowedPositions(800, 600);
 }
 
 
@@ -18,14 +17,12 @@ int Pathfinder::findPath(const Pose2D& startPos, const Pose2D& endPos, Path& pat
     ROS_DEBUG_STREAM("START: " << startPos);
     ROS_DEBUG_STREAM("END: " << endPos);
 
-    if (_allowedPositions.empty() || _allowedPositions.front().empty())
+    if (_mapStorage.width() == 0 || _mapStorage.height() == 0)
     {
         ROS_ERROR("Allowed positions is empty. Did you load the file?");
         return FindPath::Response::NO_PATH_FOUND;
     }
 
-    _dynBarriersMng->fetchOccupancyDatas(_allowedPositions.front().size(), _allowedPositions.size());
-    
     auto startTime = chrono::high_resolution_clock::now();
     
     if (!isValid(startPos) || !isValid(endPos))
@@ -36,7 +33,7 @@ int Pathfinder::findPath(const Pose2D& startPos, const Pose2D& endPos, Path& pat
     
     // Creates a map filled with -1
     auto mapDist = Vect2DShort(
-        _allowedPositions.size(), vector<short>(_allowedPositions.front().size(), -1)
+        _mapStorage.height(), vector<short>(_mapStorage.width(), -1)
     );
     if (!exploreGraph(mapDist, startPos, endPos)) // endPos not found or no paths exist between startPos and endPos
     {
@@ -58,11 +55,8 @@ int Pathfinder::findPath(const Pose2D& startPos, const Pose2D& endPos, Path& pat
 Pose2D Pathfinder::getMapSize()
 {
     Pose2D size;
-    if (_allowedPositions.size() == 0)
-        return size;
-    
-    size.x = _allowedPositions.front().size();
-    size.y = _allowedPositions.size();
+    size.x = _mapStorage.width();
+    size.y = _mapStorage.height();
     return size;
 }
 
@@ -158,13 +152,12 @@ Pathfinder::Path Pathfinder::smoothPath(const Path& rawPath)
 
 bool Pathfinder::isValid(const Pose2D& pos)
 {
-    if (pos.y < 0 || pos.y >= _allowedPositions.size())
+    if (pos.y < 0 || pos.y >= _mapStorage.height())
         return false;
-    if (pos.x < 0 || pos.x >= _allowedPositions.front().size())
+    if (pos.x < 0 || pos.x >= _mapStorage.width())
         return false;
-    if (!_allowedPositions[pos.y][pos.x] || _dynBarriersMng->hasBarriers(pos))
-        return false;
-    return true;
+
+    return _mapStorage.isBlocked(pos.x, pos.y);
 }
 
 bool Pathfinder::canConnectWithLine(const Pose2D& pA, const Pose2D& pB)

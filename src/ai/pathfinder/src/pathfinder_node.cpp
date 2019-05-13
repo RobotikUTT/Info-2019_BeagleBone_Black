@@ -1,6 +1,5 @@
 #include <ros/ros.h>
 #include <ros/package.h>
-#include <dynamic_reconfigure/server.h>
 
 #include "pathfinder/FindPath.h"
 
@@ -9,25 +8,16 @@
 
 #include "node_watcher/Node.hpp"
 #include "ai_msgs/NodeStatus.h"
+#include "ai_msgs/FindPath.h"
+#include "ai_msgs/DeclareZone.h"
 
 #include <memory>
 
+using ai_msgs::DeclareZone;
 using namespace std;
 
-const string                NAMESPACE_NAME              = "navigation";
-const string                NODE_NAME                   = "pathfinder";
-
-const string                FINDPATH_SERVICE_NAME       = NAMESPACE_NAME + "/" + NODE_NAME + "/find_path";
-const double                TABLE_WIDTH                 = 3.0; // Scale corresponding to messages received by the node
-const double                TABLE_HEIGHT                = 2.0; // Scale corresponding to messages received by the node
-const string                PR_MAP_FILE_NAME            = "layer_ground.bmp";
-const string                GR_MAP_FILE_NAME            = "layer_pathfinder.bmp"; //"/ros_ws/src/pathfinder/def/map.bmp"; for debug purposes
-const string                DEFAULT_ROBOT_NAME          = "gr";
-
-const size_t                SIZE_MAX_QUEUE              = 10;
-const double                SAFETY_MARGIN               = 0.15;
-const string                MAP_GET_OBJECTS_SERVER      = "static_map/get_container";
-const string                OBJECTS_CLASSIFIER_TOPIC    = "recognition/objects_classifier/objects";
+const double TABLE_WIDTH = 3.0; // Scale corresponding to messages received by the node
+const double TABLE_HEIGHT = 2.0; // Scale corresponding to messages received by the node
 
 
 /**
@@ -39,15 +29,6 @@ const string                OBJECTS_CLASSIFIER_TOPIC    = "recognition/objects_c
  */
 template<typename T>
 unique_ptr<T> constructSubscriber(ros::NodeHandle& nodeHandle, const string& topic);
-
-/**
- * Retrieve the robot's name from the parameters
- * 
- * @param nodeHandle The node handle used by the node
- * @return The name of the robot
- */
-string fetchRobotName(ros::NodeHandle& nodeHandle);
-
 
 class PathFinderNode : public Node {
     PathFinderNode() : Node("pathfinder", "ai") {
@@ -66,6 +47,7 @@ class PathFinderNode : public Node {
         PathfinderROSInterface pathfinderInterface(convertor);
         
         // Add some obstacle sources
+        auto mapSubscriber = this->nh.advertiseService("/ai/pathfinder/declare_zone", &PathFinderNode::declareZone, this);
         /*auto mapSubscriber = constructSubscriber<MapSubscriber>(this->nh, MAP_GET_OBJECTS_SERVER);
         mapSubscriber->setConvertor(convertor);
         pathfinderInterface.addBarrierSubscriber(std::move(mapSubscriber));
@@ -78,10 +60,14 @@ class PathFinderNode : public Node {
         this->waitForNodes(200);
 
         // Configure the main service
-        ros::ServiceServer findPathServer = this->nh.advertiseService(FINDPATH_SERVICE_NAME, &PathfinderROSInterface::findPathCallback, &pathfinderInterface);
+        ros::ServiceServer findPathServer = this->nh.advertiseService("/ai/pathfinder/findpath", &PathfinderROSInterface::findPathCallback, &pathfinderInterface);
         
         // Tell other node that we are ready
         this->setNodeStatus(NodeStatus::READY);
+    }
+
+    bool declareZone(DeclareZone::Request& req, DeclareZone::Response& res) {
+        return false;
     }
 };
 
@@ -102,7 +88,8 @@ int main (int argc, char* argv[])
 template<typename T>
 unique_ptr<T> constructSubscriber(ros::NodeHandle& nodeHandle, const string& topic)
 {
-    unique_ptr<T> subscriber = std::make_unique<T>(SAFETY_MARGIN);
-    subscriber->subscribe(nodeHandle, SIZE_MAX_QUEUE, topic);
+    // Safety margin = 0.15
+    unique_ptr<T> subscriber = std::make_unique<T>(0.15);
+    subscriber->subscribe(nodeHandle, 100, topic);
     return subscriber;
 }

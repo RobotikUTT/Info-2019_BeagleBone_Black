@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import rospy
 
-from vision import RectZone, Offset, Zone
+from map_handler import RectZone, Offset, Zone
 
 from node_watcher import Node
 
@@ -9,18 +9,18 @@ from visualization_msgs.msg import Marker
 from ai_msgs.srv import DeclareZone
 from ai_msgs.msg import Shape, NodeStatus
 
-class VisionNode(Node):
+class map_handlerNode(Node):
 	# TODO map publishing
 	# TODO objet
 	def __init__(self):
-		super().__init__("vision", "ai")
+		super().__init__("map_handler", "ai")
 
 		self.zone = RectZone.parse_file("/map/table.xml", package="ai_description")
 
 		self.rviz_marker_pub = rospy.Publisher("visualization_marker", Marker, queue_size = 100)
 
 		rospy.loginfo("map parsed, waiting for pathfinding service to register zones")
-		self.declare_zone = rospy.ServiceProxy("/ai/vision/blocking_zone", DeclareZone)
+		self.declare_zone = rospy.ServiceProxy("/ai/map_handler/blocking_zone", DeclareZone)
 		
 		try:
 			self.declare_zone.wait_for_service(1)
@@ -96,7 +96,7 @@ if __name__ == '__main__':
 	# Go to class functions that do all the heavy lifting. Do error checking.
 	try:
 		# Create node
-		node = VisionNode()
+		node = map_handlerNode()
 
 		# Spin
 		while not rospy.is_shutdown():

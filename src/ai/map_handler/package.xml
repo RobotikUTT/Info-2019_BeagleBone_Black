@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>vision</name>
+  <name>map_handler</name>
   <version>2018.1.0</version>
-  <description>The vision package</description>
+  <description>The map_handler package</description>
 
   <maintainer email="cle.bourdonnaye@gmail.com">Clément de La Bourdonnaye</maintainer>
   <license>TODO</license>

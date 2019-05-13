@@ -5,8 +5,8 @@ import unittest
 import rospy
 import rostest
 
-from vision import MapObject, Rect, Circle, MapObjectList
-from vision.map import RectZone, CircleZone, Offset, Symmetry
+from map_handler import MapObject, Rect, Circle, MapObjectList
+from map_handler.map import RectZone, CircleZone, Offset, Symmetry
 
 from xml_class_parser import ParsingException
 
@@ -88,17 +88,17 @@ class TestParsing(unittest.TestCase):
 
 	def test_map_parsing(self):
 		result = RectZone.parse_string('''
-			<rect x="0" y="0" height="3000" width="2000" blocking="true">
+			<rect-zone x="0" y="0" height="3000" width="2000" blocking="true">
 				<symmetry axis="y" offset="1500" source="up" target="down" />
 
-				<rect x="1400" y="1500" width="200" height="20" blocking="true" />
-				<rect x="1543" y="450" width="57" height="778" />
-			</rect>
+				<rect-zone x="1400" y="1500" width="200" height="20" blocking="true" />
+				<rect-zone x="1543" y="450" width="57" height="778" />
+			</rect-zone>
 		''')
 
 		print(str(result))
 
 
 if __name__ == '__main__':
-	rospy.init_node('test_vision_parsing', anonymous=True)
-	rostest.rosrun('action_manager', 'test_vision_parsing', TestParsing, sys.argv)
+	rospy.init_node('test_map_handler_parsing', anonymous=True)
+	rostest.rosrun('action_manager', 'test_map_handler_parsing', TestParsing, sys.argv)
