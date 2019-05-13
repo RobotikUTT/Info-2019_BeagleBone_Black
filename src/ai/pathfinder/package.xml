@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>pathfinder</name>
+    <version>1.0.0</version>
+    <description>The pathfinder package, taken from https://github.com/utcoupe/coupe19 and adapted to this project</description>
+    <maintainer email="utcoupe@assos.utc.fr">UTCoupe Association</maintainer>
+    <license>GPLv3</license>
+    <author email="mindstan@hotmail.fr">Mindstan</author>
+    <buildtool_depend>catkin</buildtool_depend>
+    <depend>roscpp</depend>
+    <depend>roslib</depend>
+    <depend>std_msgs</depend>
+    <depend>message_generation</depend>
+    <depend>geometry_msgs</depend>
+    <exec_depend>message_runtime</exec_depend>
+    <depend>node_watcher</depend>
+    <export>
+    </export>
+</package>
