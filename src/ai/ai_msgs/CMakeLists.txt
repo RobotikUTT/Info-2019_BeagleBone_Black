@@ -43,7 +43,6 @@ add_service_files(
   FILES
   NodeReadiness.srv
   DeclareZone.srv
-  FindPath.srv
   ComputeActionPoint.srv
   SetSchedulerState.srv
   AwaitNodesRequest.srv

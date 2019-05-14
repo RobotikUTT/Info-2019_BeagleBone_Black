@@ -11,6 +11,10 @@
 #include "interface_msgs/Directions.h"
 #include "interface_msgs/CanData.h"
 
+#include "pathfinder/FindPath.h"
+
+#include "geometry_msgs/Pose2D.h"
+
 /**
  * @brief class for the action of reaching a position
  */
@@ -21,8 +25,9 @@ public:
 
 private:
   ros::Subscriber can_data_sub;
-
+  ros::ServiceClient pathfinder_srv;
   ros::Publisher can_data_pub;
+  
   ros::Timer timerTimeout;
   
   ActionPoint computeActionPoint(Argumentable* actionArgs, Pose2D robot_pos) override;
@@ -31,6 +36,7 @@ private:
 
   void onCanData(const interface_msgs::CanData::ConstPtr&);
   void timeoutCallback(const ros::TimerEvent&);
+  void moveTo(geometry_msgs::Pose2D location);
 
 };
 

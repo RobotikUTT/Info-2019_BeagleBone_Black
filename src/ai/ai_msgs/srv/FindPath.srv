@@ -1,5 +1,0 @@
-geometry_msgs/Pose2D source
-geometry_msgs/Pose2D destination
----
-geometry_msgs/Pose2D[] targets
-bool possible

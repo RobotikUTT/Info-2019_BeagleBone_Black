@@ -234,6 +234,10 @@ std::vector< Pose2D > Pathfinder::directions() const
     return dirs; // Should use move semantics with recent compilators
 }
 
+MapStorage Pathfinder::getMapStorage() {
+    return this->_mapStorage;
+}
+
 string Pathfinder::pathMapToStr(const Path& path)
 {
     ostringstream os;

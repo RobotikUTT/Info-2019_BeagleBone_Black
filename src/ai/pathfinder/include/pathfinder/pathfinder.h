@@ -46,7 +46,8 @@ public:
      * Return the sizes of the internal barrier map.
      */
     Pose2D getMapSize();
-
+    MapStorage getMapStorage();
+    
 private:
     /** Shortcut to define a 2D array of short. **/
     typedef std::vector<std::vector<short> > Vect2DShort;

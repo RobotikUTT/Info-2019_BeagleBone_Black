@@ -10,6 +10,8 @@ ReachActionPerfomer::ReachActionPerfomer(std::string name) : ActionPerformer(nam
 	this->can_data_sub = nh.subscribe("/can_interface/in", 1, &ReachActionPerfomer::onCanData, this);
 	this->can_data_pub = nh.advertise<interface_msgs::CanData>("/can_interface/out", 1);
 
+	this->pathfinder_srv = nh.serviceClient<pathfinder::FindPath>("/ai/pathfinder/findpath");
+
 	setNodeStatus(NodeStatus::READY);
 }
 
@@ -37,46 +39,70 @@ void ReachActionPerfomer::onCanData(const interface_msgs::CanData::ConstPtr& msg
  * @brief run action toward a new goal and send the appropriate to the STM
  */
 void ReachActionPerfomer::start() {
-	interface_msgs::CanData msg;
-	Argumentable params;
+	// Test that some actions are to be performed
+	if (hasLong("x") * hasLong("y") + 2 * hasLong("angle") == 0) {
+		ROS_ERROR_STREAM("missing data in message, need at least (x,y) or (angle)");
+		returns(ActionStatus::ERROR);
+		return;
+	}
+	
+	// If movement, get pathfinding data
+	if (hasLong("x") && hasLong("y")) {
+		geometry_msgs::Pose2D posEnd;
+		posEnd.x = getLong("x");
+		posEnd.y = getLong("y");
 
-	// Copy parameters
-	params.setLong("x", getLong("x", 0));
-	params.setLong("y", getLong("y", 0));
-	params.setLong("angle", getLong("angle", 0));
-	params.setLong("direction", getLong("direction", interface_msgs::Directions::FORWARD));
+		pathfinder::FindPath srv;
+		srv.request.posStart = this->robotPos;
+		srv.request.posEnd = posEnd;
 
-	/**
-	 * Boolean equation determining which move the action should use
-	 */
-	int moveType = hasLong("x") * hasLong("y") + 2 * hasLong("angle");
+		if (this->pathfinder_srv.call(srv)) {
+			// If no path found
+			if (srv.response.return_code != pathfinder::FindPath::Response::PATH_FOUND) {
+				ROS_WARN_STREAM("No path found to reach action goal...");
+				this->returns(ActionStatus::PAUSED);
+				return;
+			}
 
-	switch (moveType) {
-		case 1: // x, y and direction provided
-			msg.type = "go_to";
-			break;
-
-		case 2: // angle only provided
-			msg.type = "rotate";
-			break;
-
-		case 3: // everything is provided
-			msg.type = "go_to_angle";
-			break;
-
-		default:
-			ROS_ERROR_STREAM("unable to determine message type to use " << moveType << " like " << hasLong("x") << ":" << hasLong("y") << ":" << hasLong("direction") << ":" << hasLong("angle"));
-			returns(ActionStatus::ERROR);
-			return;
+			// Else give order to move along path
+			for (auto& pose : srv.response.path) {
+				this->moveTo(pose);
+			}
+		} else {
+			ROS_ERROR_STREAM("Error while calling pathfinder service");
+			this->returns(ActionStatus::ERROR);
+		}
 	}
 
-	msg.params = params.toList();
-	this->can_data_pub.publish(msg);
+	// If an angle is provided
+	if (hasLong("angle")) {
+		interface_msgs::CanData msg;
+		msg.type = "rotate";
+		
+		Argumentable param;
+		param.setLong("angle", getLong("angle"));
+		msg.params = param.toList();
+		this->can_data_pub.publish(msg);
+	}
 
 	int timeout = getLong("timeout", 0);
 	if (timeout > 0) {
 		timerTimeout = nh.createTimer(ros::Duration(timeout), &ReachActionPerfomer::timeoutCallback , this, true);
 	}
+}
+
+void ReachActionPerformer::moveTo(geometry_msgs::Pose2D location) {
+	Argumentable params;
+	params.setLong("x", location.x);
+	params.setLong("y", location.y);
+	params.setLong("angle", location.theta);
+	params.setLong("direction", interface_msgs::Directions::FORWARD);
+
+	interface_msgs::CanData msg;
+	msg.type = "go_to";
+	msg.params = params.toList();
+
+	this->can_data_pub.publish(msg);
 }
 
 void ReachActionPerfomer::cancel() {

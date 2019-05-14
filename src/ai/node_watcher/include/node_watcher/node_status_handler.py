@@ -47,6 +47,11 @@ class NodeStatusHandler:
 
 		except rospy.ServiceException:
 			rospy.logerr("Unable to call watcher as getter for {}".format(nodename))
+			
+			ret = NodeStatus()
+			ret.state_code = NodeStatus.ERROR
+			ret.error_code = -1
+			return ret
 	
 	# Status setter
 	def set_node_status(self, nodename: str, package: str, state_code: int, error_code: int = 0):

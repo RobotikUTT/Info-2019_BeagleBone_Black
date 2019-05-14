@@ -49,14 +49,14 @@ file(
     source_files_pathfinder
     src/pathfinder/*
 )
-add_executable(pathfinder_node ${source_files_pathfinder} src/pathfinder_node.cpp)
+add_executable(node ${source_files_pathfinder} src/pathfinder_node.cpp)
 
-target_link_libraries(pathfinder_node
+target_link_libraries(node
     ${catkin_LIBRARIES}
     ${SFML_LIBRARIES} ${SFML_DEPENDENCIES}
 )
 
-add_dependencies(pathfinder_node
+add_dependencies(node
     ${${PROJECT_NAME}_EXPORTED_TARGETS}
     ${PROJECT_NAME}_gencfg
     ${catkin_EXPORTED_TARGETS}

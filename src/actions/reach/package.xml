@@ -17,7 +17,7 @@
 
   <!-- Packages -->
   <depend>action_manager</depend>
-  <depend>robot_interface</depend>
+  <depend>pathfinder</depend>
 
   <export></export>
 </package>
