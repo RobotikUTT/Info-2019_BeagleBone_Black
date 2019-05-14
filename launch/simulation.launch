@@ -5,6 +5,11 @@
 		<include file="$(find controller)/launch/pkg.launch"/>
 	</group>
 
+	<group ns="way">
+		<include file="$(find pathfinder)/pkg.launch" />
+		<include file="$(find map_handler)/pkg.launch" />
+	</group>
+
 	<group ns="actions">
 		<include file="$(find idle)/launch/pkg.launch"/>
 		<include file="$(find reach)/launch/pkg.launch"/>
@@ -14,6 +19,7 @@
 
 	<group ns="interface">
 		<param name="can_interface/device" value="vcan0" />
+
 		<!-- Interface to a fake can bus redirecting to simulation node -->
 		<include file="$(find can_interface)/launch/pkg.launch" />
 	</group>

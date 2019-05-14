@@ -27,7 +27,7 @@ Controller::Controller() : Node("controller", "ai"), side(Side::LEFT) {
 	schedulerController = nh.serviceClient<SetSchedulerState>("/scheduler/do");
 
 	// Wait for required nodes
-	waitForNodes(3);
+	waitForNodes(30);
 }
 
 void Controller::onWaitingResult(bool success) {

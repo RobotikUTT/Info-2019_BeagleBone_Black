@@ -89,7 +89,9 @@ class ActionGroup(Action):
 				stack = [] + self.children
 				while len(stack) > 0:
 					next = stack.pop()
-					stack.extend(next.children)
+
+					if isinstance(next, ActionGroup):
+						stack.extend(next.children)
 
 					# force state to restart everything
 					next.__state = ActionStatus.IDLE

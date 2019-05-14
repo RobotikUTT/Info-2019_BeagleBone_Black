@@ -18,10 +18,10 @@
 /**
  * @brief class for the action of reaching a position
  */
-class ReachActionPerfomer : public ActionPerformer
+class ReachActionPerformer : public ActionPerformer
 {
 public:
-  ReachActionPerfomer(std::string name);
+  ReachActionPerformer(std::string name);
 
 private:
   ros::Subscriber can_data_sub;
@@ -30,7 +30,9 @@ private:
   
   ros::Timer timerTimeout;
   
-  ActionPoint computeActionPoint(Argumentable* actionArgs, Pose2D robot_pos) override;
+  geometry_msgs::Pose2D robotPos;
+
+  ActionPoint computeActionPoint(Argumentable* actionArgs, Pose2D robotPos) override;
   void start() override;
   void cancel() override;
 
@@ -38,6 +40,7 @@ private:
   void timeoutCallback(const ros::TimerEvent&);
   void moveTo(geometry_msgs::Pose2D location);
 
+  void onWaitingResult(bool) override;
 };
 
 /**

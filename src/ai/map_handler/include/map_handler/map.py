@@ -117,7 +117,7 @@ class Symmetry:
 		original = copy(zone)
 		duplicate = deepcopy(zone)
 		self.change_zone_content_side(duplicate)
-
+		
 		# Reset original shape
 		zone.__init__()
 		zone.name = original.name

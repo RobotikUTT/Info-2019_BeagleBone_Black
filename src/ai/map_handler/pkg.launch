@@ -1,0 +1,3 @@
+<launch>
+	<node name="map_handler" pkg="map_handler" type="map_handler_node.py" output="screen" />
+</launch>

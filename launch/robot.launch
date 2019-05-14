@@ -5,6 +5,11 @@
 		<include file="$(find controller)/launch/pkg.launch" />
 	</group>
 
+	<group ns="way">
+		<include file="$(find pathfinder)/pkg.launch" />
+		<include file="$(find map_handler)/pkg.launch" />
+	</group>
+
 	<group ns="actions">
 		<include file="$(find idle)/launch/pkg.launch"/>
 		<include file="$(find reach)/launch/pkg.launch"/>
