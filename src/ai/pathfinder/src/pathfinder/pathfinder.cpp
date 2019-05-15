@@ -7,8 +7,8 @@
 
 using namespace std;
 
-Pathfinder::Pathfinder() {
-    _mapStorage.buildAllowedPositions(800, 600);
+Pathfinder::Pathfinder(std::shared_ptr<PosConvertor> convertor) : _mapStorage(convertor) {
+    _mapStorage.buildAllowedPositions(80, 20);
 }
 
 
@@ -234,7 +234,7 @@ std::vector< Pose2D > Pathfinder::directions() const
     return dirs; // Should use move semantics with recent compilators
 }
 
-MapStorage Pathfinder::getMap() {
+MapStorage& Pathfinder::getMap() {
     return this->_mapStorage;
 }
 

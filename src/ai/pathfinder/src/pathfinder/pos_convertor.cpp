@@ -28,6 +28,14 @@ Pose2D PosConvertor::fromMapToRosPos (Pose2D mapPos) const
     return res;
 }
 
+double PosConvertor::getInternalX(double externalX) const {
+    return externalX * _sizeMap.x / _sizeRos.x;
+}
+
+double PosConvertor::getInternalY(double externalY) const {
+    return externalY * _sizeMap.y / _sizeRos.y;
+}
+
 double PosConvertor::fromMapToRosDistance(double dist) const
 {
     double xCoef = _sizeMap.x/_sizeRos.x;

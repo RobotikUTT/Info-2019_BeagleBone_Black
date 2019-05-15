@@ -41,6 +41,9 @@ public:
     void setMapSize(Pose2D sizeMap) noexcept { _sizeMap = sizeMap; }
     
     void setInvertedY(bool invertedY) noexcept { _invertedY = invertedY; }
+
+    double getInternalX(double externalX) const;
+    double getInternalY(double externalY) const;
     
 private:
     bool _invertedY;

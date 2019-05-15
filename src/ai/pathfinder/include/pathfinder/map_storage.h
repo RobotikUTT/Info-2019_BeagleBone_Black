@@ -8,6 +8,8 @@
 
 #include "ai_msgs/Shape.h"
 
+#include "pathfinder/pos_convertor.h"
+
 class TemporaryShape {
 public:
     TemporaryShape(ai_msgs::Shape shape) {
@@ -27,7 +29,7 @@ class MapStorage
 public:
     using Vect2DBool = std::vector<std::vector<bool> >;
     
-    MapStorage() = default;
+    MapStorage(std::shared_ptr<PosConvertor>);
     
     /**
      * Create the allowed positions array.
@@ -39,16 +41,19 @@ public:
     void declareShape(ai_msgs::Shape shape, bool temporary);
     void applyShape(ai_msgs::Shape& shape, Vect2DBool& grid);
 
-    Vect2DBool getAllowedPositions() const;
+    Vect2DBool& getAllowedPositions();
 
     int width() const;
     int height() const;
     bool isBlocked(int x, int y) const;
     bool isIn(const ai_msgs::Shape& shape, int x, int y) const;
 
+    void display() const;
+
 private:
     Vect2DBool allowedPos;
     std::vector<TemporaryShape> tempShapes;
+    std::shared_ptr<PosConvertor> _convertor;
 };
 
 

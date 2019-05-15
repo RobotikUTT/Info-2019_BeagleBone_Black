@@ -36,7 +36,7 @@ public:
 		this->convertor->setInvertedY(true);
 
 		// Init pathfinder
-		this->pathfinderPtr_ = make_unique<Pathfinder>();
+		this->pathfinderPtr_ = make_unique<Pathfinder>(this->convertor);
 		
 		// Assert correct size
 		auto mapSize = pathfinderPtr_->getMapSize();
@@ -57,7 +57,8 @@ public:
 
 		// Wait for vision job to be done
 		this->require("map_handler", "ai", true);
-		this->waitForNodes(10, false);
+		// TODO make time higher
+		this->waitForNodes(1, false);
 	}
 
 	void onWaitingResult(bool success) override {
@@ -77,6 +78,7 @@ public:
 		Pathfinder::Path path;
 		
 		ROS_INFO_STREAM("Received request from " << req.posStart << " to " << req.posEnd);
+		this->pathfinderPtr_->getMap().display();
 		
 		auto startPos = this->convertor->fromRosToMapPos(req.posStart);
 		auto endPos = this->convertor->fromRosToMapPos(req.posEnd);
@@ -100,6 +102,7 @@ public:
 	}
 
 	bool setMapSize(SetMapDimension::Request& req, SetMapDimension::Response& res) {
+		ROS_INFO_STREAM("Setting map size to " << req.width << "x" << req.height);
 
 		// Set size used in ROS in the convertor
 		Pose2D size;
@@ -107,12 +110,16 @@ public:
 		size.y = req.height;
 		this->convertor->setRosSize(size);
 
+		this->pathfinderPtr_->getMap().display();
+
 		return true;
 	}
 
 	bool declareZone(DeclareZone::Request& req, DeclareZone::Response& res) {
 		// Pass declaration to map
 		this->pathfinderPtr_->getMap().declareShape(req.zone, req.temporary);
+
+		this->pathfinderPtr_->getMap().display();
 
 		// Mark as done
 		return true;

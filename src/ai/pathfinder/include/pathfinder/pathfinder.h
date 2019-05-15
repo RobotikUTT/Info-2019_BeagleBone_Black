@@ -32,7 +32,7 @@ public:
      * @param mapFileName The name of the image file to load.
      * @param dynBarriersMng The dynamic barriers manager already initialized.
      */
-    Pathfinder();
+    Pathfinder(std::shared_ptr<PosConvertor> convertor);
     
     /**
      * Try to find a path between the two given positions. The coordinates are directly used in inside referential. It returns false if no paths where found.
@@ -46,7 +46,7 @@ public:
      * Return the sizes of the internal barrier map.
      */
     Pose2D getMapSize();
-    MapStorage getMap();
+    MapStorage& getMap();
     
 private:
     /** Shortcut to define a 2D array of short. **/
