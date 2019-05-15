@@ -2,55 +2,61 @@
 
 using namespace std;
 
-Pose2D PosConvertor::fromRosToMapPos (Pose2D rosPos) const
-{
+Pose2D PosConvertor::internalPose(Pose2D rosPos, bool round /*= false*/) const {
     Pose2D res;
-    res.x = rosPos.x * (_sizeMap.x / _sizeRos.x);
-    res.y = rosPos.y * (_sizeMap.y / _sizeRos.y);
-    
-    if (_invertedY)
-        res.y = _sizeMap.y - res.y;
-    
+    res.x = internalX(rosPos.x);
+    res.y = internalY(rosPos.y);
+
+    if (round) {
+        res.x = std::round(res.x);
+        res.y = std::round(res.y);
+    }
 
     return res;
 }
 
 
-Pose2D PosConvertor::fromMapToRosPos (Pose2D mapPos) const
-{
+Pose2D PosConvertor::externalPose(Pose2D mapPos) const{
     Pose2D res;
-    res.x = mapPos.x * (_sizeRos.x / _sizeMap.x);
-    res.y = mapPos.y * (_sizeRos.y / _sizeMap.y);
-    
-    if (_invertedY)
-        res.y = _sizeRos.y - res.y;
-    
+    res.x = externalX(mapPos.x);
+    res.y = externalY(mapPos.y);
     return res;
 }
 
-double PosConvertor::getInternalX(double externalX) const {
-    return externalX * _sizeMap.x / _sizeRos.x;
+double PosConvertor::internalX(double externalX) const {
+    this->assertReady();
+    return std::max(1.0, externalX * _sizeMap.x / _sizeRos.x);
 }
 
-double PosConvertor::getInternalY(double externalY) const {
-    return externalY * _sizeMap.y / _sizeRos.y;
+double PosConvertor::internalY(double externalY) const {
+    this->assertReady();
+    return std::max(1.0, externalY * _sizeMap.y / _sizeRos.y);
 }
 
-double PosConvertor::fromMapToRosDistance(double dist) const
-{
-    double xCoef = _sizeMap.x/_sizeRos.x;
-    double yCoef = _sizeMap.y/_sizeRos.y;
+double PosConvertor::externalX(double externalX) const {
+    this->assertReady();
+    return externalX * _sizeRos.x / _sizeMap.x;
+}
+
+double PosConvertor::externalY(double externalY) const {
+    this->assertReady();
+    return externalY * _sizeRos.y / _sizeMap.y;
+}
+
+double PosConvertor::externalDistance(double internalDist) const {
     // We assume that the scale on x and y is the same, we take the linear average to have a better precision.
-    double coef = (xCoef + yCoef)/2;
-    return dist/coef;
+    double coef = (externalX(1) + externalY(1)) / 2;
+    return internalDist * coef;
 }
 
-double PosConvertor::fromRosToMapDistance(double dist) const
-{
-    double xCoef = _sizeMap.x/_sizeRos.x;
-    double yCoef = _sizeMap.y/_sizeRos.y;
+double PosConvertor::internalDistance(double externalDist) const {
     // We assume that the scale on x and y is the same, we take the linear average to have a better precision.
-    double coef = (xCoef + yCoef)/2;
-    return dist*coef;
+    double coef = (internalX(1) + internalY(1)) / 2;
+    return externalDist * coef;
 }
 
+void PosConvertor::assertReady() const {
+    if (_sizeMap.x == 0 || _sizeMap.y == 0 || _sizeRos.x == 0 || 0 == _sizeRos.y) {
+        throw ConversionException();
+    }
+}

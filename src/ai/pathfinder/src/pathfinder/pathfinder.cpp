@@ -35,6 +35,7 @@ int Pathfinder::findPath(const Pose2D& startPos, const Pose2D& endPos, Path& pat
     auto mapDist = Vect2DShort(
         _mapStorage.height(), vector<short>(_mapStorage.width(), -1)
     );
+
     if (!exploreGraph(mapDist, startPos, endPos)) // endPos not found or no paths exist between startPos and endPos
     {
         ROS_ERROR_STREAM("No path found !");
@@ -157,7 +158,7 @@ bool Pathfinder::isValid(const Pose2D& pos)
     if (pos.x < 0 || pos.x >= _mapStorage.width())
         return false;
 
-    return _mapStorage.isBlocked(pos.x, pos.y);
+    return !_mapStorage.isBlocked(pos.x, pos.y);
 }
 
 bool Pathfinder::canConnectWithLine(const Pose2D& pA, const Pose2D& pB)

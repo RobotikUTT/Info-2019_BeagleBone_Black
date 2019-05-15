@@ -78,8 +78,8 @@ void MapStorage::declareShape(ai_msgs::Shape shape, bool temporary) {
 }
 
 void MapStorage::applyShape(ai_msgs::Shape& shape, MapStorage::Vect2DBool& grid) {
-	shape.x = this->_convertor->getInternalX(shape.x);
-	shape.y = this->_convertor->getInternalY(shape.y);
+	shape.x = this->_convertor->internalX(shape.x);
+	shape.y = this->_convertor->internalY(shape.y);
 
 	// Apply centered rect
 	if (shape.type == ai_msgs::Shape::RECT) {
@@ -88,8 +88,8 @@ void MapStorage::applyShape(ai_msgs::Shape& shape, MapStorage::Vect2DBool& grid)
 			return;
 		}
 
-		int width = _convertor->getInternalX(shape.params[0]);
-		int height = _convertor->getInternalY(shape.params[1]);
+		int width = _convertor->internalX(shape.params[0]);
+		int height = _convertor->internalY(shape.params[1]);
 
 		for (int y = shape.y - height / 2; y < height / 2 + shape.y; y ++) {
 			if (y < 0 || y >= grid.size()) continue;
@@ -108,14 +108,14 @@ void MapStorage::applyShape(ai_msgs::Shape& shape, MapStorage::Vect2DBool& grid)
 			return;
 		}
 
-		double radiusX = _convertor->getInternalX(shape.params[0]);
+		double radiusX = _convertor->internalX(shape.params[0]);
 		double radiusY;
 		
 		// Use ellipse width/height
 		if (shape.params.size() > 1) {
-			radiusY = _convertor->getInternalY(shape.params[1]);
+			radiusY = _convertor->internalY(shape.params[1]);
 		} else { // or circle radius
-			radiusY = _convertor->getInternalY(shape.params[0]);
+			radiusY = _convertor->internalY(shape.params[0]);
 		}
 
 		for (int y = -radiusY; y < radiusY; y ++) {

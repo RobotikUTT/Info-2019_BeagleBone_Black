@@ -33,7 +33,6 @@ public:
 	PathFinderNode() : Node("pathfinder", "ai") {
 		// Partialy initialize the convertor
 		this->convertor = make_shared<PosConvertor>();
-		this->convertor->setInvertedY(true);
 
 		// Init pathfinder
 		this->pathfinderPtr_ = make_unique<Pathfinder>(this->convertor);
@@ -79,16 +78,16 @@ public:
 		
 		ROS_INFO_STREAM("Received request from " << req.posStart << " to " << req.posEnd);
 		this->pathfinderPtr_->getMap().display();
-		
-		auto startPos = this->convertor->fromRosToMapPos(req.posStart);
-		auto endPos = this->convertor->fromRosToMapPos(req.posEnd);
+
+		auto startPos = this->convertor->internalPose(req.posStart, true);
+		auto endPos = this->convertor->internalPose(req.posEnd, true);
 		
 		rep.return_code = pathfinderPtr_->findPath(startPos, endPos, path);
 
 		// In case path is found
 		if (rep.return_code == pathfinder::FindPath::Response::PATH_FOUND) {
 			for (const Pose2D& pos : path) {
-				rep.path.push_back(this->convertor->fromMapToRosPos(pos));
+				rep.path.push_back(this->convertor->externalPose(pos));
 			}
 
 			rep.return_code = rep.PATH_FOUND;
@@ -147,7 +146,7 @@ int main (int argc, char* argv[])
 {
 	ros::init(argc, argv, "pathfinder_node");
 	
-//	 ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
+	 ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
 	PathFinderNode node;
 	ros::spin();
 	
