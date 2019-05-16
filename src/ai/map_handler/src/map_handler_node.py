@@ -9,7 +9,7 @@ from visualization_msgs.msg import Marker
 from ai_msgs.msg import Shape, NodeStatus
 from ai_msgs.srv import DeclareZone
 
-from pathfinder.srv import SetMapDimension
+from pathfinder.srv import SetMapDimension, SetRobotRadius
 
 class MapHandlerNode(Node):
 	def __init__(self):
@@ -29,10 +29,12 @@ class MapHandlerNode(Node):
 		# Pathfinder
 		self.declare_zone = rospy.ServiceProxy("/ai/pathfinder/declare_zone", DeclareZone)
 		self.set_map_dim = rospy.ServiceProxy("/ai/pathfinder/set_map_dimension", SetMapDimension)
+		self.set_robot_radius = rospy.ServiceProxy("/ai/pathfinder/set_robot_radius", SetRobotRadius)
 
 		try:
 			self.set_map_dim.wait_for_service(1)
 			self.declare_zone.wait_for_service(1)
+			self.set_robot_radius.wait_for_service(1)
 		except rospy.exceptions.ROSException as e:
 			raise e
 			rospy.logerr("unable to reach pathfinding service")
@@ -41,23 +43,34 @@ class MapHandlerNode(Node):
 
 		# Reset remote map
 		self.set_map_dim(self.zone.width, self.zone.height)
+		self.set_robot_radius(20)
 
 		# Initial publication of all zone
-		for zone in self.zone.zones:
-			# Create request
-			shape = Shape()
-			shape.x = zone.x
-			shape.y = zone.y
+		zones = self.zone.zones
+		while len(zones) > 0:
+			zone = zones.pop()
 
-			if isinstance(shape, RectZone):
-				shape.params = [ shape.width, shape.height ]
-			elif isinstance(shape, CircleZone):
-				shape.params = [ shape.radius ]
+			if zone.blocking:
+				# Create request
+				shape = Shape()
+				shape.x = zone.x
+				shape.y = zone.y
+
+				if isinstance(zone, RectZone):
+					shape.type = Shape.RECT
+					shape.params = [ zone.width, zone.height ]
+				elif isinstance(zone, CircleZone):
+					shape.type = Shape.CIRCLE
+					shape.params = [ zone.radius ]
+				else:
+					raise Exception("shape type not handled : {}".format(type(zone)))
+				print("sending", zone)
+				# Publish it to pathfinder
+				self.declare_zone(shape, False)
 			else:
-				raise Exception("shape type not handled : {}".format(type(zone)))
+				# Append children
+				zones.extend(zone.zones)
 
-			# Publish it to pathfinder
-			self.declare_zone(shape, False)
 		
 		return True
 

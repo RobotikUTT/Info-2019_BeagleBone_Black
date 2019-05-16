@@ -40,6 +40,8 @@ public:
     Vect2DBool buildAllowedPositions(int width, int height);
     void declareShape(ai_msgs::Shape shape, bool temporary);
     void applyShape(ai_msgs::Shape& shape, Vect2DBool& grid);
+    void applyRect(double shape_x, double shape_y, double width, double height, Vect2DBool& grid);
+    void applyCircle(double shape_x, double shape_y, double width, double height, Vect2DBool& grid);
 
     Vect2DBool& getAllowedPositions();
 
@@ -49,11 +51,14 @@ public:
     bool isIn(const ai_msgs::Shape& shape, int x, int y) const;
 
     void display() const;
-
+    void setRobotRadius(double rad);
 private:
     Vect2DBool allowedPos;
     std::vector<TemporaryShape> tempShapes;
     std::shared_ptr<PosConvertor> _convertor;
+
+    // Radius of the robot
+    double robotRadius;
 };
 
 

@@ -28,7 +28,7 @@ public:
      * @param rosPos The coodinate in ROS system
      * @return The coordinate in pathfinder system
      */
-    Pose2D internalPose (Pose2D rosPos, bool round = false) const;
+    Pose2D internalPose (Pose2D rosPos) const;
     
     /**
      * @brief Converts a coodinate from pathfinding system to ROS system using the scales.

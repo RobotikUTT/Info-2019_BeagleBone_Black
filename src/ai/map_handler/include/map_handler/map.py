@@ -66,10 +66,15 @@ class Zone(Offset):
 		)
 
 class RectZone(Zone):
-	pass
+	def __init__(self):
+		super().__init__()
+		self.width = 0
+		self.height = 0
 
 class CircleZone(Zone):
-	pass
+	def __init__(self):
+		super().__init__()
+		self.radius = 0
 
 @Parsable(
 	name="symmetry",
@@ -120,6 +125,8 @@ class Symmetry:
 		
 		# Reset original shape
 		zone.__init__()
+		zone.width = original.width
+		zone.height = original.height
 		zone.name = original.name
 		zone.blocking = original.blocking
 

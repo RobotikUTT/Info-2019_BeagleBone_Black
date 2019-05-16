@@ -3,6 +3,7 @@
 
 #include "pathfinder/FindPath.h"
 #include "pathfinder/SetMapDimension.h"
+#include "pathfinder/SetRobotRadius.h"
 
 #include "pathfinder/pathfinder.h"
 #include "pathfinder/pos_convertor.h"
@@ -15,6 +16,7 @@
 
 using ai_msgs::DeclareZone;
 using pathfinder::SetMapDimension;
+using pathfinder::SetRobotRadius;
 
 using namespace std;
 
@@ -29,6 +31,7 @@ private:
 	ros::ServiceServer findPathServer;
 	ros::ServiceServer zoneDeclareSrv;
 	ros::ServiceServer resetSrv;
+	ros::ServiceServer robotRadiusSrv;
 public:
 	PathFinderNode() : Node("pathfinder", "ai") {
 		// Partialy initialize the convertor
@@ -53,6 +56,7 @@ public:
 		// Obstacle declaration service
 		this->zoneDeclareSrv = this->nh.advertiseService("/ai/pathfinder/declare_zone", &PathFinderNode::declareZone, this);
 		this->resetSrv = this->nh.advertiseService("/ai/pathfinder/set_map_dimension", &PathFinderNode::setMapSize, this);
+		this->robotRadiusSrv = this->nh.advertiseService("/ai/pathfinder/set_robot_radius", &PathFinderNode::setRobotRadius, this);
 
 		// Wait for vision job to be done
 		this->require("map_handler", "ai", true);
@@ -79,8 +83,8 @@ public:
 		ROS_INFO_STREAM("Received request from " << req.posStart << " to " << req.posEnd);
 		this->pathfinderPtr_->getMap().display();
 
-		auto startPos = this->convertor->internalPose(req.posStart, true);
-		auto endPos = this->convertor->internalPose(req.posEnd, true);
+		auto startPos = this->convertor->internalPose(req.posStart);
+		auto endPos = this->convertor->internalPose(req.posEnd);
 		
 		rep.return_code = pathfinderPtr_->findPath(startPos, endPos, path);
 
@@ -98,6 +102,11 @@ public:
 		}
 		
 		return true;
+	}
+
+	bool setRobotRadius(SetRobotRadius::Request& req, SetRobotRadius::Response& res) {
+		// Set radius of the robot (it is assumed to be like a circle)
+		this->pathfinderPtr_->getMap().setRobotRadius(req.radius);
 	}
 
 	bool setMapSize(SetMapDimension::Request& req, SetMapDimension::Response& res) {

@@ -2,7 +2,7 @@
 
 using namespace std;
 
-MapStorage::MapStorage(std::shared_ptr<PosConvertor> convertor) : _convertor(convertor) {}
+MapStorage::MapStorage(std::shared_ptr<PosConvertor> convertor) : _convertor(convertor), robotRadius(0) {}
 
 MapStorage::Vect2DBool MapStorage::buildAllowedPositions(int width, int height)
 {
@@ -68,6 +68,10 @@ bool MapStorage::isIn(const ai_msgs::Shape& shape, int x, int y) const {
 	return false;
 }
 
+void MapStorage::setRobotRadius(double rad) {
+	this->robotRadius = rad;
+}
+
 void MapStorage::declareShape(ai_msgs::Shape shape, bool temporary) {
 	ROS_INFO_STREAM("INSERTING SHAPE");
 	if (!temporary) {
@@ -78,27 +82,25 @@ void MapStorage::declareShape(ai_msgs::Shape shape, bool temporary) {
 }
 
 void MapStorage::applyShape(ai_msgs::Shape& shape, MapStorage::Vect2DBool& grid) {
-	shape.x = this->_convertor->internalX(shape.x);
-	shape.y = this->_convertor->internalY(shape.y);
-
-	// Apply centered rect
+	// Apply centered rect (round rect when having border)
 	if (shape.type == ai_msgs::Shape::RECT) {
 		if (shape.params.size() < 2) {
 			ROS_ERROR_STREAM("Invalid rect shape received, missing height and width...");
 			return;
 		}
 
-		int width = _convertor->internalX(shape.params[0]);
-		int height = _convertor->internalY(shape.params[1]);
+		int width = shape.params[0];
+		int height = shape.params[1];
 
-		for (int y = shape.y - height / 2; y < height / 2 + shape.y; y ++) {
-			if (y < 0 || y >= grid.size()) continue;
-			
-			for (int x = shape.x - width / 2; x < width / 2 + shape.x; x ++) {
-				if (x < 0 || x >= grid[y].size()) continue;
-				grid[y][x] = false;
-			}
-		}
+		// Draw all sides extended
+		this->applyRect(shape.x, shape.y, width + robotRadius * 2, height, grid);
+		this->applyRect(shape.x, shape.y, width, height + robotRadius * 2, grid);
+
+		// Draw cornes
+		this->applyCircle(shape.x + (width / 2), shape.y, robotRadius, robotRadius, grid);
+		this->applyCircle(shape.x - (width / 2), shape.y, robotRadius, robotRadius, grid);
+		this->applyCircle(shape.x, shape.y + (height / 2), robotRadius, robotRadius, grid);
+		this->applyCircle(shape.x, shape.y - (height / 2), robotRadius, robotRadius, grid);
 	}
 	
 	// Apply circle
@@ -108,28 +110,47 @@ void MapStorage::applyShape(ai_msgs::Shape& shape, MapStorage::Vect2DBool& grid)
 			return;
 		}
 
-		double radiusX = _convertor->internalX(shape.params[0]);
-		double radiusY;
+		double radiusX = shape.params[0];
+		double radiusY = radiusX;
 		
 		// Use ellipse width/height
 		if (shape.params.size() > 1) {
-			radiusY = _convertor->internalY(shape.params[1]);
-		} else { // or circle radius
-			radiusY = _convertor->internalY(shape.params[0]);
+			radiusY = shape.params[1];
 		}
 
-		for (int y = -radiusY; y < radiusY; y ++) {
-			if (y + shape.y < 0 || y + shape.y >= grid.size()) continue;
-			for (int x = -radiusX; x < radiusX; x ++) {
-				if (x + shape.x < 0 || x + shape.x >= grid[y].size()) continue;
-				// If x,y in ellipse
-				if (x * x / (radiusX * radiusX) + y * y / (radiusY * radiusY) <= 1) {
-					grid[y + shape.y][x + shape.x] = false;
-				}
-			}
-		}
+		this->applyCircle(shape.x, shape.y, robotRadius + radiusX, robotRadius + radiusY, grid);
 	} else {
 		ROS_ERROR_STREAM(shape.type << " shape type not recognized");
+	}
+}
+
+void MapStorage::applyRect(double shape_x, double shape_y, double width, double height, Vect2DBool& grid) {
+	for (int y = _convertor->internalY(shape_y - height / 2); y < _convertor->internalY(height / 2 + shape_y); y ++) {
+		if (y < 0 || y >= grid.size()) continue;
+		
+		for (int x = _convertor->internalX(shape_x - width / 2); x < _convertor->internalX(width / 2 + shape_x); x ++) {
+			if (x < 0 || x >= grid[y].size()) continue;
+			grid[y][x] = false;
+		}
+	}
+}
+
+void MapStorage::applyCircle(double shape_x, double shape_y, double radiusX, double radiusY, Vect2DBool& grid) {
+	radiusX = _convertor->internalX(radiusX);
+	radiusY = _convertor->internalX(radiusY);
+	
+	shape_x = this->_convertor->internalX(shape_x);
+	shape_y = this->_convertor->internalY(shape_y);
+
+	for (int y = -radiusY; y < radiusY; y ++) {
+		if (y + shape_y < 0 || y + shape_y >= grid.size()) continue;
+		for (int x = -radiusX; x < radiusX; x ++) {
+			if (x + shape_x < 0 || x + shape_x >= grid[y].size()) continue;
+			// If x,y in ellipse
+			if (x * x / (radiusX * radiusX) + y * y / (radiusY * radiusY) <= 1) {
+				grid[y + shape_y][x + shape_x] = false;
+			}
+		}
 	}
 }
 

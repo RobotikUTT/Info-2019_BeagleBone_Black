@@ -19,6 +19,7 @@ add_service_files(
     FILES
     FindPath.srv
     SetMapDimension.srv
+    SetRobotRadius.srv
 )
 
 generate_messages(
