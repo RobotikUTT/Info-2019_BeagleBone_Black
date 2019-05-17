@@ -38,9 +38,10 @@ ActionPoint ReachActionPerformer::computeActionPoint(Argumentable* actionArgs, P
 	if (actionArgs->getLong("_side") == Side::UP) {
 		ai_msgs::GetMapSize srv;
 
+		ros::service::waitForService("/ai/map_handler/get_map_size", 2);
 		if (this->get_map_data_srv.call(srv)) {
 			result.end.y = srv.response.height - result.end.y;
-			result.end.theta = M_PI * 500 - result.end.theta; // half a turn in mrad
+			result.end.theta = M_PI * 1000 - result.end.theta; // half a turn in mrad
 		} else {
 			ROS_ERROR_STREAM("Unable to fecth map size");
 		}
@@ -128,7 +129,7 @@ void ReachActionPerformer::start() {
 
 		// Revert angle
 		if (getLong("_side") == Side::UP) {
-			param.setLong("angle", M_PI * 500 - getLong("angle")); // half a turn in mrad
+			param.setLong("angle", M_PI * 1000 - getLong("angle")); // half a turn in mrad
 		}
 
 		msg.params = param.toList();

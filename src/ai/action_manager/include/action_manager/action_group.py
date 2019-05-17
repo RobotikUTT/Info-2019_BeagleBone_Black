@@ -236,6 +236,7 @@ class ActionGroup(Action):
 			mode
 		"""
 		choice = ActionChoice()
+		choice.score = -1 # ensure actions with 0 priority are taken into account
 
 		if self.state != ActionStatus.IDLE:
 			return choice

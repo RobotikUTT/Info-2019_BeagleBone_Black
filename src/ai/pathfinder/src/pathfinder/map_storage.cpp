@@ -73,7 +73,6 @@ void MapStorage::setRobotRadius(double rad) {
 }
 
 void MapStorage::declareShape(ai_msgs::Shape shape, bool temporary) {
-	ROS_INFO_STREAM("INSERTING SHAPE");
 	if (!temporary) {
 		applyShape(shape, this->allowedPos);
 	} else {

@@ -100,7 +100,7 @@
 	<frame name="rotate" id="10" source="bbb" dest="stm">
 		<description>Send order to STM to rotate of a given angle</description>
 
-		<byte name="angle" />
+		<word name="angle" />
 	</frame>
 
 	<frame name="set_left_pid" id="12" source="bbb" dest="stm">
