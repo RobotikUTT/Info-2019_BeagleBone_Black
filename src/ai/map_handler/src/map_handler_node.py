@@ -7,7 +7,7 @@ from node_watcher import Node
 
 from visualization_msgs.msg import Marker
 from ai_msgs.msg import Shape, NodeStatus
-from ai_msgs.srv import DeclareZone
+from ai_msgs.srv import DeclareZone, GetMapSize, GetMapSizeResponse
 
 from pathfinder.srv import SetMapDimension, SetRobotRadius
 
@@ -17,6 +17,7 @@ class MapHandlerNode(Node):
 
 		# Get root zone
 		self.zone = RectZone.parse_file("/map/table.xml", package="ai_description")
+		self.map_size_srv = rospy.Service("/ai/map_handler/get_map_size", GetMapSize, self.get_map_size)
 
 		# RViz publisher
 		self.rviz_marker_pub = rospy.Publisher("visualization_marker", Marker, queue_size = 100)
@@ -24,6 +25,13 @@ class MapHandlerNode(Node):
 		if self.pathfinder_update():
 			# We are ready !
 			self.set_status(NodeStatus.READY)
+
+	def get_map_size(self, req):
+		res = GetMapSizeResponse()
+		res.width = self.zone.width
+		res.height = self.zone.height
+		return res
+
 
 	def pathfinder_update(self) -> bool:
 		# Pathfinder
@@ -42,8 +50,8 @@ class MapHandlerNode(Node):
 			return False
 
 		# Reset remote map
-		self.set_map_dim(self.zone.width, self.zone.height)
-		self.set_robot_radius(20)
+		self.set_map_dim(self.zone.width, self.zone.height) # TODO make pathfinder use get_map_size
+		self.set_robot_radius(22)
 
 		# Initial publication of all zone
 		zones = self.zone.zones
@@ -64,7 +72,7 @@ class MapHandlerNode(Node):
 					shape.params = [ zone.radius ]
 				else:
 					raise Exception("shape type not handled : {}".format(type(zone)))
-				print("sending", zone)
+
 				# Publish it to pathfinder
 				self.declare_zone(shape, False)
 			else:

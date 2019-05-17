@@ -60,8 +60,7 @@ public:
 
 		// Wait for vision job to be done
 		this->require("map_handler", "ai", true);
-		// TODO make time higher
-		this->waitForNodes(1, false);
+		this->waitForNodes(30, false);
 	}
 
 	void onWaitingResult(bool success) override {
@@ -107,6 +106,7 @@ public:
 	bool setRobotRadius(SetRobotRadius::Request& req, SetRobotRadius::Response& res) {
 		// Set radius of the robot (it is assumed to be like a circle)
 		this->pathfinderPtr_->getMap().setRobotRadius(req.radius);
+		return true;
 	}
 
 	bool setMapSize(SetMapDimension::Request& req, SetMapDimension::Response& res) {
@@ -118,16 +118,12 @@ public:
 		size.y = req.height;
 		this->convertor->setRosSize(size);
 
-		this->pathfinderPtr_->getMap().display();
-
 		return true;
 	}
 
 	bool declareZone(DeclareZone::Request& req, DeclareZone::Response& res) {
 		// Pass declaration to map
 		this->pathfinderPtr_->getMap().declareShape(req.zone, req.temporary);
-
-		this->pathfinderPtr_->getMap().display();
 
 		// Mark as done
 		return true;
@@ -148,14 +144,14 @@ public:
 
 		return str;
 	}
-	
+
 };
 
 int main (int argc, char* argv[])
 {
 	ros::init(argc, argv, "pathfinder_node");
 	
-	 ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
+	//ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
 	PathFinderNode node;
 	ros::spin();
 	

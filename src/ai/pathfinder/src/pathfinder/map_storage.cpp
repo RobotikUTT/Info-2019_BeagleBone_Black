@@ -97,10 +97,10 @@ void MapStorage::applyShape(ai_msgs::Shape& shape, MapStorage::Vect2DBool& grid)
 		this->applyRect(shape.x, shape.y, width, height + robotRadius * 2, grid);
 
 		// Draw cornes
-		this->applyCircle(shape.x + (width / 2), shape.y, robotRadius, robotRadius, grid);
-		this->applyCircle(shape.x - (width / 2), shape.y, robotRadius, robotRadius, grid);
-		this->applyCircle(shape.x, shape.y + (height / 2), robotRadius, robotRadius, grid);
-		this->applyCircle(shape.x, shape.y - (height / 2), robotRadius, robotRadius, grid);
+		this->applyCircle(shape.x + (width / 2), shape.y - (height / 2), robotRadius, robotRadius, grid);
+		this->applyCircle(shape.x - (width / 2), shape.y - (height / 2), robotRadius, robotRadius, grid);
+		this->applyCircle(shape.x + (width / 2), shape.y + (height / 2), robotRadius, robotRadius, grid);
+		this->applyCircle(shape.x - (width / 2), shape.y + (height / 2), robotRadius, robotRadius, grid);
 	}
 	
 	// Apply circle
@@ -164,5 +164,5 @@ void MapStorage::display() const {
 		res << "|\n";
 	}
 
-	ROS_INFO_STREAM("[Map]\n" << res.str());
+	ROS_DEBUG_STREAM("[Map]\n" << res.str());
 }

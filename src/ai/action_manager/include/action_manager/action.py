@@ -52,6 +52,10 @@ class Action:
 
 		self.__state = ActionStatus.IDLE
 
+	def set_side(self, side: int):
+		# Set side as argument
+		self.arguments.set("_side", side)
+
 	def __before_children__(self, context):
 		# Get parent arguments
 		if context.parent is not None:

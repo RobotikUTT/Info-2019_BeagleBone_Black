@@ -17,7 +17,6 @@ class SchedulerNode(PerformClient):
 		super().__init__("scheduler", "ai")
 
 		self.running = False
-		self.side = Side.LEFT
 		self.current_action: Action = None
 		self.robot_pos = Pose2D()
 
@@ -57,7 +56,9 @@ class SchedulerNode(PerformClient):
 			# apply change
 			if request.running:
 				rospy.loginfo("Scheduler actions resumed !")
-				self.side = request.side
+				
+				# Set side
+				self.root_action.set_side(request.side)
 
 				# Resume action
 				self.next_action()

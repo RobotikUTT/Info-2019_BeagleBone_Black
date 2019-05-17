@@ -8,7 +8,7 @@
 using namespace std;
 
 Pathfinder::Pathfinder(std::shared_ptr<PosConvertor> convertor) : _mapStorage(convertor) {
-    _mapStorage.buildAllowedPositions(150, 300);
+    _mapStorage.buildAllowedPositions(200, 300);
 }
 
 

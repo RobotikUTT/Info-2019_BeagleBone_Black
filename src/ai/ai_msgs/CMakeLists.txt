@@ -45,6 +45,7 @@ add_service_files(
   DeclareZone.srv
   ComputeActionPoint.srv
   SetSchedulerState.srv
+  GetMapSize.srv
   AwaitNodesRequest.srv
 )
 

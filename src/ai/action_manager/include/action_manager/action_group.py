@@ -141,6 +141,11 @@ class ActionGroup(Action):
 				if next.state == ActionStatus.PAUSED:
 					next.state = ActionStatus.IDLE
 	
+	def set_side(self, side):
+		# Propagate side to children
+		for sub in self.children:
+			sub.set_side(side)
+
 	def total_points(self):
 		points = self.points
 

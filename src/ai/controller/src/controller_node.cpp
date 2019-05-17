@@ -6,7 +6,7 @@
  * @param n	NodeHandle var
  * 
  */
-Controller::Controller() : Node("controller", "ai"), side(Side::LEFT) {
+Controller::Controller() : Node("controller", "ai"), side(Side::DOWN) {
 	// attributes
 	direction = Directions::NONE;
 	proximity_stop = false;
@@ -151,17 +151,23 @@ void Controller::processSonars(const Argumentable& data) {
 	 * become less or equals than limit distances in
 	 * the current direction.
 	 */
-	proximity_stop = (
-		direction == Directions::FORWARD && (
-			front_left <= SONAR_MIN_DIST_FORWARD + 6 ||
-			front_right <= SONAR_MIN_DIST_FORWARD + 16
-		)
-	) || (
-		direction == Directions::BACKWARD && (
-			back_left <= SONAR_MIN_DIST_BACKWARD ||
-			back_right <= SONAR_MIN_DIST_BACKWARD
-		)
+	bool forward_stop = direction == Directions::FORWARD && (
+		front_left <= SONAR_MIN_DIST_FORWARD + 6 ||
+		front_right <= SONAR_MIN_DIST_FORWARD + 16
 	);
+	bool backward_stop = direction == Directions::BACKWARD && (
+		back_left <= SONAR_MIN_DIST_BACKWARD ||
+		back_right <= SONAR_MIN_DIST_BACKWARD
+	);
+
+	proximity_stop = forward_stop || backward_stop;
+
+	// Declare unknown shape
+	if (forward_stop) {
+		// TODO
+	} else {
+		// TODO
+	}
 
 	if (last_proximity_value != proximity_stop) {
 		ProximityStop proximity_msg;
@@ -169,9 +175,9 @@ void Controller::processSonars(const Argumentable& data) {
 		proximity_stop_pub.publish(proximity_msg);
 
 		if (proximity_stop) {
-			ROS_WARN("SET EMG");
+			ROS_WARN("Set proximity stop");
 		} else {
-			ROS_WARN("UNSET EMG");
+			ROS_WARN("Unset proximity stop");
 		}
 
 		interface_msgs::CanData msg;

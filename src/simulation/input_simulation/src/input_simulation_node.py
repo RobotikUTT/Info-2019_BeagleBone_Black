@@ -29,7 +29,7 @@ class RobotSimulationNode():
 			poll_rate.sleep()
 
 		msg = StartRobot()
-		msg.side = Side.LEFT
+		msg.side = Side.UP
 		self.start_signal_pub.publish(msg)
 		rospy.loginfo("Start signal sent")
 

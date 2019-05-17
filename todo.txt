@@ -1,6 +1,6 @@
 - gérer les arrêts suite aux détecteurs (ajout d'un élément)
-- intégrer un pathfinding efficace en C++
-- gérer le coté (changement des angles et autre)
+- intégrer un pathfinding efficace en C++ (90%)
+- gérer le coté (changement des angles et autre) ==> IMPORTANT
 - gérer l'échec de groupe d'action (modes retry, resume et postpone)
-- gérer les arguments contextuels des actions (@...)
+- gérer les arguments contextuels des actions (@...) (OK)
 - passer le XML à protocol buffer

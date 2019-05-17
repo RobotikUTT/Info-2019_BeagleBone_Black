@@ -58,7 +58,6 @@ class TestPerformClient(unittest.TestCase):
 	def test_perform_not_found(self):
 		action = Action.parse_string("<no_action_bound />")
 
-		# TODO assert fail
 		with self.assertRaises(PerformException):
 			self.pc.perform_action(action, Pose2D())
 

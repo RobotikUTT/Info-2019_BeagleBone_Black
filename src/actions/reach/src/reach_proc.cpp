@@ -11,8 +11,10 @@ ReachActionPerformer::ReachActionPerformer(std::string name) : ActionPerformer(n
 	this->can_data_pub = nh.advertise<interface_msgs::CanData>("/can_interface/out", 1);
 
 	this->pathfinder_srv = nh.serviceClient<pathfinder::FindPath>("/ai/pathfinder/findpath");
-
-	this->require("pathfinder", "ai");
+	
+	this->get_map_data_srv = nh.serviceClient<ai_msgs::GetMapSize>("/ai/map_handler/get_map_size");
+	
+	this->require("/ai/pathfinder");
 	this->waitForNodes(10, false);
 }
 
@@ -31,6 +33,19 @@ ActionPoint ReachActionPerformer::computeActionPoint(Argumentable* actionArgs, P
 	result.end.x = getLong("x", robotPos.x);
 	result.end.y = getLong("y", robotPos.y);
 	result.end.theta = getLong("angle", robotPos.theta);
+
+	// Up side : revert coordinates
+	if (actionArgs->getLong("_side") == Side::UP) {
+		ai_msgs::GetMapSize srv;
+
+		if (this->get_map_data_srv.call(srv)) {
+			result.end.y = srv.response.height - result.end.y;
+			result.end.theta = M_PI * 500 - result.end.theta; // half a turn in mrad
+		} else {
+			ROS_ERROR_STREAM("Unable to fecth map size");
+		}
+	}
+
 	return result;
 }
 
@@ -70,6 +85,17 @@ void ReachActionPerformer::start() {
 		posEnd.x = getLong("x");
 		posEnd.y = getLong("y");
 
+		// Up side : revert Y coordinates
+		if (getLong("_side") == Side::UP) {
+			ai_msgs::GetMapSize srv;
+
+			if (this->get_map_data_srv.call(srv)) {
+				posEnd.y = srv.response.height - posEnd.y;
+			} else {
+				ROS_ERROR_STREAM("Unable to fecth map size");
+			}
+		}
+
 		pathfinder::FindPath srv;
 		srv.request.posStart = this->robotPos;
 		srv.request.posEnd = posEnd;
@@ -99,6 +125,12 @@ void ReachActionPerformer::start() {
 		
 		Argumentable param;
 		param.setLong("angle", getLong("angle"));
+
+		// Revert angle
+		if (getLong("_side") == Side::UP) {
+			param.setLong("angle", M_PI * 500 - getLong("angle")); // half a turn in mrad
+		}
+
 		msg.params = param.toList();
 		this->can_data_pub.publish(msg);
 	}
