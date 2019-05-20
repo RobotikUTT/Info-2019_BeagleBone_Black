@@ -1,0 +1,3 @@
+[submodule "src/interface/interface_description"]
+	path = src/interface/interface_description
+	url = https://github.com/RobotikUTT/Info-2019_Interface
