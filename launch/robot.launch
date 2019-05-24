@@ -1,4 +1,6 @@
 <launch>
+	<rosparam command="load" file="$(find ai_description)/params.yaml" />
+
 	<group ns="ai">
 		<include file="$(find node_watcher)/launch/pkg.launch" />
 		<include file="$(find scheduler)/launch/pkg.launch" />
@@ -18,8 +20,6 @@
 	</group>
 
 	<group ns="interface">
-		<param name="can_interface/device" value="can1" />
-
 		<include file="$(find gpio_handler)/launch/pkg.launch" />
 		<include file="$(find can_interface)/launch/pkg.launch" />
 	</group>

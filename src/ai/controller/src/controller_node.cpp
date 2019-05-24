@@ -58,10 +58,19 @@ void Controller::start() {
 	}
 
 	// init STM position
+	int x, y, angle;
+	bool found = nh.getParam("/robot/start/x", x) &&
+		nh.getParam("/robot/start/y", x) &&
+		nh.getParam("/robot/start/angle", x);
+
+	if (!found) {
+		ROS_ERROR_STREAM("unable to get x, y and angle parameters for initial robot position");
+	}
+
 	Argumentable params;
-	params.setLong("x", 0);
-	params.setLong("y", 0);
-	params.setLong("angle", 0);
+	params.setLong("x", x);
+	params.setLong("y", y);
+	params.setLong("angle", angle);
 
 	interface_msgs::CanData msg;
 	msg.type = "set_position";

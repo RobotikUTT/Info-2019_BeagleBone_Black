@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<!-- Contains 2D map content, see reference.png for more details -->
+<rect-zone x="0" y="0" height="1500" width="2000" blocking="true">
+	<!-- Walls -->
+	<!--<rect-zone x="1500" y="1510" width="200" height="20" blocking="true" />-->
+</rect-zone>

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!-- Example action tree-->
+<group points="30" type="ordered" fail="restart">
+    <reach native="true">
+		<arg name="x">0</arg>
+		<arg name="y">1300</arg>
+		<arg name="angle">90</arg>
+	</reach>
+
+    <idle native="true">
+        <arg name="duration">1</arg>
+    </idle>
+    <reach native="true">
+		<arg name="x">1800</arg>
+		<arg name="y">1300</arg>
+		<arg name="angle">180</arg>
+	</reach>
+    <idle native="true">
+        <arg name="duration">1</arg>
+    </idle>
+    <reach native="true">
+		<arg name="x">1800</arg>
+		<arg name="y">0</arg>
+		<arg name="angle">-90</arg>
+	</reach>
+    <idle native="true">
+        <arg name="duration">1</arg>
+    </idle>
+    <reach native="true">
+		<arg name="x">0</arg>
+		<arg name="y">0</arg>
+		<arg name="angle">0</arg>
+	</reach>
+    <idle native="true">
+        <arg name="duration">1</arg>
+    </idle>
+
+    <!-- Invalid action that will make the group restart-->
+    <reach native="true">
+    </reach>
+</group>
