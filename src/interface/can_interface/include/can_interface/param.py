@@ -8,6 +8,8 @@ from typing import List
 
 from can import Message
 
+import rospy
+
 class MissingParameterException(Exception):
 	pass
 
@@ -41,11 +43,17 @@ class Param:
 		if not values.has(self.name):
 			raise MissingParameterException(self.name)
 
+		value = values.get(self.name, int)
+
+		if value < 0 or value > 255 ** self.size:
+			rospy.logerr("unable to encode {} value {}".format(self.name, value))
+			return
+
 		if self.size == 1:
-			data_array[self.byte_start] = values.get(self.name, int)
+			data_array[self.byte_start] = value
 		elif self.size == 2:
-			data_array[self.byte_start] = values.get(self.name, int) >> 8
-			data_array[self.byte_start + 1] = values.get(self.name, int) & 0x00FF
+			data_array[self.byte_start] = value >> 8
+			data_array[self.byte_start + 1] = value & 0x00FF
 		else:
 			raise Exception("size not handled yet, go back to coding")
 	

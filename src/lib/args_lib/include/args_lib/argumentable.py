@@ -6,8 +6,8 @@ class Argumentable:
 	"""
 		This object make it easier to manipulate variant type argument.
 	"""
-	def __init__(self):
-		self.values: Dict[str, str] = {}
+	def __init__(self, values={}):
+		self.values: Dict[str, str] = values
 		
 	def get(self, name: str, type: type = str, default = None) -> str:
 		if name in self.values:

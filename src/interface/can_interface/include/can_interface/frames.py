@@ -89,7 +89,7 @@ class Frame:
 				.format(e, self.name))
 
 			return None
-
+		
 		return bytearray(data_array)
 
 @Parsable(

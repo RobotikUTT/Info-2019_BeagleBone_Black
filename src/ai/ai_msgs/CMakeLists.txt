@@ -47,6 +47,7 @@ add_service_files(
   SetSchedulerState.srv
   GetMapSize.srv
   AwaitNodesRequest.srv
+  GetSidedPoint.srv
 )
 
 # Actions files

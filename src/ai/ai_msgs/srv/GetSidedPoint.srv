@@ -1,0 +1,4 @@
+geometry_msgs/Pose2D point
+int8 side
+---
+geometry_msgs/Pose2D point

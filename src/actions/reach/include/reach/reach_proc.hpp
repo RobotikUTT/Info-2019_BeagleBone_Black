@@ -47,6 +47,8 @@ private:
   void moveTo(geometry_msgs::Pose2D location);
 
   void onWaitingResult(bool) override;
+
+  bool usePathfinder;
 };
 
 /**

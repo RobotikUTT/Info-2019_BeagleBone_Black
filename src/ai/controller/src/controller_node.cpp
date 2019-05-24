@@ -25,6 +25,7 @@ Controller::Controller() : Node("controller", "ai"), side(Side::DOWN) {
 	start_sub = nh.subscribe("/signal/start", 1, &Controller::onStartSignal, this);
 	
 	schedulerController = nh.serviceClient<SetSchedulerState>("/scheduler/do");
+	sidedPoint = nh.serviceClient<GetSidedPoint>("/ai/map_handler/get_sided_point");
 
 	// Wait for required nodes
 	waitForNodes(30);
@@ -58,19 +59,26 @@ void Controller::start() {
 	}
 
 	// init STM position
-	int x, y, angle;
-	bool found = nh.getParam("/robot/start/x", x) &&
-		nh.getParam("/robot/start/y", x) &&
-		nh.getParam("/robot/start/angle", x);
+	ai_msgs::GetSidedPoint srv;
+	srv.request.side = this->side;
+	bool found = nh.getParam("/robot/start/x", srv.request.point.x) &&
+		nh.getParam("/robot/start/y", srv.request.point.y) &&
+		nh.getParam("/robot/start/angle", srv.request.point.theta);
 
 	if (!found) {
 		ROS_ERROR_STREAM("unable to get x, y and angle parameters for initial robot position");
 	}
 
+	if (!this->sidedPoint.call(srv)) {
+		ROS_ERROR_STREAM("Unable to get point with correct side reference");
+		setNodeStatus(NodeStatus::ERROR);
+		return;
+	}
+
 	Argumentable params;
-	params.setLong("x", x);
-	params.setLong("y", y);
-	params.setLong("angle", angle);
+	params.setLong("x", srv.response.point.x);
+	params.setLong("y", srv.response.point.y);
+	params.setLong("angle", srv.response.point.theta);
 
 	interface_msgs::CanData msg;
 	msg.type = "set_position";

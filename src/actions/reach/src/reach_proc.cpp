@@ -10,12 +10,20 @@ ReachActionPerformer::ReachActionPerformer(std::string name) : ActionPerformer(n
 	this->can_data_sub = nh.subscribe("/can_interface/in", 1, &ReachActionPerformer::onCanData, this);
 	this->can_data_pub = nh.advertise<interface_msgs::CanData>("/can_interface/out", 1);
 
-	this->pathfinder_srv = nh.serviceClient<pathfinder::FindPath>("/ai/pathfinder/findpath");
-	
 	this->get_map_data_srv = nh.serviceClient<ai_msgs::GetMapSize>("/ai/map_handler/get_map_size");
-	
-	this->require("/ai/pathfinder");
-	this->waitForNodes(10, false);
+
+	if (!nh.getParam("/pathfinder/enabled", this->usePathfinder)) {
+		ROS_WARN_STREAM("unable to determine whether pathfinder is enabled or not, disabling by default");
+		this->usePathfinder = false;
+	}
+
+	if (this->usePathfinder) {
+		this->pathfinder_srv = nh.serviceClient<pathfinder::FindPath>("/ai/pathfinder/findpath");
+		this->require("/ai/pathfinder");
+		this->waitForNodes(10, false);
+	} else {
+		this->onWaitingResult(true);
+	}
 }
 
 void ReachActionPerformer::onWaitingResult(bool result) {
@@ -97,25 +105,33 @@ void ReachActionPerformer::start() {
 			}
 		}
 
-		pathfinder::FindPath srv;
-		srv.request.posStart = this->robotPos;
-		srv.request.posEnd = posEnd;
+		// If pathfinder
+		if (this->usePathfinder) {
+			pathfinder::FindPath srv;
+			srv.request.posStart = this->robotPos;
+			srv.request.posEnd = posEnd;
 
-		if (this->pathfinder_srv.call(srv)) {
-			// If no path found
-			if (srv.response.return_code != pathfinder::FindPath::Response::PATH_FOUND) {
-				ROS_WARN_STREAM("No path found to reach action goal...");
-				this->returns(ActionStatus::PAUSED);
-				return;
-			}
+			if (this->pathfinder_srv.call(srv)) {
+				// If no path found
+				if (srv.response.return_code != pathfinder::FindPath::Response::PATH_FOUND) {
+					ROS_WARN_STREAM("No path found to reach action goal...");
+					this->returns(ActionStatus::PAUSED);
+					return;
+				}
 
-			// Else give order to move along path
-			for (auto& pose : srv.response.path) {
-				this->moveTo(pose);
+				// Else give order to move along path
+				for (auto& pose : srv.response.path) {
+					this->moveTo(pose);
+				}
+			} else {
+				ROS_ERROR_STREAM("Error while calling pathfinder service");
+				this->returns(ActionStatus::ERROR);
 			}
-		} else {
-			ROS_ERROR_STREAM("Error while calling pathfinder service");
-			this->returns(ActionStatus::ERROR);
+		}
+		
+		// Otherwise
+		else {
+			this->moveTo(posEnd);
 		}
 	}
 
