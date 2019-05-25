@@ -2,9 +2,9 @@
 <group fail="restart" points="6">
 	<!-- Go to zone side -->
 	<reach native="true">
-		<x>@zone_x</x>
-		<y>450</y>
-		<angle>-90</angle>
+		<arg name="x">@zone_x</arg>
+		<arg name="y">450</arg>
+		<arg name="angle">-90</arg>
 	</reach>
 
 	<drop native="true" />

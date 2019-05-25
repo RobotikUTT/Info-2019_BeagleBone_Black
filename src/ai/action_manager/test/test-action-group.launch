@@ -1,0 +1,6 @@
+<launch>
+	<!-- Tests to perform -->
+	<test test-name="test_best_action_group" pkg="action_manager" type="test_best_action_group.py" />
+	<test test-name="test_ordered_action_group" pkg="action_manager" type="test_ordered_action_group.py" />
+	<test test-name="test_unordered_action_group" pkg="action_manager" type="test_unordered_action_group.py" />
+</launch>

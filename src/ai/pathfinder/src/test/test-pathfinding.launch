@@ -1,0 +1,10 @@
+<launch>
+	<!-- Da great node_watcher -->
+	<node name="node_watcher" pkg="node_watcher" type="node" required="true" output="screen" />
+
+	<!-- Da UTC pathfander-->
+	<node name="pathfinder" pkg="pathfinder" type="node" />
+
+	<!-- Tests to perform -->
+	<test test-name="test_pathfinding" pkg="pathfinder" type="test_pathfinding.py" time-limit="5.0" />
+</launch>

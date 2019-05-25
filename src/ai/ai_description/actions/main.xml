@@ -2,33 +2,33 @@
 <!-- Example action tree-->
 <group points="30" type="unordered">
     <idle native="true">
-        <duration>1</duration>
+        <arg name="duration">1</arg>
     </idle>
     <transfer_pucks>
         <!-- Red pucks in distributor -->
-        <puck_1_y>50</puck_1_y>
-        <puck_2_y>250</puck_2_y>
-        <puck_3_y>450</puck_3_y>
+        <arg name="puck_1_y">500</arg>
+        <arg name="puck_2_y">700</arg>
+        <arg name="puck_3_y">900</arg>
 
-        <balance_points>4</balance_points>
-        <zone_x>300</zone_x>
+        <arg name="balance_points">4</arg>
+        <arg name="zone_x">300</arg>
     </transfer_pucks>
 
     <transfer_pucks>
         <!-- Green pucks in distributor -->
-        <puck_1_y>150</puck_1_y>
-        <puck_2_y>550</puck_2_y>
+        <arg name="puck_1_y">600</arg>
+        <arg name="puck_2_y">1000</arg>
 
-        <balance_points>8</balance_points>
-        <zone_x>600</zone_x>
+        <arg name="balance_points">8</arg>
+        <arg name="zone_x">600</arg>
     </transfer_pucks>
 
     <transfer_pucks>
         <!-- Blue pucks in distributor -->
-        <puck_1_y>150</puck_1_y>
+        <arg name="puck_1_y">800</arg>
 
-        <balance_points>12</balance_points>
-        <zone_x>900</zone_x>
+        <arg name="balance_points">12</arg>
+        <arg name="zone_x">900</arg>
     </transfer_pucks>
 
 

@@ -1,8 +1,15 @@
 <launch>
+	<rosparam command="load" file="$(find ai_description)/params.yaml" />
+
 	<group ns="ai">
 		<include file="$(find node_watcher)/launch/pkg.launch"/>
 		<include file="$(find scheduler)/launch/pkg.launch"/>
 		<include file="$(find controller)/launch/pkg.launch"/>
+	</group>
+
+	<group ns="way">
+		<include file="$(find pathfinder)/pkg.launch" />
+		<include file="$(find map_handler)/pkg.launch" />
 	</group>
 
 	<group ns="actions">
@@ -13,7 +20,12 @@
 	</group>
 
 	<group ns="interface">
+		<!--
+			Override to virtual can
+			Need to run "rosrun can_interface virtual_can.sh"
+		-->
 		<param name="can_interface/device" value="vcan0" />
+
 		<!-- Interface to a fake can bus redirecting to simulation node -->
 		<include file="$(find can_interface)/launch/pkg.launch" />
 	</group>

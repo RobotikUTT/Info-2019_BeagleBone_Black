@@ -15,8 +15,8 @@ class TestParsing(unittest.TestCase):
 	def test_action_parsing(self):
 		parsed = Action.parse_string("""
 			<parse native="true" points="34">
-				<file>yes</file>
-				<smthg>34</smthg>
+				<arg name="file">yes</arg>
+				<arg name="smthg">34</arg>
 			</parse>
 		""")
 
@@ -65,7 +65,7 @@ class TestParsing(unittest.TestCase):
 		"""
 			test
 			<group native="false">
-				<arg1>value</arg1> -> passed to context for children actions
+				<arg name="arg1">value</arg> -> passed to context for children actions
 			</group>
 		"""
 		self.fail("not implemented")
@@ -83,7 +83,7 @@ class TestParsing(unittest.TestCase):
 		"""
 			test
 			<action native="false">
-				<arg1>{destination}</arg1> -> map destination to arg1
+				<arg name="arg1">{destination}</arg> -> map destination to arg1
 			</action>
 		"""
 		self.fail("not implemented")

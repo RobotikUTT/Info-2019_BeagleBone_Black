@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+	Robot settings description file
+	[NOT USED YET]
+-->
+<robot>
+	<radius>22</radius>
+
+	<start>
+		<x>200</x>
+		<y>200</y>
+		<theta>0</theta>
+	</start>
+</robot>

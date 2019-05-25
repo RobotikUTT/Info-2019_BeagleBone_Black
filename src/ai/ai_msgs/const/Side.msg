@@ -1,3 +1,3 @@
 # Message constants
-uint8 LEFT = 0
-uint8 RIGHT = 1
+uint8 DOWN = 0
+uint8 UP = 1

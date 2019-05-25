@@ -1,0 +1,5 @@
+- gérer les arrêts suite aux détecteurs (ajout d'un élément + vérification élément bien pris en compte)
+- gérer le coté (changement des angles et autre)
+	- tester angle et positionnement correct
+	- bugs cotés haut action reach
+- gérer l'échec de groupe d'action (modes retry, resume et postpone)

@@ -3,15 +3,15 @@
 <group type="ordered" fail="restart">
 	<!-- Take right alignment -->
 	<reach native="true">
-		<x>1500</x>
-		<y>300</y>
-		<angle>90</angle>
+		<arg name="x">1500</arg>
+		<arg name="y">300</arg>
+		<arg name="angle">90</arg>
 	</reach>
 
 	<!-- Move toward puck -->
 	<reach native="true">
-		<x>1500</x>
-		<y>@puck_y</y>
+		<arg name="x">1500</arg>
+		<arg name="y">@puck_y</arg>
 	</reach>
 
 	<!-- Retrieve -->

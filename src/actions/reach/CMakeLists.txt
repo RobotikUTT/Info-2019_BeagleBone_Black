@@ -14,12 +14,13 @@ find_package(catkin REQUIRED COMPONENTS
 
   # Other packages
   action_manager
+  pathfinder
 )
 
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES reach
-  CATKIN_DEPENDS roscpp robot_interface action_manager interface_msgs
+  CATKIN_DEPENDS roscpp action_manager interface_msgs
 #  DEPENDS system_lib
 )
 

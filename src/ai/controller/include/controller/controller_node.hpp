@@ -19,6 +19,7 @@
 #include "ai_msgs/StartRobot.h"
 #include "ai_msgs/PointsScored.h"
 #include "ai_msgs/SetSchedulerState.h"
+#include "ai_msgs/GetSidedPoint.h"
 
 #include "geometry_msgs/Pose2D.h"
 
@@ -64,6 +65,7 @@ private:
 	Publisher can_data_pub;
 
 	ServiceClient schedulerController;
+	ServiceClient sidedPoint;
 
 	// Robot state
 	int robotState;

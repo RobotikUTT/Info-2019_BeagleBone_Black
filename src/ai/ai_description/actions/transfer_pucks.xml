@@ -2,19 +2,19 @@
 <group>
 	<!-- Takes up to 3 pucks -->
 	<pickup_puck>
-		<puck_y>@puck_1_y</puck_y>
+		<arg name="puck_y">@puck_1_y</arg>
 	</pickup_puck>
 
 	<pickup_puck>
-		<puck_y>@puck_2_y</puck_y>
+		<arg name="puck_y">@puck_2_y</arg>
 	</pickup_puck>
 
 	<pickup_puck>
-		<puck_y>@puck_3_y</puck_y>
+		<arg name="puck_y">@puck_3_y</arg>
 	</pickup_puck>
 
 	<!-- Choose best action between 3 dropping sites -->
-	<group type="best" fail="loopin">
+	<group type="best" fail="restart">
 		<drop_zone />
 		<drop_balance />
 		<drop_accelerator />

@@ -27,7 +27,7 @@ class TestPerformClient(unittest.TestCase):
 	def test_perform_success(self):
 		self.action_state = ActionStatus.IDLE
 		action = Action.parse_string("""
-			<sleep><duration>0.5</duration></sleep>
+			<sleep><arg name="duration">0.5</arg></sleep>
 		""")
 
 		self.pc.perform_action(action, Pose2D())
@@ -58,7 +58,6 @@ class TestPerformClient(unittest.TestCase):
 	def test_perform_not_found(self):
 		action = Action.parse_string("<no_action_bound />")
 
-		# TODO assert fail
 		with self.assertRaises(PerformException):
 			self.pc.perform_action(action, Pose2D())
 
