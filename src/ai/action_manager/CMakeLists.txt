@@ -55,7 +55,7 @@ if(CATKIN_ENABLE_TESTING)
     test_move_performer
     test_sleep_performer
   )
-    add_executable(${T} test/actions_performers/${T}.cpp)
+    add_executable(${T} test/actions_performers/${T}.cpp src/ActionPerformer.cpp)
     add_dependencies(${T} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
     target_link_libraries(${T}
       ${catkin_LIBRARIES}

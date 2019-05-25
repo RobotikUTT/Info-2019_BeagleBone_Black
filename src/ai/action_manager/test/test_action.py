@@ -41,9 +41,9 @@ class TestAction(unittest.TestCase):
 		# Create move action
 		action = Action.parse_string("""
 			<move native='true'>
-				<x>90</x>
-				<y>60</y>
-				<theta>0</theta>
+				<arg name="x">90</arg>
+				<arg name="y">60</arg>
+				<arg name="theta">0</arg>
 			</move>
 		""")
 

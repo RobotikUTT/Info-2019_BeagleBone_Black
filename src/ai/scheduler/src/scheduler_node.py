@@ -89,6 +89,19 @@ class SchedulerNode(PerformClient):
 		if not self.running:
 			return
 		
+		# Following peace of code assert once a group is launched, it's actions
+		# are performing until group state is not IDLE
+		current_root = self.root_action
+		if self.current_action is not None:
+			# Compute local root to continue previously selected group until it is done
+			current_root = self.current_action
+
+			while current_root.state != ActionStatus.IDLE and \
+				current_root.parent is not None:
+
+				current_root = current_root.parent
+
+
 		# If pause cancer has spread into the root of the action tree
 		if self.root_action.state == ActionStatus.PAUSED:
 			# We cure it

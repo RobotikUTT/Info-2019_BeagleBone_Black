@@ -171,5 +171,6 @@ class Action:
 
 	def __str__(self):
 		return "{} points={} {{{}}}".format(
-			self.color("[" + self.name + "]"), self.total_points(), self.arguments.__str__()
+			#self.color("[" + self.name + "]"), self.total_points(), self.arguments.__str__()
+			self.color("[" + self.name + "]"), self.total_points(), ""
 		)

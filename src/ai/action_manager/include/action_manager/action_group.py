@@ -254,6 +254,8 @@ class ActionGroup(Action):
 			# If we hit a unfinished action in an ordered group, it must
 			# be performed in priority
 			if self.type == ActionGroup.ORDERED and next.state != ActionStatus.DONE:
+				# Choose this action and quit loop
+				choice = next_choice
 				break
 		
 

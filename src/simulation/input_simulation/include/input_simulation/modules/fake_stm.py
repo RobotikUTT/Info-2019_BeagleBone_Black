@@ -41,7 +41,7 @@ class FakeStm:
 	
 	def spin(self):
 		if self.done != False:
-			if time.time() - self.done > 1:
+			if time.time() - self.done > 0.1:
 				self.done = False
 				self.master_node.send_can("order_complete", {})
 		
