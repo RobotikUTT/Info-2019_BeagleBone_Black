@@ -93,6 +93,22 @@ void Controller::start() {
 	msg.params = params.toList();
 	this->can_data_pub.publish(msg);
 
+	// set left pid
+	params.reset();
+	params.setLong("p", 240);
+	params.setLong("i", 0);
+	params.setLong("d", 20000);
+	msg.type = "set_left_pid";
+	msg.params = params.toList();
+	this->can_data_pub.publish(msg);
+
+	// set right pid
+	params.setLong("p", 130);
+	msg.type = "set_right_pid";
+	msg.params = params.toList();
+	this->can_data_pub.publish(msg);
+
+
 	// start actions by calling scheduler service
 	SetSchedulerState setter;
 	setter.request.running = true;
