@@ -6,10 +6,13 @@ class Argumentable:
 	"""
 		This object make it easier to manipulate variant type argument.
 	"""
-	def __init__(self, values={}):
+	def __init__(self, values=None):
 		# Convert to string
-		for name in values:
-			values[name] = str(values[name])
+		if values is not None:
+			for name in values:
+				values[name] = str(values[name])
+		else:
+			values = {}
 
 		self.values: Dict[str, str] = values
 		

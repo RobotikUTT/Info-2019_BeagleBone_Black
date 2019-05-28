@@ -6,7 +6,7 @@ from args_lib.msg import Argument
 
 from typing import List, Union
 
-from xml_class_parser import Parsable, Bind, BindDict, Enum, BindList
+from xml_class_parser import Parsable, Bind, BindDict, Enum, BindList, Context
 
 @Parsable(
 	name = "group",
@@ -42,26 +42,34 @@ class ActionGroup(Action):
 
 		self.__state = ActionStatus.IDLE
 		self.__best_child = None
-	
-	def __parsed__(self, context):
+
+	def __before_children__(self, context: Context):
+		print("01", self.action_id, self.arguments)
+		super().__before_children__(context)
+		print("02", self.action_id, self.arguments)
+
+	def __parsed__(self, context: Context):
+		print("11", self.action_id, self.arguments)
 		super().__parsed__(context)
+		print("12", self.action_id, self.arguments)
 
 		for i in range(len(self.children)):
 			child = self.children[i]
-
+			
 			# Non native action children
 			if type(child) == Action and not child.native:
-				self.children[i] = ActionGroup()
+				# Recover list format
+				child.arguments = child.arguments.to_list()
 
-				# Pass arguments
-				self.children[i].arguments.extend(child.arguments.to_list())
-
-				ActionGroup.parse_file(
+				# Create adequate context
+				child_context = Context(**context.params)
+				child_context.parent = child
+				
+				# Parse children with context
+				self.children[i] = ActionGroup.parse_file(
 					context.get("folder") + child.name + ".xml",
-					context = context,
-					obj = self.children[i]
+					context = child_context
 				)
-
 			
 			# Set children parent
 			self.children[i].parent = self

@@ -36,14 +36,12 @@ Argument = Parsable(name="arg", attributes={"name": str}, content=Bind(to="value
 	]
 )
 class Action:
-	id = 0
+	action_id = 0
 
 	def __init__(self):
-		super().__init__()
-
 		# Object id
-		self.id = Action.id + 1
-		Action.id += 1
+		self.action_id = Action.action_id
+		Action.action_id += 1
 
 		self.name: str = ""
 		self.native = False
@@ -75,7 +73,7 @@ class Action:
 
 		for key in self.arguments.keys():
 			self.arguments.set(key, self.__contextualized_value(self.arguments.get(key)))
-
+		
 	def __contextualized_value(self, value: str, cast: Type = str):
 		# TODO check
 		if len(value) > 0 and value[0] == "@":
@@ -177,6 +175,6 @@ class Action:
 
 	def __str__(self):
 		return "{} points={} {{{}}}".format(
-#			self.color("[{}@{}]".format(self.name, self.id)), self.total_points(), self.arguments.__str__()
-			self.color("[{}@{}]".format(self.name, self.id)), self.total_points(), ""
+			self.color("[{}@{}]".format(self.name, self.action_id)), self.total_points(), self.arguments.__str__()
+#			self.color("[{}@{}]".format(self.name, self.action_id)), self.total_points(), ""
 		)
