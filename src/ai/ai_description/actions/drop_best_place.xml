@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!-- Choose best action between 3 dropping sites -->
+<group type="best" fail="restart">
+	<drop_zone />
+	<drop_balance />
+	<drop_accelerator />
+</group>

@@ -1,13 +1,6 @@
 <?xml version="1.0"?>
 <!-- Take a puck in a distibutor -->
 <group type="ordered" fail="restart">
-	<!-- Take right alignment -->
-	<reach native="true">
-		<arg name="x">1500</arg>
-		<arg name="y">300</arg>
-		<arg name="angle">90</arg>
-	</reach>
-
 	<!-- Move toward puck -->
 	<reach native="true">
 		<arg name="x">1500</arg>

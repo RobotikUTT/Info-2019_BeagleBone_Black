@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<group>
+	<!-- Take right alignment -->
+	<reach native="true">
+		<arg name="x">1500</arg>
+		<arg name="y">300</arg>
+		<arg name="angle">90</arg>
+	</reach>
+</group>

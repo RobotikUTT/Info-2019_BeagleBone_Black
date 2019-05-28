@@ -1,65 +1,61 @@
 <?xml version="1.0"?>
 <!-- Example action tree-->
 <group type="unordered">
-    <idle native="true">
-        <arg name="duration">1</arg>
-    </idle>
-    <transfer_pucks>
+
+    <group type="ordered" fail="restart">
+        <reach_pickup_start />
+
         <!-- Red pucks in distributor -->
-        <arg name="puck_1_y">500</arg>
-        <arg name="puck_2_y">700</arg>
-        <arg name="puck_3_y">900</arg>
+        <pickup_puck>
+            <arg name="puck_y">500</arg>
+        </pickup_puck>
 
-        <arg name="balance_points">4</arg>
-        <arg name="zone_x">300</arg>
-    </transfer_pucks>
+        <pickup_puck>
+            <arg name="puck_y">700</arg>
+        </pickup_puck>
 
-    <transfer_pucks>
+        <pickup_puck>
+            <arg name="puck_y">900</arg>
+        </pickup_puck>
+
+        <drop_best_place>
+            <!-- 3 * 4 points -->
+            <arg name="balance_points">12</arg>
+            <arg name="zone_x">300</arg>
+        </drop_best_place>
+    </group>
+
+    <group type="ordered" fail="restart">
+        <reach_pickup_start />
+
         <!-- Green pucks in distributor -->
-        <arg name="puck_1_y">600</arg>
-        <arg name="puck_2_y">1000</arg>
+        <pickup_puck>
+            <arg name="puck_y">600</arg>
+        </pickup_puck>
 
-        <arg name="balance_points">8</arg>
-        <arg name="zone_x">600</arg>
-    </transfer_pucks>
+        <pickup_puck>
+            <arg name="puck_y">1000</arg>
+        </pickup_puck>
 
-    <transfer_pucks>
+        <drop_best_place>
+            <!-- 8 * 2 points -->
+            <arg name="balance_points">16</arg>
+            <arg name="zone_x">600</arg>
+        </drop_best_place>
+    </group>
+
+    <group type="ordered" fail="restart">
+        <reach_pickup_start />
+
         <!-- Blue pucks in distributor -->
-        <arg name="puck_1_y">800</arg>
+        <pickup_puck>
+            <arg name="puck_y">800</arg>
+        </pickup_puck>
 
-        <arg name="balance_points">12</arg>
-        <arg name="zone_x">900</arg>
-    </transfer_pucks>
-
-
-    <!--<group type="ordered" fail="resume">
-        <reach native="true" points="30">
-            <description>Set angle</description>
-            <angle>0</angle>
-        </reach>
-        <reach native="true">
-            <description>Point 1</description>
-            <x>200</x>
-            <y>0</y>
-            <angle>0</angle>
-        </reach>
-        <reach native="true">
-            <description>Point 2</description>
-            <x>200</x>
-            <y>200</y>
-            <angle>90</angle>
-        </reach>
-        <reach native="true">
-            <description>Point 3</description>
-            <x>0</x>
-            <y>200</y>
-            <angle>180</angle>
-        </reach>
-        <reach native="true">
-            <description>Return to start</description>
-            <x>0</x>
-            <y>0</y>
-            <angle>240</angle>
-        </reach>
-    </group>-->
+        <drop_best_place>
+            <arg name="balance_points">12</arg>
+            <arg name="zone_x">900</arg>
+        </drop_best_place>
+    </group>
+    
 </group>
