@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- Example action tree-->
-<group points="30" type="unordered">
+<group type="unordered">
     <idle native="true">
         <arg name="duration">1</arg>
     </idle>

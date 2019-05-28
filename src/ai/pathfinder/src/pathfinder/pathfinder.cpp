@@ -81,7 +81,7 @@ bool Pathfinder::exploreGraph(Vect2DShort& distMap, const Pose2D& startPos, cons
             for (const Pose2D& dir : directions())
             {
                 Pose2D nextPos = add(prevPos, dir);
-                if (isValid(nextPos) && distMap[nextPos.y][nextPos.x] == -1)
+                if (distMap[nextPos.y][nextPos.x] == -1 && isValid(nextPos))
                 {
                     distMap[nextPos.y][nextPos.x] = distFromEnd;
                     if (nextPos.x == startPos.x && nextPos.y == startPos.y) {

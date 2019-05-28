@@ -10,6 +10,7 @@ from ai_msgs.msg import Side, NodeStatus, ActionStatus
 from ai_msgs.srv import SetSchedulerState, SetSchedulerStateRequest, SetSchedulerStateResponse
 from geometry_msgs.msg import Pose2D
 
+from args_lib.argumentable import Argumentable
 from xml_class_parser import ParsingException
 
 class SchedulerNode(PerformClient):
@@ -20,9 +21,13 @@ class SchedulerNode(PerformClient):
 		self.current_action: Action = None
 		self.robot_pos = Pose2D()
 
+		self.points = 0
+
 		# ROS services / subscribers
 		self.control_srv = rospy.Service("/scheduler/do", SetSchedulerState, self.set_state)
 		self.robot_pos_sub = rospy.Subscriber("/can_interface/in", CanData, self.on_can_message)
+		
+		self.can_out = rospy.Publisher("/can_interface/out", CanData, queue_size=10)
 
 		# Parse actions
 		try:
@@ -83,6 +88,23 @@ class SchedulerNode(PerformClient):
 			Current action done
 		"""
 		self.current_action.state = result.state
+
+		# Declare points
+		if result.state == ActionStatus.DONE:
+			parent = self.current_action
+			while parent is not None and parent.state == ActionStatus.DONE:
+				self.points += parent.points
+				parent = parent.parent
+
+			frame = CanData()
+			frame.type = "update_screen"
+			frame.params = Argumentable({
+				"points": self.points,
+				"status": 3 if self.root_action.state == ActionStatus.DONE else 2
+			}).to_list()
+
+			self.can_out.publish(frame)
+
 		self.next_action()
 
 	def next_action(self):

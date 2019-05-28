@@ -36,8 +36,14 @@ Argument = Parsable(name="arg", attributes={"name": str}, content=Bind(to="value
 	]
 )
 class Action:
+	id = 0
+
 	def __init__(self):
 		super().__init__()
+
+		# Object id
+		self.id = Action.id + 1
+		Action.id += 1
 
 		self.name: str = ""
 		self.native = False
@@ -171,6 +177,6 @@ class Action:
 
 	def __str__(self):
 		return "{} points={} {{{}}}".format(
-			#self.color("[" + self.name + "]"), self.total_points(), self.arguments.__str__()
-			self.color("[" + self.name + "]"), self.total_points(), ""
+			self.color("[{}@{}]".format(self.name, self.id)), self.total_points(), self.arguments.__str__()
+#			self.color("[{}@{}]".format(self.name, self.id)), self.total_points(), ""
 		)

@@ -41,6 +41,7 @@ class ActionGroup(Action):
 		self.__action_point_origin: Union[ActionPoint, None] = None
 
 		self.__state = ActionStatus.IDLE
+		self.__best_child = None
 	
 	def __parsed__(self, context):
 		super().__parsed__(context)
@@ -149,6 +150,10 @@ class ActionGroup(Action):
 	def total_points(self):
 		points = self.points
 
+		if self.type == ActionGroup.BEST:
+			best = self.best_child()
+			return points + (best.total_points() if best is not None else 0)
+
 		for child in self.children:
 			points += child.total_points()
 		
@@ -165,13 +170,8 @@ class ActionGroup(Action):
 	
 	def priority(self, origin: Pose2D):
 		if self.type == ActionGroup.BEST:
-			best_child = None
-			best_prio = 0
-			for child in self.children:
-				prio = child.priority(origin)
-				if prio > best_prio:
-					best_prio = prio
-					best_child = child
+			best_child = self.best_child()
+
 			if best_child is None:
 				return math.inf
 			else:
@@ -181,15 +181,8 @@ class ActionGroup(Action):
 
 	def travel_distance(self, origin: Pose2D) -> float:
 		if self.type == ActionGroup.BEST:
-			best_child = None
-			best_prio = 0
-			for child in self.children:
-				prio = child.priority(origin)
-				if prio > best_prio:
-					best_prio = prio
-					best_child = child
-			
-			return best_child.travel_distance(origin)
+			best = self.best_child()
+			return best.travel_distance(origin) if best is not None else 0
 
 		distance = 0
 		current_point = origin
@@ -207,6 +200,9 @@ class ActionGroup(Action):
 		# Check if previously saved for this origin
 		if self.__action_point != None and self.__action_point_origin == origin:
 			return self.__action_point
+
+		if self.type == ActionGroup.BEST:
+			return self.best_child().action_point(origin)
 
 		start: Pose2D = None
 		current: Pose2D = origin
@@ -263,6 +259,25 @@ class ActionGroup(Action):
 		# atomic action's priority
 		choice.score = self.priority(robot_pos)
 		return choice
+
+	def best_child(self) -> Action:
+		"""
+			Returns children with max points
+		"""
+		if self.__best_child is not None:
+			return self.__best_child
+
+		best_child = None
+		best_prio = 0
+		for child in self.children:
+			prio = child.total_points()
+			if prio > best_prio:
+				best_prio = prio
+				best_child = child
+
+		# Cache it
+		self.__best_child = best_child
+		return best_child
 
 	def __str__(self):
 		sublines = [(" ╟──" + str(child)) for child in self.children]

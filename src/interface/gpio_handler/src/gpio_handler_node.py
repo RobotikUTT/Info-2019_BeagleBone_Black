@@ -64,7 +64,7 @@ class GPIOHandlerNode(object):
 			# Monitor start signal
 			if GPIO.input(PIN_START) != GAME_IDLE and self.started == GAME_IDLE:
 				self.started = not self.started
-				self._start_publisher.publish(StartRobot(Side.LEFT if self.side else Side.RIGHT))
+				self._start_publisher.publish(StartRobot(Side.UP if self.side else Side.DOWN))
 
 			# Wait for next cycle
 			r.sleep()
