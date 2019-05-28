@@ -150,7 +150,7 @@ unsigned long ReachActionPerformer::convertAngle(long degree) const {
 	// Convert from degree to mrad
 	double fraction = ((degree % 360 + 360) % 360);
 	fraction /= 360;
-	return fraction * 1000 * M_PI;
+	return fraction * 1000 * 2 * M_PI;
 }
 
 void ReachActionPerformer::moveTo(geometry_msgs::Pose2D location, std::string request) {
