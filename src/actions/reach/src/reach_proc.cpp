@@ -73,7 +73,7 @@ void ReachActionPerformer::onCanData(const interface_msgs::CanData::ConstPtr& ms
 
 		this->robotPos.x = input.getLong("x");
 		this->robotPos.y = input.getLong("y");
-		this->robotPos.theta = input.getLong("angle");
+		this->robotPos.theta = this->convertAngle(input.getLong("angle"));
 	}
 }
 
@@ -141,11 +141,11 @@ void ReachActionPerformer::start() {
 		msg.type = "rotate";
 		
 		Argumentable param;
-		param.setLong("angle", getLong("angle"));
+		param.setLong("angle", this->convertAngle(getLong("angle")));
 
 		// Revert angle
 		if (getLong("_side") == Side::UP) {
-			param.setLong("angle", M_PI * 1000 - getLong("angle")); // half a turn in mrad
+			param.setLong("angle", M_PI * 1000 - this->convertAngle(getLong("angle"))); // half a turn in mrad
 		}
 
 		msg.params = param.toList();
@@ -156,6 +156,13 @@ void ReachActionPerformer::start() {
 	if (timeout > 0) {
 		timerTimeout = nh.createTimer(ros::Duration(timeout), &ReachActionPerformer::timeoutCallback , this, true);
 	}
+}
+
+unsigned long ReachActionPerformer::convertAngle(long degree) const {
+	// Convert from degree to mrad
+	double fraction = ((degree % 360 + 360) % 360);
+	fraction /= 360;
+	return fraction * 1000 * M_PI;
 }
 
 void ReachActionPerformer::moveTo(geometry_msgs::Pose2D location) {

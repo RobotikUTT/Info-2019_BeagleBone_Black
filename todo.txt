@@ -10,3 +10,7 @@
 	D = 1000
 	left : 240 / 0 / 20000
 	right : 130 / 0 / 20000
+
+
+/ URGENT \
+- Régler les problème de paramètres passsés (paramètres identiques pour toutes les actions)

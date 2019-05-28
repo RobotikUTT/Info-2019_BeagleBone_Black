@@ -48,6 +48,8 @@ private:
 
   void onWaitingResult(bool) override;
 
+  unsigned long convertAngle(long degree) const;
+
   bool usePathfinder;
 };
 
