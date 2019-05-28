@@ -176,6 +176,7 @@ class ActionGroup(Action):
 			if best_child is None:
 				return math.inf
 			else:
+				# TODO travel distance
 				return (self.points + best_child.total_points()) ** 2 / best_child.travel_distance(origin)
 		else:
 			return super().priority(origin)

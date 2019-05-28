@@ -65,6 +65,11 @@ void Controller::start() {
 		nh.getParam("/robot/start/y", srv.request.point.y) &&
 		nh.getParam("/robot/start/angle", srv.request.point.theta);
 
+	// Convert angle
+	double angleRad = (long)(srv.request.point.theta + 360) % 360;
+	angleRad /= 360;
+	srv.request.point.theta = angleRad * 1000 * M_PI;
+
 	if (!found) {
 		ROS_ERROR_STREAM("unable to get x, y and angle parameters for initial robot position");
 	}

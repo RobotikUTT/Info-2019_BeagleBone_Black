@@ -10,7 +10,7 @@ ReachActionPerformer::ReachActionPerformer(std::string name) : ActionPerformer(n
 	this->can_data_sub = nh.subscribe("/can_interface/in", 1, &ReachActionPerformer::onCanData, this);
 	this->can_data_pub = nh.advertise<interface_msgs::CanData>("/can_interface/out", 1);
 
-	this->get_map_data_srv = nh.serviceClient<ai_msgs::GetMapSize>("/ai/map_handler/get_map_size");
+	this->get_sided_point_srv = nh.serviceClient<ai_msgs::GetSidedPoint>("/ai/map_handler/get_sided_point");
 
 	if (!nh.getParam("/pathfinder/enabled", this->usePathfinder)) {
 		ROS_WARN_STREAM("unable to determine whether pathfinder is enabled or not, disabling by default");
@@ -42,17 +42,15 @@ ActionPoint ReachActionPerformer::computeActionPoint(Argumentable* actionArgs, P
 	result.end.y = getLong("y", robotPos.y);
 	result.end.theta = getLong("angle", robotPos.theta);
 
-	// Up side : revert coordinates
-	if (actionArgs->getLong("_side") == Side::UP) {
-		ai_msgs::GetMapSize srv;
-
-		ros::service::waitForService("/ai/map_handler/get_map_size", 2);
-		if (this->get_map_data_srv.call(srv)) {
-			result.end.y = srv.response.height - result.end.y;
-			result.end.theta = M_PI * 1000 - result.end.theta; // half a turn in mrad
-		} else {
-			ROS_ERROR_STREAM("Unable to fecth map size");
-		}
+	ai_msgs::GetSidedPoint srv;
+	srv.request.point = result.end;
+	srv.request.side = actionArgs->getLong("_side");
+	
+	ros::service::waitForService("/ai/map_handler/get_sided_point", 2);
+	if (this->get_sided_point_srv.call(srv)) {
+		result.end = srv.response.point;
+	} else {
+		ROS_ERROR_STREAM("Unable to get sided point for action point computation");
 	}
 
 	return result;
@@ -88,24 +86,28 @@ void ReachActionPerformer::start() {
 		return;
 	}
 	
-	// If movement, get pathfinding data
+	// Get destination
+	geometry_msgs::Pose2D posEnd;
+	posEnd.x = getLong("x", 0);
+	posEnd.y = getLong("y", 0);
+	// Convert from degree to mrad
+	posEnd.theta = this->convertAngle(getLong("angle", 0));
+
+	// Get point from right side
+	ai_msgs::GetSidedPoint srv;
+	srv.request.point = posEnd;
+	srv.request.side = getLong("_side");
+	
+	ros::service::waitForService("/ai/map_handler/get_sided_point", 2);
+	if (this->get_sided_point_srv.call(srv)) {
+		posEnd = srv.response.point;
+	} else {
+		ROS_ERROR_STREAM("Unable to get sided point for action point computation");
+	}
+
+	// If require movement
 	if (hasLong("x") && hasLong("y")) {
-		geometry_msgs::Pose2D posEnd;
-		posEnd.x = getLong("x");
-		posEnd.y = getLong("y");
-
-		// Up side : revert Y coordinates
-		if (getLong("_side") == Side::UP) {
-			ai_msgs::GetMapSize srv;
-
-			if (this->get_map_data_srv.call(srv)) {
-				posEnd.y = srv.response.height - posEnd.y;
-			} else {
-				ROS_ERROR_STREAM("Unable to fecth map size");
-			}
-		}
-
-		// If pathfinder
+		// Pathfinder?
 		if (this->usePathfinder) {
 			pathfinder::FindPath srv;
 			srv.request.posStart = this->robotPos;
@@ -121,35 +123,21 @@ void ReachActionPerformer::start() {
 
 				// Else give order to move along path
 				for (auto& pose : srv.response.path) {
-					this->moveTo(pose);
+					this->moveTo(pose, "go_to");
 				}
 			} else {
 				ROS_ERROR_STREAM("Error while calling pathfinder service");
 				this->returns(ActionStatus::ERROR);
 			}
+		} else {
+			// x,y and maybe angle provided
+			this->moveTo(posEnd, hasLong("angle") ? "go_to_angle" : "go_to");
 		}
-		
-		// Otherwise
-		else {
-			this->moveTo(posEnd);
-		}
-	}
-
-	// If an angle is provided
-	if (hasLong("angle")) {
-		interface_msgs::CanData msg;
-		msg.type = "rotate";
-		
-		Argumentable param;
-		param.setLong("angle", this->convertAngle(getLong("angle")));
-
-		// Revert angle
-		if (getLong("_side") == Side::UP) {
-			param.setLong("angle", M_PI * 1000 - this->convertAngle(getLong("angle"))); // half a turn in mrad
-		}
-
-		msg.params = param.toList();
-		this->can_data_pub.publish(msg);
+	} else if (hasLong("angle")) {
+		// Only angle provided
+		this->moveTo(posEnd, "rotate");
+	} else {
+		ROS_ERROR_STREAM("Missing arguments for [reach], provide x/y and/or angle.");
 	}
 
 	int timeout = getLong("timeout", 0);
@@ -165,7 +153,7 @@ unsigned long ReachActionPerformer::convertAngle(long degree) const {
 	return fraction * 1000 * M_PI;
 }
 
-void ReachActionPerformer::moveTo(geometry_msgs::Pose2D location) {
+void ReachActionPerformer::moveTo(geometry_msgs::Pose2D location, std::string request) {
 	Argumentable params;
 	params.setLong("x", location.x);
 	params.setLong("y", location.y);
@@ -173,7 +161,7 @@ void ReachActionPerformer::moveTo(geometry_msgs::Pose2D location) {
 	params.setLong("direction", interface_msgs::Directions::FORWARD);
 
 	interface_msgs::CanData msg;
-	msg.type = "go_to";
+	msg.type = request;
 	msg.params = params.toList();
 
 	this->can_data_pub.publish(msg);

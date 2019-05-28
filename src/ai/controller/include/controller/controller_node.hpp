@@ -29,6 +29,8 @@
 
 #include "std_msgs/Int8.h"
 
+#include <math.h>
+
 /**
  * @defgroup Controller The Controller package
  * @{

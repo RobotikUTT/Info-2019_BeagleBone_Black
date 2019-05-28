@@ -7,7 +7,7 @@
 
 #include "action_manager/ActionPerformer.hpp"
 
-#include "ai_msgs/GetMapSize.h"
+#include "ai_msgs/GetSidedPoint.h"
 #include "ai_msgs/Side.h"
 
 #include "interface_msgs/StmMode.h"
@@ -31,7 +31,7 @@ public:
 private:
   ros::Subscriber can_data_sub;
   ros::ServiceClient pathfinder_srv;
-  ros::ServiceClient get_map_data_srv;
+  ros::ServiceClient get_sided_point_srv;
   ros::Publisher can_data_pub;
   
   ros::Timer timerTimeout;
@@ -44,7 +44,7 @@ private:
 
   void onCanData(const interface_msgs::CanData::ConstPtr&);
   void timeoutCallback(const ros::TimerEvent&);
-  void moveTo(geometry_msgs::Pose2D location);
+  void moveTo(geometry_msgs::Pose2D location, std::string);
 
   void onWaitingResult(bool) override;
 
