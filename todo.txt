@@ -3,3 +3,10 @@
 	- tester angle et positionnement correct
 	- bugs cotés haut action reach
 - gérer l'échec de groupe d'action (modes retry, resume et postpone)
+
+- SET PIDs TO:
+	P = 150
+	I = 10
+	D = 1000
+	left : 240 / 0 / 20000
+	right : 130 / 0 / 20000

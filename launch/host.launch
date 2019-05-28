@@ -1,0 +1,8 @@
+<launch>
+	<rosparam command="load" file="$(find ai_description)/params.yaml" />
+
+	<group ns="interface">
+		<include file="$(find gpio_handler)/launch/pkg.launch" />
+		<include file="$(find can_interface)/launch/pkg.launch" />
+	</group>
+</launch>

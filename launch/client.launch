@@ -1,0 +1,21 @@
+<launch>
+	<rosparam command="load" file="$(find ai_description)/params.yaml" />
+
+	<group ns="ai">
+		<include file="$(find node_watcher)/launch/pkg.launch" />
+		<include file="$(find scheduler)/launch/pkg.launch" />
+		<include file="$(find controller)/launch/pkg.launch" />
+	</group>
+
+	<group ns="way">
+		<include file="$(find pathfinder)/pkg.launch" />
+		<include file="$(find map_handler)/pkg.launch" />
+	</group>
+
+	<group ns="actions">
+		<include file="$(find idle)/launch/pkg.launch"/>
+		<include file="$(find reach)/launch/pkg.launch"/>
+		<include file="$(find drop)/launch/pkg.launch"/>
+		<include file="$(find fetch_puck)/launch/pkg.launch"/>
+	</group>
+</launch>
