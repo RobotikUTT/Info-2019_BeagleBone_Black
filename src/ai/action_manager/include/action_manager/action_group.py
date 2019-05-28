@@ -43,15 +43,8 @@ class ActionGroup(Action):
 		self.__state = ActionStatus.IDLE
 		self.__best_child = None
 
-	def __before_children__(self, context: Context):
-		print("01", self.action_id, self.arguments)
-		super().__before_children__(context)
-		print("02", self.action_id, self.arguments)
-
 	def __parsed__(self, context: Context):
-		print("11", self.action_id, self.arguments)
 		super().__parsed__(context)
-		print("12", self.action_id, self.arguments)
 
 		for i in range(len(self.children)):
 			child = self.children[i]
