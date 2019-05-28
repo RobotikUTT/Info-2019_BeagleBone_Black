@@ -155,7 +155,7 @@ class Action:
 
 		# In a simple action, only two cases : action unavailable or not
 		if self.state != ActionStatus.IDLE:
-			return ActionChoice()
+			return ActionChoice(None, -1)
 		else:
 			return ActionChoice(self, self.priority(robot_pos))
 

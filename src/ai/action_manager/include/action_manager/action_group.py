@@ -1,5 +1,7 @@
 from .action import Action, ActionChoice
 
+import rospy
+
 from ai_msgs.msg import ActionPoint, ActionStatus
 from geometry_msgs.msg import Pose2D
 from args_lib.msg import Argument
@@ -87,16 +89,19 @@ class ActionGroup(Action):
 				self.__state = ActionStatus.PAUSED
 
 			elif self.fail == ActionGroup.FAIL_RESTART:
-				# Restart all children
+				rospy.logwarn("restart action group handling is not supported yet")
+				"""# Restart all children
 				stack = [] + self.children
 				while len(stack) > 0:
 					next = stack.pop()
-
+					print(next)
 					if isinstance(next, ActionGroup):
 						stack.extend(next.children)
 
 					# force state to restart everything
 					next.__state = ActionStatus.IDLE
+				
+				self.__state = state"""
 
 		# Best action action course
 		if state != ActionStatus.IDLE and self.type == ActionGroup.BEST:
@@ -122,7 +127,7 @@ class ActionGroup(Action):
 					# If one action is done, it cannot be finished or impossible
 					translate_to_pause = True
 
-				# If it's a unfinished sync action
+				# If it's a unfinished ordered action group
 				if self.type == ActionGroup.ORDERED and next.state != ActionStatus.DONE:
 					# No need to proceed further, we can apply state
 					break
