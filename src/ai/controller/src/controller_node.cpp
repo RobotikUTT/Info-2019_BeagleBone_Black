@@ -26,7 +26,7 @@ Controller::Controller() : Node("controller", "ai"), side(Side::DOWN) {
 	sidedPoint = nh.serviceClient<GetSidedPoint>("/ai/map_handler/get_sided_point");
 
 	// Wait for required nodes
-	waitForNodes(30);
+	waitForNodes(3000);
 }
 
 void Controller::onWaitingResult(bool success) {

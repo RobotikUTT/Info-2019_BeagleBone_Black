@@ -33,7 +33,8 @@ class SchedulerNode(PerformClient):
 		try:
 			folder = RosPack().get_path("ai_description") + "/actions/"
 			self.root_action = ActionGroup.parse_file(
-				folder + "main.xml", context={"folder": folder})
+				folder + rospy.get_param("/actions/main", default="main") +
+				".xml", context={"folder": folder})
 		except ParsingException as e:
 			self.set_status(NodeStatus.ERROR, 1)
 			raise e

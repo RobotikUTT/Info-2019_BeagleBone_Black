@@ -7,6 +7,12 @@ robot:
     y: 210
     angle: 0
 
+actions:
+    main: "homolog"
+  
+simulation: # 1 for Up, 0 for Down
+  side: 1
+
 interface:
   can_interface:
     device: "can1"

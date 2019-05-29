@@ -49,7 +49,7 @@ class CanInterfaceNode(NodeStatusHandler):
 
 		# TODO /can_interface/out as a service
 		self.subscriber: Subscriber = Subscriber("/can_interface/out", CanData, self.on_ros_message)
-		self.publisher: Publisher = Publisher("/can_interface/in", CanData, queue_size=10)
+		self.publisher: Publisher = Publisher("/can_interface/in", CanData, queue_size=100)
 
 		# Start thread
 		self.can_input_thread.start()

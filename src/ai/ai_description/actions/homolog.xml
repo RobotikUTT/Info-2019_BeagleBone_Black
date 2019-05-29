@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- Homologation action tree -->
+<group type="ordered">
+	<reach native="true">
+		<arg name="x">1350</arg>
+		<arg name="y">225</arg>
+	</reach>
+	<reach native="true">
+		<arg name="x">1350</arg>
+		<arg name="y">750</arg>
+	</reach>
+	<reach native="true">
+		<arg name="x">750</arg>
+		<arg name="y">750</arg>
+	</reach>
+	<reach native="true">
+		<arg name="x">750</arg>
+		<arg name="y">225</arg>
+	</reach>
+</group>
