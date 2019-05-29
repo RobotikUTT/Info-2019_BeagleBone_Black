@@ -1,6 +1,7 @@
 from .action import Action, ActionChoice
 
 import rospy
+import math
 
 from ai_msgs.msg import ActionPoint, ActionStatus
 from geometry_msgs.msg import Pose2D
@@ -181,8 +182,12 @@ class ActionGroup(Action):
 			if best_child is None:
 				return math.inf
 			else:
-				# TODO travel distance
-				return (self.points + best_child.total_points()) ** 2 / best_child.travel_distance(origin)
+				distance = best_child.travel_distance(origin)
+
+				if distance == 0:
+					return math.inf
+				else:
+					return (self.points + best_child.total_points()) ** 2 / distance
 		else:
 			return super().priority(origin)
 
