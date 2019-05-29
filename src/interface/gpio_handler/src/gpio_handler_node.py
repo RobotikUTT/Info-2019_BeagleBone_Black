@@ -11,13 +11,11 @@ from ai_msgs.msg import StartRobot, RobotStatus, Side
 PIN_SIDE 	= "P8_7"
 PIN_START 	= "P8_8"
 
-PIN_SONARS = "P8_X"
-
 GAME_IDLE = 0
 GAME_STARTED = 1
 
 # Groups of pins to ease initialisation
-GPIO_IN_PINS = [ PIN_START, PIN_SIDE, PIN_SONARS ]
+GPIO_IN_PINS = [ PIN_START, PIN_SIDE ]
 
 # @brief I/O interface between the robot pins and the IA
 class GPIOHandlerNode(object):
@@ -35,7 +33,6 @@ class GPIOHandlerNode(object):
 
 		# Publishers
 		self._start_publisher = rospy.Publisher("/signal/start", StartRobot, queue_size = 1, latch=True)
-		self.can_out: Publisher = Publisher("/can_interface/out", CanData, queue_size=10)
 
 		# init states
 		self.side = -1 # impossible value that will get the side updated in the loop
@@ -57,29 +54,6 @@ class GPIOHandlerNode(object):
 				self._start_publisher.publish(StartRobot(Side.UP if self.side else Side.DOWN))
 
 			# Wait for next cycle
-			r.sleep()
-			
-		# Then read sonar data
-		if not rospy.is_shutdown():
-			sonars = GPIO.input(PIN_SONARS)
-
-			if self.last_sonars != sonars:
-				if sonars:
-					rospy.logwarn("Set proximity stop")
-				else:
-					rospy.logwarn("Unset proximity stop")
-
-				msg = CanData()
-				msg.type = "set_stm_mode"
-
-				msg.params = Argumentable({
-					"mode": interface_msgs::StmMode::SETEMERGENCYSTOP \
-						if sonars else interface_msgs::StmMode::UNSETEMERGENCYSTOP
-				}).to_list()
-
-				self.can_out.publish(msg)
-
-			self.last_sonars = sonars
 			r.sleep()
 
 

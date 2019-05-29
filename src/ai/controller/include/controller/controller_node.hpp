@@ -36,7 +36,7 @@
  * @{
  */
 
-#define SONAR_MIN_DIST_FORWARD 30 // in cm
+#define SONAR_MIN_DIST_FORWARD 10 // in cm
 #define SONAR_MIN_DIST_BACKWARD	10 // in cm
 
 using ros::Subscriber;

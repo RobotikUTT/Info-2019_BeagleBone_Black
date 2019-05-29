@@ -4,5 +4,6 @@
 	<group ns="interface">
 		<include file="$(find gpio_handler)/launch/pkg.launch" />
 		<include file="$(find can_interface)/launch/pkg.launch" />
+		<include file="$(find serial_interface)/launch/pkg.launch" />
 	</group>
 </launch>

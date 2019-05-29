@@ -174,14 +174,13 @@ void Controller::onCanData(const interface_msgs::CanData::ConstPtr& msg) {
  * mandatory
  */
 void Controller::processSonars(const Argumentable& data) {
-	bool last_proximity_value = proximity_stop;
-	uint8_t front_left, front_right,
-		back_left, back_right;
+	bool last_proximity_value = this->proximity_stop;
 
-	front_left = data.getLong("dist_front_left");
-	front_right = data.getLong("dist_front_right");
-	back_left = data.getLong("dist_back_left");
-	back_right = data.getLong("dist_back_right");
+	uint8_t front_left = data.getLong("dist_front_left");
+	uint8_t front_right = data.getLong("dist_front_right");
+	uint8_t back = data.getLong("dist_back");
+	uint8_t right = data.getLong("dist_right");
+	uint8_t left = data.getLong("dist_left");
 
 	/*
 	 * Proximity stop is enabled in case the distance
@@ -189,15 +188,14 @@ void Controller::processSonars(const Argumentable& data) {
 	 * the current direction.
 	 */
 	bool forward_stop = direction == Directions::FORWARD && (
-		front_left <= SONAR_MIN_DIST_FORWARD + 6 ||
-		front_right <= SONAR_MIN_DIST_FORWARD + 16
+		front_left <= SONAR_MIN_DIST_FORWARD ||
+		front_right <= SONAR_MIN_DIST_FORWARD
 	);
 	bool backward_stop = direction == Directions::BACKWARD && (
-		back_left <= SONAR_MIN_DIST_BACKWARD ||
-		back_right <= SONAR_MIN_DIST_BACKWARD
+		back <= SONAR_MIN_DIST_BACKWARD
 	);
 
-	proximity_stop = forward_stop || backward_stop;
+	this->proximity_stop = forward_stop || backward_stop;
 
 	// Declare unknown shape
 	if (forward_stop) {
