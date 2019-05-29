@@ -62,8 +62,6 @@ private:
 	Subscriber can_data_sub;
 	Subscriber start_sub;
 
-	Publisher robot_status_pub;
-	Publisher proximity_stop_pub;
 	Publisher can_data_pub;
 
 	ServiceClient schedulerController;

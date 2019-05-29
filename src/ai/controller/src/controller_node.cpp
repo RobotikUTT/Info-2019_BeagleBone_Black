@@ -16,7 +16,6 @@ Controller::Controller() : Node("controller", "ai"), side(Side::DOWN) {
 
 	// Advertisers
 	can_data_pub = nh.advertise<interface_msgs::CanData>("/can_interface/out", 1);
-	robot_status_pub = nh.advertise<RobotStatus>("/ai/controller/robot_status", 1);
 
 	// Subscribers
 	can_data_sub = nh.subscribe("/can_interface/in", 1, &Controller::onCanData, this);
@@ -176,11 +175,12 @@ void Controller::onCanData(const interface_msgs::CanData::ConstPtr& msg) {
 void Controller::processSonars(const Argumentable& data) {
 	bool last_proximity_value = this->proximity_stop;
 
-	uint8_t front_left = data.getLong("dist_front_left");
-	uint8_t front_right = data.getLong("dist_front_right");
-	uint8_t back = data.getLong("dist_back");
-	uint8_t right = data.getLong("dist_right");
-	uint8_t left = data.getLong("dist_left");
+	uint8_t front_left = data.getLong("dist_front_left", -1);
+	uint8_t front_right = data.getLong("dist_front_right", -1);
+	uint8_t back = data.getLong("dist_back", -1);
+	uint8_t right = data.getLong("dist_right", -1);
+	uint8_t left = data.getLong("dist_left", -1);
+
 
 	/*
 	 * Proximity stop is enabled in case the distance
@@ -205,10 +205,6 @@ void Controller::processSonars(const Argumentable& data) {
 	}
 
 	if (last_proximity_value != proximity_stop) {
-		ProximityStop proximity_msg;
-		proximity_msg.proximity_set = proximity_stop;
-		proximity_stop_pub.publish(proximity_msg);
-
 		if (proximity_stop) {
 			ROS_WARN("Set proximity stop");
 		} else {
