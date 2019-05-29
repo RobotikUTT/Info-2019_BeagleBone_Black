@@ -1,0 +1,4 @@
+
+<launch>
+	<node name="serial_interface" pkg="serial_interface" type="serial_interface_node.py" output="screen" />
+</launch>

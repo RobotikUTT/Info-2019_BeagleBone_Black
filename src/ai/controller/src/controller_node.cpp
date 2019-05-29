@@ -15,7 +15,6 @@ Controller::Controller() : Node("controller", "ai"), side(Side::DOWN) {
 	robotState = RobotStatus::ROBOT_INIT;
 
 	// Advertisers
-	proximity_stop_pub = nh.advertise<ProximityStop>("proximity", 1);
 	can_data_pub = nh.advertise<interface_msgs::CanData>("/can_interface/out", 1);
 	robot_status_pub = nh.advertise<RobotStatus>("/ai/controller/robot_status", 1);
 

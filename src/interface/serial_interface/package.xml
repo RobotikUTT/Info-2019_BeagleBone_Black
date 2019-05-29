@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>serial_interface</name>
+  <version>2018.1.0</version>
+  <description>The serial_interface package</description>
+
+  <maintainer email="cle.bourdonnaye@gmail.com">Clément de La Bourdonnaye</maintainer>
+  <license>TODO</license>
+  <author email="cle.bourdonnaye@gmail.com">Clément de La Bourdonnaye</author>
+  <author email="alx.care@gmail.com">Alexis CARE</author>
+
+  <!-- Requirements for c++ program -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+
+  <!-- Other packages-->
+  <depend>node_watcher</depend>
+  <depend>interface_description</depend>
+  <depend>args_lib</depend>
+  <depend>can_interface</depend>
+  
+  <!-- Message dependencies-->
+  <depend>std_msgs</depend>
+  <depend>interface_msgs</depend>
+
+  <export></export>
+</package>

@@ -14,7 +14,7 @@ sudo apt install -y ros-melodic-ros-base python-catkin-tools ros-melodic-roslint
 
 echo "Installing python3-pip and python3-rospkg"
 sudo apt-get install -y python3-pip
-pip3 install rospkg python-can Adafruit_BBIO
+pip3 install rospkg python-can Adafruit_BBIO pyserial
 
 echo "rosdep initialization..."
 sudo rosdep init
