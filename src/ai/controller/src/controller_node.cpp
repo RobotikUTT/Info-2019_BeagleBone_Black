@@ -148,13 +148,15 @@ void Controller::stop(const ros::TimerEvent& timer) {
 	interface_msgs::CanData msg;
 	msg.type = "set_stm_mode";
 
-	params.setLong("mode", interface_msgs::StmMode::STOP);
-	msg.params = params.toList();
-	this->can_data_pub.publish(msg);
-
 	params.setLong("mode", interface_msgs::StmMode::RESET_ORDERS);
 	msg.params = params.toList();
 	this->can_data_pub.publish(msg);
+
+	interface_msgs::CanData msg2;
+	msg2.type = "set_stm_mode";
+	params.setLong("mode", interface_msgs::StmMode::STOP);
+	msg2.params = params.toList();
+	this->can_data_pub.publish(msg2);
 }
 
 void Controller::onCanData(const interface_msgs::CanData::ConstPtr& msg) {
@@ -167,11 +169,11 @@ void Controller::onCanData(const interface_msgs::CanData::ConstPtr& msg) {
 		// Exceeding values allow to go back
 		int16_t linearSpeed = input.getLong("linear_speed");
 
-		if (linearSpeed >= 0) {
+		if (linearSpeed > 0) {
 			direction = Directions::FORWARD;
 		} else if (linearSpeed < 0) {
 			direction = Directions::BACKWARD;
-		} else {
+		} else if (!this->proximity_stop) {
 			direction = Directions::NONE;
 		}
 	}
