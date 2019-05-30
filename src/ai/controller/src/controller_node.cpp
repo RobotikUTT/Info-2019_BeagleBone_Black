@@ -10,6 +10,7 @@ Controller::Controller() : Node("controller", "ai"), side(Side::DOWN) {
 	// attributes
 	direction = Directions::FORWARD;
 	proximity_stop = false;
+	done = false;
 	panelUp = 0;
 	startSignalReceived = false;
 	robotState = RobotStatus::ROBOT_INIT;
@@ -55,6 +56,14 @@ void Controller::start() {
 		this->robotState != RobotStatus::ROBOT_READY) {
 		return;
 	}
+
+	int timeout = 100;
+	if (!nh.getParam("/actions/timeout", timeout)) {
+		ROS_ERROR_STREAM("No /actions/timeout defined in params, using 100");
+		timeout = 100;
+
+	}
+	timer = nh.createTimer(ros::Duration(timeout), &Controller::stop, this, true);
 
 	// init STM position
 	ai_msgs::GetSidedPoint srv;
@@ -128,7 +137,7 @@ void Controller::start() {
  * @brief stop all actions
  * @param[in]	msg	 The RobotStatus message
  */
-void Controller::stop() {
+void Controller::stop(const ros::TimerEvent& timer) {
 	// stop actions by calling scheduler service
 	SetSchedulerState setter;
 	setter.request.running = false;
@@ -155,6 +164,7 @@ void Controller::onCanData(const interface_msgs::CanData::ConstPtr& msg) {
 	// TODO can interface to check for channels
 	if (msg->type == "current_speed") {
 		// Set robot direction according to speed
+		// Exceeding values allow to go back
 		int16_t linearSpeed = input.getLong("linear_speed");
 
 		if (linearSpeed >= 0) {
@@ -178,11 +188,10 @@ void Controller::onCanData(const interface_msgs::CanData::ConstPtr& msg) {
 void Controller::processSonars(const Argumentable& data) {
 	bool last_proximity_value = this->proximity_stop;
 
-	uint8_t front_left = data.getLong("dist_front_left", -1);
-	uint8_t front_right = data.getLong("dist_front_right", -1);
-	uint8_t back = data.getLong("dist_back", -1);
-	uint8_t right = data.getLong("dist_right", -1);
-	uint8_t left = data.getLong("dist_left", -1);
+	uint8_t front_left = data.getLong("dist_front_left", 255);
+	uint8_t front_right = data.getLong("dist_front_right", 255);
+	uint8_t back_left = data.getLong("dist_back_left", 255);
+	uint8_t back_right = data.getLong("dist_back_right", 255);
 
 
 	/*
@@ -195,7 +204,8 @@ void Controller::processSonars(const Argumentable& data) {
 		front_right <= SONAR_MIN_DIST_FORWARD + (this->proximity_stop ? 10 : 0)
 	);
 	bool backward_stop = direction == Directions::BACKWARD && (
-		back <= SONAR_MIN_DIST_BACKWARD + (this->proximity_stop ? 10 : 0)
+		back_left <= SONAR_MIN_DIST_BACKWARD + (this->proximity_stop ? 10 : 0) ||
+		back_right <= SONAR_MIN_DIST_BACKWARD + (this->proximity_stop ? 10 : 0)
 	);
 
 	this->proximity_stop = forward_stop || backward_stop;

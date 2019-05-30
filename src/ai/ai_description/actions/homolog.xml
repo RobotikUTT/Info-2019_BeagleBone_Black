@@ -2,23 +2,8 @@
 <!-- Homologation action tree -->
 <group type="ordered">
 	<reach native="true">
-		<arg name="x">1350</arg>
-		<arg name="y">225</arg>
-	</reach>
-	<reach native="true">
-		<arg name="x">1350</arg>
-		<arg name="y">750</arg>
-	</reach>
-	<reach native="true">
-		<arg name="x">750</arg>
-		<arg name="y">750</arg>
-	</reach>
-	<reach native="true">
-		<arg name="x">750</arg>
-		<arg name="y">225</arg>
-	</reach>
-	<reach native="true">
-		<arg name="x">750</arg>
-		<arg name="y">225</arg>
+		<arg name="x">445</arg>
+		<arg name="y">1225</arg>
+		<arg name="direction">0</arg>
 	</reach>
 </group>

@@ -101,7 +101,7 @@ class SchedulerNode(PerformClient):
 			frame.type = "update_screen"
 			frame.params = Argumentable({
 				"points": self.points,
-				"status": 3 if self.root_action.state == ActionStatus.DONE else 2
+				"status": 4 if self.root_action.state == ActionStatus.DONE else 2
 			}).to_list()
 
 			self.can_out.publish(frame)

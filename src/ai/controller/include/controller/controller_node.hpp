@@ -57,6 +57,8 @@ public:
 	Controller();
 
 private:
+	ros::Timer timer;
+
 	Subscriber status_sub;
 	Subscriber nodes_status_sub;
 	Subscriber can_data_sub;
@@ -70,6 +72,7 @@ private:
 	// Robot state
 	int robotState;
 	bool startSignalReceived;
+	bool done;
 
 	int8_t direction;
 	int8_t side;
@@ -86,7 +89,7 @@ private:
 	void onStartSignal(const ai_msgs::StartRobot& msg);
 
 	void start();
-	void stop();
+	void stop(const ros::TimerEvent& timer);
 
 	void onWaitingResult(bool success) override;
 };
