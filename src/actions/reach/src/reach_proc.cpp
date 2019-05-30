@@ -79,6 +79,8 @@ void ReachActionPerformer::onCanData(const interface_msgs::CanData::ConstPtr& ms
  * @brief run action toward a new goal and send the appropriate to the STM
  */
 void ReachActionPerformer::start() {
+	int direction = getLong("direction", interface_msgs::Directions::FORWARD);
+
 	// Test that some actions are to be performed
 	if (hasLong("x") * hasLong("y") + 2 * hasLong("angle") == 0) {
 		ROS_ERROR_STREAM("missing data in message, need at least (x,y) or (angle)");
@@ -123,7 +125,7 @@ void ReachActionPerformer::start() {
 
 				// Else give order to move along path
 				for (auto& pose : srv.response.path) {
-					this->moveTo(pose, "go_to");
+					this->moveTo(pose, "go_to", direction);
 				}
 			} else {
 				ROS_ERROR_STREAM("Error while calling pathfinder service");
@@ -131,11 +133,11 @@ void ReachActionPerformer::start() {
 			}
 		} else {
 			// x,y and maybe angle provided
-			this->moveTo(posEnd, hasLong("angle") ? "go_to_angle" : "go_to");
+			this->moveTo(posEnd, hasLong("angle") ? "go_to_angle" : "go_to", direction);
 		}
 	} else if (hasLong("angle")) {
 		// Only angle provided
-		this->moveTo(posEnd, "rotate");
+		this->moveTo(posEnd, "rotate", direction);
 	} else {
 		ROS_ERROR_STREAM("Missing arguments for [reach], provide x/y and/or angle.");
 	}
@@ -153,12 +155,13 @@ unsigned long ReachActionPerformer::convertAngle(long degree) const {
 	return fraction * 1000 * 2 * M_PI;
 }
 
-void ReachActionPerformer::moveTo(geometry_msgs::Pose2D location, std::string request) {
+void ReachActionPerformer::moveTo(geometry_msgs::Pose2D location, std::string request, int direction) {
 	Argumentable params;
 	params.setLong("x", location.x);
 	params.setLong("y", location.y);
 	params.setLong("angle", location.theta);
 	params.setLong("direction", interface_msgs::Directions::FORWARD);
+	// TODO: params.setLong("direction", direction);
 
 	interface_msgs::CanData msg;
 	msg.type = request;

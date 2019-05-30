@@ -46,28 +46,28 @@ add_library(${PROJECT_NAME}
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 # Testing
-if(CATKIN_ENABLE_TESTING)
-  find_package(rostest REQUIRED)
+# if(CATKIN_ENABLE_TESTING)
+#   find_package(rostest REQUIRED)
 
-  # C++ test performers nodes
-  foreach(T
-    test_fail_performer
-    test_move_performer
-    test_sleep_performer
-  )
-    add_executable(${T} test/actions_performers/${T}.cpp src/ActionPerformer.cpp)
-    add_dependencies(${T} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-    target_link_libraries(${T}
-      ${catkin_LIBRARIES}
-      ${PROJECT_NAME}
-    )
-  endforeach()
+#   # C++ test performers nodes
+#   foreach(T
+#     test_fail_performer
+#     test_move_performer
+#     test_sleep_performer
+#   )
+#     add_executable(${T} test/actions_performers/${T}.cpp src/ActionPerformer.cpp)
+#     add_dependencies(${T} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#     target_link_libraries(${T}
+#       ${catkin_LIBRARIES}
+#       ${PROJECT_NAME}
+#     )
+#   endforeach()
 
-  # Tests to perform
-  foreach(T
-      test/test-actions-cpp.launch
-      test/test-actions-py.launch
-      test/test-parsing.launch)
-     add_rostest(${T})
-  endforeach()
-endif()
+#   # Tests to perform
+#   foreach(T
+#       test/test-actions-cpp.launch
+#       test/test-actions-py.launch
+#       test/test-parsing.launch)
+#      add_rostest(${T})
+#   endforeach()
+# endif()

@@ -47,7 +47,7 @@ class SerialInterfaceNode(NodeStatusHandler):
 		)
 
 		# Create serial bus bus with given interface
-		self.serial = serial.Serial(port="/dev/pts/4", baudrate=57600)
+		self.serial = serial.Serial(port="/dev/ttyUSB0", baudrate=57600)
 		self.serial_input_thread = threading.Thread(name="serial_input", target=self.wait_for_serial_message)
 
 		# TODO /can_interface/out as a service
@@ -93,7 +93,7 @@ class SerialInterfaceNode(NodeStatusHandler):
 		# Get frame type
 		frame_type = self.frames.by_id[frame_id]
 		
-		rospy.loginfo("received frame from serial of type {}".format(frame_type.name))
+		rospy.logdebug("received frame from serial of type {}".format(frame_type.name))
 
 		# Handle pong data
 		if frame_type.name == "pong":
@@ -134,7 +134,7 @@ class SerialInterfaceNode(NodeStatusHandler):
 			Handle message from ROS and build a frame from it
 		"""
 		
-		rospy.loginfo("received frame to send of type {}".format(message.type))
+		rospy.logdebug("received frame to send of type {}".format(message.type))
 
 		# Get message params as argumentable
 		values = Argumentable().from_list(message.params)

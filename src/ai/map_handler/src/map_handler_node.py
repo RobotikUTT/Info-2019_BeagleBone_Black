@@ -40,7 +40,7 @@ class MapHandlerNode(Node):
 
 		if req.side == Side.UP:
 			res.point.y = self.zone.height - res.point.y
-			res.point.theta = math.pi * 1000 - res.point.theta # half a turn in mrad
+			res.point.theta = (2 * math.pi * 1000 - res.point.theta) % (2 * math.pi * 1000) # symmetry
 
 		return res
 

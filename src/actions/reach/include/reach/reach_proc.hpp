@@ -44,7 +44,7 @@ private:
 
   void onCanData(const interface_msgs::CanData::ConstPtr&);
   void timeoutCallback(const ros::TimerEvent&);
-  void moveTo(geometry_msgs::Pose2D location, std::string);
+  void moveTo(geometry_msgs::Pose2D location, std::string, int);
 
   void onWaitingResult(bool) override;
 

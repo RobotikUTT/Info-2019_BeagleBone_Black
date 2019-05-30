@@ -1,8 +1,5 @@
 - gérer les arrêts suite aux détecteurs (ajout d'un élément + vérification élément bien pris en compte)
 - gérer le coté (changement des angles et autre)
-	- tester angle et positionnement correct
-	- bugs cotés haut action reach
-- gérer l'échec de groupe d'action (modes retry, resume et postpone)
 
 - SET PIDs TO:
 	P = 150
@@ -12,5 +9,5 @@
 	right : 130 / 0 / 20000
 
 
-/ URGENT \
-- Régler les problème de paramètres passsés (paramètres identiques pour toutes les actions)
+- stop au bout de 100 frames pour les actions secondes
+- lancement du code sans moi :):)

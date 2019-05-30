@@ -36,8 +36,8 @@
  * @{
  */
 
-#define SONAR_MIN_DIST_FORWARD 10 // in cm
-#define SONAR_MIN_DIST_BACKWARD	10 // in cm
+#define SONAR_MIN_DIST_FORWARD 25 // in cm
+#define SONAR_MIN_DIST_BACKWARD	25 // in cm
 
 using ros::Subscriber;
 using ros::Publisher;

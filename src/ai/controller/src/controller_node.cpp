@@ -8,7 +8,7 @@
  */
 Controller::Controller() : Node("controller", "ai"), side(Side::DOWN) {
 	// attributes
-	direction = Directions::NONE;
+	direction = Directions::FORWARD;
 	proximity_stop = false;
 	panelUp = 0;
 	startSignalReceived = false;
@@ -92,24 +92,27 @@ void Controller::start() {
 	params.reset();
 	params.setLong("mode", interface_msgs::StmMode::START);
 
-	msg.type = "set_stm_mode";
-	msg.params = params.toList();
-	this->can_data_pub.publish(msg);
+	interface_msgs::CanData msg2;
+	msg2.type = "set_stm_mode";
+	msg2.params = params.toList();
+	this->can_data_pub.publish(msg2);
 
 	// set left pid
+	interface_msgs::CanData msg3;
 	params.reset();
 	params.setLong("p", 240);
 	params.setLong("i", 0);
 	params.setLong("d", 20000);
-	msg.type = "set_left_pid";
-	msg.params = params.toList();
-	this->can_data_pub.publish(msg);
+	msg3.type = "set_left_pid";
+	msg3.params = params.toList();
+	this->can_data_pub.publish(msg3);
 
 	// set right pid
 	params.setLong("p", 130);
-	msg.type = "set_right_pid";
-	msg.params = params.toList();
-	this->can_data_pub.publish(msg);
+	interface_msgs::CanData msg4;
+	msg4.type = "set_right_pid";
+	msg4.params = params.toList();
+	this->can_data_pub.publish(msg4);
 
 
 	// start actions by calling scheduler service
@@ -154,7 +157,7 @@ void Controller::onCanData(const interface_msgs::CanData::ConstPtr& msg) {
 		// Set robot direction according to speed
 		int16_t linearSpeed = input.getLong("linear_speed");
 
-		if (linearSpeed > 0) {
+		if (linearSpeed >= 0) {
 			direction = Directions::FORWARD;
 		} else if (linearSpeed < 0) {
 			direction = Directions::BACKWARD;
@@ -188,11 +191,11 @@ void Controller::processSonars(const Argumentable& data) {
 	 * the current direction.
 	 */
 	bool forward_stop = direction == Directions::FORWARD && (
-		front_left <= SONAR_MIN_DIST_FORWARD ||
-		front_right <= SONAR_MIN_DIST_FORWARD
+		front_left <= SONAR_MIN_DIST_FORWARD + (this->proximity_stop ? 10 : 0) ||
+		front_right <= SONAR_MIN_DIST_FORWARD + (this->proximity_stop ? 10 : 0)
 	);
 	bool backward_stop = direction == Directions::BACKWARD && (
-		back <= SONAR_MIN_DIST_BACKWARD
+		back <= SONAR_MIN_DIST_BACKWARD + (this->proximity_stop ? 10 : 0)
 	);
 
 	this->proximity_stop = forward_stop || backward_stop;
@@ -204,8 +207,8 @@ void Controller::processSonars(const Argumentable& data) {
 		// TODO
 	}
 
-	if (last_proximity_value != proximity_stop) {
-		if (proximity_stop) {
+	if (last_proximity_value != this->proximity_stop) {
+		if (this->proximity_stop) {
 			ROS_WARN("Set proximity stop");
 		} else {
 			ROS_WARN("Unset proximity stop");
@@ -216,7 +219,7 @@ void Controller::processSonars(const Argumentable& data) {
 
 		Argumentable params;
 		params.setLong("mode",
-			proximity_stop ? interface_msgs::StmMode::SETEMERGENCYSTOP : interface_msgs::StmMode::UNSETEMERGENCYSTOP);
+			this->proximity_stop ? interface_msgs::StmMode::SETEMERGENCYSTOP : interface_msgs::StmMode::UNSETEMERGENCYSTOP);
 
 		msg.params = params.toList();
 		this->can_data_pub.publish(msg);

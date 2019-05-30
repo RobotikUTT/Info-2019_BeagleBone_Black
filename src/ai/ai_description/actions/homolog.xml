@@ -17,4 +17,8 @@
 		<arg name="x">750</arg>
 		<arg name="y">225</arg>
 	</reach>
+	<reach native="true">
+		<arg name="x">750</arg>
+		<arg name="y">225</arg>
+	</reach>
 </group>
