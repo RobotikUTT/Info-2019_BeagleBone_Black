@@ -5,6 +5,9 @@
 	<reach native="true">
 		<arg name="x">1500</arg>
 		<arg name="y">@puck_y</arg>
+		<arg name="direction">1</arg>
+
+		<arg name="change_direction_up_side">true</arg>
 	</reach>
 
 	<!-- Retrieve -->

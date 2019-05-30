@@ -51,6 +51,7 @@ private:
   unsigned long convertAngle(long degree) const;
 
   bool usePathfinder;
+  bool onlyForward;
 };
 
 /**

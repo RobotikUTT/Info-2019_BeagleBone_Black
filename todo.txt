@@ -1,5 +1,4 @@
 - gérer les arrêts suite aux détecteurs (ajout d'un élément + vérification élément bien pris en compte)
-- gérer le coté (changement des angles et autre)
 
 - SET PIDs TO:
 	P = 150
@@ -9,5 +8,12 @@
 	right : 130 / 0 / 20000
 
 
-- stop au bout de 100 frames pour les actions secondes
-- lancement du code sans moi :):)
+- stop au bout de 100 secondes pour les actions secondes
+- affichage démarré
+- lancement du code sans moi :) :)
+- gérer les directions du controller (tester signe de la vitesse recue)
+
+100+28.5-38.5 = 90 de hauteur
+195 mm du centre
+- offset coté haut
+- base = 145

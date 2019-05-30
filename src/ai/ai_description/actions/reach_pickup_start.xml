@@ -2,8 +2,12 @@
 <group>
 	<!-- Take right alignment -->
 	<reach native="true">
-		<arg name="x">1500</arg>
-		<arg name="y">300</arg>
+		<!-- margin of 180 mm + 10 mm -->
+		<arg name="x">1358</arg>
+		<arg name="y">225</arg>
 		<arg name="angle">90</arg>
+
+		<!-- Constant angle -->
+		<arg name="same_angle">true</arg>
 	</reach>
 </group>

@@ -4,14 +4,16 @@ pathfinder:
 robot:
   start:
     x: 520
-    y: 210
+    y: 225 # width 360 + 90 to fill zone
     angle: 0
 
 actions:
-    main: "homolog"
+  main: "main"
+  timeout: 100 # in seconds
+  move_only_forward: true
   
 simulation: # 1 for Up, 0 for Down
-  side: 1
+  side: 0
 
 interface:
   can_interface:

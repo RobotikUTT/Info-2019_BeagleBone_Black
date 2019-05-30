@@ -24,6 +24,11 @@ ReachActionPerformer::ReachActionPerformer(std::string name) : ActionPerformer(n
 	} else {
 		this->onWaitingResult(true);
 	}
+
+	nh.getParam("/actions/move_only_forward", this->onlyForward);
+	if (this->onlyForward) {
+		ROS_WARN_STREAM("Robot will only use forward moves.");
+	}
 }
 
 void ReachActionPerformer::onWaitingResult(bool result) {
@@ -161,7 +166,21 @@ void ReachActionPerformer::moveTo(geometry_msgs::Pose2D location, std::string re
 	params.setLong("y", location.y);
 	params.setLong("angle", location.theta);
 	params.setLong("direction", interface_msgs::Directions::FORWARD);
-	// TODO: params.setLong("direction", direction);
+	
+	// If forward
+	if (!this->onlyForward) {
+		params.setLong("direction", direction);
+		if (getLong("_side") == Side::UP && getString("change_direction_up_side", "false") == "true") {
+			ROS_WARN_STREAM("Changing direction from " << direction << " to " << 1 - direction << " because up side.");
+			params.setLong("direction", 1 - direction);
+		}
+	}
+
+	// Keep original angle if provided
+	if (getString("same_angle", "false") == "true") {
+		ROS_WARN_STREAM("Keeping original angle value " << this->convertAngle(getLong("angle", 0)) << ".");
+		params.setLong("angle", this->convertAngle(getLong("angle", 0)));
+	}
 
 	interface_msgs::CanData msg;
 	msg.type = request;
