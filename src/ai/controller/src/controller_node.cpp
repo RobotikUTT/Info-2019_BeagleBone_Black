@@ -8,19 +8,13 @@
  */
 Controller::Controller() : Node("controller", "ai"), side(Side::DOWN) {
 	// attributes
-	direction = Directions::FORWARD;
-	proximity_stop = false;
 	done = false;
-	panelUp = 0;
 	startSignalReceived = false;
 	robotState = RobotStatus::ROBOT_INIT;
 
 	// Advertisers
 	can_data_pub = nh.advertise<interface_msgs::CanData>("/can_interface/out", 1);
 
-	// Subscribers
-	can_data_sub = nh.subscribe("/can_interface/in", 1, &Controller::onCanData, this);
-	
 	start_sub = nh.subscribe("/signal/start", 1, &Controller::onStartSignal, this);
 	
 	schedulerController = nh.serviceClient<SetSchedulerState>("/scheduler/do");
@@ -61,7 +55,6 @@ void Controller::start() {
 	if (!nh.getParam("/actions/timeout", timeout)) {
 		ROS_ERROR_STREAM("No /actions/timeout defined in params, using 100");
 		timeout = 100;
-
 	}
 	timer = nh.createTimer(ros::Duration(timeout), &Controller::stop, this, true);
 
@@ -158,86 +151,6 @@ void Controller::stop(const ros::TimerEvent& timer) {
 	msg2.params = params.toList();
 	this->can_data_pub.publish(msg2);
 }
-
-void Controller::onCanData(const interface_msgs::CanData::ConstPtr& msg) {
-	Argumentable input;
-	input.fromList(msg->params);
-
-	// TODO can interface to check for channels
-	if (msg->type == "current_speed") {
-		// Set robot direction according to speed
-		// Exceeding values allow to go back
-		int16_t linearSpeed = input.getLong("linear_speed");
-
-		if (linearSpeed > 0) {
-			direction = Directions::FORWARD;
-		} else if (linearSpeed < 0) {
-			direction = Directions::BACKWARD;
-		} else if (!this->proximity_stop) {
-			direction = Directions::NONE;
-		}
-	}
-
-	else if (msg->type == "sonar_distance") {
-		this->processSonars(input);
-	}
-}
-
-/**
- * process sonars data to detect if an proximity stop is
- * mandatory
- */
-void Controller::processSonars(const Argumentable& data) {
-	bool last_proximity_value = this->proximity_stop;
-
-	uint8_t front_left = data.getLong("dist_front_left", 255);
-	uint8_t front_right = data.getLong("dist_front_right", 255);
-	uint8_t back_left = data.getLong("dist_back_left", 255);
-	uint8_t back_right = data.getLong("dist_back_right", 255);
-
-
-	/*
-	 * Proximity stop is enabled in case the distance
-	 * become less or equals than limit distances in
-	 * the current direction.
-	 */
-	bool forward_stop = direction == Directions::FORWARD && (
-		front_left <= SONAR_MIN_DIST_FORWARD + (this->proximity_stop ? 10 : 0) ||
-		front_right <= SONAR_MIN_DIST_FORWARD + (this->proximity_stop ? 10 : 0)
-	);
-	bool backward_stop = direction == Directions::BACKWARD && (
-		back_left <= SONAR_MIN_DIST_BACKWARD + (this->proximity_stop ? 10 : 0) ||
-		back_right <= SONAR_MIN_DIST_BACKWARD + (this->proximity_stop ? 10 : 0)
-	);
-
-	this->proximity_stop = forward_stop || backward_stop;
-
-	// Declare unknown shape
-	if (forward_stop) {
-		// TODO
-	} else {
-		// TODO
-	}
-
-	if (last_proximity_value != this->proximity_stop) {
-		if (this->proximity_stop) {
-			ROS_WARN("Set proximity stop");
-		} else {
-			ROS_WARN("Unset proximity stop");
-		}
-
-		interface_msgs::CanData msg;
-		msg.type = "set_stm_mode";
-
-		Argumentable params;
-		params.setLong("mode",
-			this->proximity_stop ? interface_msgs::StmMode::SETEMERGENCYSTOP : interface_msgs::StmMode::UNSETEMERGENCYSTOP);
-
-		msg.params = params.toList();
-		this->can_data_pub.publish(msg);
-	}
-}
-
 
 int main(int argc, char *argv[]) {
 	ros::init(argc, argv, "controller_node");

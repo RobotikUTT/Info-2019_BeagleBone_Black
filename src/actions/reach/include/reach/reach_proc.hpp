@@ -20,6 +20,8 @@
 
 #include <math.h>
 
+using interface_msgs::Directions;
+
 /**
  * @brief class for the action of reaching a position
  */
@@ -35,6 +37,7 @@ private:
   ros::Publisher can_data_pub;
   
   ros::Timer timerTimeout;
+  ros::Timer timerProximity;
   
   geometry_msgs::Pose2D robotPos;
 
@@ -50,8 +53,20 @@ private:
 
   unsigned long convertAngle(long degree) const;
 
+  void processSonars(const Argumentable& data);
+	void onProximityTimeout(const ros::TimerEvent& timer);
+
   bool usePathfinder;
-  bool onlyForward;
+
+  // Current action blocked
+  bool blocked;
+
+  bool proximityStop, forwardStop, backwardStop;
+
+  double proximityTimeout;
+  int backTriggerDistance, frontTriggerDistance, escapeDistance;
+
+  int8_t direction;
 };
 
 /**

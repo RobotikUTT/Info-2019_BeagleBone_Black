@@ -6,15 +6,40 @@
  *
  * @param[in] name name of the action server
  */
-ReachActionPerformer::ReachActionPerformer(std::string name) : ActionPerformer(name) {
+ReachActionPerformer::ReachActionPerformer(std::string name) : ActionPerformer(name) {	
 	this->can_data_sub = nh.subscribe("/can_interface/in", 1, &ReachActionPerformer::onCanData, this);
 	this->can_data_pub = nh.advertise<interface_msgs::CanData>("/can_interface/out", 1);
 
 	this->get_sided_point_srv = nh.serviceClient<ai_msgs::GetSidedPoint>("/ai/map_handler/get_sided_point");
 
+	this->proximityStop = false;
+	this->forwardStop = false;
+	this->backwardStop = false;
+
+	// Fecth parameters
 	if (!nh.getParam("/pathfinder/enabled", this->usePathfinder)) {
 		ROS_WARN_STREAM("unable to determine whether pathfinder is enabled or not, disabling by default");
 		this->usePathfinder = false;
+	}
+
+	if (!nh.getParam("/sonars/back_trigger_distance", this->backTriggerDistance)) {
+		ROS_WARN_STREAM("/sonars/back_trigger_distance is not set, using 25 cm as default");
+		this->backTriggerDistance = 25;
+	}
+
+	if (!nh.getParam("/sonars/front_trigger_distance", this->frontTriggerDistance)) {
+		ROS_WARN_STREAM("/sonars/front_trigger_distance is not set, using 25 cm as default");
+		this->frontTriggerDistance = 25;
+	}
+
+	if (!nh.getParam("/sonars/escape_distance", this->escapeDistance)) {
+		ROS_WARN_STREAM("/sonars/escape_distance is not set, using 200 mm as default");
+		this->escapeDistance = 200;
+	}
+
+	if (!nh.getParam("/sonars/proximity_timeout", this->proximityTimeout)) {
+		ROS_WARN_STREAM("/sonars/proximity_timeout is not set, using 2 seconds as default");
+		this->proximityTimeout = 2;
 	}
 
 	if (this->usePathfinder) {
@@ -24,11 +49,6 @@ ReachActionPerformer::ReachActionPerformer(std::string name) : ActionPerformer(n
 	} else {
 		this->onWaitingResult(true);
 	}
-
-	nh.getParam("/actions/move_only_forward", this->onlyForward);
-	if (this->onlyForward) {
-		ROS_WARN_STREAM("Robot will only use forward moves.");
-	}
 }
 
 void ReachActionPerformer::onWaitingResult(bool result) {
@@ -37,6 +57,99 @@ void ReachActionPerformer::onWaitingResult(bool result) {
 	} else {
 		ROS_ERROR_STREAM("unable to start reach action, missing pathfinder...");
 		setNodeStatus(NodeStatus::ERROR);
+	}
+}
+
+/**
+ * process sonars data to detect if an proximity stop is
+ * mandatory
+ */
+void ReachActionPerformer::processSonars(const Argumentable& data) {
+	bool last_proximity_value = this->proximityStop;
+
+	uint8_t front_left = data.getLong("dist_front_left", 255);
+	uint8_t front_right = data.getLong("dist_front_right", 255);
+	uint8_t back_left = data.getLong("dist_back_left", 255);
+	uint8_t back_right = data.getLong("dist_back_right", 255);
+	
+	// Check if something is close in front or in back
+	this->forwardStop = front_left <= this->frontTriggerDistance + (this->proximityStop ? 7 : 0) ||
+		front_right <= this->frontTriggerDistance + (this->proximityStop ? 7 : 0);
+		
+	this->backwardStop = back_left <= this->backTriggerDistance + (this->proximityStop ? 7 : 0) ||
+		back_right <= this->backTriggerDistance + (this->proximityStop ? 7 : 0);
+
+	// Stop if disturbance match with direction
+	this->proximityStop = (direction == Directions::FORWARD && forwardStop) ||
+		(direction == Directions::BACKWARD && backwardStop);
+
+	if (last_proximity_value != this->proximityStop) {
+		// Run some timer to move backward
+		if (this->proximityStop) {
+			ROS_WARN("Set proximity stop");
+			timerProximity.stop();
+			timerProximity = nh.createTimer(ros::Duration(this->proximityTimeout), &ReachActionPerformer::onProximityTimeout, this, true);
+		} else {
+			ROS_WARN("Unset proximity stop");
+			timerProximity.stop();
+		}
+
+		interface_msgs::CanData msg;
+		msg.type = "set_stm_mode";
+
+		Argumentable params;
+		params.setLong("mode",
+			this->proximityStop ? interface_msgs::StmMode::SETEMERGENCYSTOP : interface_msgs::StmMode::UNSETEMERGENCYSTOP);
+
+		msg.params = params.toList();
+		this->can_data_pub.publish(msg);
+	}
+}
+
+/**
+ * Runned when proximity stop is set for too much time
+ */
+void ReachActionPerformer::onProximityTimeout(const ros::TimerEvent& timer) {
+	// reset all goal in the STM
+	this->cancel();
+
+	// If not locked from both sides
+	if (!(this->forwardStop && this->backwardStop)) {
+		geometry_msgs::Pose2D goal;
+		ROS_INFO_STREAM(this->robotPos);
+		// Get from mrad to rad
+		double angleRad = this->robotPos.theta;
+		angleRad /= 1000;
+		ROS_INFO_STREAM(angleRad);
+		// Values (for forward by default)
+		int direction = 1;
+		long dx = cos(angleRad) * this->escapeDistance;
+		long dy = sin(angleRad) * this->escapeDistance;
+
+		// Forward blocked
+		if (this->forwardStop) {
+			direction = 0;
+
+			// Change direction
+			dx = -dx;
+			dy = -dy;
+		}
+
+		goal.x = dx + this->robotPos.x;
+		goal.y = dy + this->robotPos.y;
+
+		goal.x = goal.x > 0 ? goal.x : 0;
+		goal.y = goal.y > 0 ? goal.y : 0;
+
+		// Reset args to avoid further modificatio
+		this->reset();
+
+		// Start action as blocked and start handling again with new values
+		this->blocked = true;
+		this->moveTo(goal, "go_to", direction);
+	} else {
+		// Create new timer otherwise
+		timerProximity = nh.createTimer(ros::Duration(this->proximityTimeout), &ReachActionPerformer::onProximityTimeout, this, true);
 	}
 }
 
@@ -66,24 +179,56 @@ ActionPoint ReachActionPerformer::computeActionPoint(Argumentable* actionArgs, P
  * @param[in]  msg   The finish message
  */
 void ReachActionPerformer::onCanData(const interface_msgs::CanData::ConstPtr& msg){
+	Argumentable input;
+	input.fromList(msg->params);
+
 	if (msg->type == "order_complete") {
 		timerTimeout.stop();
-		returns(ActionStatus::DONE);
+		timerProximity.stop();
 
-	} else if (msg->type == "current_pos") {
-		Argumentable input;
-		input.fromList(msg->params);
+		// If blocked pause action
+		if (this->blocked) {
+			returns(ActionStatus::PAUSED);
+		} else {
+			returns(ActionStatus::DONE);
+		}
 
+	}
+	
+	else if (msg->type == "current_pos") {
 		this->robotPos.x = input.getLong("x");
 		this->robotPos.y = input.getLong("y");
-		this->robotPos.theta = this->convertAngle(input.getLong("angle"));
+		this->robotPos.theta = input.getLong("angle");
+	}
+	
+	else if (msg->type == "current_speed") {
+		// Set robot direction according to speed
+		// Exceeding values allow to go back
+		int16_t linearSpeed = input.getLong("linear_speed");
+
+		if (linearSpeed > 0) {
+			direction = Directions::FORWARD;
+		} else if (linearSpeed < 0) {
+			direction = Directions::BACKWARD;
+		} else if (!this->proximityStop) {
+			direction = Directions::NONE;
+		}
+	}
+
+	else if (msg->type == "sonar_distance") {
+		this->processSonars(input);
 	}
 }
+
 
 /**
  * @brief run action toward a new goal and send the appropriate to the STM
  */
 void ReachActionPerformer::start() {
+	// Reset blocked
+	this->blocked = false;
+
+	// Get direction
 	int direction = getLong("direction", interface_msgs::Directions::FORWARD);
 
 	// Test that some actions are to be performed
@@ -165,15 +310,10 @@ void ReachActionPerformer::moveTo(geometry_msgs::Pose2D location, std::string re
 	params.setLong("x", location.x);
 	params.setLong("y", location.y);
 	params.setLong("angle", location.theta);
-	params.setLong("direction", interface_msgs::Directions::FORWARD);
-	
-	// If forward
-	if (!this->onlyForward) {
-		params.setLong("direction", direction);
-		if (getLong("_side") == Side::UP && getString("change_direction_up_side", "false") == "true") {
-			ROS_WARN_STREAM("Changing direction from " << direction << " to " << 1 - direction << " because up side.");
-			params.setLong("direction", 1 - direction);
-		}
+	params.setLong("direction", direction);
+	if (getLong("_side") == Side::UP && getString("change_direction_up_side", "false") == "true") {
+		ROS_WARN_STREAM("Changing direction from " << direction << " to " << 1 - direction << " because up side.");
+		params.setLong("direction", 1 - direction);
 	}
 
 	// Keep original angle if provided
@@ -199,6 +339,7 @@ void ReachActionPerformer::cancel() {
 	msg.params = params.toList();
 	this->can_data_pub.publish(msg);
 }
+
 
 /**
  * @brief send new order if the robot is too slow

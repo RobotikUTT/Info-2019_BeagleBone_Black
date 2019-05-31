@@ -36,9 +36,6 @@
  * @{
  */
 
-#define SONAR_MIN_DIST_FORWARD 25 // in cm
-#define SONAR_MIN_DIST_BACKWARD	25 // in cm
-
 using ros::Subscriber;
 using ros::Publisher;
 using ros::ServiceClient;
@@ -61,7 +58,6 @@ private:
 
 	Subscriber status_sub;
 	Subscriber nodes_status_sub;
-	Subscriber can_data_sub;
 	Subscriber start_sub;
 
 	Publisher can_data_pub;
@@ -74,17 +70,9 @@ private:
 	bool startSignalReceived;
 	bool done;
 
-	int8_t direction;
 	int8_t side;
 
-	bool proximity_stop;
-	bool panelUp;
-
-	//void setRobotStatus(const RobotStatus::ConstPtr& msg);
 	void setRobotPosition(const geometry_msgs::Pose2D::ConstPtr& msg);
-	void onCanData(const interface_msgs::CanData::ConstPtr& msg);
-
- 	void processSonars(const Argumentable& data);
 
 	void onStartSignal(const ai_msgs::StartRobot& msg);
 

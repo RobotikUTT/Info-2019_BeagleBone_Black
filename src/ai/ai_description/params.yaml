@@ -8,9 +8,16 @@ robot:
     angle: 0
 
 actions:
-  main: "homolog"
-  timeout: 10 # in seconds
-  move_only_forward: false
+  main: "moving_only_2"
+  timeout: 96 # in seconds
+
+sonars:
+  back_trigger_distance: 25 # cm
+  front_trigger_distance: 25 # cm
+
+  escape_distance: 200 # mm
+
+  proximity_timeout: 3 # seconds before giving up on wait for obstacle to leave
   
 simulation: # 1 for Up, 0 for Down
   side: 0
