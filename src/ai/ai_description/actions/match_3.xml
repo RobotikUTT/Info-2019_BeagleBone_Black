@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!-- Example action tree-->
+<group type="ordered">
+	<!-- Sleep first second and score points of experience -->
+	<idle native="true" points="40">
+		<arg name="duration">1</arg>
+	</idle>
+	
+	<!-- Go out of the zone -->
+	<reach native="true">
+		<!-- margin of 180 mm + 10 mm -->
+		<arg name="x">775</arg>
+		<arg name="y">800</arg>
+	</reach>
+
+	<!-- Go behind things -->
+	<reach native="true">
+		<!-- margin of 180 mm + 10 mm -->
+		<arg name="x">1050</arg>
+		<arg name="y">1400</arg>
+	</reach>
+
+	<!-- Go back home -->
+	<reach native="true" points="10">
+		<!-- margin of 180 mm + 10 mm -->
+		<arg name="x">1050</arg>
+		<arg name="y">400</arg>
+	</reach>
+
+	<!-- Get some distance -->
+	<reach native="true">
+		<arg name="x">1050</arg>
+		<arg name="y">800</arg>
+		<arg name="direction">0</arg>
+	</reach>
+
+
+	<reach native="true">
+		<arg name="x">1320</arg>
+		<arg name="y">700</arg>
+	</reach>
+
+	<reach native="true">
+		<arg name="x">1320</arg>
+		<arg name="y">250</arg>
+	</reach>
+
+	<!-- Pousse les palets -->
+	<reach native="true" points="11">
+		<arg name="x">400</arg>
+		<arg name="y">250</arg>
+	</reach>
+
+	<!-- PARTIE 2 : RECUL -->
+	<reach native="true">
+		<arg name="x">800</arg>
+		<arg name="y">250</arg>
+		<arg name="direction">0</arg>
+	</reach>
+
+	<!-- zone adverse -->
+	<reach native="true">
+		<arg name="x">730</arg>
+		<arg name="y">2200</arg>
+	</reach>
+
+	<reach native="true">
+		<arg name="x">1050</arg>
+		<arg name="y">2200</arg>
+	</reach>
+
+	<reach native="true" points="9">
+		<!-- margin of 180 mm + 10 mm -->
+		<arg name="x">1050</arg>
+		<arg name="y">400</arg>
+	</reach>
+
+</group>

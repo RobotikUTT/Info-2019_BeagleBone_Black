@@ -120,7 +120,7 @@ void ReachActionPerformer::onProximityTimeout(const ros::TimerEvent& timer) {
 		// Get from mrad to rad
 		double angleRad = this->robotPos.theta;
 		angleRad /= 1000;
-		ROS_INFO_STREAM(angleRad);
+		
 		// Values (for forward by default)
 		int direction = 1;
 		long dx = cos(angleRad) * this->escapeDistance;
@@ -147,6 +147,13 @@ void ReachActionPerformer::onProximityTimeout(const ros::TimerEvent& timer) {
 		// Cancel movement timeout as it's origin is known
 		timerTimeout.stop();
 		timerTimeout = nh.createTimer(ros::Duration(3), &ReachActionPerformer::timeoutCallback , this, true);
+		
+		Argumentable params;
+		params.setLong("mode", interface_msgs::StmMode::UNSETEMERGENCYSTOP);
+		interface_msgs::CanData msg;
+		msg.type = "set_stm_mode";
+		msg.params = params.toList();
+		this->can_data_pub.publish(msg);
 
 		// Start action as blocked and start handling again with new values
 		this->blocked = true;

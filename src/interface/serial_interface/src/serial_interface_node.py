@@ -28,37 +28,25 @@ class FakeFrameForHurryPurpose:
 	def __init__(self, data):
 		self.data = data
 
-class SerialInterfaceNode(NodeStatusHandler):
-	def __init__(self):
-		super().__init__()
-		self.set_node_status("serial_interface", "interface", NodeStatus.INIT)
+class SerialBus():
 
-		# Parse devices
-		self.devices: DeviceList = DeviceList.parse_file(
-			"can/devices.xml",
-			package="interface_description"
+	def __init__(self, device, handler):
+		self.enabled = True
+		self.handler = handler
+		try:
+			self.serial = serial.Serial(port=device, baudrate=57600)
+		except serial.serialutil.SerialException as e:
+			rospy.logerr("Unable to open serial port on {}".format(device))
+			self.enabled = False
+			return
+
+		self.serial_input_thread = threading.Thread(
+			name="serial_input_{}".format("device"),
+			target=self.wait_for_serial_message
 		)
-
-		# Then frames
-		self.frames: Dict[str, Frame] = FrameList.parse_file(
-			"can/frames.xml",
-			package="interface_description",
-			context=Context(devices=self.devices)
-		)
-
-		# Create serial bus bus with given interface
-		self.serial = serial.Serial(port="/dev/ttyUSB0", baudrate=57600)
-		self.serial_input_thread = threading.Thread(name="serial_input", target=self.wait_for_serial_message)
-
-		# TODO /can_interface/out as a service
-		self.subscriber: Subscriber = Subscriber("/can_interface/out", CanData, self.on_ros_message)
-		self.publisher: Publisher = Publisher("/can_interface/in", CanData, queue_size=10)
 
 		# Start thread
 		self.serial_input_thread.start()
-
-		# Declare can_interface ready
-		self.set_node_status("serial_interface", "interface", NodeStatus.READY)
 
 	def wait_for_serial_message(self):
 		'''
@@ -75,7 +63,7 @@ class SerialInterfaceNode(NodeStatusHandler):
 				rospy.logwarn("Serial reception interrupted")
 			else:
 				raise e
-			
+
 	def read_byte(self):
 		return int.from_bytes(self.serial.read(), byteorder="big")
 	
@@ -86,12 +74,12 @@ class SerialInterfaceNode(NodeStatusHandler):
 
 		frame_id = self.read_byte()
 
-		if frame_id not in self.frames.by_id:
+		if frame_id not in self.handler.frames.by_id:
 			rospy.logerr("received unhandled frame of id {}".format(frame_id))
 			return
 		
 		# Get frame type
-		frame_type = self.frames.by_id[frame_id]
+		frame_type = self.handler.frames.by_id[frame_id]
 		
 		rospy.logdebug("received frame from serial of type {}".format(frame_type.name))
 
@@ -101,8 +89,8 @@ class SerialInterfaceNode(NodeStatusHandler):
 			status: int = self.read_byte()
 
 			# Set status if in devices
-			if address in self.devices.by_id:
-				self.set_node_status(self.devices.by_id[address], "board", NodeStatus.READY)
+			if address in self.handler.devices.by_id:
+				self.handler.set_node_status(self.handler.devices.by_id[address], "board", NodeStatus.READY)
 			else:
 				rospy.logerr("received pong frame for an unknown device of id {}".format(address))
 		else:
@@ -127,8 +115,39 @@ class SerialInterfaceNode(NodeStatusHandler):
 			message.type = frame_type.name
 
 			# Publish
-			self.publisher.publish(message)
+			self.handler.publisher.publish(message)
 				
+
+class SerialInterfaceNode(NodeStatusHandler):
+	def __init__(self):
+		super().__init__()
+		self.set_node_status("serial_interface", "interface", NodeStatus.INIT)
+
+		# Parse devices
+		self.devices: DeviceList = DeviceList.parse_file(
+			"can/devices.xml",
+			package="interface_description"
+		)
+
+		# Then frames
+		self.frames: Dict[str, Frame] = FrameList.parse_file(
+			"can/frames.xml",
+			package="interface_description",
+			context=Context(devices=self.devices)
+		)
+
+		# Create serial bus bus with given interface
+		self.serials = [
+			SerialBus("/dev/ttyUSB0", self),
+			SerialBus("/dev/ttyUSB1", self)
+		]
+		
+		self.subscriber: Subscriber = Subscriber("/can_interface/out", CanData, self.on_ros_message)
+		self.publisher: Publisher = Publisher("/can_interface/in", CanData, queue_size=10)
+
+		# Declare can_interface ready
+		self.set_node_status("serial_interface", "interface", NodeStatus.READY)
+
 	def on_ros_message(self, message):
 		"""
 			Handle message from ROS and build a frame from it
@@ -144,8 +163,15 @@ class SerialInterfaceNode(NodeStatusHandler):
 		data = frame_type.get_frame_data(values)
 
 		if data is not None:
-			self.serial.write(bytes(data[:frame_type.size()]))
-			self.serial.flush()
+			for bus in self.serials:
+				if bus.enabled:
+					bus.serial.write(bytes(data[:frame_type.size()]))
+					bus.serial.flush()
+
+	def close(self):
+		for bus in self.serials:
+			if bus.enabled:
+				bus.serial.close()
 
 
 if __name__ == '__main__':
@@ -161,7 +187,7 @@ if __name__ == '__main__':
 		while not rospy.is_shutdown():
 			rospy.spin()
 		
-		node.serial.close()
+		node.close()
 		sys.exit()
 	except rospy.ROSInterruptException:
 		pass
