@@ -8,7 +8,7 @@ robot:
     angle: 0
 
 actions:
-  main: "match_3"
+  main: "main"
   timeout: 96 # in seconds
 
 sonars:

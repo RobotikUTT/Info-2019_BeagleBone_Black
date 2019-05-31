@@ -17,12 +17,19 @@ class Dock:
 	def can_data(self, name, params, node):
 		if name == "set_dock_height":
 			self.done = time.time()
+		if name == "fetch_puck":
+			self.done = -time.time()
 	
 	def spin(self):
 		if self.done != False:
-			if time.time() - self.done > 0.1:
-				self.done = False
-				self.master_node.send_can("your_dock_has_fullfilled_your_request", {})
+			if self.done > 0:
+				if time.time() - self.done > 0.1:
+					self.done = False
+					self.master_node.send_can("your_dock_has_fullfilled_your_request", {})
+			else:
+				if time.time() + self.done > 0.1:
+					self.done = False
+					self.master_node.send_can("puck_fetched_chief", {})
 		
 
 def register(master_node):

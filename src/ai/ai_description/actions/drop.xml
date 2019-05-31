@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <group type="ordered">
 	<dock_control native="true">
-		<arg name="front_height">20</arg>
-		<arg name="back_height">100</arg>
+		<arg name="front_height">90</arg>
+		<arg name="back_height">227</arg>
 	</dock_control>
 </group>

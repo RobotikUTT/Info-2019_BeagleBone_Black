@@ -12,8 +12,8 @@
 
 	<!-- Retrieve -->
 	<dock_control native="true">
-		<arg name="front_height">20</arg>
-		<arg name="back_height">20</arg>
+		<arg name="front_height">90</arg>
+		<arg name="back_height">80</arg>
 	</dock_control>
 	
 	<fetch_puck native="true" />

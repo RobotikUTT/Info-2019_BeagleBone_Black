@@ -47,7 +47,7 @@
 
 	<!-- Pousse les palets -->
 	<reach native="true" points="11">
-		<arg name="x">400</arg>
+		<arg name="x">700</arg>
 		<arg name="y">250</arg>
 	</reach>
 
