@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!-- Example action tree-->
+<group type="ordered">
+	<reach native="true">
+		<arg name="x">800</arg>
+		<arg name="y">250</arg>
+		<arg name="direction">0</arg>
+	</reach>
+
+	<!-- zone adverse -->
+	<reach native="true">
+		<arg name="x">730</arg>
+		<arg name="y">2200</arg>
+	</reach>
+	<!-- derrière la zone -->
+	<reach native="true">
+		<arg name="x">1050</arg>
+		<arg name="y">2200</arg>
+	</reach>
+	<!--  -->
+	<reach native="true" points="9">
+		<arg name="x">1050</arg>
+		<arg name="y">400</arg>
+	</reach>
+</group>

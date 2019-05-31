@@ -3,8 +3,9 @@
 	<!-- Go to zone side -->
 	<reach native="true">
 		<arg name="x">@zone_x</arg>
-		<arg name="y">450</arg>
-		<arg name="angle">-90</arg>
+		<arg name="y">550</arg>
+		<arg name="angle">0</arg>
+		<arg name="same_angle">true</arg>
 	</reach>
 
 	<drop />

@@ -3,7 +3,8 @@
 <group type="ordered" fail="restart">
 	<!-- Move toward puck -->
 	<reach native="true">
-		<arg name="x">1500</arg>
+		<!-- 1543 -->
+		<arg name="x">1343/arg>
 		<arg name="y">@puck_y</arg>
 		<arg name="direction">1</arg>
 

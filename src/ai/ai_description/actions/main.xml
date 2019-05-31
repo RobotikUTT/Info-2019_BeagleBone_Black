@@ -21,7 +21,7 @@
             <!-- 3 * 4 points -->
             <arg name="balance_points">12</arg>
             <arg name="zone_points">18</arg>
-            <arg name="zone_x">300</arg>
+            <arg name="zone_x">450</arg>
         </drop_best_place>
     </group>
 
@@ -41,7 +41,7 @@
             <!-- 8 * 2 points -->
             <arg name="balance_points">16</arg>
             <arg name="zone_points">12</arg>
-            <arg name="zone_x">600</arg>
+            <arg name="zone_x">750</arg>
         </drop_best_place>
     </group>
 
@@ -56,7 +56,7 @@
         <drop_best_place>
             <arg name="balance_points">12</arg>
             <arg name="zone_points">6</arg>
-            <arg name="zone_x">900</arg>
+            <arg name="zone_x">1050</arg>
         </drop_best_place>
     </group>
     
