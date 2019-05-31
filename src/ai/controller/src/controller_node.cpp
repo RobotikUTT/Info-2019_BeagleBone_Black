@@ -80,15 +80,17 @@ void Controller::start() {
 		return;
 	}
 
+	// Set positision
 	Argumentable params;
 	params.setLong("x", srv.response.point.x);
 	params.setLong("y", srv.response.point.y);
 	params.setLong("angle", srv.response.point.theta);
-
 	interface_msgs::CanData msg;
 	msg.type = "set_position";
 	msg.params = params.toList();
 	this->can_data_pub.publish(msg);
+
+	ros::Duration(0.3).sleep();
 
 	// make it running
 	params.reset();
@@ -99,6 +101,8 @@ void Controller::start() {
 	msg2.params = params.toList();
 	this->can_data_pub.publish(msg2);
 
+	ros::Duration(0.3).sleep();
+
 	// set left pid
 	interface_msgs::CanData msg3;
 	params.reset();
@@ -108,6 +112,8 @@ void Controller::start() {
 	msg3.type = "set_left_pid";
 	msg3.params = params.toList();
 	this->can_data_pub.publish(msg3);
+
+	ros::Duration(0.3).sleep();
 
 	// set right pid
 	params.setLong("p", 130);

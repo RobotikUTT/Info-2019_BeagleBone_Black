@@ -12,7 +12,7 @@ from action_manager import PerformClient, Action
 from ai_msgs.msg import ActionStatus, ActionPoint
 from geometry_msgs.msg import Pose2D
 
-class TestDropPerformer(unittest.TestCase):
+class TestDock_controlPerformer(unittest.TestCase):
 	def setUp(self):
 		# Init some position
 		self.robot_position = Pose2D()
@@ -28,7 +28,7 @@ class TestDropPerformer(unittest.TestCase):
 		self.action_state = ActionStatus.IDLE
 
 		# Perform client
-		self.pc = PerformClient("test_drop_performer_client", "actions")
+		self.pc = PerformClient("test_dock_control_performer_client", "actions")
 		self.pc.on_action_returns = self.action_returns
 
 	def action_returns(self, state, result):
@@ -38,10 +38,10 @@ class TestDropPerformer(unittest.TestCase):
 
 	def test_action_point(self):
 		"""
-			Test action point computation for drop performer.
+			Test action point computation for dock_control performer.
 		"""
 		# Create move action
-		action = Action.parse_string("<drop />")
+		action = Action.parse_string("<dock_control />")
 		
 		#action.arguments.set("argname", value)
 
@@ -54,7 +54,7 @@ class TestDropPerformer(unittest.TestCase):
 
 	def test_perform_success(self):
 		self.action_state = ActionStatus.IDLE
-		self.pc.perform_action(Action.parse_string("<drop />"), Pose2D())
+		self.pc.perform_action(Action.parse_string("<dock_control />"), Pose2D())
 
 		# Wait for result
 		start = time()
@@ -67,5 +67,5 @@ class TestDropPerformer(unittest.TestCase):
 
 
 if __name__ == '__main__':
-	rospy.init_node('test_drop_performer', anonymous=True)
-	rostest.rosrun('drop', 'actions', TestDropPerformer, sys.argv)
+	rospy.init_node('test_dock_control_performer', anonymous=True)
+	rostest.rosrun('dock_control', 'actions', TestDock_controlPerformer, sys.argv)

@@ -11,5 +11,15 @@
 	</reach>
 
 	<!-- Retrieve -->
+	<dock_control native="true">
+		<arg name="front_height">20</arg>
+		<arg name="back_height">20</arg>
+	</dock_control>
+	
 	<fetch_puck native="true" />
+
+	<dock_control native="true">
+		<arg name="front_height">100</arg>
+		<arg name="back_height">20</arg>
+	</dock_control>
 </group>

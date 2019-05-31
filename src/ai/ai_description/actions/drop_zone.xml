@@ -7,5 +7,5 @@
 		<arg name="angle">-90</arg>
 	</reach>
 
-	<drop native="true" />
+	<drop />
 </group>

@@ -6,5 +6,5 @@
 		<arg name="y">1300</arg>
 	</reach>
 
-	<drop native="true" />
+	<drop />
 </group>

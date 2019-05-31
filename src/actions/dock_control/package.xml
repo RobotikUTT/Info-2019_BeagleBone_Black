@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>drop</name>
+  <name>dock_control</name>
   <version>0.0.0</version>
-  <description>The drop package</description>
+  <description>The dock_control package</description>
 
   <license>TODO</license>
   <maintainer email="cle.bourdonnaye@gmail.com">Clément de La Bourdonnaye</maintainer>

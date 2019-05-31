@@ -1,0 +1,10 @@
+<launch>
+	<!-- Da great node_watcher -->
+	<node name="node_watcher" pkg="node_watcher" type="node" required="true"/>
+
+	<!-- Da action performer -->
+  <node name="dock_control" pkg="dock_control" type="dock_control_performer.py" required="true" />
+
+	<!-- Test to perform -->
+	<test test-name="test_dock_control_performer" pkg="dock_control" type="test_dock_control_performer.py" />
+</launch>

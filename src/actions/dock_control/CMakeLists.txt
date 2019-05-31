@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(drop)
+project(dock_control)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
@@ -32,7 +32,7 @@ if(CATKIN_ENABLE_TESTING)
 
   # Tests to perform
   foreach(T
-      test/test-drop-performer.launch)
+      test/test-dock_control-performer.launch)
      add_rostest(${T})
   endforeach()
 endif()

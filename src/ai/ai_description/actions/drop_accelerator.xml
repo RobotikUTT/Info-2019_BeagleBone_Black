@@ -8,5 +8,5 @@
 	</reach>
 
 	<!-- Drop puck -->
-	<drop native="true" />
+	<drop />
 </group>

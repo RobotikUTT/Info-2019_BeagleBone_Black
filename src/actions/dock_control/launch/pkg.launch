@@ -1,0 +1,3 @@
+<launch>
+	<node name="dock_control" pkg="dock_control" type="dock_control_performer.py" output="screen" />
+</launch>
