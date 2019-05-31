@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <!-- Example action tree-->
-<group type="unordered">
-
-    <group type="ordered" fail="restart">
+<group type="ordered">
+    <group type="ordered" fail="continue">
         <reach_pickup_start />
 
         <!-- Red pucks in distributor -->
@@ -21,11 +20,12 @@
         <drop_best_place>
             <!-- 3 * 4 points -->
             <arg name="balance_points">12</arg>
+            <arg name="zone_points">18</arg>
             <arg name="zone_x">300</arg>
         </drop_best_place>
     </group>
 
-    <group type="ordered" fail="restart">
+    <group type="ordered" fail="continue">
         <reach_pickup_start />
 
         <!-- Green pucks in distributor -->
@@ -40,11 +40,12 @@
         <drop_best_place>
             <!-- 8 * 2 points -->
             <arg name="balance_points">16</arg>
+            <arg name="zone_points">12</arg>
             <arg name="zone_x">600</arg>
         </drop_best_place>
     </group>
 
-    <group type="ordered" fail="restart">
+    <group type="ordered" fail="continue">
         <reach_pickup_start />
 
         <!-- Blue pucks in distributor -->
@@ -54,6 +55,7 @@
 
         <drop_best_place>
             <arg name="balance_points">12</arg>
+            <arg name="zone_points">6</arg>
             <arg name="zone_x">900</arg>
         </drop_best_place>
     </group>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<group fail="restart" points="6">
+<group fail="continue" points="@zone_points">
 	<!-- Go to zone side -->
 	<reach native="true">
 		<arg name="x">@zone_x</arg>

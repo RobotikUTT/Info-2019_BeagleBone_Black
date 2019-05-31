@@ -144,6 +144,10 @@ void ReachActionPerformer::onProximityTimeout(const ros::TimerEvent& timer) {
 		// Reset args to avoid further modificatio
 		this->reset();
 
+		// Cancel movement timeout as it's origin is known
+		timerTimeout.stop();
+		timerTimeout = nh.createTimer(ros::Duration(3), &ReachActionPerformer::timeoutCallback , this, true);
+
 		// Start action as blocked and start handling again with new values
 		this->blocked = true;
 		this->moveTo(goal, "go_to", direction);
@@ -186,8 +190,10 @@ void ReachActionPerformer::onCanData(const interface_msgs::CanData::ConstPtr& ms
 		timerTimeout.stop();
 		timerProximity.stop();
 
-		// If blocked pause action
+		// If blocked, pause action
 		if (this->blocked) {
+			// Wait a bit since it was caused by probably a moving obstacle
+			ros::Duration(2).sleep();
 			returns(ActionStatus::PAUSED);
 		} else {
 			returns(ActionStatus::DONE);
@@ -292,7 +298,7 @@ void ReachActionPerformer::start() {
 		ROS_ERROR_STREAM("Missing arguments for [reach], provide x/y and/or angle.");
 	}
 
-	int timeout = getLong("timeout", 0);
+	int timeout = getLong("timeout", 10);
 	if (timeout > 0) {
 		timerTimeout = nh.createTimer(ros::Duration(timeout), &ReachActionPerformer::timeoutCallback , this, true);
 	}
@@ -346,7 +352,7 @@ void ReachActionPerformer::cancel() {
  * @details we consider that the robot is blocked at the end of the timer
  * @param[in] timer timer event
  */
-void ReachActionPerformer::timeoutCallback(const ros::TimerEvent& timer){
+void ReachActionPerformer::timeoutCallback(const ros::TimerEvent& timer) {
 	// Cancel action
 	cancel();
 

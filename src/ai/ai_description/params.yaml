@@ -3,12 +3,12 @@ pathfinder:
 
 robot:
   start:
-    x: 475 # width 290 / 2 + 330 offset start
+    x: 775 # width 290 / 2 + 330 offset start + 300 to change zone
     y: 225 # width 360 + 90 to fill zone
     angle: 0
 
 actions:
-  main: "moving_only_2"
+  main: "main"
   timeout: 96 # in seconds
 
 sonars:
